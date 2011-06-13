@@ -12,10 +12,6 @@ $argv = explode("/",$_SERVER['PATH_INFO']);
 if($argv[1] == "info")
 {
 	phpinfo();
-	if(count($argv)>1)
-	{
-		require_once('controllers/'.$argv.'.php');
-	}
 }
 else if($argv[1] == "debug")
 {
