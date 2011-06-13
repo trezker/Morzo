@@ -7,14 +7,23 @@ class User
 		include "models/$model.php";
 		$this->$model = new $model();
 	}
-
-	public function Index()
+	
+	public function Logged_in()
 	{
 		session_start();
 
 		if(!isset($_SESSION['userid']))
 		{
 			include 'views/not_logged_in.php';
+			return false;
+		}
+		return true;
+	}
+
+	public function Index()
+	{
+		if(!$this->Logged_in())
+		{
 			return;
 		}
 
@@ -108,6 +117,22 @@ class User
 	{
 		sleep(1);
 		echo 1;
+	}
+	
+	public function Actor($actor_id)
+	{
+		//Todo: check user session owns this actor.
+		$this->Load_model('User_model');
+		$actor = $this->User_model->Get_actor($actor_id);
+		if($actor['Name'] == NULL)
+		{
+			$actor['Name'] = 'Unnamed character';
+		}
+		if($actor['Location'] == NULL)
+		{
+			$actor['Location'] = 'Unnamed location';
+		}
+		include 'views/actor_view.php';
 	}
 }
 

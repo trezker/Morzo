@@ -142,6 +142,25 @@ class User_model
 		}
 		return $actors;
 	}
+
+	public function Get_actor($actor_id)
+	{
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			select AN.Name as Name, LN.Name as Location
+			from Actor A
+			left join Actor_name AN on A.ID = AN.Actor_ID and A.ID = AN.Named_actor_ID
+			left join Location_name LN on A.ID = LN.Actor_ID and A.Location_ID = LN.Location_ID
+			where A.ID = ?
+			', array($actor_id));
+		
+		if(!$rs)
+		{
+			return false;
+		}
+		return Array('Name' => $rs->fields['Name'], 'Location' => $rs->fields['Location']);
+	}
 }
 }
 ?>
