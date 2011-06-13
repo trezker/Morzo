@@ -57,7 +57,7 @@
     			echo "<p><a href='user/actor/$actor'>$actor</a></p>";
 			}
 		?>
-		<p id="logout"><a href='' onclick='logout()'>Log out</a></p>
+		<p id="logout"><span class="action" onclick='logout()'>Log out</span></p>
 		
 		<?php if($_SESSION['admin']===true) { ?>
 			<p>You're an Admin!</p>
