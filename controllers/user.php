@@ -126,13 +126,63 @@ class User
 		$actor = $this->User_model->Get_actor($actor_id);
 		if($actor['Name'] == NULL)
 		{
-			$actor['Name'] = 'Unnamed character';
+			$actor['Name'] = 'Unnamed actor';
 		}
 		if($actor['Location'] == NULL)
 		{
 			$actor['Location'] = 'Unnamed location';
 		}
 		include 'views/actor_view.php';
+	}
+	
+	public function Change_location_name($actor_id, $location_id, $new_name)
+	{
+		//Todo: check user session owns this actor.
+		$this->Load_model('User_model');
+		$r = $this->User_model->Change_location_name($actor_id, $location_id, $new_name);
+		if($r == false)
+		{
+			echo false;
+			return;
+		}
+		else
+		{
+			if(strlen($new_name) == 0)
+			{
+				echo 'Unnamed location';
+			}
+			else
+			{
+				echo $new_name;
+			}
+		}
+	}
+	
+	public function Change_actor_name($actor_id, $named_actor_id, $new_name)
+	{
+		if(strlen($new_name) == 0)
+		{
+			echo false;
+		}
+		//Todo: check user session owns this actor.
+		$this->Load_model('User_model');
+		$r = $this->User_model->Change_actor_name($actor_id, $named_actor_id, $new_name);
+		if($r == false)
+		{
+			echo false;
+			return;
+		}
+		else
+		{
+			if(strlen($new_name) == 0)
+			{
+				echo 'Unnamed actor';
+			}
+			else
+			{
+				echo $new_name;
+			}
+		}
 	}
 }
 

@@ -148,7 +148,7 @@ class User_model
 		$db = Load_database();
 
 		$rs = $db->Execute('
-			select AN.Name as Name, LN.Name as Location
+			select AN.Name as Name, LN.Name as Location, A.Location_ID as Location_ID
 			from Actor A
 			left join Actor_name AN on A.ID = AN.Actor_ID and A.ID = AN.Named_actor_ID
 			left join Location_name LN on A.ID = LN.Actor_ID and A.Location_ID = LN.Location_ID
@@ -159,7 +159,43 @@ class User_model
 		{
 			return false;
 		}
-		return Array('Name' => $rs->fields['Name'], 'Location' => $rs->fields['Location']);
+		return Array(
+			'Name' => $rs->fields['Name'], 
+			'Location' => $rs->fields['Location'], 
+			'Location_ID' => $rs->fields['Location_ID']
+		);
+	}
+	
+	public function Change_location_name($actor_ID, $location_ID, $new_name)
+	{
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			update Location_name set name = ?
+			where actor_ID = ? and location_ID = ?
+			', array($new_name, $actor_ID, $location_ID));
+		
+		if(!$rs)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	public function Change_actor_name($actor_ID, $named_actor_ID, $new_name)
+	{
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			update Actor_name set name = ?
+			where Actor_ID = ? and Named_actor_ID = ?
+			', array($new_name, $actor_ID, $named_actor_ID));
+		
+		if(!$rs)
+		{
+			return false;
+		}
+		return true;
 	}
 }
 }
