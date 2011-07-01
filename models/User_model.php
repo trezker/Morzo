@@ -114,7 +114,7 @@ class User_model
 		{
 			return false;
 		}
-		if($rs->RecordCount() == 1)
+		if($db->Affected_Rows() == 1)
 		{
 			return true;
 		}

@@ -1,7 +1,11 @@
 <html>
 	<head>
 		<style type="text/css">
-			p {margin-left:20px; text-align:center;}
+			.actor_list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
 			.action {
 				color: #00F;
 				cursor: pointer;
@@ -28,19 +32,40 @@
 			{
 				if(new_actor_processing == true)
 				{
-					$('#new_actor_status').html('Requesting, please wait...');
+					$('#new_actor').html('Requesting, please wait...');
 					return;
 				}
 				new_actor_processing = true;
-				$('#new_actor_status').html('Requesting...');
+				$('#new_actor').html('Requesting...');
 				$.ajax(
 				{
 					type: 'GET',
-					url: 'user/New_actor',
+					url: '/user/Request_actor',
 					success: function(data)
 					{
-						$('#new_actor_status').html('');
+						if(data == true)
+						{
+							$('#new_actor').html('Request granted');
+						}
+						else
+						{
+							$('#new_actor').html('Request denied');
+						}
+						Refresh_actors();
 						new_actor_processing = false;
+					}
+				});
+			}
+			
+			function Refresh_actors()
+			{
+				$.ajax(
+				{
+					type: 'GET',
+					url: '/user/Actors',
+					success: function(data)
+					{
+						$('#actors').html(data);
 					}
 				});
 			}
@@ -50,13 +75,10 @@
 		<p>Hello <?php echo $_SESSION['username']; ?>!</p>
 		<p>
 			<span class="action" id="new_actor" onclick='new_actor()'>New actor</span>
-			<span id="new_actor_status"></span>
 		</p>
-		<?php
-			foreach ($actors as $actor) {
-    			echo "<p><a href='user/actor/$actor'>$actor</a></p>";
-			}
-		?>
+		<div id="actors">
+			<?php include 'views/actors_view.php'; ?>
+		</div>
 		<p id="logout"><span class="action" onclick='logout()'>Log out</span></p>
 		
 		<?php if($_SESSION['admin']===true) { ?>
@@ -64,4 +86,3 @@
 		<?php } ?>
 	</body>
 </html>
-

@@ -113,10 +113,15 @@ class User
 		echo 1;
 	}
 
-	public function New_actor()
+	public function Request_actor()
 	{
-		sleep(1);
-		echo 1;
+		if(!$this->Logged_in())
+		{
+			return;
+		}
+		$this->Load_model('User_model');
+		$r = $this->User_model->Request_actor($_SESSION['userid']);
+		echo $r;
 	}
 	
 	public function Actor($actor_id)
@@ -183,6 +188,19 @@ class User
 				echo $new_name;
 			}
 		}
+	}
+
+	public function Actors()
+	{	
+		if(!$this->Logged_in())
+		{
+			return;
+		}
+
+		$this->Load_model('User_model');
+		$actors = $this->User_model->Get_actors($_SESSION['userid']);
+
+		include 'views/actors_view.php';
 	}
 }
 
