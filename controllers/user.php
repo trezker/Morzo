@@ -142,7 +142,7 @@ class User
 		$west = false;
 		$north = false;
 		$south = false;
-		foreach ($locations as $location) {
+		foreach ($locations as &$location) {
 			if($location['x'] == 1 && $location['y'] == 0)
 				$east = true;
 			if($location['x'] == -1 && $location['y'] == 0)
@@ -151,10 +151,11 @@ class User
 				$south = true;
 			if($location['x'] == 0 && $location['y'] == -1)
 				$north = true;
-				
+
 			if(!$location['Name'])
     			$location['Name'] = 'Unnamed location';
 		}
+		unset($location);
 		if(!$east)
 		{
     		$locations[] = array(
