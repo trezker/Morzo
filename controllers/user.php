@@ -137,6 +137,61 @@ class User
 		{
 			$actor['Location'] = 'Unnamed location';
 		}
+		$locations = $this->User_model->Get_neighbouring_locations($actor_id);
+		$east = false;
+		$west = false;
+		$north = false;
+		$south = false;
+		foreach ($locations as $location) {
+			if($location['x'] == 1 && $location['y'] == 0)
+				$east = true;
+			if($location['x'] == -1 && $location['y'] == 0)
+				$west = true;
+			if($location['x'] == 0 && $location['y'] == 1)
+				$south = true;
+			if($location['x'] == 0 && $location['y'] == -1)
+				$north = true;
+				
+			if(!$location['Name'])
+    			$location['Name'] = 'Unnamed location';
+		}
+		if(!$east)
+		{
+    		$locations[] = array(
+    			'ID' => 'east',
+    			'x' => 1,
+    			'y' => 0,
+    			'Name' => 'Unnamed location'
+    		);
+		}
+		if(!$west)
+		{
+    		$locations[] = array(
+    			'ID' => 'west',
+    			'x' => -1,
+    			'y' => 0,
+    			'Name' => 'Unnamed location'
+    		);
+		}
+		if(!$south)
+		{
+    		$locations[] = array(
+    			'ID' => 'south',
+    			'x' => 0,
+    			'y' => 1,
+    			'Name' => 'Unnamed location'
+    		);
+		}
+		if(!$north)
+		{
+    		$locations[] = array(
+    			'ID' => 'north',
+    			'x' => 0,
+    			'y' => -1,
+    			'Name' => 'Unnamed location'
+    		);
+		}
+
 		include 'views/actor_view.php';
 	}
 	
@@ -144,6 +199,16 @@ class User
 	{
 		//Todo: check user session owns this actor.
 		$this->Load_model('User_model');
+		if(!is_numeric($location_id))
+		{
+			$r = $this->User_model->Create_location($actor_id, $location_id);
+			if(!$r)
+			{
+				echo false;
+				return;
+			}
+			$location_id = $r;
+		}
 		$r = $this->User_model->Change_location_name($actor_id, $location_id, $new_name);
 		if($r == false)
 		{
