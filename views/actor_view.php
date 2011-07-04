@@ -1,10 +1,12 @@
 <html>
 	<head>
 		<style type="text/css">
-			p {margin-left:20px; text-align:center;}
 			.action {
 				color: #00F;
 				cursor: pointer;
+			}
+			.namechange {
+				font-size: 80%;
 			}
 		</style>
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
@@ -16,10 +18,15 @@
 				{
 					change_location_id = -1;
 					$('#edit_popup').html('');
+					$('#changelink_'+location_id).html('Change name');
 					return;
 				}
+				else
+				{
+					$('#changelink_'+change_location_id).html('Change name');
+					$('#changelink_'+location_id).html('See name changer');
+				}
 				change_location_id = location_id;
-				//Todo: Toggle location changer visibility
 				$('#edit_popup').html($('#location_name_popup').html());
 			}
 			function change_location_name(location_id)
@@ -77,7 +84,7 @@
 		</p>
 		<p>
 			Current location is <span id="location_name"><?= $actor['Location']; ?></span>
-			<span class="action" onclick="location_changer(<?=$actor['Location_ID']?>);">Change</span>
+			<span id='changelink_<?=$actor['Location_ID']?>' class="action namechange" onclick="location_changer(<?=$actor['Location_ID']?>);">Change name</span>
 		</p>
 		<div id="edit_popup">
 		</div>
@@ -91,7 +98,7 @@
 					echo "
 						<li>
 							<a href='/user/travel/$id'>$name</a>
-							<span class='action' onclick='location_changer(\"$id\");'>Change</span>
+							<span id='changelink_$id' class='action namechange' onclick='location_changer(\"$id\");'>Change name</span>
 						</li>
 						";
 				}
