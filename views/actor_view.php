@@ -9,11 +9,18 @@
 		</style>
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript">
-			var change_location_id = <?=$actor['Location_ID']?>;
+			var change_location_id = -1;
 			function location_changer(location_id)
 			{
+				if(change_location_id == location_id)
+				{
+					change_location_id = -1;
+					$('#edit_popup').html('');
+					return;
+				}
 				change_location_id = location_id;
 				//Todo: Toggle location changer visibility
+				$('#edit_popup').html($('#location_name_popup').html());
 			}
 			function change_location_name(location_id)
 			{
@@ -72,9 +79,7 @@
 			Current location is <span id="location_name"><?= $actor['Location']; ?></span>
 			<span class="action" onclick="location_changer(<?=$actor['Location_ID']?>);">Change</span>
 		</p>
-		<div id="location_name_changer">
-			<input type="text" name="location_input" id="location_input" />
-			<span class="action" id="change_location_name" onclick="change_location_name(-1);">Change</span>
+		<div id="edit_popup">
 		</div>
 		<div id="locations">
 			<h2>Locations you can go to</h2>
@@ -94,5 +99,11 @@
 			</ul>
 		</div>
 		<p id="Leave this actor"><a href='/user'>Leave this actor</a></p>
+
+		<div id="location_name_popup" style="display: none">
+			<h3>Change location name</h3>
+			<input type="text" name="location_input" id="location_input" />
+			<span class="action" id="change_location_name" onclick="change_location_name(-1);">Change</span>
+		</div>
 	</body>
 </html>
