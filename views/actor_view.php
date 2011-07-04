@@ -14,11 +14,11 @@
 			var change_location_id = -1;
 			function location_changer(location_id)
 			{
-				if(change_location_id == location_id)
+				if(change_location_id == location_id || location_id == -1)
 				{
-					change_location_id = -1;
 					$('#edit_popup').html('');
-					$('#changelink_'+location_id).html('Change name');
+					$('#changelink_'+change_location_id).html('Change name');
+					change_location_id = -1;
 					return;
 				}
 				else
@@ -31,7 +31,6 @@
 			}
 			function change_location_name(location_id)
 			{
-				alert("Changing: " + change_location_id);
 				$('#change_location_name').html('Changing');
 				callurl = '/user/Change_location_name/' + <?=$actor_id?> + '/' + change_location_id + '/' + $('#location_input').val();
 				$.ajax(
@@ -51,8 +50,8 @@
 						else
 						{
 							//TODO: Reload locations view
-							alert("Changed: " + data);
 						}
+						location_changer(-1);
 					}
 				});
 			}
