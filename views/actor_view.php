@@ -49,7 +49,7 @@
 						}
 						else
 						{
-							//TODO: Reload locations view
+							//TODO: Reload locations view https://github.com/trezker/Morzo/issues/16
 						}
 						location_changer(-1);
 					}
@@ -94,9 +94,12 @@
 				foreach ($locations as $location) {
 					$id = $location["ID"];
 					$name = $location["Name"];
+					$compass = $location["Compass"];
+					$x = $location["x"];
+					$y = $location["y"];
 					echo "
 						<li>
-							<a href='/user/travel/$id'>$name</a>
+							<a href='/user/travel/$id'>$name $compass, $x, $y</a>
 							<span id='changelink_$id' class='action namechange' onclick='location_changer(\"$id\");'>Change name</span>
 						</li>
 						";
