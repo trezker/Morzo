@@ -221,9 +221,10 @@ class User_model
 			left join (
 				select Name, ILN.Location_ID from Location_name ILN
 				join Actor A on ILN.Actor_ID = A.ID
+				where A.ID = ?
 				) LN on L.ID = LN.Location_ID
 			where L.x >= ? and L.y >= ? and L.x <= ? and L.y <= ?
-			', array($x-1, $y-1, $x+1, $y+1));
+			', array($actor_ID, $x-1, $y-1, $x+1, $y+1));
 
 		if(!$rs)
 		{
