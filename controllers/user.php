@@ -154,26 +154,26 @@ class User
 
 			if(!$location['Name'])
     			$location['Name'] = 'Unnamed location';
-    		$location['Compass'] = 90+rad2deg(atan2($location['y'], $location['x']));
-    		if($location['Compass'] < 0)   $location['Compass'] += 360;
-    		if($location['Compass'] > 360) $location['Compass'] -= 360;
-    		if($location['Compass'] < 22.5 || $location['Compass'] >= 337.5)
+    		$location['Direction'] = 90+rad2deg(atan2($location['y'], $location['x']));
+    		if($location['Direction'] < 0)   $location['Direction'] += 360;
+    		if($location['Direction'] > 360) $location['Direction'] -= 360;
+    		if($location['Direction'] < 22.5 || $location['Direction'] >= 337.5)
 				$location['Compass'] = 'N';
-			else if($location['Compass'] < 22.5+45)
+			else if($location['Direction'] < 22.5+45)
 				$location['Compass'] = 'NE';
-			else if($location['Compass'] < 22.5+90)
+			else if($location['Direction'] < 22.5+90)
 				$location['Compass'] = 'E';
-			else if($location['Compass'] < 22.5+135)
+			else if($location['Direction'] < 22.5+135)
 				$location['Compass'] = 'SE';
-			else if($location['Compass'] < 22.5+180)
+			else if($location['Direction'] < 22.5+180)
 				$location['Compass'] = 'S';
-			else if($location['Compass'] < 22.5+225)
+			else if($location['Direction'] < 22.5+225)
 				$location['Compass'] = 'SW';
-			else if($location['Compass'] < 22.5+270)
+			else if($location['Direction'] < 22.5+270)
 				$location['Compass'] = 'W';
-			else if($location['Compass'] < 22.5+315)
+			else if($location['Direction'] < 22.5+315)
 				$location['Compass'] = 'NW';
-    	}
+  		}
 		unset($location);
 		if(!$east)
 		{
@@ -211,6 +211,11 @@ class User
     			'Name' => 'Unnamed location'
     		);
 		}
+		function compare_direction($a, $b)
+  		{
+    		return $a['Direction'] > $b['Direction'];
+  		}
+  		usort($locations, 'compare_direction');
 
 		include 'views/actor_view.php';
 	}
