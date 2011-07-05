@@ -8,7 +8,7 @@ if(!function_exists ('Load_database'))
 		if(!isset($db))
 		{
 			$db = ADONewConnection('mysql');
-			$db->Connect('10.0.1.4', 'morzo', 'gAgRoWyPLr', 'morzo');
+			$db->Connect('localhost', 'morzo', 'gAgRoWyPLr', 'morzo');
 		}
 		return $db;
 	}
