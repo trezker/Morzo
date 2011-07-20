@@ -91,6 +91,116 @@ class User
 			echo 0;
 		}
 	}
+
+	public function Start_openid_login()
+	{
+		if(!isset($_POST['openid'])) {
+			echo false;
+			return;
+		}
+		
+		session_start();
+
+		require_once "Auth/OpenID/Consumer.php";
+		require_once "Auth/OpenID/FileStore.php";
+
+		$store = new Auth_OpenID_FileStore('./oid_store');
+		$consumer = new Auth_OpenID_Consumer($store);
+
+		$auth = $consumer->begin($_POST['openid']);
+		if (!$auth) {
+			echo false;
+			return;
+		}
+
+		$url = $auth->redirectURL('http://dev.trezker.net/', 'http://dev.trezker.net/user/Finish_openid_login');
+		$_SESSION['OPENID_AUTH'] = false;
+		$_SESSION['OPENID'] = $_POST['openid'];
+		echo $url;
+	}
+
+	public function Finish_openid_login()
+	{
+		require_once "Auth/OpenID/Consumer.php";
+		require_once "Auth/OpenID/FileStore.php";
+
+		session_start();
+
+		$store = new Auth_OpenID_FileStore('./oid_store');
+		$consumer = new Auth_OpenID_Consumer($store);
+		$response = $consumer->complete('http://dev.trezker.net/user/Finish_openid_login');
+
+		if ($response->status == Auth_OpenID_SUCCESS) {
+			$_SESSION['OPENID_AUTH'] = true;
+		} else {
+			$_SESSION['OPENID_AUTH'] = false;
+		}
+		if($_SESSION['OPENID_AUTH']) {
+			echo "<a>yesy</a>";
+			//echo '<a href="/user">Proceed</a>';
+			$this->Login_openid($_SESSION['OPENID']);
+			
+//			header('Location: /user');
+		} else {
+			echo 'Denied!';
+		}
+	}
+
+	/* Login openid is a private function
+	 * Must only be called from Finish_openid_login which verifies the openid.
+	 * */
+	private function Login_openid($openid)
+	{
+		$this->Load_model('User_model');
+		$r = $this->User_model->Login_openid($openid);
+		if(is_array($r))
+		{
+			session_start();
+			if(isset($_SESSION['userid']))
+			{
+				return 0;
+			}
+			$_SESSION['username'] = $r['Username'];
+			$_SESSION['userid'] = $r['ID'];
+			$_SESSION['admin'] = $this->User_model->User_has_access($_SESSION['userid'], 'Admin');
+			header('Location: /user');
+		} elseif($r == 'Not found') {
+			$this->Sign_up();
+		} else {
+			echo 'TODO: openid login failure';
+			//header('Location: /front')
+		}
+	}
+	
+	private function Sign_up() {
+		include 'views/signup_view.php';
+	}
+	
+	public function Create_user() {
+		session_start();
+
+		if($_SESSION['OPENID_AUTH'] !== true) {
+			echo json_encode(array(success => false, reason => 'No authorized openid'));
+			return;
+		}
+		if(!isset($_POST['username'])) {
+			echo json_encode(array(success => false, reason => 'No username'));
+			return;
+		}
+
+		$this->Load_model('User_model');
+		$r = $this->User_model->Create_user_openid($_POST['username'], $_SESSION['OPENID']);
+		if($r['success'] == false) {
+			echo json_encode(array('success' => false, 'reason' => $r['reason']));
+			return;
+		} else {
+			echo json_encode(array('success' => true));
+			$_SESSION['username'] = $_POST['username'];
+			$_SESSION['userid'] = $r['ID'];
+			$_SESSION['admin'] = $this->User_model->User_has_access($_SESSION['userid'], 'Admin');
+			return;
+		}
+	}
 	
 	public function Logout()
 	{
@@ -153,11 +263,11 @@ class User
 				$north = true;
 
 			if(!$location['Name'])
-    			$location['Name'] = 'Unnamed location';
-    		$location['Direction'] = 90+rad2deg(atan2($location['y'], $location['x']));
-    		if($location['Direction'] < 0)   $location['Direction'] += 360;
-    		if($location['Direction'] > 360) $location['Direction'] -= 360;
-    		if($location['Direction'] < 22.5 || $location['Direction'] >= 337.5)
+				$location['Name'] = 'Unnamed location';
+			$location['Direction'] = 90+rad2deg(atan2($location['y'], $location['x']));
+			if($location['Direction'] < 0)   $location['Direction'] += 360;
+			if($location['Direction'] > 360) $location['Direction'] -= 360;
+			if($location['Direction'] < 22.5 || $location['Direction'] >= 337.5)
 				$location['Compass'] = 'N';
 			else if($location['Direction'] < 22.5+45)
 				$location['Compass'] = 'NE';
@@ -173,7 +283,7 @@ class User
 				$location['Compass'] = 'W';
 			else if($location['Direction'] < 22.5+315)
 				$location['Compass'] = 'NW';
-  		}
+		}
 		unset($location);
 		if(!$east)
 		{
@@ -212,10 +322,10 @@ class User
     		);
 		}
 		function compare_direction($a, $b)
-  		{
-    		return $a['Direction'] > $b['Direction'];
-  		}
-  		usort($locations, 'compare_direction');
+		{
+			return $a['Direction'] > $b['Direction'];
+		}
+		usort($locations, 'compare_direction');
 
 		include 'views/actor_view.php';
 	}

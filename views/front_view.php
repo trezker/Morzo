@@ -27,6 +27,57 @@
 				else
 					e.style.display = 'block';
 			}
+			function openid_toggle()
+			{
+				var e = document.getElementById('login_div');
+				if(e.style.display == 'block')
+					e.style.display = 'none';
+				e = document.getElementById('openid_div');
+				if(e.style.display == 'block')
+					e.style.display = 'none';
+				else
+					e.style.display = 'block';
+			}
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function()
+			{
+				$("#openid_form").validate(
+				{
+					debug: false,
+					rules:
+					{
+						openid:
+						{
+							required: true
+						}
+					},
+					messages:
+					{
+						openid: "A valid openid please.",
+					},
+					submitHandler: function(form)
+					{
+						$('#openidfeedback').html('Processing...');
+						var openid = document.getElementById('openid').value;
+						$.ajax(
+						{
+							type: 'POST',
+							url: 'user/Start_openid_login',
+							data: { openid: openid },
+							success: function(data)
+							{
+								if(!data) {
+									$('#openidfeedback').html('Process failed');
+								} else {
+									$('#openidfeedback').html('Redirecting');
+									window.location = data;
+								}
+							}
+						});
+					}
+				});
+			});
 		</script>
 		<script type="text/javascript">
 			$(document).ready(function()
@@ -122,8 +173,11 @@
 				<span class="user_option" id="login_link" onclick='login_toggle()'>Log in</span>
 				<span id="login_separator"> or </span>
 				<span class="user_option" id="register_link" onclick='register_toggle()'>Register</span>
+				<span id="login_separator"> or </span>
+				<span class="user_option" id="openid_link" onclick='openid_toggle()'>OpenID</span>
 			</div>
 			<div style="clear:both;"></div>
+
 			<div class="login" id="login_div" style="display:none">
 				<form name="login" id="login" action="" method="POST">
 					<div class="login_input">
@@ -141,6 +195,7 @@
 				<div id="loginfeedback">
 				</div>
 			</div>
+			
 			<div class="login" id="register_div" style="display:none">
 				<form name="register" id="register" action="" method="POST">  
 					<div class="login_input">
@@ -152,6 +207,19 @@
 					</div>
 				</form>
 				<div id="registerfeedback"></div>
+			</div>
+			
+			<div class="login" id="openid_div" style="display:none">
+				<form name="openid" id="openid_form" action="" method="POST">  
+					<div class="login_input">
+						OpenID<br/>
+						<input type="text" name="openid" id="openid" />
+					</div>
+					<div class="login_submit">
+						<input type="submit" name="submit" value="Log in" />
+					</div>
+				</form>
+				<div id="openidfeedback"></div>
 			</div>
 		</div>
 	</body>

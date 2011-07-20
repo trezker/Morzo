@@ -1,5 +1,5 @@
 <?php
-include 'libraries/adodb/adodb.inc.php';
+require_once 'libraries/adodb/adodb.inc.php';
 
 if(!function_exists ('Load_database'))
 {

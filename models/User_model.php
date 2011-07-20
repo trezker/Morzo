@@ -76,6 +76,86 @@ class User_model
 		return $rs->fields['ID'];
 	}
 
+	public function Login_openid($openid)
+	{
+		$db = Load_database();
+
+		$query = '
+			SELECT
+				u.ID,
+				u.Username
+			FROM User u
+			JOIN User_openID uo ON uo.UserID = u.ID
+			WHERE uo.OpenID = ?';
+		$rs = $db->Execute($query, array($openid));
+		if(!$rs)
+		{
+			return 'Query failed';
+		}
+		if($rs->RecordCount()!=1)
+		{
+			return 'Not found';
+		}
+		
+		return array(
+			'ID' => $rs->fields['ID'],
+			'Username' => $rs->fields['Username'],
+		);
+	}
+
+	public function Create_user_openid($username, $openid)
+	{
+		$db = Load_database();
+		
+		$db->StartTrans();
+		$query = 'INSERT INTO User (Username) VALUES(?)';
+		$rs = $db->Execute($query, array($username));
+		if(!$rs) {
+			$db->FailTrans();
+			$db->CompleteTrans();
+			return array(
+				'success' => false,
+				'reason' => $db->ErrorMsg(),
+			);
+		}
+		$query = 'SELECT ID FROM User WHERE Username = ?';
+		$rs = $db->Execute($query, array($username));
+		if(!$rs) {
+			$db->FailTrans();
+			$db->CompleteTrans();
+			return array(
+				'success' => false,
+				'reason' => $db->ErrorMsg(),
+			);
+		}
+		if($rs->RecordCount()!=1) {
+			$db->FailTrans();
+			$db->CompleteTrans();
+			return array(
+				'success' => false,
+				'reason' => 'Could not find user row, weird.',
+			);
+		}
+		$userid = $rs->fields['ID'];
+
+		$query = 'INSERT INTO User_openID (OpenID, UserID) VALUES(?, ?)';
+		$rs = $db->Execute($query, array($openid, $userid));
+		if(!$rs) {
+			$db->FailTrans();
+			$db->CompleteTrans();
+			return array(
+				'success' => false,
+				'reason' => $db->ErrorMsg(),
+			);
+		}
+		
+		$db->CompleteTrans();
+		return array(
+			'success' => true,
+			'ID' => $userid
+		);
+	}
+
 	public function User_has_access($user_id, $accessname)
 	{
 		$db = Load_database();

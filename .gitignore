@@ -1,1 +1,4 @@
 libraries/*
+Auth
+oid_store
+php_errors.log
