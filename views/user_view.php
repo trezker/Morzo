@@ -1,16 +1,6 @@
 <html>
 	<head>
-		<style type="text/css">
-			.actor_list {
-				list-style: none;
-				margin: 0;
-				padding: 0;
-			}
-			.action {
-				color: #00F;
-				cursor: pointer;
-			}
-		</style>
+		<link rel="stylesheet" type="text/css" media="screen" href="css/style.php">
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript">
 			function logout()

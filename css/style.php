@@ -44,3 +44,23 @@ blockquote {
 
 .login_submit {
 }
+
+.action {
+	color: #00F;
+	cursor: pointer;
+}
+
+.actor_list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.namechange {
+	font-size: 80%;
+}
+
+.not_logged_in p {
+	margin-left:20px;
+	text-align:center;
+}
