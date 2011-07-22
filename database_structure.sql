@@ -67,7 +67,7 @@ CREATE TABLE `Actor_name` (
   KEY `Actor_name_fk_Named_actor` (`Named_actor_ID`),
   CONSTRAINT `Actor_name_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Actor_name_fk_Named_actor` FOREIGN KEY (`Named_actor_ID`) REFERENCES `Actor` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -83,7 +83,7 @@ CREATE TABLE `Location` (
   `Y` bigint(20) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `XY` (`X`,`Y`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -103,7 +103,7 @@ CREATE TABLE `Location_name` (
   KEY `Location_name_fk_Location` (`Location_ID`),
   CONSTRAINT `Location_name_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Location_name_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -120,7 +120,7 @@ CREATE TABLE `RegistrationQueue` (
   `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Email` (`Email`)
-) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -132,11 +132,11 @@ DROP TABLE IF EXISTS `User`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `User` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Username` varchar(32) CHARACTER SET latin1 NOT NULL,
-  `Password` char(64) NOT NULL,
+  `Username` varchar(32) NOT NULL,
+  `Password` char(64) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Username` (`Username`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -157,6 +157,24 @@ CREATE TABLE `User_access` (
   CONSTRAINT `User_fk_constraint` FOREIGN KEY (`User_ID`) REFERENCES `User` (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `User_openID`
+--
+
+DROP TABLE IF EXISTS `User_openID`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `User_openID` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `OpenID` varchar(255) NOT NULL,
+  `UserID` bigint(20) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `OpenID_UNIQUE` (`OpenID`),
+  KEY `User_openID_fk_User` (`UserID`),
+  CONSTRAINT `User_openID_fk_User` FOREIGN KEY (`UserID`) REFERENCES `User` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -167,4 +185,4 @@ CREATE TABLE `User_access` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-06-14 20:51:37
+-- Dump completed on 2011-07-22 15:35:53
