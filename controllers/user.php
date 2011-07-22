@@ -234,19 +234,8 @@ class User
 		echo $r;
 	}
 	
-	public function Actor($actor_id)
+	private function Get_neighbouring_locations($actor_id)
 	{
-		//Todo: check user session owns this actor.
-		$this->Load_model('User_model');
-		$actor = $this->User_model->Get_actor($actor_id);
-		if($actor['Name'] == NULL)
-		{
-			$actor['Name'] = 'Unnamed actor';
-		}
-		if($actor['Location'] == NULL)
-		{
-			$actor['Location'] = 'Unnamed location';
-		}
 		$locations = $this->User_model->Get_neighbouring_locations($actor_id);
 		$east = false;
 		$west = false;
@@ -326,8 +315,35 @@ class User
 			return $a['Direction'] > $b['Direction'];
 		}
 		usort($locations, 'compare_direction');
+		return $locations;
+	}
+	
+	public function Actor($actor_id)
+	{
+		//Todo: check user session owns this actor.
+		$this->Load_model('User_model');
+		$actor = $this->User_model->Get_actor($actor_id);
+		if($actor['Name'] == NULL)
+		{
+			$actor['Name'] = 'Unnamed actor';
+		}
+		if($actor['Location'] == NULL)
+		{
+			$actor['Location'] = 'Unnamed location';
+		}
 
+		$locations = $this->Get_neighbouring_locations($actor_id);
+		
 		include 'views/actor_view.php';
+	}
+	
+	public function Location_list()
+	{
+		//Todo: check user session owns this actor.
+		$this->Load_model('User_model');
+		$locations = $this->Get_neighbouring_locations($_POST['actor']);
+		
+		include 'views/locations_view.php';
 	}
 	
 	public function Change_location_name($actor_id, $location_id, $new_name)

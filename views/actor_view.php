@@ -1,10 +1,10 @@
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" media="screen" href="css/style.php">
+		<link rel="stylesheet" type="text/css" media="screen" href="/css/style.php">
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript">
 			var change_location_id = -1;
-			function location_changer(location_id)
+			function set_location_changer(location_id)
 			{
 				if(change_location_id == location_id || location_id == -1)
 				{
@@ -21,6 +21,25 @@
 				change_location_id = location_id;
 				$('#edit_popup').html($('#location_name_popup').html());
 			}
+			
+			function reload_location_list()
+			{
+				callurl = '/user/Location_list';
+				$.ajax(
+				{
+					type: 'POST',
+					url: callurl,
+					data: {actor: <?=$actor_id?>},
+					success: function(data)
+					{
+						if(data !== false)
+						{
+							$('#locations').html(data);
+						}
+					}
+				});
+			}
+			
 			function change_location_name()
 			{
 				$('#change_location_name').html('Changing');
@@ -41,12 +60,13 @@
 						}
 						else
 						{
-							//TODO: Reload locations view https://github.com/trezker/Morzo/issues/16
+							reload_location_list();
 						}
-						location_changer(-1);
+						set_location_changer(-1);
 					}
 				});
 			}
+			
 			function change_actor_name(actor_id)
 			{
 				$('#change_actor_name').html('Changing');
@@ -75,36 +95,21 @@
 		</p>
 		<p>
 			Current location is <span id="location_name"><?= $actor['Location']; ?></span>
-			<span id='changelink_<?=$actor['Location_ID']?>' class="action namechange" onclick="location_changer(<?=$actor['Location_ID']?>);">Change name</span>
+			<span id='changelink_<?=$actor['Location_ID']?>' class="action namechange" onclick="set_location_changer(<?=$actor['Location_ID']?>);">Change name</span>
 		</p>
 		<div id="edit_popup">
 		</div>
+
+		<h2>Locations you can go to</h2>
 		<div id="locations">
-			<h2>Locations you can go to</h2>
-			<ul class="location_list">
-				<?php
-				foreach ($locations as $location) {
-					$id = $location["ID"];
-					$name = $location["Name"];
-					$compass = $location["Compass"];
-					$x = $location["x"];
-					$y = $location["y"];
-					echo "
-						<li>
-							<a href='/user/travel/$id'>$name $compass, $x, $y</a>
-							<span id='changelink_$id' class='action namechange' onclick='location_changer(\"$id\");'>Change name</span>
-						</li>
-						";
-				}
-				?>
-			</ul>
+			<?php include 'views/locations_view.php'; ?>
 		</div>
 		<p id="Leave this actor"><a href='/user'>Leave this actor</a></p>
 
 		<div id="location_name_popup" style="display: none">
 			<h3>Change location name</h3>
 			<input type="text" name="location_input" id="location_input" />
-			<span class="action" id="change_location_name" onclick="change_location_name(-1);">Change</span>
+			<span class="action" id="change_location_name" onclick="change_location_name();">Change</span>
 		</div>
 	</body>
 </html>
