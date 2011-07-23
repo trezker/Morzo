@@ -52,7 +52,7 @@
 				$.ajax(
 				{
 					type: 'GET',
-					url: '/user/Actors',
+					url: '/actor/Actors',
 					success: function(data)
 					{
 						$('#actors').html(data);

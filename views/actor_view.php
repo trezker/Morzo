@@ -70,7 +70,7 @@
 			function change_actor_name(actor_id)
 			{
 				$('#change_actor_name').html('Changing');
-				callurl = '/user/Change_actor_name/' + <?=$actor_id?> + '/' + actor_id + '/' + $('#name_input').val();
+				callurl = '/actor/Change_actor_name/' + <?=$actor_id?> + '/' + actor_id + '/' + $('#name_input').val();
 				$.ajax(
 				{
 					type: 'GET',
