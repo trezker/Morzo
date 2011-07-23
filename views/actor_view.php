@@ -24,7 +24,7 @@
 			
 			function reload_location_list()
 			{
-				callurl = '/user/Location_list';
+				callurl = '/location/Location_list';
 				$.ajax(
 				{
 					type: 'POST',
@@ -43,7 +43,7 @@
 			function change_location_name()
 			{
 				$('#change_location_name').html('Changing');
-				callurl = '/user/Change_location_name/' + <?=$actor_id?> + '/' + change_location_id + '/' + $('#location_input').val();
+				callurl = '/location/Change_location_name/' + <?=$actor_id?> + '/' + change_location_id + '/' + $('#location_input').val();
 				$.ajax(
 				{
 					type: 'GET',
