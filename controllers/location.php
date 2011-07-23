@@ -1,33 +1,11 @@
 <?php
+require_once "controllers/controller.php";
 
-class Location
+class Location extends Controller
 {
-	public function Load_model($model)
-	{
-		require_once "models/".strtolower($model).".php";
-		$this->$model = new $model();
-	}
-
-	public function Load_controller($controller)
-	{
-		require_once "controllers/".strtolower($controller).".php";
-		$this->$controller = new $controller();
-	}
-
-	public function Logged_in()
-	{
-		session_start();
-
-		if(!isset($_SESSION['userid']))
-		{
-			include 'views/not_logged_in.php';
-			return false;
-		}
-		return true;
-	}
-
 	public function Get_neighbouring_locations($actor_id)
 	{
+		//Todo: check user session owns this actor.
 		$this->Load_model("Location_model");
 		$locations = $this->Location_model->Get_neighbouring_locations($actor_id);
 		$east = false;
