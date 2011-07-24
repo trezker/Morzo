@@ -16,8 +16,15 @@ class Actor extends Controller
 	
 	public function Show_actor($actor_id)
 	{
-		//Todo: check user session owns this actor.
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			return;
+		}
 		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			die("This is not the actor you are looking for.");
+		}
+
 		$this->Load_controller('Location');
 		$actor = $this->Actor_model->Get_actor($actor_id);
 		if($actor['Name'] == NULL)

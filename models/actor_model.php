@@ -4,6 +4,28 @@ require_once 'models/database.php';
 
 class Actor_model
 {
+	public function User_owns_actor($user_id, $actor_id)
+	{
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			select ID
+			from Actor A
+			where A.User_ID = ? and A.ID = ?
+			', array($user_id, $actor_id));
+		
+		if(!$rs)
+		{
+			return false;
+		}
+		if($rs->RecordCount()==1)
+		{
+			return true;
+		}
+
+		return false;
+	}
+	
 	public function Request_actor($user_id)
 	{
 		$db = Load_database();
