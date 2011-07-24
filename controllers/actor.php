@@ -47,8 +47,14 @@ class Actor extends Controller
 		{
 			echo false;
 		}
-		//Todo: check user session owns this actor.
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			return;
+		}
 		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			die("This is not the actor you are looking for.");
+		}
 		$r = $this->Actor_model->Change_actor_name($actor_id, $named_actor_id, $new_name);
 		if($r == false)
 		{

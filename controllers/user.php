@@ -5,8 +5,6 @@ class User extends Controller
 {
 	public function Logged_in()
 	{
-		session_start();
-
 		if(!isset($_SESSION['userid']))
 		{
 			include 'views/not_logged_in.php';
@@ -71,7 +69,6 @@ class User extends Controller
 		$r = $this->User_model->Login($username, $password);
 		if(is_numeric($r))
 		{
-			session_start();
 			if(isset($_SESSION['userid']))
 			{
 				return 0;
@@ -93,8 +90,6 @@ class User extends Controller
 			echo false;
 			return;
 		}
-		
-		session_start();
 
 		require_once "Auth/OpenID/Consumer.php";
 		require_once "Auth/OpenID/FileStore.php";
@@ -118,8 +113,6 @@ class User extends Controller
 	{
 		require_once "Auth/OpenID/Consumer.php";
 		require_once "Auth/OpenID/FileStore.php";
-
-		session_start();
 
 		$store = new Auth_OpenID_FileStore('./oid_store');
 		$consumer = new Auth_OpenID_Consumer($store);
@@ -150,7 +143,6 @@ class User extends Controller
 		$r = $this->User_model->Login_openid($openid);
 		if(is_array($r))
 		{
-			session_start();
 			if(isset($_SESSION['userid']))
 			{
 				return 0;
@@ -172,8 +164,6 @@ class User extends Controller
 	}
 	
 	public function Create_user() {
-		session_start();
-
 		if($_SESSION['OPENID_AUTH'] !== true) {
 			echo json_encode(array(success => false, reason => 'No authorized openid'));
 			return;
@@ -199,8 +189,6 @@ class User extends Controller
 	
 	public function Logout()
 	{
-		session_start();
-
 		// Unset all of the session variables.
 		$_SESSION = array();
 

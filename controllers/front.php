@@ -12,8 +12,6 @@ class Front
 
 	public function Index()
 	{
-		session_start();
-
 		if(isset($_SESSION['userid']))
 		{
 			include 'views/user_view.php';

@@ -67,6 +67,7 @@ else
 
 				if(count($argv)<3)
 				{
+					session_start();
 					$obj->Index();
 				}
 				else if(!method_exists($obj, $argv[2]))
@@ -75,6 +76,7 @@ else
 				}
 				else
 				{
+					session_start();
 					$funcargs = array_slice($argv, 3);
 					call_user_func_array(array($obj, $argv[2]), $funcargs);
 				}

@@ -5,7 +5,14 @@ class Location extends Controller
 {
 	public function Get_neighbouring_locations($actor_id)
 	{
-		//Todo: check user session owns this actor.
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			return;
+		}
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			die("This is not the actor you are looking for.");
+		}
 		$this->Load_model("Location_model");
 		$locations = $this->Location_model->Get_neighbouring_locations($actor_id);
 		$east = false;
@@ -91,7 +98,17 @@ class Location extends Controller
 	
 	public function Location_list()
 	{
-		//Todo: check user session owns this actor.
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			return;
+		}
+		if(!isset($_POST['actor'])) {
+			die("No actor requested.");
+		}
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $_POST['actor'])) {
+			die("This is not the actor you are looking for.");
+		}
 		$this->Load_model('Location_model');
 		$locations = $this->Get_neighbouring_locations($_POST['actor']);
 		
@@ -100,7 +117,14 @@ class Location extends Controller
 	
 	public function Change_location_name($actor_id, $location_id, $new_name)
 	{
-		//Todo: check user session owns this actor.
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			return;
+		}
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			die("This is not the actor you are looking for.");
+		}
 		$this->Load_model('Location_model');
 		if(!is_numeric($location_id))
 		{
