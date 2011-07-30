@@ -104,7 +104,6 @@ class User extends Controller
 		}
 
 		$url = $auth->redirectURL('http://dev.trezker.net/', 'http://dev.trezker.net/user/Finish_openid_login');
-		$_SESSION['OPENID_AUTH'] = false;
 		$_SESSION['OPENID'] = $_POST['openid'];
 		echo $url;
 	}
@@ -119,18 +118,16 @@ class User extends Controller
 		$response = $consumer->complete('http://dev.trezker.net/user/Finish_openid_login');
 
 		if ($response->status == Auth_OpenID_SUCCESS) {
-			$_SESSION['OPENID_AUTH'] = true;
-		} else {
-			$_SESSION['OPENID_AUTH'] = false;
-		}
-		if($_SESSION['OPENID_AUTH']) {
-			echo "<a>yesy</a>";
-			//echo '<a href="/user">Proceed</a>';
 			$this->Login_openid($_SESSION['OPENID']);
-			
-//			header('Location: /user');
 		} else {
-			echo 'Denied!';
+			if ($response->status == Auth_OpenID_CANCEL) {
+				// This means the authentication was cancelled.
+				echo 'Verification cancelled.';
+			} else if ($response->status == Auth_OpenID_FAILURE) {
+				// Authentication failed; display the error message.
+				echo "OpenID authentication failed: " . $response->message;
+			}
+			echo ' = Denied!';
 		}
 	}
 
