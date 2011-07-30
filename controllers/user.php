@@ -25,64 +25,6 @@ class User extends Controller
 
 		include 'views/user_view.php';
 	}
-	
-	public function RegisterQueue($email)
-	{
-		$email = mb_strtolower($email);
-		if(!filter_var($email, FILTER_VALIDATE_EMAIL))
-		{
-			echo 'Please provide a valid email. <br />';
-		}
-		else
-		{
-			include 'models/User_model.php';
-			$this->Load_model('User_model');
-			$r = $this->User_model->RegisterQueue($email);
-			if($r === false)
-			{
-				echo 'Failed to register \' ' . $email . '\': ' . $r . ' <br />';
-			}
-			else
-			{
-				if($r == 'Duplicate')
-				{
-					echo $email . ' has already been registered. <br />';
-				}
-				else
-				{
-					echo 'Registered \' ' . $email . '\'. Thank you. <br />';
-				}
-			}
-		}
-	}
-	
-	public function Register($username, $password)
-	{
-		$this->Load_model('User_model');
-		$r = $this->User_model->Register($username, $password);
-		return $r;
-	}
-	
-	public function Login($username, $password)
-	{
-		$this->Load_model('User_model');
-		$r = $this->User_model->Login($username, $password);
-		if(is_numeric($r))
-		{
-			if(isset($_SESSION['userid']))
-			{
-				return 0;
-			}
-			$_SESSION['username'] = $username;
-			$_SESSION['userid'] = $r;
-			$_SESSION['admin'] = $this->User_model->User_has_access($_SESSION['userid'], 'Admin');
-			echo 1;
-		}
-		else
-		{
-			echo 0;
-		}
-	}
 
 	public function Start_openid_login()
 	{

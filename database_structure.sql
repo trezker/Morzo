@@ -103,24 +103,7 @@ CREATE TABLE `Location_name` (
   KEY `Location_name_fk_Location` (`Location_ID`),
   CONSTRAINT `Location_name_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Location_name_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `RegistrationQueue`
---
-
-DROP TABLE IF EXISTS `RegistrationQueue`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `RegistrationQueue` (
-  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Email` varchar(100) NOT NULL,
-  `Score` int(11) NOT NULL DEFAULT '0',
-  `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `Email` (`Email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -133,7 +116,6 @@ DROP TABLE IF EXISTS `User`;
 CREATE TABLE `User` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `Username` varchar(32) NOT NULL,
-  `Password` char(64) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Username` (`Username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
@@ -185,4 +167,4 @@ CREATE TABLE `User_openID` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-07-22 15:35:53
+-- Dump completed on 2011-07-30 18:05:11
