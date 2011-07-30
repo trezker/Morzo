@@ -7,8 +7,9 @@ if(!function_exists ('Load_database'))
 	{
 		if(!isset($db))
 		{
+			include 'config.php';
 			$db = ADONewConnection('mysql');
-			$db->Connect('localhost', 'morzo', 'gAgRoWyPLr', 'morzo');
+			$db->Connect($config['db_host'], $config['db_user'], $config['db_password'], $config['db_database']);
 		}
 		return $db;
 	}
