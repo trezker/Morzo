@@ -67,6 +67,31 @@
 				});
 			}
 			
+			function travel(destination_id)
+			{
+//				$('#change_actor_name').html('Changing');
+				callurl = '/location/Travel';
+				$.ajax(
+				{
+					type: 'POST',
+					url: callurl,
+					data: {
+						actor: <?=$actor_id?>,
+						destination: destination_id,
+						origin: <?=$actor['Location_ID']?>
+					},
+					dataType: "json",
+					success: function(data)
+					{
+						if(data.success) {
+							$('#locations').html("Can go there.");
+						} else {
+							$('#locations').html("Can't go there.");
+						}
+					}
+				});
+			}
+			
 			function change_actor_name(actor_id)
 			{
 				$('#change_actor_name').html('Changing');
@@ -100,16 +125,20 @@
 		<div id="edit_popup">
 		</div>
 
+<?php if($travel) { ?>
+		Travelling from <?=$travel['OriginName']?> to <?=$travel['DestinationName']?>.
+<?php } else { ?>
 		<h2>Locations you can go to</h2>
 		<div id="locations">
 			<?php include 'views/locations_view.php'; ?>
 		</div>
-		<p id="Leave this actor"><a href='/user'>Leave this actor</a></p>
-
+<?php } ?>
 		<div id="location_name_popup" style="display: none">
 			<h3>Change location name</h3>
 			<input type="text" name="location_input" id="location_input" />
 			<span class="action" id="change_location_name" onclick="change_location_name();">Change</span>
 		</div>
+
+		<p id="Leave this actor"><a href='/user'>Leave this actor</a></p>
 	</body>
 </html>

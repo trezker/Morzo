@@ -154,6 +154,31 @@ class Location extends Controller
 			}
 		}
 	}
+	
+	public function Travel()
+	{
+		if(!isset($_POST['actor'])) {
+			die("No actor requested.");
+		}
+		if(!isset($_POST['destination'])) {
+			die("No destination requested.");
+		}
+		if(!isset($_POST['origin'])) {
+			die("No origin provided.");
+		}
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			return;
+		}
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $_POST['actor'])) {
+			die("This is not the actor you are looking for.");
+		}
+		
+		$this->Load_model('Travel_model');
+		$r = $this->Travel_model->Travel($_POST['actor'], $_POST['destination'], $_POST['origin']);
+		echo json_encode(array("success" => $r));
+	}
 }
 
 ?>

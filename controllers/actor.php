@@ -26,6 +26,7 @@ class Actor extends Controller
 		}
 
 		$this->Load_controller('Location');
+
 		$actor = $this->Actor_model->Get_actor($actor_id);
 		if($actor['Name'] == NULL)
 		{
@@ -34,6 +35,15 @@ class Actor extends Controller
 		if($actor['Location'] == NULL)
 		{
 			$actor['Location'] = 'Unnamed location';
+		}
+
+		$this->Load_model('Travel_model');
+		$travel = $this->Travel_model->Get_travel_info($actor_id);
+		if($travel) {
+			if(!$travel['OriginName'])
+				$travel['OriginName'] = 'Unnamed location';
+			if(!$travel['DestinationName'])
+				$travel['DestinationName'] = 'Unnamed location';
 		}
 
 		$locations = $this->Location->Get_neighbouring_locations($actor_id);
