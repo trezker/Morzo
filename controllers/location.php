@@ -28,30 +28,8 @@ class Location extends Controller
 				$south = true;
 			if($location['x'] == 0 && $location['y'] == -1)
 				$north = true;
-
-			if(!$location['Name'])
-				$location['Name'] = 'Unnamed location';
-			$location['Direction'] = 90+rad2deg(atan2($location['y'], $location['x']));
-			if($location['Direction'] < 0)   $location['Direction'] += 360;
-			if($location['Direction'] > 360) $location['Direction'] -= 360;
-			if($location['Direction'] < 22.5 || $location['Direction'] >= 337.5)
-				$location['Compass'] = 'N';
-			else if($location['Direction'] < 22.5+45)
-				$location['Compass'] = 'NE';
-			else if($location['Direction'] < 22.5+90)
-				$location['Compass'] = 'E';
-			else if($location['Direction'] < 22.5+135)
-				$location['Compass'] = 'SE';
-			else if($location['Direction'] < 22.5+180)
-				$location['Compass'] = 'S';
-			else if($location['Direction'] < 22.5+225)
-				$location['Compass'] = 'SW';
-			else if($location['Direction'] < 22.5+270)
-				$location['Compass'] = 'W';
-			else if($location['Direction'] < 22.5+315)
-				$location['Compass'] = 'NW';
 		}
-		unset($location);
+
 		if(!$east)
 		{
     		$locations[] = array(
@@ -88,10 +66,35 @@ class Location extends Controller
     			'Name' => 'Unnamed location'
     		);
 		}
+
+		foreach ($locations as &$location) {
+			if(!$location['Name'])
+				$location['Name'] = 'Unnamed location';
+			$location['Direction'] = 90+rad2deg(atan2($location['y'], $location['x']));
+			if($location['Direction'] < 0)   $location['Direction'] += 360;
+			if($location['Direction'] > 360) $location['Direction'] -= 360;
+			if($location['Direction'] < 22.5 || $location['Direction'] >= 337.5)
+				$location['Compass'] = 'N';
+			else if($location['Direction'] < 22.5+45)
+				$location['Compass'] = 'NE';
+			else if($location['Direction'] < 22.5+90)
+				$location['Compass'] = 'E';
+			else if($location['Direction'] < 22.5+135)
+				$location['Compass'] = 'SE';
+			else if($location['Direction'] < 22.5+180)
+				$location['Compass'] = 'S';
+			else if($location['Direction'] < 22.5+225)
+				$location['Compass'] = 'SW';
+			else if($location['Direction'] < 22.5+270)
+				$location['Compass'] = 'W';
+			else if($location['Direction'] < 22.5+315)
+				$location['Compass'] = 'NW';
+		}
 		function compare_direction($a, $b)
 		{
 			return $a['Direction'] > $b['Direction'];
 		}
+		unset($location);
 		usort($locations, 'compare_direction');
 		return $locations;
 	}

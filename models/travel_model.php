@@ -7,10 +7,15 @@ class Travel_model
 	public function Travel($actor, $destination, $origin) {
 		$db = Load_database();
 
+		$rs = $db->Execute("
+			select Value from Count where Name = 'Update'
+			");
+		$update = $rs->fields['Value'];
+
 		$rs = $db->Execute('
-			insert into Travel (ActorID, DestinationID, OriginID, X, Y)
-			select ?, ?, ?, X, Y from Location l where ID = ?
-			', array($actor, $destination, $origin, $origin));
+			insert into Travel (ActorID, DestinationID, OriginID, X, Y, UpdateTick)
+			select ?, ?, ?, X, Y, ? from Location l where ID = ?
+			', array($actor, $destination, $origin, $update, $origin));
 
 		if(!$rs)
 		{
@@ -52,15 +57,23 @@ class Travel_model
 	public function Get_travels() {
 		$db = Load_database();
 
+		$rs = $db->Execute("
+			select Value from Count where Name = 'Update'
+			");
+		$update = $rs->fields['Value'];
+
 		$rs = $db->Execute('
 			select
+				t.ActorID,
 				t.X as CurrentX,
 				t.Y as CurrentY,
 				ld.X as DestinationX,
 				ld.Y as DestinationY,
+				t.DestinationID
 			from Travel t
-			join Location ld on l.ID = t.DestinationID
-			', array($actor, $actor, $actor));
+			join Location ld on ld.ID = t.DestinationID
+			where t.UpdateTick = ?
+			', array($update));
 		
 		if(!$rs)
 		{
@@ -71,7 +84,58 @@ class Travel_model
 		var_dump($rs->fields);
 		echo '</pre>';
 
-		return $rs->fields;
+		$travels = array();
+		foreach ($rs as $row) {
+			$travels[] = $row;
+		}
+		echo 'TRAVELS: <pre>';
+		var_dump($travels);
+		echo '</pre>';
+
+		return $travels;
+	}
+	
+	public function Move($moves) {
+		echo 'MOVE: <pre>';
+		var_dump($moves);
+		echo '</pre>';
+		
+	}
+
+	public function Arrive($arrives) {
+		echo 'ARRIVE: <pre>';
+		var_dump($arrives);
+		echo '</pre>';
+		
+		$db = Load_database();
+
+		$db->StartTrans();
+		foreach($arrives as $arrive) {
+			$rs = $db->Execute('
+				update Actor set Location_ID = ? where ID = ?
+				', array($arrive['Destination'], $arrive['Actor']));
+			
+			if(!$rs) {
+				$db->FailTrans();
+				break;
+			}
+
+			$rs = $db->Execute('
+				delete from Travel where ActorID = ?
+				', array($arrive['Actor']));
+			
+			if(!$rs) {
+				$db->FailTrans();
+				break;
+			}
+		}
+		if($db->HasFailedTrans()) {
+			$success = false;
+		} else {
+			$success = true;
+		}
+		$db->CompleteTrans();
+		return $success;
 	}
 }
 ?>
