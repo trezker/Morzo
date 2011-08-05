@@ -25,8 +25,9 @@ class Update extends Controller
 					'Destination' => $travel['DestinationID']
 				);
 			}
-			$this->Travel_model->Move($move);
+			$move_success = $this->Travel_model->Move($move);
 			$arrive_success = $this->Travel_model->Arrive($arrive);
+			echo "Move processing: ". $move_success;
 			echo "Arrive processing: ". $arrive_success;
 		}
 	}

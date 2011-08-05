@@ -118,6 +118,19 @@ class Location extends Controller
 		include 'views/locations_view.php';
 	}
 	
+	private function Get_location($actor_id, $location_id) {
+		if(!is_numeric($location_id)) {
+			$r = $this->Location_model->Create_location($actor_id, $location_id);
+			if(!$r) {
+				return false;
+			}
+			return $r;
+		}
+		else {
+			return $location_id;
+		}
+	}
+	
 	public function Change_location_name($actor_id, $location_id, $new_name)
 	{
 		$this->Load_controller('User');
@@ -129,15 +142,10 @@ class Location extends Controller
 			die("This is not the actor you are looking for.");
 		}
 		$this->Load_model('Location_model');
-		if(!is_numeric($location_id))
-		{
-			$r = $this->Location_model->Create_location($actor_id, $location_id);
-			if(!$r)
-			{
-				echo false;
-				return;
-			}
-			$location_id = $r;
+		$lcoation_id = $this->Get_location($actor_id, $location_id);
+		if(!$location_id) {
+			echo false;
+			return;
 		}
 		$r = $this->Location_model->Change_location_name($actor_id, $location_id, $new_name);
 		if($r == false)
@@ -178,8 +186,14 @@ class Location extends Controller
 			die("This is not the actor you are looking for.");
 		}
 		
+		$this->Load_model('Location_model');
+		$destination = $this->Get_location($_POST['actor'], $_POST['destination']);
+		if(!$destination) {
+			echo json_encode(array("success" => false));
+		}
+		
 		$this->Load_model('Travel_model');
-		$r = $this->Travel_model->Travel($_POST['actor'], $_POST['destination'], $_POST['origin']);
+		$r = $this->Travel_model->Travel($_POST['actor'], $destination, $_POST['origin']);
 		echo json_encode(array("success" => $r));
 	}
 }

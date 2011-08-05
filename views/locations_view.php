@@ -8,7 +8,7 @@
 		$y = $location["y"];
 		echo "
 			<li>
-				<span class='action' onclick='travel($id)'>$name $compass, $x, $y</span>
+				<span class='action' onclick='travel(\"$id\")'>$name $compass, $x, $y</span>
 				<span id='changelink_$id' class='action namechange' onclick='set_location_changer(\"$id\");'>Change name</span>
 			</li>
 			";

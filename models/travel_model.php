@@ -100,6 +100,27 @@ class Travel_model
 		var_dump($moves);
 		echo '</pre>';
 		
+		$db = Load_database();
+
+		$db->StartTrans();
+		foreach($moves as $move) {
+			$rs = $db->Execute('
+				update Travel set X = ?, Y = ? where ActorID = ?
+				', array($move['x'], $move['y'], $move['actor']));
+			
+			if(!$rs) {
+				$db->FailTrans();
+				break;
+			}
+		}
+		if($db->HasFailedTrans()) {
+			echo $db->ErrorMsg();
+			$success = false;
+		} else {
+			$success = true;
+		}
+		$db->CompleteTrans();
+		return $success;
 	}
 
 	public function Arrive($arrives) {
