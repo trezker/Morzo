@@ -84,9 +84,10 @@
 					success: function(data)
 					{
 						if(data.success) {
-							$('#locations').html("Can go there.");
+							$('#locations_feedback').html("Travelling there.");
+							window.location.reload();
 						} else {
-							$('#locations').html("Can't go there.");
+							$('#locations_feedback').html("Can't travel there.");
 						}
 					}
 				});
@@ -129,6 +130,7 @@
 		Travelling from <?=$travel['OriginName']?> to <?=$travel['DestinationName']?>.
 <?php } else { ?>
 		<h2>Locations you can go to</h2>
+		<div id="locations_feedback"></div>
 		<div id="locations">
 			<?php include 'views/locations_view.php'; ?>
 		</div>

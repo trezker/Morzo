@@ -46,11 +46,6 @@ class Travel_model
 			return false;
 		}
 
-		echo 'Actor: '.$actor;
-		echo '<pre>';
-		var_dump($rs->fields);
-		echo '</pre>';
-
 		return $rs->fields;
 	}
 
