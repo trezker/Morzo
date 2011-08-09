@@ -25,6 +25,8 @@ class Actor extends Controller
 			die("This is not the actor you are looking for.");
 		}
 
+		$this->Update_travel($actor_id);
+
 		$this->Load_controller('Location');
 
 		$actor = $this->Actor_model->Get_actor($actor_id);
@@ -95,6 +97,34 @@ class Actor extends Controller
 		$actors = $this->Actor_model->Get_actors($_SESSION['userid']);
 
 		include 'views/actors_view.php';
+	}
+	
+	private function Update_travel($actor_id) {
+		$this->Load_model("Travel_model");
+
+		$update = $this->Travel_model->Get_update_count();
+		$travel = $this->Travel_model->Get_outdated_travel($actor_id, $update);
+		if($travel) {
+			$time_difference = $update - $travel['UpdateTick'];
+			$dx = $travel['DestinationX'] - $travel['CurrentX'];
+			$dy = $travel['DestinationY'] - $travel['CurrentY'];
+			$d = sqrt($dx*$dx+$dy*$dy);
+			if($d > $time_difference) {
+				$move_factor = $time_difference / $d;
+				$move = array(array(
+					'x' => $travel['CurrentX'] + $dx * $move_factor,
+					'y' => $travel['CurrentY'] + $dy * $move_factor,
+					'actor' => $actor_id
+				));
+				$move_success = $this->Travel_model->Move($move, $update);
+			} else {
+				$arrive = array(array(
+					'Actor' => $actor_id,
+					'Destination' => $travel['DestinationID']
+				));
+				$arrive_success = $this->Travel_model->Arrive($arrive);
+			}
+		}
 	}
 }
 

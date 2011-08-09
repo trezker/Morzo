@@ -89,19 +89,57 @@ class Travel_model
 
 		return $travels;
 	}
-	
-	public function Move($moves) {
-		echo 'MOVE: <pre>';
-		var_dump($moves);
-		echo '</pre>';
+
+	public function Tick() {
+		$db = Load_database();
+
+		$rs = $db->Execute("
+			update Count SET Value=Value+1 Where Name='Update'
+			");
+		return $this->Get_update_count();
+	}
+
+	public function Get_update_count() {
+		$db = Load_database();
+
+		$rs = $db->Execute("
+			select Value from Count where Name = 'Update'
+			");
+		return $rs->fields['Value'];
+	}
+
+	public function Get_outdated_travel($actor_id, $update) {
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			select
+				t.X as CurrentX,
+				t.Y as CurrentY,
+				ld.X as DestinationX,
+				ld.Y as DestinationY,
+				t.DestinationID,
+				t.UpdateTick
+			from Travel t
+			join Location ld on ld.ID = t.DestinationID
+			where t.UpdateTick < ? and t.ActorID = ?
+			', array($update, $actor_id));
 		
+		if(!$rs)
+		{
+			echo $db->ErrorMsg();
+			return false;
+		}
+		return $rs->fields;
+	}
+	
+	public function Move($moves, $update) {
 		$db = Load_database();
 
 		$db->StartTrans();
 		foreach($moves as $move) {
 			$rs = $db->Execute('
-				update Travel set X = ?, Y = ? where ActorID = ?
-				', array($move['x'], $move['y'], $move['actor']));
+				update Travel set X = ?, Y = ?, UpdateTick = ? where ActorID = ?
+				', array($move['x'], $move['y'], $update, $move['actor']));
 			
 			if(!$rs) {
 				$db->FailTrans();
@@ -119,10 +157,6 @@ class Travel_model
 	}
 
 	public function Arrive($arrives) {
-		echo 'ARRIVE: <pre>';
-		var_dump($arrives);
-		echo '</pre>';
-		
 		$db = Load_database();
 
 		$db->StartTrans();
