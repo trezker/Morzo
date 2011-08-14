@@ -69,7 +69,6 @@
 			
 			function travel(destination_id)
 			{
-//				$('#change_actor_name').html('Changing');
 				callurl = '/location/Travel';
 				$.ajax(
 				{
