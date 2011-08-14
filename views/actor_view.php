@@ -43,11 +43,17 @@
 			function change_location_name()
 			{
 				$('#change_location_name').html('Changing');
-				callurl = '/location/Change_location_name/' + <?=$actor_id?> + '/' + change_location_id + '/' + $('#location_input').val();
+				callurl = '/location/Change_location_name';
 				$.ajax(
 				{
-					type: 'GET',
+					type: 'POST',
 					url: callurl,
+					data: {
+						actor: <?=$actor_id?>,
+						location: change_location_id,
+						name: $('#location_input').val()
+					},
+					dataType: "json",
 					success: function(data)
 					{
 						$('#change_location_name').html('Change');

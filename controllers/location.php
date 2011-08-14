@@ -131,8 +131,11 @@ class Location extends Controller
 		}
 	}
 	
-	public function Change_location_name($actor_id, $location_id, $new_name)
+	public function Change_location_name()
 	{
+		$actor_id = $_POST['actor'];
+		$location_id = $_POST['location'];
+		$new_name = $_POST['name'];
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
 			return;
@@ -144,24 +147,24 @@ class Location extends Controller
 		$this->Load_model('Location_model');
 		$lcoation_id = $this->Get_location($actor_id, $location_id);
 		if(!$location_id) {
-			echo false;
+			echo json_encode(false);
 			return;
 		}
 		$r = $this->Location_model->Change_location_name($actor_id, $location_id, $new_name);
 		if($r == false)
 		{
-			echo false;
+			echo json_encode(false);
 			return;
 		}
 		else
 		{
 			if(strlen($new_name) == 0)
 			{
-				echo 'Unnamed location';
+				echo json_encode('Unnamed location');
 			}
 			else
 			{
-				echo $new_name;
+				echo json_encode($new_name);
 			}
 		}
 	}
