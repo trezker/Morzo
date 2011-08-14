@@ -53,11 +53,14 @@ class Actor extends Controller
 		include 'views/actor_view.php';
 	}
 	
-	public function Change_actor_name($actor_id, $named_actor_id, $new_name)
+	public function Change_actor_name()
 	{
+		$actor_id = $_POST['actor'];
+		$named_actor_id = $_POST['named_actor'];
+		$new_name = $_POST['name'];
 		if(strlen($new_name) == 0)
 		{
-			echo false;
+			echo json_encode(false);
 		}
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
@@ -70,18 +73,18 @@ class Actor extends Controller
 		$r = $this->Actor_model->Change_actor_name($actor_id, $named_actor_id, $new_name);
 		if($r == false)
 		{
-			echo false;
+			echo json_encode(false);
 			return;
 		}
 		else
 		{
 			if(strlen($new_name) == 0)
 			{
-				echo 'Unnamed actor';
+				echo json_encode('Unnamed actor');
 			}
 			else
 			{
-				echo $new_name;
+				echo json_encode($new_name);
 			}
 		}
 	}

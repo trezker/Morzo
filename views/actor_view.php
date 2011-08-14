@@ -96,11 +96,17 @@
 			function change_actor_name(actor_id)
 			{
 				$('#change_actor_name').html('Changing');
-				callurl = '/actor/Change_actor_name/' + <?=$actor_id?> + '/' + actor_id + '/' + $('#name_input').val();
+				callurl = '/actor/Change_actor_name';
 				$.ajax(
 				{
-					type: 'GET',
+					type: 'POST',
 					url: callurl,
+					data: {
+						actor: <?=$actor_id?>,
+						named_actor: actor_id,
+						name: $('#name_input').val()
+					},
+					dataType: "json",
 					success: function(data)
 					{
 						$('#change_actor_name').html('Change');
