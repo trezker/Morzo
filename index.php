@@ -50,6 +50,7 @@ else
 		$controller_path = 'controllers/'.$argv[1].'.php';
 		if(!file_exists($controller_path))
 		{
+			header("HTTP/1.0 404 Not Found");
 			include 'blocked.php';
 		}
 		else
@@ -59,6 +60,7 @@ else
 			if ($r != 1) {
 				//Todo: Log error
 	//			echo 'Failed '.$r.': ' . $controller_path . '<br />';
+				header("HTTP/1.0 404 Not Found");
 				include 'blocked.php';
 			}
 			else
@@ -72,7 +74,8 @@ else
 				}
 				else if(!method_exists($obj, $argv[2]))
 				{
-					echo 'You\'re not supposed to be here <br />';
+					header("HTTP/1.0 404 Not Found");
+					include 'blocked.php';
 				}
 				else
 				{
