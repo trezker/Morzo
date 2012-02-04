@@ -209,5 +209,54 @@ class Location_model
 		}
 		return true;
 	}
+	
+	public function Get_location($id)
+	{
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			select L.ID, L.X, L.Y, L.Biome_ID, B.Name as Biome_name from Location L
+			left join Biome B on L.Biome_ID = B.ID
+			where L.ID = ?
+			', array($id));
+
+		if(!$rs)
+		{
+			return false;
+		}
+		if($rs->RecordCount()!=1)
+		{
+			return 'Not found';
+		}
+		
+		return array(
+			'ID' => $rs->fields['ID'],
+			'X' => $rs->fields['X'],
+			'Y' => $rs->fields['Y'],
+			'Biome_ID' => $rs->fields['Biome_ID'],
+			'Biome_name' => $rs->fields['Biome_name']
+		);
+	}
+
+	public function Get_location_resources($location_id)
+	{
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			select LR.ID, R.Name from Location_resource LR
+			join Resource R on R.ID = LR.Resource_ID
+			where LR.Location_ID = ?
+			', array($location_id));
+
+		if(!$rs)
+		{
+			return false;
+		}
+		$resources = array();
+		foreach ($rs as $row) {
+    		$resources[] = $row;
+		}
+		return $resources;
+	}
 }
 ?>

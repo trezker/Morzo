@@ -18,9 +18,6 @@ class World_admin extends Controller
 		$locations = $this->Location_model->Get_deficient_locations();
 		$biomes = $this->Location_model->Get_biomes();
 		$resources = $this->Location_model->Get_resources();
-//		echo "<pre>"; 
-//		var_dump($locations);
-//		echo "</pre>";
 		include 'views/world_admin_view.php';
 	}
 	
@@ -31,10 +28,20 @@ class World_admin extends Controller
 			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
 			return;
 		}
+
+		$this->Load_model('Location_model');
+		$location = $this->Location_model->Get_location($_POST['id']);
+		$location_resources = $this->Location_model->Get_location_resources($_POST['id']);
 		
-		
-		
-		echo json_encode(array('success' => true, 'data' => 'woopie'));
+		ob_start();
+		//include 'views/location_admin_view.php';
+		echo "<pre>";
+		var_dump($location);
+		var_dump($location_resources);
+		echo "</pre>";
+		$location_admin_view = ob_get_clean();
+
+		echo json_encode(array('success' => true, 'data' => $location_admin_view));
 	}
 	
 	public function Add_biome()

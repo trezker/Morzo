@@ -152,6 +152,7 @@ CREATE TABLE `Location_resource` (
   `Location_ID` bigint(20) NOT NULL,
   `Resource_ID` bigint(20) NOT NULL,
   PRIMARY KEY (`ID`),
+  UNIQUE KEY `Location_resource_unique` (`Location_ID`,`Resource_ID`),
   KEY `Location_resource_fk_Location` (`Location_ID`),
   KEY `Location_resource_fk_Resource` (`Resource_ID`),
   CONSTRAINT `Location_resource_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
@@ -171,7 +172,7 @@ CREATE TABLE `Resource` (
   `Name` varchar(45) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Name_UNIQUE` (`Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -285,4 +286,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-02-04 17:22:29
+-- Dump completed on 2012-02-04 20:06:12
