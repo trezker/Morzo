@@ -39,6 +39,24 @@
 					}
 				});
 			}
+			function add_resource()
+			{
+				$.ajax(
+				{
+					type: 'POST',
+					url: 'world_admin/add_resource',
+					data: {
+						name: $('#new_resource').val()
+					},
+					success: function(data)
+					{
+						if(data !== false)
+						{
+							$('#resource_list').html(data.data);
+						}
+					}
+				});
+			}
 		</script>
 	</head>
 	<body>
@@ -52,6 +70,12 @@
 			<?php include 'views/biomes_view.php'; ?>
 		</div>
 		<input type="text" id="new_biome" /><span class="action" onclick="add_biome();">Add biome</span>
+
+		<h3>Resources</h3>
+		<div id="resource_list">
+			<?php include 'views/resources_view.php'; ?>
+		</div>
+		<input type="text" id="new_resource" /><span class="action" onclick="add_resource();">Add resource</span>
 		
 		<h2>Deficient locations</h2>
 		<div id="locations">

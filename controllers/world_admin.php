@@ -17,6 +17,7 @@ class World_admin extends Controller
 		$this->Load_model('Location_model');
 		$locations = $this->Location_model->Get_deficient_locations();
 		$biomes = $this->Location_model->Get_biomes();
+		$resources = $this->Location_model->Get_resources();
 //		echo "<pre>"; 
 //		var_dump($locations);
 //		echo "</pre>";
@@ -59,6 +60,31 @@ class World_admin extends Controller
 		$biomes_view = ob_get_clean();
 
 		echo json_encode(array('success' => true, 'data' => $biomes_view));
+	}
+
+	public function Add_resource()
+	{
+		header('Content-type: application/json');
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
+			return;
+		}
+		if(!is_string($_POST['name']) || $_POST['name'] == '') {
+			echo json_encode(array('success' => false, 'reason' => $_POST['name'].'Must give a name'));
+			return;
+		}
+
+		$this->Load_model('Location_model');
+		if(!$this->Location_model->Add_resource($_POST['name'])) {
+			echo json_encode(array('success' => false, 'reason' => 'Failed to add resource'));
+			return;
+		}
+		$resources = $this->Location_model->Get_resources();
+		ob_start();
+		include 'views/resources_view.php';
+		$resources_view = ob_get_clean();
+
+		echo json_encode(array('success' => true, 'data' => $resources_view));
 	}
 }
 
