@@ -139,5 +139,40 @@ class Location_model
 		}
 		return $locations;
 	}
+	
+	public function Get_biomes()
+	{
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			select B.ID, B.Name from Biome B
+			', array());
+
+		if(!$rs)
+		{
+			return false;
+		}
+		
+		$biomes = array();
+		foreach ($rs as $row) {
+    		$biomes[] = $row;
+		}
+		return $biomes;
+	}
+	
+	public function Add_biome($name)
+	{
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			insert into Biome(name) values(?)
+			', array($name));
+
+		if(!$rs)
+		{
+			return false;
+		}
+		return true;
+	}
 }
 ?>

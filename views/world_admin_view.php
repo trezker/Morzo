@@ -21,6 +21,24 @@
 					}
 				});
 			}
+			function add_biome()
+			{
+				$.ajax(
+				{
+					type: 'POST',
+					url: 'world_admin/add_biome',
+					data: {
+						name: $('#new_biome').val()
+					},
+					success: function(data)
+					{
+						if(data !== false)
+						{
+							$('#biome_list').html(data.data);
+						}
+					}
+				});
+			}
 		</script>
 	</head>
 	<body>
@@ -28,6 +46,13 @@
 		<p><span class="action" onclick="window.location = 'front'">Back</span></p>
 		<div id="edit_location">
 		</div>
+
+		<h3>Biomes</h3>
+		<div id="biome_list">
+			<?php include 'views/biomes_view.php'; ?>
+		</div>
+		<input type="text" id="new_biome" /><span class="action" onclick="add_biome();">Add biome</span>
+		
 		<h2>Deficient locations</h2>
 		<div id="locations">
 			<?php
