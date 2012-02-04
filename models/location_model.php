@@ -116,5 +116,28 @@ class Location_model
 
 		return $rs->fields['ID'];
 	}
+	
+	public function Get_deficient_locations()
+	{
+		$db = Load_database();
+		$rs = $db->Execute('
+			select L.ID, L.X, L.Y, L.Biome_ID, B.Name from Location L
+			left join Biome B on L.Biome_ID = B.ID
+			where Biome_ID is NULL or not exists (
+				select * from Location_resource LR where L.ID = LR.Location_ID
+			);
+			', array());
+
+		if(!$rs)
+		{
+			return false;
+		}
+		
+		$locations = array();
+		foreach ($rs as $row) {
+    		$locations[] = $row;
+		}
+		return $locations;
+	}
 }
 ?>
