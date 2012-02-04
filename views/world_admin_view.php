@@ -65,17 +65,25 @@
 		<div id="edit_location">
 		</div>
 
-		<h3>Biomes</h3>
-		<div id="biome_list">
-			<?php include 'views/biomes_view.php'; ?>
+		<div style="float: left;">
+			<h4 style="margin: 0px;">Biomes</h4>
+			<div id="biome_list">
+				<?php include 'views/biomes_view.php'; ?>
+			</div>
+			<input type="text" id="new_biome" />
+			<br/><span class="action" onclick="add_biome();">Add biome</span>
 		</div>
-		<input type="text" id="new_biome" /><span class="action" onclick="add_biome();">Add biome</span>
 
-		<h3>Resources</h3>
-		<div id="resource_list">
-			<?php include 'views/resources_view.php'; ?>
+		<div style="float: left;">
+			<h4 style="margin: 0px;">Resources</h4>
+			<div id="resource_list">
+				<?php include 'views/resources_view.php'; ?>
+			</div>
+			<input type="text" id="new_resource" />
+			<br/><span class="action" onclick="add_resource();">Add resource</span>
 		</div>
-		<input type="text" id="new_resource" /><span class="action" onclick="add_resource();">Add resource</span>
+		
+		<div style="clear: both;"></div>
 		
 		<h2>Deficient locations</h2>
 		<div id="locations">
