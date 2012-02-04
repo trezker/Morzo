@@ -3,3 +3,4 @@ Auth
 oid_store
 php_errors.log
 config.php
+controllers/test.php
