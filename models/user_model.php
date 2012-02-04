@@ -105,5 +105,28 @@ class User_model
 		}
 		return false;
 	}
+	
+	public function Get_users()
+	{
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			select U.ID, U.Username
+			from User U
+			', array());
+		if(!$rs)
+		{
+			return false;
+		}
+		if($rs->RecordCount() > 0)
+		{
+			$users = array();
+			foreach ($rs as $row) {
+				$users[] = $row;
+			}
+			return $users;
+		}
+		return false;
+	}
 }
 ?>

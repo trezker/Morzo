@@ -144,6 +144,20 @@ class User extends Controller
 		session_destroy();
 		echo 1;
 	}
+	
+	public function Login_as()
+	{
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array(success => false, reason => 'Requires admin privilege'));
+			return;
+		}
+		
+		$_SESSION['username'] = $_POST['username'];
+		$_SESSION['userid'] = $_POST['id'];
+		$_SESSION['admin'] = false;
+
+		echo json_encode(array(success => true));
+	}
 }
 
 ?>

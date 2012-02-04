@@ -73,6 +73,8 @@
 		
 		<?php if($_SESSION['admin']===true) { ?>
 			<p>You're an Admin!</p>
+			<p><span class="action" onclick='window.location="user_admin"'>Users</span></p>
+			<p><span class="action" onclick='window.location="world_admin"'>World</span></p>
 		<?php } ?>
 	</body>
 </html>
