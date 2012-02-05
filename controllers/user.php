@@ -17,6 +17,7 @@ class User extends Controller
 	{
 		if(!$this->Logged_in())
 		{
+			header("Location: front");
 			return;
 		}
 
