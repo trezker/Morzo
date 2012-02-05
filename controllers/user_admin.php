@@ -74,6 +74,11 @@ class User_admin extends Controller
 			return;
 		}
 		
+//		$this->User->Logout();
+//		session_start();
+		$this->Load_model('User_model');
+		$this->User_model->Login($_POST['id']);
+		
 		$_SESSION['username'] = $_POST['username'];
 		$_SESSION['userid'] = $_POST['id'];
 		$_SESSION['admin'] = false;

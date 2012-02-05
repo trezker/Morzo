@@ -25,19 +25,29 @@ class User_model
 			return 'Not found';
 		}
 
-		$query = '
-			UPDATE User SET Session_ID = ?
-			WHERE ID = ?';
-		$session_id = session_id();
-		$rs2 = $db->Execute($query, array($session_id, $rs->fields['ID']));
-		if(!$rs2) {
-			return 'Query failed';
+		$l = $this->Login($rs->fields['ID']);
+		if($l !== true) {
+			return $l;
 		}
 		
 		return array(
 			'ID' => $rs->fields['ID'],
 			'Username' => $rs->fields['Username'],
 		);
+	}
+
+	public function Login($id)
+	{
+		$db = Load_database();
+		$query = '
+			UPDATE User SET Session_ID = ?
+			WHERE ID = ?';
+		$session_id = session_id();
+		$rs2 = $db->Execute($query, array($session_id, $id));
+		if(!$rs2) {
+			return 'Query failed';
+		}
+		return true;
 	}
 
 	public function Create_user_openid($username, $openid)
