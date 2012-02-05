@@ -10,6 +10,10 @@ class User extends Controller
 //			include 'views/not_logged_in.php';
 			return false;
 		}
+		if(Get_cache('kick_user_'.$_SESSION['userid'])) {
+			$this->Logout();
+			return false;
+		}
 		return true;
 	}
 

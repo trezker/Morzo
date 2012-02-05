@@ -43,21 +43,10 @@ class User_admin extends Controller
 			echo json_encode(array('success' => false, 'reason' => 'Must give a user id'));
 			return;
 		}
-
-		$this->Load_model('User_model');
-		$user_session_id = $this->User_model->Get_session_id($_POST['id']);
 		
-		if(!$user_session_id) {
-			echo json_encode(array('success' => false, 'reason' => 'User is not in the system'));
-			return;
-		}
-		session_destroy();
-		session_id($user_session_id);
-		session_start();
-		session_unset();
-		session_destroy();
+		Set_cache('kick_user_'.$_POST['id'], true);
 		
-		echo json_encode(array('success' => true, 'data' => $user_session_id));
+		echo json_encode(array('success' => true));
 	}
 	
 	public function Login_as()

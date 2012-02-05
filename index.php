@@ -21,7 +21,7 @@ function Get_cache($key) {
 # Puts key / value pair into memcache
 function Set_cache($key, $object, $timeout = 60) {
 	global $memcache;
-	return ($memcache) ? $memcache->set($key, $object, MEMCACHE_COMPRESSED, $timeout) : false;
+	return ($memcache) ? $memcache->set($key, $object, MEMCACHE_COMPRESSED, $timeout) : NULL;
 }
 
 if($argv[1] == "info")
