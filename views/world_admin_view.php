@@ -6,7 +6,7 @@
 	</head>
 	<body>
 		<h1>World administration</h1>
-		<p><span class="action" onclick="window.location = 'front'">Back</span></p>
+		<p><span class="action" onclick="window.location = 'user'">Back</span></p>
 		<div id="edit_location">
 		</div>
 

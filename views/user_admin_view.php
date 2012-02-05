@@ -23,7 +23,7 @@
 	</head>
 	<body>
 		<h1>User administration</h1>
-		<p><span class="action" onclick="window.location = 'front'">Back</span></p>
+		<p><span class="action" onclick="window.location = 'user'">Back</span></p>
 		<div id="users">
 			<?php
 			foreach ($users as $user) {

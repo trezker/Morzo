@@ -14,7 +14,7 @@ class Front
 	{
 		if(isset($_SESSION['userid']))
 		{
-			include 'views/user_view.php';
+			header("Location: user");
 			return;
 		}
 

@@ -24,6 +24,15 @@ class User_model
 		{
 			return 'Not found';
 		}
+
+		$query = '
+			UPDATE User SET Session_ID = ?
+			WHERE ID = ?';
+		$session_id = session_id();
+		$rs2 = $db->Execute($query, array($session_id, $rs->fields['ID']));
+		if(!$rs2) {
+			return 'Query failed';
+		}
 		
 		return array(
 			'ID' => $rs->fields['ID'],
