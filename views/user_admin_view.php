@@ -8,7 +8,7 @@
 				$.ajax(
 				{
 					type: 'POST',
-					url: 'user/Login_as',
+					url: 'user_admin/Login_as',
 					data: {
 						id: id,
 						username: name

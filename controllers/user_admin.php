@@ -59,6 +59,27 @@ class User_admin extends Controller
 		
 		echo json_encode(array('success' => true, 'data' => $user_session_id));
 	}
+	
+	public function Login_as()
+	{
+		header('Content-type: application/json');
+
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
+			return;
+		}
+		
+		$_SESSION['username'] = $_POST['username'];
+		$_SESSION['userid'] = $_POST['id'];
+		$_SESSION['admin'] = false;
+
+		echo json_encode(array('success' => true));
+	}
 }
 
 ?>
