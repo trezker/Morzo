@@ -19,6 +19,21 @@
 					}
 				});
 			}
+			function kick_user(id)
+			{
+				$.ajax(
+				{
+					type: 'POST',
+					url: 'user_admin/Kick_user',
+					data: {
+						id: id
+					},
+					success: function(data)
+					{
+						//window.location = 'user_admin';
+					}
+				});
+			}
 		</script>
 	</head>
 	<body>
@@ -27,7 +42,12 @@
 		<div id="users">
 			<?php
 			foreach ($users as $user) {
-				echo '<li>'.$user['Username'].' <span class="action" onclick="login_as('.$user['ID'].', \''.$user['Username'].'\');">Login as</span></li>';
+				echo '
+					<li>'
+						.$user['Username'].
+						' <span class="action" onclick="login_as('.$user['ID'].', \''.$user['Username'].'\');">Login as</span>
+						<span class="action" onclick="kick_user('.$user['ID'].');">Kick</span>
+					</li>';
 			}
 			?>
 		</div>

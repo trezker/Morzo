@@ -137,5 +137,26 @@ class User_model
 		}
 		return false;
 	}
+	
+	public function Get_session_id($user_id)
+	{
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			select U.Session_ID
+			from User U
+			where U.ID = ?
+			', array($user_id));
+		if(!$rs)
+		{
+			return false;
+		}
+
+		if($rs->RecordCount() !== 1)
+		{
+			return false;
+		}
+		return $rs->fields['Session_ID'];
+	}
 }
 ?>

@@ -7,7 +7,7 @@ class User extends Controller
 	{
 		if(!isset($_SESSION['userid']))
 		{
-			include 'views/not_logged_in.php';
+//			include 'views/not_logged_in.php';
 			return false;
 		}
 		return true;

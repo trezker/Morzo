@@ -26,6 +26,7 @@ class World_admin extends Controller
 		header('Content-type: application/json');
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
 			return;
 		}
 		if($_SESSION['admin'] != true) {
