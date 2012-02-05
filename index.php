@@ -9,9 +9,31 @@ $argv = explode("/",$_SERVER['PATH_INFO']);
 /* 3 populate the page with uniqid's content */
 //    [omitted for the sake of simplicity]
 
+$memcache;
+$memcache = new Memcache;	
+$memcache->addServer('127.0.0.1', 11211);
+# Gets key / value pair from memcache
+function Get_cache($key) {
+	global $memcache;
+	return ($memcache) ? $memcache->get($key) : false;
+}
+
+# Puts key / value pair into memcache
+function Set_cache($key, $object, $timeout = 60) {
+	global $memcache;
+	return ($memcache) ? $memcache->set($key, $object, MEMCACHE_COMPRESSED, $timeout) : false;
+}
+
 if($argv[1] == "info")
 {
 	phpinfo();
+}
+else if($argv[1] == "mem")
+{
+	
+	Set_cache('test', 'woop');
+	var_dump(Get_cache('test'));
+	var_dump(Get_cache('tes'));
 }
 else if($argv[1] == "debug")
 {
