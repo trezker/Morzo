@@ -50,6 +50,11 @@ class World_admin extends Controller
 	public function Add_biome()
 	{
 		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
 		if($_SESSION['admin'] != true) {
 			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
 			return;
@@ -75,6 +80,11 @@ class World_admin extends Controller
 	public function Add_resource()
 	{
 		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
 		if($_SESSION['admin'] != true) {
 			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
 			return;
@@ -95,6 +105,35 @@ class World_admin extends Controller
 		$resources_view = ob_get_clean();
 
 		echo json_encode(array('success' => true, 'data' => $resources_view));
+	}
+
+	public function Set_location_biome() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
+			return;
+		}
+		if(!is_string($_POST['location']) || $_POST['location'] == '') {
+			echo json_encode(array('success' => false, 'reason' => 'Must give a location'));
+			return;
+		}
+		if(!is_string($_POST['biome']) || $_POST['biome'] == '') {
+			echo json_encode(array('success' => false, 'reason' => 'Must give a biome'));
+			return;
+		}
+		
+		$this->Load_model('Location_model');
+		if(!$this->Location_model->Set_location_biome($_POST['location'], $_POST['biome'])) {
+			echo json_encode(array('success' => false, 'reason' => 'Failed to set biome'));
+			return;
+		}
+
+		echo json_encode(array('success' => true));
 	}
 }
 

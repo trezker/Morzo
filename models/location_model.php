@@ -258,5 +258,20 @@ class Location_model
 		}
 		return $resources;
 	}
+
+	public function Set_location_biome($location_id, $biome_id)
+	{
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			update Location set Biome_ID = ? where ID = ?
+			', array($biome_id, $location_id));
+
+		if(!$rs)
+		{
+			return false;
+		}
+		return true;
+	}
 }
 ?>
