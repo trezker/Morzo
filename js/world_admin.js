@@ -52,3 +52,20 @@ function add_resource()
 		}
 	});
 }
+
+function toggle_resource(id) {
+	var e = $('#'+id);
+	if(e.hasClass('selected')) {
+		e.removeClass('selected');
+	} else {
+		e.addClass('selected');
+	}
+}
+
+function toggle_biome(id) {
+	var e = $('#'+id);
+	if(e.hasClass('selected') == false) {
+		$('#biomes .selected').removeClass('selected');
+		e.addClass('selected');
+	}
+}

@@ -1,7 +1,8 @@
-<select>
+<ul class="selectable" id="biomes">
 	<?php
 	foreach ($biomes as $biome) {
-		echo "<option value='".$biome['ID']."'>".$biome['Name']."</option>";
+		$id = "biome_".$biome['ID'];
+		echo '<li class="selectable" id="'.$id.'" onclick="toggle_biome(\''.$id.'\')">'.$biome['Name'].'</li>';
 	}
 	?>
-</select>
+</ul>

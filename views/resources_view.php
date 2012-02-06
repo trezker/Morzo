@@ -1,7 +1,8 @@
-<select>
+<ul class="selectable" id="resources">
 	<?php
 	foreach ($resources as $resource) {
-		echo "<option value='".$resource['ID']."'>".$resource['Name']."</option>";
+		$id = "resource_".$resource['ID'];
+		echo '<li class="selectable" id="'.$id.'" onclick="toggle_resource(\''.$id.'\')">'.$resource['Name'].'</li>';
 	}
 	?>
-</select>
+</ul>

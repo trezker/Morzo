@@ -11,7 +11,7 @@ foreach ($location_resources as $resource) {
 ?>
 </ul>
 <div style="float: left;">
-	<h4 style="margin: 0px;">Biomes</h4>
+	<h3 class="list_title" style="margin: 0px;">Biomes</h3>
 	<div id="biome_list">
 		<?php include 'views/biomes_view.php'; ?>
 	</div>
@@ -20,7 +20,7 @@ foreach ($location_resources as $resource) {
 </div>
 
 <div style="float: left;">
-	<h4 style="margin: 0px;">Resources</h4>
+	<h3 class="list_title" style="margin: 0px;">Resources</h3>
 	<div id="resource_list">
 		<?php include 'views/resources_view.php'; ?>
 	</div>

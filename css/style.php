@@ -64,3 +64,31 @@ blockquote {
 	margin-left:20px;
 	text-align:center;
 }
+
+.list_title {
+	margin: 0px;
+}
+
+ul.selectable {
+	list-style-type:none;
+	padding: 0px;
+	margin: 5px;
+}
+
+li.selectable {
+	cursor: pointer;
+	padding-left: 5px;
+}
+
+li.selectable:hover {
+	background: #EEEEFF;
+}
+
+li.selected {
+	cursor: pointer;
+	background: #AAAAFF;
+}
+
+li.selected:hover {
+	background: #CCCCFF;
+}
