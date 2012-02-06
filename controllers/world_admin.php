@@ -7,6 +7,7 @@ class World_admin extends Controller
 	{
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
+			header("Location: front");
 			return;
 		}
 		if($_SESSION['admin'] != true) {
@@ -16,8 +17,6 @@ class World_admin extends Controller
 
 		$this->Load_model('Location_model');
 		$locations = $this->Location_model->Get_deficient_locations();
-		$biomes = $this->Location_model->Get_biomes();
-		$resources = $this->Location_model->Get_resources();
 		include 'views/world_admin_view.php';
 	}
 	
@@ -39,6 +38,8 @@ class World_admin extends Controller
 		$location_resources = $this->Location_model->Get_location_resources($_POST['id']);
 		if($location['Biome_name'] === NULL)
 			$location['Biome_name'] = "N/A";
+		$biomes = $this->Location_model->Get_biomes();
+		$resources = $this->Location_model->Get_resources();
 		ob_start();
 		include 'views/location_edit_view.php';
 		$location_admin_view = ob_get_clean();
