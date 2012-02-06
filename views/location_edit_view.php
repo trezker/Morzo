@@ -1,17 +1,7 @@
-
-<h3>Edit location <?php echo $location['X']." ".$location['Y'];?></h3>
-Biome: <?php echo $location['Biome_name'];?>
-
-<p>Resources</p>
-<ul>
-<?php
-foreach ($location_resources as $resource) {
-	echo "<li>".$resource['Name']."</li>";
-}
-?>
+<h2>Edit location <?php echo $location['X']." ".$location['Y'];?></h2>
 </ul>
 <div style="float: left;">
-	<h3 class="list_title" style="margin: 0px;">Biomes</h3>
+	<h3 class="list_title">Biome</h3>
 	<div id="biome_list">
 		<?php include 'views/biomes_view.php'; ?>
 	</div>
@@ -20,7 +10,7 @@ foreach ($location_resources as $resource) {
 </div>
 
 <div style="float: left;">
-	<h3 class="list_title" style="margin: 0px;">Resources</h3>
+	<h3 class="list_title">Resources</h3>
 	<div id="resource_list">
 		<?php include 'views/resources_view.php'; ?>
 	</div>

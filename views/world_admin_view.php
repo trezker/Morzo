@@ -7,18 +7,19 @@
 	<body>
 		<h1>World administration</h1>
 		<p><span class="action" onclick="window.location = 'user'">Back</span></p>
-		<div id="edit_location">
+
+		<div class="deficient_locations">
+			<h2>Deficient locations</h2>
+			<div id="locations">
+				<?php
+				foreach ($locations as $location) {
+					echo '<li><span class="action" onclick="edit_location('.$location['ID'].');">'.$location['X'].' '.$location['Y'].'</span></li>';
+				}
+				?>
+			</div>
 		</div>
 
-		<div style="clear: both;"></div>
-		
-		<h2>Deficient locations</h2>
-		<div id="locations">
-			<?php
-			foreach ($locations as $location) {
-				echo '<li><span class="action" onclick="edit_location('.$location['ID'].');">'.$location['X'].' '.$location['Y'].'</span></li>';
-			}
-			?>
+		<div id="edit_location" style="float: left;">
 		</div>
 	</body>
 </html>

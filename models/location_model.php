@@ -243,7 +243,7 @@ class Location_model
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			select LR.ID, R.Name from Location_resource LR
+			select R.ID, R.Name from Location_resource LR
 			join Resource R on R.ID = LR.Resource_ID
 			where LR.Location_ID = ?
 			', array($location_id));

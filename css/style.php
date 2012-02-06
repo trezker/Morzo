@@ -92,3 +92,8 @@ li.selected {
 li.selected:hover {
 	background: #CCCCFF;
 }
+
+.deficient_locations {
+	float: left;
+	margin-right: 20px;
+}
