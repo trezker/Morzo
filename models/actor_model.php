@@ -67,6 +67,8 @@ class Actor_model
 		}
 		$actors = array();
 		foreach ($rs as $row) {
+			if(!$row['Name'])
+				$row['Name'] = 'Unnamed actor';
     		$actors[] = $row;
 		}
 		return $actors;
@@ -99,10 +101,6 @@ class Actor_model
 	{
 		$db = Load_database();
 
-//			update Actor_name set name = ?
-//			where Actor_ID = ? and Named_actor_ID = ?
-//			', array($new_name, $actor_ID, $named_actor_ID));
-
 		$rs = $db->Execute('
 			insert into Actor_name(Named_actor_ID, Actor_ID, Name) values(?, ?, ?)
 			on duplicate key update Name = ?
@@ -112,6 +110,29 @@ class Actor_model
 			return false;
 		}
 		return true;
+	}
+	
+	public function Get_visible_actors($actor_ID) {
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			select A.ID, AN.Name
+			from Actor Me
+			join Actor A on Me.Location_ID = A.Location_ID and not Me.ID = A.ID
+			left join Actor_name AN on A.ID = AN.Named_actor_ID and Me.ID = AN.Actor_ID
+			where Me.ID = ?
+			', array($actor_ID));
+		
+		if(!$rs) {
+			return false;
+		}
+		$actors = array();
+		foreach ($rs as $row) {
+			if(!$row['Name'])
+				$row['Name'] = 'Unnamed actor';
+    		$actors[] = $row;
+		}
+		return $actors;
 	}
 }
 ?>

@@ -145,6 +145,17 @@
 			<?php include 'views/locations_view.php'; ?>
 		</div>
 <?php } ?>
+
+<ul class="actor_list">
+	<?php
+	foreach ($actors as $visible_actor) {
+		$id = $visible_actor['ID'];
+		$name = $visible_actor['Name'];
+		echo "<li><a href='/actor/show_actor/".$id."'>".$name."</a></li>";
+	}
+	?>
+</ul>
+
 		<div id="location_name_popup" style="display: none">
 			<h3>Change location name</h3>
 			<input type="text" name="location_input" id="location_input" />

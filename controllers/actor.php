@@ -50,7 +50,7 @@ class Actor extends Controller
 		}
 
 		$locations = $this->Location->Get_neighbouring_locations($actor_id);
-		
+		$actors = $this->Actor_model->Get_visible_actors($actor_id);
 		include 'views/actor_view.php';
 	}
 	
