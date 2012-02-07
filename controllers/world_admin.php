@@ -135,6 +135,62 @@ class World_admin extends Controller
 
 		echo json_encode(array('success' => true));
 	}
+	public function Add_location_resource() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
+			return;
+		}
+		if(!is_string($_POST['location']) || $_POST['location'] == '') {
+			echo json_encode(array('success' => false, 'reason' => 'Must give a location'));
+			return;
+		}
+		if(!is_string($_POST['resource']) || $_POST['resource'] == '') {
+			echo json_encode(array('success' => false, 'reason' => 'Must give a resource'));
+			return;
+		}
+		
+		$this->Load_model('Location_model');
+		if(!$this->Location_model->Add_location_resource($_POST['location'], $_POST['resource'])) {
+			echo json_encode(array('success' => false, 'reason' => 'Failed to add resource'));
+			return;
+		}
+
+		echo json_encode(array('success' => true));
+	}
+	public function Remove_location_resource() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
+			return;
+		}
+		if(!is_string($_POST['location']) || $_POST['location'] == '') {
+			echo json_encode(array('success' => false, 'reason' => 'Must give a location'));
+			return;
+		}
+		if(!is_string($_POST['resource']) || $_POST['resource'] == '') {
+			echo json_encode(array('success' => false, 'reason' => 'Must give a resource'));
+			return;
+		}
+		
+		$this->Load_model('Location_model');
+		if(!$this->Location_model->Remove_location_resource($_POST['location'], $_POST['resource'])) {
+			echo json_encode(array('success' => false, 'reason' => 'Failed to remove resource'));
+			return;
+		}
+
+		echo json_encode(array('success' => true));
+	}
 }
 
 ?>

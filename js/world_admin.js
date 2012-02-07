@@ -58,10 +58,11 @@ function add_resource()
 
 function toggle_resource(id) {
 	var e = $('#'+id);
+	var resource_id = e.attr('id').substr(9);
 	if(e.hasClass('selected')) {
-		e.removeClass('selected');
+		remove_location_resource(resource_id, e);
 	} else {
-		e.addClass('selected');
+		add_location_resource(resource_id, e);
 	}
 }
 
@@ -86,6 +87,37 @@ function set_location_biome(biome, e) {
 		{
 			$('#biomes .selected').removeClass('selected');
 			e.addClass('selected');
+		}
+	});
+}
+
+function add_location_resource(resource, e) {
+	$.ajax(
+	{
+		type: 'POST',
+		url: 'world_admin/add_location_resource',
+		data: {
+			location: current_location,
+			resource: resource
+		},
+		success: function(data)
+		{
+			e.addClass('selected');
+		}
+	});
+}
+function remove_location_resource(resource, e) {
+	$.ajax(
+	{
+		type: 'POST',
+		url: 'world_admin/remove_location_resource',
+		data: {
+			location: current_location,
+			resource: resource
+		},
+		success: function(data)
+		{
+			e.removeClass('selected');
 		}
 	});
 }

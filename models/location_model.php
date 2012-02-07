@@ -273,5 +273,33 @@ class Location_model
 		}
 		return true;
 	}
+	public function Add_location_resource($location_id, $resource_id)
+	{
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			insert into Location_resource(Location_ID, Resource_ID) values(?, ?)
+			', array($location_id, $resource_id));
+
+		if(!$rs)
+		{
+			return false;
+		}
+		return true;
+	}
+	public function Remove_location_resource($location_id, $resource_id)
+	{
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			delete from Location_resource where Location_ID=? and Resource_ID = ?
+			', array($location_id, $resource_id));
+
+		if(!$rs)
+		{
+			return false;
+		}
+		return true;
+	}
 }
 ?>
