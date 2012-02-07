@@ -115,9 +115,8 @@
 					success: function(data)
 					{
 						$('#change_actor_name').html('Change');
-						if(data !== false)
-						{
-							$('#actor_name').html(data);
+						if(data.success == true) {
+							$('#actor_name').html(data.data);
 						}
 					}
 				});

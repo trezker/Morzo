@@ -18,6 +18,7 @@ class Actor extends Controller
 	{
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
+			header("Location: front");
 			return;
 		}
 		$this->Load_model('Actor_model');
@@ -55,44 +56,40 @@ class Actor extends Controller
 	
 	public function Change_actor_name()
 	{
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
 		$actor_id = $_POST['actor'];
 		$named_actor_id = $_POST['named_actor'];
 		$new_name = $_POST['name'];
-		if(strlen($new_name) == 0)
-		{
-			echo json_encode(false);
-		}
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			return;
-		}
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			die("This is not the actor you are looking for.");
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
 		}
 		$r = $this->Actor_model->Change_actor_name($actor_id, $named_actor_id, $new_name);
 		if($r == false)
 		{
-			echo json_encode(false);
+			echo json_encode(array('success' => false, 'reason' => 'Could not change actor name'));
 			return;
 		}
 		else
 		{
-			if(strlen($new_name) == 0)
-			{
-				echo json_encode('Unnamed actor');
+			if(strlen($new_name) == 0) {
+				echo json_encode(array('success' => true, 'data' => 'Unnamed actor'));
 			}
-			else
-			{
-				echo json_encode($new_name);
+			else {
+				echo json_encode(array('success' => true, 'data' => $new_name));
 			}
 		}
 	}
 
 	public function Actors()
 	{	
-		if(!$this->Logged_in())
-		{
+		if(!$this->Logged_in()) {
+			header("Location: front");
 			return;
 		}
 
