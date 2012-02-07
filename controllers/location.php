@@ -133,71 +133,76 @@ class Location extends Controller
 	
 	public function Change_location_name()
 	{
+		header('Content-type: application/json');
 		$actor_id = $_POST['actor'];
 		$location_id = $_POST['location'];
 		$new_name = $_POST['name'];
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
 			return;
 		}
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			die("This is not the actor you are looking for.");
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
 		}
 		$this->Load_model('Location_model');
 		$lcoation_id = $this->Get_location($actor_id, $location_id);
 		if(!$location_id) {
-			echo json_encode(false);
+			echo json_encode(array('success' => false, 'reason' => 'Location error'));
 			return;
 		}
 		$r = $this->Location_model->Change_location_name($actor_id, $location_id, $new_name);
 		if($r == false)
 		{
-			echo json_encode(false);
+			echo json_encode(array('success' => false, 'reason' => 'Could not rename location'));
 			return;
 		}
 		else
 		{
-			if(strlen($new_name) == 0)
-			{
-				echo json_encode('Unnamed location');
+			if(strlen($new_name) == 0) {
+				echo json_encode(array('success' => true, 'data' => 'Unnamed location'));
 			}
-			else
-			{
-				echo json_encode($new_name);
+			else {
+				echo json_encode(array('success' => true, 'data' => $new_name));
 			}
 		}
 	}
 	
 	public function Travel()
 	{
+		header('Content-type: application/json');
 		if(!isset($_POST['actor'])) {
-			die("No actor requested.");
+			echo json_encode(array('success' => false, 'reason' => 'No actor requested'));
 		}
 		if(!isset($_POST['destination'])) {
-			die("No destination requested.");
+			echo json_encode(array('success' => false, 'reason' => 'No destination requested'));
 		}
 		if(!isset($_POST['origin'])) {
-			die("No origin provided.");
+			echo json_encode(array('success' => false, 'reason' => 'No origin provided'));
 		}
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
 			return;
 		}
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $_POST['actor'])) {
-			die("This is not the actor you are looking for.");
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
 		}
 		
 		$this->Load_model('Location_model');
 		$destination = $this->Get_location($_POST['actor'], $_POST['destination']);
 		if(!$destination) {
-			echo json_encode(array("success" => false));
+			echo json_encode(array('success' => false, 'reason' => 'Could not get destination'));
 		}
 		
 		$this->Load_model('Travel_model');
 		$r = $this->Travel_model->Travel($_POST['actor'], $destination, $_POST['origin']);
-		echo json_encode(array("success" => $r));
+		if(!$r) {
+			echo json_encode(array('success' => false, 'reason' => 'Could not initiate travel'));
+		}
+		echo json_encode(array('success' => true));
 	}
 }
 

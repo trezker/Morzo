@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" media="screen" href="/css/style.php">
+		<link rel="stylesheet" type="text/css" media="screen" href="/css/style.css">
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
 		<script type="text/javascript">
 			var change_location_id = -1;
@@ -59,9 +59,9 @@
 						$('#change_location_name').html('Change');
 						if(change_location_id == <?=$actor['Location_ID']?>)
 						{
-							if(data !== false)
+							if(data.success == true)
 							{
-								$('#location_name').html(data);
+								$('#location_name').html(data.data);
 							}
 						}
 						else
