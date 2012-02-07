@@ -55,8 +55,9 @@ class Actor_model
 		$db = Load_database();
 
 		$rs = $db->Execute('
-			select A.ID
+			select A.ID, AN.Name
 			from Actor A
+			left join Actor_name AN on A.ID = AN.Named_actor_ID and A.ID = AN.Actor_ID
 			where A.User_ID = ?
 			', array($user_id));
 		
@@ -66,7 +67,7 @@ class Actor_model
 		}
 		$actors = array();
 		foreach ($rs as $row) {
-    		$actors[] = $row['ID'];
+    		$actors[] = $row;
 		}
 		return $actors;
 	}
@@ -98,13 +99,16 @@ class Actor_model
 	{
 		$db = Load_database();
 
+//			update Actor_name set name = ?
+//			where Actor_ID = ? and Named_actor_ID = ?
+//			', array($new_name, $actor_ID, $named_actor_ID));
+
 		$rs = $db->Execute('
-			update Actor_name set name = ?
-			where Actor_ID = ? and Named_actor_ID = ?
-			', array($new_name, $actor_ID, $named_actor_ID));
+			insert into Actor_name(Named_actor_ID, Actor_ID, Name) values(?, ?, ?)
+			on duplicate key update Name = ?
+			', array($named_actor_ID, $actor_ID, $new_name, $new_name));
 		
-		if(!$rs)
-		{
+		if(!$rs) {
 			return false;
 		}
 		return true;

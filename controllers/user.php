@@ -27,6 +27,10 @@ class User extends Controller
 
 		$this->Load_model('Actor_model');
 		$actors = $this->Actor_model->Get_actors($_SESSION['userid']);
+		foreach ($actors as &$actor) {
+			if(!$actor['Name'])
+				$actor['Name'] = 'Unnamed actor';
+		}
 
 		include 'views/user_view.php';
 	}

@@ -70,13 +70,11 @@ class Actor extends Controller
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
 		}
 		$r = $this->Actor_model->Change_actor_name($actor_id, $named_actor_id, $new_name);
-		if($r == false)
-		{
+		if($r == false) {
 			echo json_encode(array('success' => false, 'reason' => 'Could not change actor name'));
 			return;
 		}
-		else
-		{
+		else {
 			if(strlen($new_name) == 0) {
 				echo json_encode(array('success' => true, 'data' => 'Unnamed actor'));
 			}
