@@ -18,12 +18,7 @@ class User_admin extends Controller
 		$this->Load_model('User_model');
 		$users = $this->User_model->Get_users();
 		
-//		echo "<pre>";
-//		var_dump($users);
-//		echo "</pre>";
-		
 		include 'views/user_admin_view.php';
-//		echo "As admin you will be able to access this page.";
 	}
 	
 	public function Kick_user()
@@ -63,8 +58,6 @@ class User_admin extends Controller
 			return;
 		}
 		
-//		$this->User->Logout();
-//		session_start();
 		$this->Load_model('User_model');
 		$this->User_model->Login($_POST['id']);
 		
