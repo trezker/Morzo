@@ -33,8 +33,9 @@ class User extends Controller
 
 	public function Start_openid_login()
 	{
+		header('Content-type: application/json');
 		if(!isset($_POST['openid'])) {
-			echo false;
+			echo json_encode(array('success' => false, 'reason' => 'Must give an openid'));
 			return;
 		}
 
@@ -46,13 +47,13 @@ class User extends Controller
 
 		$auth = $consumer->begin($_POST['openid']);
 		if (!$auth) {
-			echo false;
+			echo json_encode(array('success' => false, 'reason' => 'Could not start openid login process'));
 			return;
 		}
 
 		$url = $auth->redirectURL('http://dev.trezker.net/', 'http://dev.trezker.net/user/Finish_openid_login');
 		$_SESSION['OPENID'] = $_POST['openid'];
-		echo $url;
+		echo json_encode(array('success' => true, 'redirect_url' => $url));
 	}
 
 	public function Finish_openid_login()
@@ -108,12 +109,13 @@ class User extends Controller
 	}
 	
 	public function Create_user() {
+		header('Content-type: application/json');
 		if($_SESSION['OPENID_AUTH'] !== true) {
-			echo json_encode(array(success => false, reason => 'No authorized openid'));
+			echo json_encode(array('success' => false, 'reason' => 'No authorized openid'));
 			return;
 		}
 		if(!isset($_POST['username'])) {
-			echo json_encode(array(success => false, reason => 'No username'));
+			echo json_encode(array('success' => false, 'reason' => 'No username'));
 			return;
 		}
 
@@ -123,16 +125,17 @@ class User extends Controller
 			echo json_encode(array('success' => false, 'reason' => $r['reason']));
 			return;
 		} else {
-			echo json_encode(array('success' => true));
 			$_SESSION['username'] = $_POST['username'];
 			$_SESSION['userid'] = $r['ID'];
 			$_SESSION['admin'] = $this->User_model->User_has_access($_SESSION['userid'], 'Admin');
+			echo json_encode(array('success' => true));
 			return;
 		}
 	}
 	
 	public function Logout()
 	{
+		header('Content-type: application/json');
 		// Unset all of the session variables.
 		$_SESSION = array();
 
@@ -147,7 +150,7 @@ class User extends Controller
 		}
 
 		session_destroy();
-		echo 1;
+		echo json_encode(array('success' => true));
 	}
 }
 

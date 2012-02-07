@@ -40,11 +40,11 @@
 							data: { openid: openid },
 							success: function(data)
 							{
-								if(!data) {
-									$('#openidfeedback').html('Process failed');
+								if(data.success == false) {
+									$('#openidfeedback').html('Process failed: ' + data.reason);
 								} else {
 									$('#openidfeedback').html('Redirecting');
-									window.location = data;
+									window.location = data.redirect_url;
 								}
 							}
 						});
