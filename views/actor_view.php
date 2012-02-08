@@ -87,16 +87,16 @@
 					success: function(data)
 					{
 						$('#change_location_name').html('Change');
-						if(change_location_id == <?=$actor['Location_ID']?>)
+						if(data.success == true)
 						{
-							if(data.success == true)
+							if(change_location_id == <?=$actor['Location_ID']?>)
 							{
 								$('#location_name').html(data.data);
 							}
-						}
-						else
-						{
-							reload_location_list();
+							else
+							{
+								reload_location_list();
+							}
 						}
 						set_location_changer(-1);
 					}
