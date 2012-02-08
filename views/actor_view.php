@@ -21,6 +21,25 @@
 				change_location_id = location_id;
 				$('#edit_popup').html($('#location_name_popup').html());
 			}
+
+			var change_actor_id = -1;
+			function set_actor_changer(actor_id)
+			{
+				if(change_actor_id == actor_id || actor_id == -1)
+				{
+					$('#edit_popup').html('');
+					$('#changeactorname_'+change_actor_id).html('Change name');
+					change_actor_id = -1;
+					return;
+				}
+				else
+				{
+					$('#changeactorname_'+change_actor_id).html('Change name');
+					$('#changeactorname_'+actor_id).html('See name changer');
+				}
+				change_actor_id = actor_id;
+				$('#edit_popup').html($('#actor_name_popup').html());
+			}
 			
 			function reload_location_list()
 			{
@@ -35,6 +54,20 @@
 						if(data !== false)
 						{
 							$('#locations').html(data);
+						}
+					}
+				});
+			}
+
+			function reload_actor_list() {
+				callurl = '/actor/Actor_list';
+				$.ajax({
+					type: 'POST',
+					url: callurl,
+					data: {actor: <?=$actor_id?>},
+					success: function(data) {
+						if(data !== false) {
+							$('#actors').html(data.data);
 						}
 					}
 				});
@@ -72,6 +105,31 @@
 					}
 				});
 			}
+
+			function change_actor_name()
+			{
+				$('#change_actor_name').html('Changing');
+				callurl = '/actor/Change_actor_name';
+				
+				$.ajax(
+				{
+					type: 'POST',
+					url: callurl,
+					data: {
+						actor: <?=$actor_id?>,
+						named_actor: change_actor_id,
+						name: $('#actor_input').val()
+					},
+					dataType: "json",
+					success: function(data) {
+						$('#change_actor_name').html('Change');
+						if(data.success == true) {
+							reload_actor_list();
+						}
+						set_actor_changer(-1);
+					}
+				});
+			}
 			
 			function travel(destination_id)
 			{
@@ -93,30 +151,6 @@
 							window.location.reload();
 						} else {
 							$('#locations_feedback').html("Can't travel there.");
-						}
-					}
-				});
-			}
-			
-			function change_actor_name(actor_id)
-			{
-				$('#change_actor_name').html('Changing');
-				callurl = '/actor/Change_actor_name';
-				$.ajax(
-				{
-					type: 'POST',
-					url: callurl,
-					data: {
-						actor: <?=$actor_id?>,
-						named_actor: actor_id,
-						name: $('#name_input').val()
-					},
-					dataType: "json",
-					success: function(data)
-					{
-						$('#change_actor_name').html('Change');
-						if(data.success == true) {
-							$('#actor_name').html(data.data);
 						}
 					}
 				});
@@ -146,20 +180,23 @@
 		</div>
 <?php } ?>
 
-<ul class="actor_list">
-	<?php
-	foreach ($actors as $visible_actor) {
-		$id = $visible_actor['ID'];
-		$name = $visible_actor['Name'];
-		echo "<li><a href='/actor/show_actor/".$id."'>".$name."</a></li>";
-	}
-	?>
-</ul>
+
+		<h2>Actors you can see</h2>
+		<div id="actors_feedback"></div>
+		<div id="actors">
+			<?php include 'views/location_actors_view.php'; ?>
+		</div>
 
 		<div id="location_name_popup" style="display: none">
 			<h3>Change location name</h3>
 			<input type="text" name="location_input" id="location_input" />
 			<span class="action" id="change_location_name" onclick="change_location_name();">Change</span>
+		</div>
+
+		<div id="actor_name_popup" style="display: none">
+			<h3>Change actor name</h3>
+			<input type="text" name="actor_input" id="actor_input" />
+			<span class="action" id="change_actor_name" onclick="change_actor_name();">Change</span>
 		</div>
 
 		<p id="Leave this actor"><a href='/user'>Leave this actor</a></p>

@@ -54,6 +54,26 @@ class Actor extends Controller
 		include 'views/actor_view.php';
 	}
 	
+	public function Actor_list() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		$actor_id = $_POST['actor'];
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+		$actors = $this->Actor_model->Get_visible_actors($actor_id);
+		ob_start();
+		include 'views/location_actors_view.php';
+		$location_actors_view = ob_get_clean();
+
+		echo json_encode(array('success' => true, 'data' => $location_actors_view));
+	}
+	
 	public function Change_actor_name()
 	{
 		header('Content-type: application/json');
