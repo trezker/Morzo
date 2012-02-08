@@ -101,21 +101,25 @@ class Location extends Controller
 	
 	public function Location_list()
 	{
+		header('Content-type: application/json');
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
 			return;
-		}
-		if(!isset($_POST['actor'])) {
-			die("No actor requested.");
 		}
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $_POST['actor'])) {
-			die("This is not the actor you are looking for.");
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 		$this->Load_model('Location_model');
 		$locations = $this->Get_neighbouring_locations($_POST['actor']);
 		
+		ob_start();
 		include 'views/locations_view.php';
+		$locations_view = ob_get_clean();
+
+		echo json_encode(array('success' => true, 'data' => $locations_view));
 	}
 	
 	private function Get_location($actor_id, $location_id) {

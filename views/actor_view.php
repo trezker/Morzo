@@ -44,16 +44,13 @@
 			function reload_location_list()
 			{
 				callurl = '/location/Location_list';
-				$.ajax(
-				{
+				$.ajax({
 					type: 'POST',
 					url: callurl,
 					data: {actor: <?=$actor_id?>},
-					success: function(data)
-					{
-						if(data !== false)
-						{
-							$('#locations').html(data);
+					success: function(data) {
+						if(data.success !== false) {
+							$('#locations').html(data.data);
 						}
 					}
 				});
