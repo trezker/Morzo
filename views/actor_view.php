@@ -120,8 +120,16 @@
 					dataType: "json",
 					success: function(data) {
 						$('#change_actor_name').html('Change');
-						if(data.success == true) {
-							reload_actor_list();
+						if(data.success == true)
+						{
+							if(change_actor_id == <?=$actor_id?>)
+							{
+								$('#actor_name').html(data.data);
+							}
+							else
+							{
+								reload_actor_list();
+							}
 						}
 						set_actor_changer(-1);
 					}
@@ -157,8 +165,7 @@
 	<body>
 		<p>
 			Viewing <span id="actor_name"><?= $actor['Name']; ?></span>
-			<input type="text" name="name_input" id="name_input" />
-			<span class="action" id="change_actor_name" onclick="change_actor_name(<?=$actor_id?>);">Change</span>
+			<span id='changeactorname_<?=$actor_id?>' class="action namechange" onclick="set_actor_changer(<?=$actor_id?>);">Change name</span>
 		</p>
 		<p>
 			Current location is <span id="location_name"><?= $actor['Location']; ?></span>
