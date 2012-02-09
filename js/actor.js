@@ -36,13 +36,13 @@ function set_actor_changer(actor_id)
 	$('#edit_popup').html($('#actor_name_popup').html());
 }
 
-function reload_location_list()
+function reload_location_list(actor_id)
 {
 	callurl = '/location/Location_list';
 	$.ajax({
 		type: 'POST',
 		url: callurl,
-		data: {actor: <?=$actor_id?>},
+		data: {actor: actor_id},
 		success: function(data) {
 			if(data.success !== false) {
 				$('#locations').html(data.data);
@@ -51,12 +51,12 @@ function reload_location_list()
 	});
 }
 
-function reload_actor_list() {
+function reload_actor_list(actor_id) {
 	callurl = '/actor/Actor_list';
 	$.ajax({
 		type: 'POST',
 		url: callurl,
-		data: {actor: <?=$actor_id?>},
+		data: {actor: actor_id},
 		success: function(data) {
 			if(data !== false) {
 				$('#actors').html(data.data);
@@ -65,7 +65,7 @@ function reload_actor_list() {
 	});
 }
 
-function change_location_name()
+function change_location_name(actor_id, Location_ID)
 {
 	$('#change_location_name').html('Changing');
 	callurl = '/location/Change_location_name';
@@ -74,7 +74,7 @@ function change_location_name()
 		type: 'POST',
 		url: callurl,
 		data: {
-			actor: <?=$actor_id?>,
+			actor: actor_id,
 			location: change_location_id,
 			name: $('#location_input').val()
 		},
@@ -84,13 +84,13 @@ function change_location_name()
 			$('#change_location_name').html('Change');
 			if(data.success == true)
 			{
-				if(change_location_id == <?=$actor['Location_ID']?>)
+				if(change_location_id == Location_ID)
 				{
 					$('#location_name').html(data.data);
 				}
 				else
 				{
-					reload_location_list();
+					reload_location_list(actor_id);
 				}
 			}
 			set_location_changer(-1);
@@ -98,7 +98,7 @@ function change_location_name()
 	});
 }
 
-function change_actor_name()
+function change_actor_name(actor_id)
 {
 	$('#change_actor_name').html('Changing');
 	callurl = '/actor/Change_actor_name';
@@ -108,7 +108,7 @@ function change_actor_name()
 		type: 'POST',
 		url: callurl,
 		data: {
-			actor: <?=$actor_id?>,
+			actor: actor_id,
 			named_actor: change_actor_id,
 			name: $('#actor_input').val()
 		},
@@ -117,13 +117,13 @@ function change_actor_name()
 			$('#change_actor_name').html('Change');
 			if(data.success == true)
 			{
-				if(change_actor_id == <?=$actor_id?>)
+				if(change_actor_id == actor_id)
 				{
 					$('#actor_name').html(data.data);
 				}
 				else
 				{
-					reload_actor_list();
+					reload_actor_list(actor_id);
 				}
 			}
 			set_actor_changer(-1);
@@ -131,7 +131,7 @@ function change_actor_name()
 	});
 }
 
-function travel(destination_id)
+function travel(destination_id, actor_id, Location_ID)
 {
 	callurl = '/location/Travel';
 	$.ajax(
@@ -139,9 +139,9 @@ function travel(destination_id)
 		type: 'POST',
 		url: callurl,
 		data: {
-			actor: <?=$actor_id?>,
+			actor: actor_id,
 			destination: destination_id,
-			origin: <?=$actor['Location_ID']?>
+			origin: Location_ID
 		},
 		dataType: "json",
 		success: function(data)
