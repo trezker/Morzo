@@ -158,6 +158,8 @@ function travel(destination_id, actor_id, Location_ID)
 
 function load_tab(tab_name, actor_id) {
 	$('#tab_content').html("Loading...");
+	$('#actor_tabs .current').removeClass('current');
+	$('#'+tab_name+'_tab').addClass('current');
 	$.ajax(
 	{
 		type: 'POST',

@@ -18,8 +18,8 @@
 		
 		
 		<ul id="actor_tabs">
-			<li class="current" onclick="load_tab('locations', <?=$actor_id?>)">Locations</li>
-			<li onclick="load_tab('people', <?=$actor_id?>)">People</li>
+			<li id="locations_tab" class="current" onclick="load_tab('locations', <?=$actor_id?>)">Locations</li>
+			<li id="people_tab" onclick="load_tab('people', <?=$actor_id?>)">People</li>
 		</ul>
 		<div id="tab_content" style="clear: both;"></div>
 
