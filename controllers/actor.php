@@ -28,8 +28,6 @@ class Actor extends Controller
 
 		$this->Update_travel($actor_id);
 
-		$this->Load_controller('Location');
-
 		$actor = $this->Actor_model->Get_actor($actor_id);
 		if($actor['Name'] == NULL)
 		{
@@ -40,18 +38,45 @@ class Actor extends Controller
 			$actor['Location'] = 'Unnamed location';
 		}
 
-		$this->Load_model('Travel_model');
-		$travel = $this->Travel_model->Get_travel_info($actor_id);
-		if($travel) {
-			if(!$travel['OriginName'])
-				$travel['OriginName'] = 'Unnamed location';
-			if(!$travel['DestinationName'])
-				$travel['DestinationName'] = 'Unnamed location';
-		}
-
-		$locations = $this->Location->Get_neighbouring_locations($actor_id);
 		$actors = $this->Actor_model->Get_visible_actors($actor_id);
 		include 'views/actor_view.php';
+	}
+	
+	public function Load_tab() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		$actor_id = $_POST['actor'];
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+		$tab_name = $_POST['tab'];
+
+		$actor = $this->Actor_model->Get_actor($actor_id);
+
+		if($tab_name == 'locations') {
+			$this->Load_model("Travel_model");
+			$this->Update_travel($actor_id);
+			$travel = $this->Travel_model->Get_travel_info($actor_id);
+			if($travel) {
+				if(!$travel['OriginName'])
+					$travel['OriginName'] = 'Unnamed location';
+				if(!$travel['DestinationName'])
+					$travel['DestinationName'] = 'Unnamed location';
+			}
+			$this->Load_controller('Location');
+			$locations = $this->Location->Get_neighbouring_locations($actor_id);
+			ob_start();
+			include 'views/locations_tab_view.php';
+			$locations_tab_view = ob_get_clean();
+			echo json_encode(array('success' => true, 'data' => $locations_tab_view));
+			return;
+		}
+		echo json_encode(array('success' => false, 'data' => 'Invalid tab name'));
 	}
 	
 	public function Actor_list() {

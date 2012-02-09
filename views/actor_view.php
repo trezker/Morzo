@@ -15,22 +15,21 @@
 		</p>
 		<div id="edit_popup">
 		</div>
-
-<?php if($travel) { ?>
-		Travelling from <?=$travel['OriginName']?> to <?=$travel['DestinationName']?>.
-<?php } else { ?>
-		<h2>Locations you can go to</h2>
-		<div id="locations_feedback"></div>
-		<div id="locations">
-			<?php include 'views/locations_view.php'; ?>
-		</div>
-<?php } ?>
+		
+		
+		<ul id="actor_tabs">
+			<li class="current" onclick="load_tab('locations', <?=$actor_id?>)">Locations</li>
+			<li onclick="load_tab('people', <?=$actor_id?>)">People</li>
+		</ul>
+		<div id="tab_content" style="clear: both;"></div>
 
 
-		<h2>Actors you can see</h2>
-		<div id="actors_feedback"></div>
-		<div id="actors">
-			<?php include 'views/location_actors_view.php'; ?>
+		<div class="tab_content" id="people_content">
+			<h2>Actors you can see</h2>
+			<div id="actors_feedback"></div>
+			<div id="actors">
+				<?php include 'views/location_actors_view.php'; ?>
+			</div>
 		</div>
 
 		<div id="location_name_popup" style="display: none">

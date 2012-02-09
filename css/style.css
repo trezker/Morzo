@@ -97,3 +97,37 @@ li.selected:hover {
 	float: left;
 	margin-right: 20px;
 }
+
+#actor_tabs {
+	padding: 0px;
+	margin: 0px;
+	list-style: none;
+}
+
+#actor_tabs li {
+	display: block;
+	float: left;
+	padding: 2px 4px;
+	margin: 0px;
+	background: #CCF;
+	cursor: pointer;
+	border-top: 1px solid #000;
+	border-bottom: 1px solid #888;
+	border-left: 1px solid #000;
+}
+
+#actor_tabs li:last-child {
+	border-right: 1px solid #000;
+}
+
+#actor_tabs li:hover {
+	background: #BBF;
+}
+
+#actor_tabs li.current {
+	background: #99F;
+}
+
+#actor_tabs li.current:hover {
+	background: #AAF;
+}
