@@ -18,7 +18,7 @@ class Actor extends Controller
 	{
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			header("Location: front");
+			header("Location: /front");
 			return;
 		}
 		$this->Load_model('Actor_model');
