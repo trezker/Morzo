@@ -38,7 +38,6 @@ class Actor extends Controller
 			$actor['Location'] = 'Unnamed location';
 		}
 
-		$actors = $this->Actor_model->Get_visible_actors($actor_id);
 		include 'views/actor_view.php';
 	}
 	
@@ -74,6 +73,14 @@ class Actor extends Controller
 			include 'views/locations_tab_view.php';
 			$locations_tab_view = ob_get_clean();
 			echo json_encode(array('success' => true, 'data' => $locations_tab_view));
+			return;
+		}
+		if($tab_name == 'people') {
+			$actors = $this->Actor_model->Get_visible_actors($actor_id);
+			ob_start();
+			include 'views/people_tab_view.php';
+			$people_tab_view = ob_get_clean();
+			echo json_encode(array('success' => true, 'data' => $people_tab_view));
 			return;
 		}
 		echo json_encode(array('success' => false, 'data' => 'Invalid tab name'));

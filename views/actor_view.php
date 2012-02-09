@@ -23,15 +23,6 @@
 		</ul>
 		<div id="tab_content" style="clear: both;"></div>
 
-
-		<div class="tab_content" id="people_content">
-			<h2>Actors you can see</h2>
-			<div id="actors_feedback"></div>
-			<div id="actors">
-				<?php include 'views/location_actors_view.php'; ?>
-			</div>
-		</div>
-
 		<div id="location_name_popup" style="display: none">
 			<h3>Change location name</h3>
 			<input type="text" name="location_input" id="location_input" />

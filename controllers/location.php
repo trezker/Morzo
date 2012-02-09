@@ -107,13 +107,15 @@ class Location extends Controller
 			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
 			return;
 		}
+		$actor_id = $_POST['actor'];
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $_POST['actor'])) {
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
 			return;
 		}
+		$actor = $this->Actor_model->Get_actor($actor_id);
 		$this->Load_model('Location_model');
-		$locations = $this->Get_neighbouring_locations($_POST['actor']);
+		$locations = $this->Get_neighbouring_locations($actor_id);
 		
 		ob_start();
 		include 'views/locations_view.php';
