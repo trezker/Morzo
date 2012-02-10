@@ -14,7 +14,7 @@ class Actor extends Controller
 		echo $r;
 	}
 	
-	public function Show_actor($actor_id)
+	public function Show_actor($actor_id, $tab = 'locations')
 	{
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
@@ -26,6 +26,7 @@ class Actor extends Controller
 			die("This is not the actor you are looking for.");
 		}
 
+		$this->Load_model("Travel_model");
 		$this->Update_travel($actor_id);
 
 		$actor = $this->Actor_model->Get_actor($actor_id);
@@ -37,29 +38,9 @@ class Actor extends Controller
 		{
 			$actor['Location'] = 'Unnamed location';
 		}
-
-		include 'views/actor_view.php';
-	}
-	
-	public function Load_tab() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		$actor_id = $_POST['actor'];
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-		}
-		$tab_name = $_POST['tab'];
-
-		$actor = $this->Actor_model->Get_actor($actor_id);
-
-		if($tab_name == 'locations') {
-			$this->Load_model("Travel_model");
-			$this->Update_travel($actor_id);
+		
+		$tab_view = '';
+		if($tab == 'locations') {
 			$travel = $this->Travel_model->Get_travel_info($actor_id);
 			if($travel) {
 				if(!$travel['OriginName'])
@@ -71,21 +52,17 @@ class Actor extends Controller
 			$locations = $this->Location->Get_neighbouring_locations($actor_id);
 			ob_start();
 			include 'views/locations_tab_view.php';
-			$locations_tab_view = ob_get_clean();
-			echo json_encode(array('success' => true, 'data' => $locations_tab_view));
-			return;
-		}
-		if($tab_name == 'people') {
+			$tab_view = ob_get_clean();
+		} elseif ($tab == 'people') {
 			$actors = $this->Actor_model->Get_visible_actors($actor_id);
 			ob_start();
 			include 'views/people_tab_view.php';
-			$people_tab_view = ob_get_clean();
-			echo json_encode(array('success' => true, 'data' => $people_tab_view));
-			return;
+			$tab_view = ob_get_clean();
 		}
-		echo json_encode(array('success' => false, 'data' => 'Invalid tab name'));
+
+		include 'views/actor_view.php';
 	}
-	
+
 	public function Actor_list() {
 		header('Content-type: application/json');
 		$this->Load_controller('User');

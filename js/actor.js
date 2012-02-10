@@ -158,25 +158,5 @@ function travel(destination_id, actor_id, Location_ID)
 
 function load_tab(tab_name, actor_id) {
 	$('#tab_content').html("Loading...");
-	$('#actor_tabs .current').removeClass('current');
-	$('#'+tab_name+'_tab').addClass('current');
-	$.ajax(
-	{
-		type: 'POST',
-		url: '/actor/load_tab',
-		data: {
-			actor: actor_id,
-			tab: tab_name
-		},
-		dataType: "json",
-		success: function(data)
-		{
-			if(data.success == true) {
-				$('#tab_content').html(data.data);
-			}
-			else {
-				$('#tab_content').html("Failed to load tab");
-			}
-		}
-	});
+	window.location = '/actor/show_actor/'+actor_id+'/'+tab_name;
 }

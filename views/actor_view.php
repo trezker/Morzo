@@ -18,10 +18,16 @@
 		
 		
 		<ul id="actor_tabs">
-			<li id="locations_tab" class="current" onclick="load_tab('locations', <?=$actor_id?>)">Locations</li>
-			<li id="people_tab" onclick="load_tab('people', <?=$actor_id?>)">People</li>
+			<li <?php if($tab=="locations") echo 'class="current"';?> onclick="load_tab('locations', <?=$actor_id?>)">
+				Locations
+			</li>
+			<li <?php if($tab=="people") echo 'class="current"';?> onclick="load_tab('people', <?=$actor_id?>)">
+				People
+			</li>
 		</ul>
-		<div id="tab_content" style="clear: both;"></div>
+		<div id="tab_content" style="clear: both;">
+			<?=$tab_view?>
+		</div>
 
 		<div id="location_name_popup" style="display: none">
 			<h3>Change location name</h3>
