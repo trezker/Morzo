@@ -160,3 +160,29 @@ function load_tab(tab_name, actor_id) {
 	$('#tab_content').html("Loading...");
 	window.location = '/actor/show_actor/'+actor_id+'/'+tab_name;
 }
+
+function speak(actor_id) {
+	var message = $('#actor_message').val();
+	if(message == '')
+		return;
+	$('#event_feedback').html("Sending...");
+	callurl = '/actor/Speak';
+	$.ajax(
+	{
+		type: 'POST',
+		url: callurl,
+		data: {
+			actor: actor_id,
+			message: message
+		},
+		dataType: "json",
+		success: function(data)
+		{
+			if(data.success == true) {
+				window.location.reload();
+			} else {
+				$('#event_feedback').html(data.reason);
+			}
+		}
+	});
+}

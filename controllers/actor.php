@@ -14,7 +14,7 @@ class Actor extends Controller
 		echo $r;
 	}
 	
-	public function Show_actor($actor_id, $tab = 'locations')
+	public function Show_actor($actor_id, $tab = 'events')
 	{
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
@@ -57,6 +57,12 @@ class Actor extends Controller
 			$actors = $this->Actor_model->Get_visible_actors($actor_id);
 			ob_start();
 			include 'views/people_tab_view.php';
+			$tab_view = ob_get_clean();
+		} elseif ($tab == 'events') {
+			$this->Load_model("Event_model");
+			$events = $this->Event_model->Get_events($actor_id);
+			ob_start();
+			include 'views/events_tab_view.php';
 			$tab_view = ob_get_clean();
 		}
 
@@ -151,6 +157,31 @@ class Actor extends Controller
 				));
 				$arrive_success = $this->Travel_model->Arrive($arrive);
 			}
+		}
+	}
+	
+	public function Speak() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		$actor_id = $_POST['actor'];
+		$message = $_POST['message'];
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+		
+		$this->Load_model('Event_model');
+		$r = $this->Event_model->Speak($actor_id, $message);
+		if($r == false) {
+			echo json_encode(array('success' => false, 'reason' => 'Could not save your message'));
+			return;
+		}
+		else {
+			echo json_encode(array('success' => true));
 		}
 	}
 }

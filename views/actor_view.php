@@ -19,6 +19,9 @@
 		
 		
 		<ul id="actor_tabs">
+			<li <?php if($tab=="events") echo 'class="current"';?> onclick="load_tab('events', <?=$actor_id?>)">
+				Events
+			</li>
 			<li <?php if($tab=="locations") echo 'class="current"';?> onclick="load_tab('locations', <?=$actor_id?>)">
 				Locations
 			</li>
