@@ -8,11 +8,12 @@ class Event_model
 		$db = Load_database();
 
 		$rs = $db->Execute('
-			SELECT E.From_actor_ID, E.To_actor_ID, E.Message, E.Ingame_time, E.Real_time FROM Event E
+			SELECT E.From_actor_ID, FAN.Name AS From_actor_name, E.To_actor_ID, E.Message, E.Ingame_time, E.Real_time FROM Event E
 			JOIN Actor_event AE on AE.Event_ID = E.ID
+			LEFT JOIN Actor_name FAN ON FAN.Named_actor_ID = E.From_actor_ID AND FAN.Actor_ID = ?
 			WHERE AE.Actor_ID = ?
 			ORDER BY E.Real_time DESC
-			', array($actor_id));
+			', array($actor_id, $actor_id));
 		if(!$rs) {
 			return false;
 		}
@@ -30,7 +31,7 @@ class Event_model
 		$rs = $db->Execute('
 			insert into Event(From_actor_ID, Message, Ingame_time, Real_time) 
 			select ?, ?, C.Value, NOW() from Count C where Name = \'Update\' limit 1
-			', array($actor_id, $message));
+			', array($actor_id, '{From_actor_name} says: '.$message));
 		if(!$rs) {
 			return false;
 		}

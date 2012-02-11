@@ -5,6 +5,9 @@
 	<?php
 	foreach ($events as $event) {
 		$message = $event["Message"];
+		if($event['From_actor_name'] == NULL)
+			$event['From_actor_name'] = 'Unnamed actor';
+		$message = preg_replace('/{From_actor_name}/', $event['From_actor_name'], $message);
 		echo "
 			<li>
 				$message
