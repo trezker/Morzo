@@ -38,13 +38,6 @@ blockquote {
 	margin-top: 10px;
 }
 
-.login_input {
-	font-size: 0.75em;
-}
-
-.login_submit {
-}
-
 .action {
 	color: #00F;
 	cursor: pointer;
@@ -130,4 +123,18 @@ li.selected:hover {
 
 #actor_tabs li.current:hover {
 	background: #AAF;
+}
+
+.popup_title {
+	padding: 5px;
+	background: #88F;
+	margin-bottom: 5px;
+}
+
+.login_action {
+	margin-top: 5px;;
+}
+
+.login_content {
+    text-align: center;
 }
