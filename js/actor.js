@@ -115,16 +115,8 @@ function change_actor_name(actor_id)
 		dataType: "json",
 		success: function(data) {
 			$('#change_actor_name').html('Change');
-			if(data.success == true)
-			{
-				if(change_actor_id == actor_id)
-				{
-					$('#actor_name').html(data.data);
-				}
-				else
-				{
-					reload_actor_list(actor_id);
-				}
+			if(data.success == true) {
+				window.location.reload();
 			}
 			set_actor_changer(-1);
 		}
