@@ -44,6 +44,7 @@ function Refresh_actors()
 		url: '/actor/Actors',
 		success: function(data)
 		{
+			if(ajax_logged_out(data)) return;
 			$('#actors').html(data);
 		}
 	});

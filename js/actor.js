@@ -44,6 +44,7 @@ function reload_location_list(actor_id)
 		url: callurl,
 		data: {actor: actor_id},
 		success: function(data) {
+			if(ajax_logged_out(data)) return;
 			if(data.success !== false) {
 				$('#locations').html(data.data);
 			}
@@ -67,6 +68,7 @@ function change_location_name(actor_id, Location_ID)
 		dataType: "json",
 		success: function(data)
 		{
+			if(ajax_logged_out(data)) return;
 			$('#change_location_name').html('Change');
 			if(data.success == true)
 			{
@@ -100,6 +102,7 @@ function change_actor_name(actor_id)
 		},
 		dataType: "json",
 		success: function(data) {
+			if(ajax_logged_out(data)) return;
 			$('#change_actor_name').html('Change');
 			if(data.success == true) {
 				window.location.reload();
@@ -124,6 +127,7 @@ function travel(destination_id, actor_id, Location_ID)
 		dataType: "json",
 		success: function(data)
 		{
+			if(ajax_logged_out(data)) return;
 			if(data.success) {
 				$('#locations_feedback').html("Travelling there.");
 				window.location.reload();
@@ -156,6 +160,7 @@ function speak(actor_id) {
 		dataType: "json",
 		success: function(data)
 		{
+			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
 				window.location.reload();
 			} else {

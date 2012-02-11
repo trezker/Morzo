@@ -10,6 +10,7 @@ function login_as(id, name)
 		},
 		success: function(data)
 		{
+			if(ajax_logged_out(data)) return;
 			window.location = 'user';
 		}
 	});
@@ -25,6 +26,7 @@ function kick_user(id)
 		},
 		success: function(data)
 		{
+			if(ajax_logged_out(data)) return;
 			//window.location = 'user_admin';
 		}
 	});

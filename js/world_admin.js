@@ -11,6 +11,7 @@ function edit_location(id)
 		},
 		success: function(data)
 		{
+			if(ajax_logged_out(data)) return;
 			if(data !== false)
 			{
 				current_location = id;
@@ -30,6 +31,7 @@ function add_biome()
 		},
 		success: function(data)
 		{
+			if(ajax_logged_out(data)) return;
 			if(data !== false)
 			{
 				$('#biome_list').html(data.data);
@@ -48,6 +50,7 @@ function add_resource()
 		},
 		success: function(data)
 		{
+			if(ajax_logged_out(data)) return;
 			if(data !== false)
 			{
 				$('#resource_list').html(data.data);
@@ -85,6 +88,7 @@ function set_location_biome(biome, e) {
 		},
 		success: function(data)
 		{
+			if(ajax_logged_out(data)) return;
 			$('#biomes .selected').removeClass('selected');
 			e.addClass('selected');
 		}
@@ -102,6 +106,7 @@ function add_location_resource(resource, e) {
 		},
 		success: function(data)
 		{
+			if(ajax_logged_out(data)) return;
 			e.addClass('selected');
 		}
 	});
@@ -117,6 +122,7 @@ function remove_location_resource(resource, e) {
 		},
 		success: function(data)
 		{
+			if(ajax_logged_out(data)) return;
 			e.removeClass('selected');
 		}
 	});
