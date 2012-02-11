@@ -68,7 +68,13 @@
 			<span class="action" id="new_actor" onclick='new_actor()'>New actor</span>
 		</p>
 		<div id="actors">
-			<?php include 'views/actors_view.php'; ?>
+			<ul class="actor_list">
+				<?php
+				foreach ($actors as $actor) {
+					echo "<li><a href='actor/show_actor/".$actor["ID"]."'>".$actor["Name"]."</a></li>";
+				}
+				?>
+			</ul>
 		</div>
 		<p id="logout"><span class="action" onclick='logout()'>Log out</span></p>
 		

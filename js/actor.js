@@ -51,20 +51,6 @@ function reload_location_list(actor_id)
 	});
 }
 
-function reload_actor_list(actor_id) {
-	callurl = '/actor/Actor_list';
-	$.ajax({
-		type: 'POST',
-		url: callurl,
-		data: {actor: actor_id},
-		success: function(data) {
-			if(data !== false) {
-				$('#actors').html(data.data);
-			}
-		}
-	});
-}
-
 function change_location_name(actor_id, Location_ID)
 {
 	$('#change_location_name').html('Changing');
