@@ -4,58 +4,7 @@
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/style.css">
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
 		<script type="text/javascript" src="/js/dialog.js"></script>
-		<script type="text/javascript">
-			function logout()
-			{
-				$('#logout').html('Logging out...');
-				$.ajax(
-				{
-					type: 'GET',
-					url: 'user/Logout',
-					success: function(data)
-					{
-						window.location = 'front';
-					}
-				});
-			}
-			
-			var new_actor_processing = false;
-			function new_actor() {
-				if(new_actor_processing == true) {
-					$('#new_actor').html('Requesting, please wait...');
-					return;
-				}
-				new_actor_processing = true;
-				$('#new_actor').html('Requesting...');
-				$.ajax({
-					type: 'GET',
-					url: '/actor/Request_actor',
-					success: function(data) {
-						if(ajax_logged_out(data)) return;
-						if(data.success == true) {
-							$('#new_actor').html('Request granted');
-							window.location.reload();
-						}
-						else {
-							$('#new_actor').html('Request denied');
-						}
-					}
-				});
-			}
-			
-			function Refresh_actors()
-			{
-				$.ajax(
-				{
-					type: 'GET',
-					url: '/actor/Actors',
-					success: function(data)
-					{
-						$('#actors').html(data);
-					}
-				});
-			}
-		</script>
+		<script type="text/javascript" src="/js/user.js"></script>
 	</head>
 	<body>
 		<p>Hello <?php echo $_SESSION['username']; ?>!</p>
