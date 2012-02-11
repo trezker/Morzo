@@ -5,13 +5,19 @@ class Actor extends Controller
 {
 	public function Request_actor()
 	{
-		if(!$this->Logged_in())
-		{
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
 			return;
 		}
 		$this->Load_model('Actor_model');
 		$r = $this->Actor_model->Request_actor($_SESSION['userid']);
-		echo $r;
+		if($r) {
+			echo json_encode(array('success' => true));
+		} else {
+			echo json_encode(array('success' => false, 'reason' => 'Could not give you an actor'));
+		}
 	}
 	
 	public function Show_actor($actor_id, $tab = 'events')

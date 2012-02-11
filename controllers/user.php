@@ -5,13 +5,11 @@ class User extends Controller
 {
 	public function Logged_in()
 	{
-		if(!isset($_SESSION['userid']))
-		{
-//			include 'views/not_logged_in.php';
+		if(!isset($_SESSION['userid'])) {
 			return false;
 		}
 		if(Get_cache('kick_user_'.$_SESSION['userid'])) {
-			$this->Logout();
+			$this->Kick_user();
 			return false;
 		}
 		return true;
@@ -132,10 +130,8 @@ class User extends Controller
 			return;
 		}
 	}
-	
-	public function Logout()
-	{
-		header('Content-type: application/json');
+
+	private function Kick_user() {
 		// Unset all of the session variables.
 		$_SESSION = array();
 
@@ -150,6 +146,12 @@ class User extends Controller
 		}
 
 		session_destroy();
+	}
+	
+	public function Logout()
+	{
+		header('Content-type: application/json');
+		$this->Kick_user();
 		echo json_encode(array('success' => true));
 	}
 }
