@@ -28,33 +28,27 @@ class Event_model
 		$db = Load_database();
 
 		//Make a transaction, no use storing an event that noone sees.
+		$db->StartTrans();
 		$rs = $db->Execute('
 			insert into Event(From_actor_ID, Message, Ingame_time, Real_time) 
 			select ?, ?, C.Value, NOW() from Count C where Name = \'Update\' limit 1
 			', array($actor_id, '{From_actor_name} says: '.$message));
-		if(!$rs) {
-			return false;
-		}
 		
 		$event_id = $db->Insert_ID();
-		if(!$event_id) {
-			return false;
-		}
-		
+
 		$rs = $db->Execute('
 			insert into Actor_event(Actor_ID, Event_ID)
 			select B.ID, ? from Actor A
 			join Actor B on A.Location_ID = B.Location_ID
 			where A.ID = ?
 			', array($event_id, $actor_id));
-		if(!$rs) {
-			return false;
-		}
 		
-		if($db->Affected_rows() > 0) {
-			return true;
+		if($db->Affected_rows() == 0) {
+			$db->FailTrans();
 		}
-		return false;
+		$success = !$db->HasFailedTrans();
+		$db->CompleteTrans();
+		return $success;
 	}
 }
 ?>
