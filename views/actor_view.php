@@ -30,6 +30,9 @@
 			<li <?php if($tab=="people") echo 'class="current"';?> onclick="load_tab('people', <?=$actor_id?>)">
 				People
 			</li>
+			<li <?php if($tab=="resources") echo 'class="current"';?> onclick="load_tab('resources', <?=$actor_id?>)">
+				Resources
+			</li>
 		</ul>
 		<div id="tab_content" style="clear: both;">
 			<?=$tab_view?>

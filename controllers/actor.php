@@ -74,6 +74,12 @@ class Actor extends Controller
 			ob_start();
 			include 'views/events_tab_view.php';
 			$tab_view = ob_get_clean();
+		} elseif ($tab == 'resources') {
+			$this->Load_model("Location_model");
+			$resources = $this->Location_model->Get_location_resources($actor['Location_ID']);
+			ob_start();
+			include 'views/resources_tab_view.php';
+			$tab_view = ob_get_clean();
 		}
 
 		include 'views/actor_view.php';
