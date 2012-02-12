@@ -1,8 +1,9 @@
 <?php
 
 require_once 'models/database.php';
+require_once "models/model.php";
 
-class Travel_model
+class Travel_model extends Model
 {
 	public function Travel($actor, $destination, $origin) {
 		$db = Load_database();
@@ -12,16 +13,18 @@ class Travel_model
 			");
 		$update = $rs->fields['Value'];
 
+		$db->StartTrans();
 		$rs = $db->Execute('
 			insert into Travel (ActorID, DestinationID, OriginID, X, Y, UpdateTick)
 			select ?, ?, ?, X, Y, ? from Location l where ID = ?
 			', array($actor, $destination, $origin, $update, $origin));
 
-		if(!$rs)
-		{
-			return false;
-		}
-		return true;
+		$this->Load_model('Event_model');
+		$this->Event_model->Save_event($actor, NULL, '{From_actor_name} left {Location '.$origin.'} going towards {Location '.$destination.'}');
+
+		$success = !$db->HasFailedTrans();
+		$db->CompleteTrans();
+		return $success;
 	}
 	
 	public function Get_travel_info($actor) {
