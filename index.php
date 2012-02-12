@@ -24,6 +24,11 @@ function Set_cache($key, $object, $timeout = 60) {
 	return ($memcache) ? $memcache->set($key, $object, MEMCACHE_COMPRESSED, $timeout) : NULL;
 }
 
+function Delete_cache($key) {
+	global $memcache;
+	return ($memcache) ? $memcache->delete($key) : NULL;
+}
+
 if($argv[1] == "info")
 {
 	phpinfo();

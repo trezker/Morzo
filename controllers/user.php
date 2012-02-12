@@ -9,6 +9,7 @@ class User extends Controller
 			return false;
 		}
 		if(Get_cache('kick_user_'.$_SESSION['userid'])) {
+			Delete_cache('kick_user_'.$_SESSION['userid']);
 			$this->Kick_user();
 			return false;
 		}
