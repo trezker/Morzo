@@ -22,8 +22,8 @@ function open_dialog(html) {
 	if($('#popup').length == 0) {
 		var grayout_div = '<div id="grayout" onclick="close_dialog()"></div>';
 		var popup_div = '<div id="popup"></div>';
-		$('body').append(grayout_div);
-		$('body').append(popup_div);
+		$('body').prepend(popup_div);
+		$('body').prepend(grayout_div);
 	}
 	var popup = $('#popup');
 	popup.html(html);

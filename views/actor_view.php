@@ -57,15 +57,23 @@
 		</div>
 
 		<div id="location_name_popup" style="display: none">
-			<h3>Change location name</h3>
-			<input type="text" name="location_input" id="location_input" />
-			<span class="action" id="change_location_name" onclick="change_location_name(<?=$actor_id?>,<?=$actor['Location_ID']?>);">Change</span>
+			<div class="popup_background">
+				<div class="popup_title">Change location name</div>
+				<div class="login_content">
+					<input type="text" name="location_input" id="location_input" />
+					<span class="action" id="change_location_name" onclick="change_location_name(<?=$actor_id?>,<?=$actor['Location_ID']?>);">Change</span>
+				</div>
+			</div>
 		</div>
 
 		<div id="actor_name_popup" style="display: none">
-			<h3>Change actor name</h3>
-			<input type="text" name="actor_input" id="actor_input" />
-			<span class="action" id="change_actor_name" onclick="change_actor_name(<?=$actor_id?>);">Change</span>
+			<div class="popup_background">
+				<div class="popup_title">Change actor name</div>
+				<div class="login_content">
+					<input type="text" name="actor_input" id="actor_input" />
+					<span class="action" id="change_actor_name" onclick="change_actor_name(<?=$actor_id?>);">Change</span>
+				</div>
+			</div>
 		</div>
 
 		<p id="Leave this actor"><a href='/user'>Leave this actor</a></p>

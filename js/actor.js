@@ -14,7 +14,7 @@ function set_location_changer(location_id)
 		$('#changelink_'+location_id).html('See name changer');
 	}
 	change_location_id = location_id;
-	$('#edit_popup').html($('#location_name_popup').html());
+	open_dialog($('#location_name_popup').html());
 }
 
 var change_actor_id = -1;
@@ -33,7 +33,7 @@ function set_actor_changer(actor_id)
 		$('#changeactorname_'+actor_id).html('See name changer');
 	}
 	change_actor_id = actor_id;
-	$('#edit_popup').html($('#actor_name_popup').html());
+	open_dialog($('#actor_name_popup').html());
 }
 
 function reload_location_list(actor_id)
@@ -66,20 +66,11 @@ function change_location_name(actor_id, Location_ID)
 			name: $('#location_input').val()
 		},
 		dataType: "json",
-		success: function(data)
-		{
+		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			$('#change_location_name').html('Change');
-			if(data.success == true)
-			{
-				if(change_location_id == Location_ID)
-				{
-					$('#location_name').html(data.data);
-				}
-				else
-				{
-					reload_location_list(actor_id);
-				}
+			if(data.success == true) {
+				window.location.reload();
 			}
 			set_location_changer(-1);
 		}
