@@ -79,12 +79,18 @@ class Actor_model
 		$db = Load_database();
 
 		$rs = $db->Execute('
-			select AN.Name as Name, LN.Name as Location, A.Location_ID as Location_ID, B.Name as Biome_name
+			select 
+				AN.Name as Name, 
+				LN.Name as Location, 
+				A.Location_ID as Location_ID, 
+				B.Name as Biome_name,
+				T.Value as Time
 			from Actor A
 			left join Actor_name AN on A.ID = AN.Actor_ID and A.ID = AN.Named_actor_ID
 			left join Location_name LN on A.ID = LN.Actor_ID and A.Location_ID = LN.Location_ID
 			left join Location L on A.Location_ID = L.ID
 			left join Biome B on L.Biome_ID = B.ID
+			join Count T on T.Name = \'Update\'
 			where A.ID = ?
 			', array($actor_id));
 		

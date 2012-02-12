@@ -44,6 +44,10 @@ class Actor extends Controller
 		{
 			$actor['Location'] = 'Unnamed location';
 		}
+		$hour = ($actor['Time'] % 16) + 1;
+		$day = (intval($actor['Time'] / 16) % 16) + 1;
+		$month = (intval($actor['Time'] / 256) % 16) +1;
+		$year = intval($actor['Time'] / 4096);
 		
 		$tab_view = '';
 		if($tab == 'locations') {
