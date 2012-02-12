@@ -1,4 +1,4 @@
-<ul class="location_list">
+<table class="location_list">
 	<?php
 	foreach ($locations as $location) {
 		$id = $location["ID"];
@@ -8,11 +8,16 @@
 		$y = $location["y"];
 		$current_location = $actor['Location_ID'];
 		echo "
-			<li>
-				<span class='action' onclick='travel(\"$id\",\"$actor_id\",\"$current_location\")'>$name $compass, $x, $y</span>
-				<span id='changelink_$id' class='action namechange' onclick='set_location_changer(\"$id\");'>Change name</span>
+				<tr>
+					<td>
+						<span class='action' onclick='set_location_changer(\"$id\");'>$name</span>
+					</td>
+					<td>
+						<span class='action' onclick='travel(\"$id\",\"$actor_id\",\"$current_location\")'>Travel $compass</span>
+					</td>
+				</tr>
 			</li>
 			";
 	}
 	?>
-</ul>
+</table>
