@@ -79,10 +79,12 @@ class Actor_model
 		$db = Load_database();
 
 		$rs = $db->Execute('
-			select AN.Name as Name, LN.Name as Location, A.Location_ID as Location_ID
+			select AN.Name as Name, LN.Name as Location, A.Location_ID as Location_ID, B.Name as Biome_name
 			from Actor A
 			left join Actor_name AN on A.ID = AN.Actor_ID and A.ID = AN.Named_actor_ID
 			left join Location_name LN on A.ID = LN.Actor_ID and A.Location_ID = LN.Location_ID
+			left join Location L on A.Location_ID = L.ID
+			left join Biome B on L.Biome_ID = B.ID
 			where A.ID = ?
 			', array($actor_id));
 		
@@ -90,11 +92,12 @@ class Actor_model
 		{
 			return false;
 		}
-		return Array(
-			'Name' => $rs->fields['Name'], 
-			'Location' => $rs->fields['Location'], 
-			'Location_ID' => $rs->fields['Location_ID']
-		);
+		if($rs->RecordCount()!=1) {
+			echo "CAUT HERE?";
+			return false;
+		}
+
+		return $rs->fields;
 	}
 	
 	public function Change_actor_name($actor_ID, $named_actor_ID, $new_name)

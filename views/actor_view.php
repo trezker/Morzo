@@ -12,8 +12,7 @@
 			<span id='changeactorname_<?=$actor_id?>' class="action namechange" onclick="set_actor_changer(<?=$actor_id?>);">Change name</span>
 		</p>
 		<p>
-			Current location is <span id="location_name"><?= $actor['Location']; ?></span>
-			<span id='changelink_<?=$actor['Location_ID']?>' class="action namechange" onclick="set_location_changer(<?=$actor['Location_ID']?>);">Change name</span>
+			Current location: <span id="location_name" class="action" onclick="set_location_changer(<?=$actor['Location_ID']?>);"><?= $actor['Location']; ?></span> [<?= $actor['Biome_name']; ?>]
 		</p>
 		<div id="edit_popup">
 		</div>
