@@ -7,18 +7,35 @@
 		<script type="text/javascript" src="/js/dialog.js">	</script>
 	</head>
 	<body>
-		<p>
-			Viewing <span id="actor_name" class="action" onclick="set_actor_changer(<?=$actor_id?>);"><?= $actor['Name']; ?></span>
-		</p>
-		<p>
-			Current location: <span id="location_name" class="action" onclick="set_location_changer(<?=$actor['Location_ID']?>);"><?= $actor['Location']; ?></span> [<?= $actor['Biome_name']; ?>]
-		</p>
-		<p>
-			Time: <?php echo "$year:$month:$day:$hour" ?> (Y:M:D:H)
-		</p>
+		<table>
+			<tr>
+				<td>
+					Name
+				</td>
+				<td id="actor_name" class="action" onclick="set_actor_changer(<?=$actor_id?>);">
+					<?= $actor['Name']; ?>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Location
+				</td>
+				<td>
+					<span id="location_name" class="action" onclick="set_location_changer(<?=$actor['Location_ID']?>);"><?= $actor['Location']; ?></span> [<?= $actor['Biome_name']; ?>]
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Time
+				</td>
+				<td>
+					<?php echo "$year:$month:$day:$hour" ?> (Y:M:D:H)
+				</td>
+			</tr>
+		</table>
+
 		<div id="edit_popup">
 		</div>
-		
 		
 		<ul id="actor_tabs">
 			<li <?php if($tab=="events") echo 'class="current"';?> onclick="load_tab('events', <?=$actor_id?>)">
