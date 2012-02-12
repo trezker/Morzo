@@ -70,6 +70,9 @@ class Actor extends Controller
 		} elseif ($tab == 'events') {
 			$this->Load_model("Event_model");
 			$events = $this->Event_model->Get_events($actor_id);
+			foreach ($events as $key => $event) {
+				$events[$key]['Time_values'] = $this->Update->Get_time_units($event['Ingame_time']);
+			}
 			ob_start();
 			include 'views/events_tab_view.php';
 			$tab_view = ob_get_clean();
