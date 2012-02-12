@@ -1,5 +1,5 @@
 <?php
-require_once "controllers/controller.php";
+require_once "../controllers/controller.php";
 
 class World_admin extends Controller
 {
@@ -17,7 +17,7 @@ class World_admin extends Controller
 
 		$this->Load_model('Location_model');
 		$locations = $this->Location_model->Get_deficient_locations();
-		include 'views/world_admin_view.php';
+		include '../views/world_admin_view.php';
 	}
 	
 	public function Edit_location()
@@ -41,7 +41,7 @@ class World_admin extends Controller
 		$biomes = $this->Location_model->Get_biomes();
 		$resources = $this->Location_model->Get_resources();
 		ob_start();
-		include 'views/location_edit_view.php';
+		include '../views/location_edit_view.php';
 		$location_admin_view = ob_get_clean();
 
 		echo json_encode(array('success' => true, 'data' => $location_admin_view));
@@ -71,7 +71,7 @@ class World_admin extends Controller
 		}
 		$biomes = $this->Location_model->Get_biomes();
 		ob_start();
-		include 'views/biomes_view.php';
+		include '../views/biomes_view.php';
 		$biomes_view = ob_get_clean();
 
 		echo json_encode(array('success' => true, 'data' => $biomes_view));
@@ -101,7 +101,7 @@ class World_admin extends Controller
 		}
 		$resources = $this->Location_model->Get_resources();
 		ob_start();
-		include 'views/resources_view.php';
+		include '../views/resources_view.php';
 		$resources_view = ob_get_clean();
 
 		echo json_encode(array('success' => true, 'data' => $resources_view));

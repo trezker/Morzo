@@ -1,7 +1,7 @@
 <?php
 
-require_once 'models/database.php';
-require_once "models/model.php";
+require_once '../models/database.php';
+require_once "../models/model.php";
 
 class Travel_model extends Model
 {

@@ -1,5 +1,5 @@
 <?php
-require_once "controllers/controller.php";
+require_once "../controllers/controller.php";
 
 class User extends Controller
 {
@@ -27,7 +27,7 @@ class User extends Controller
 		$this->Load_model('Actor_model');
 		$actors = $this->Actor_model->Get_actors($_SESSION['userid']);
 
-		include 'views/user_view.php';
+		include '../views/user_view.php';
 	}
 
 	public function Start_openid_login()
@@ -41,7 +41,7 @@ class User extends Controller
 		require_once "Auth/OpenID/Consumer.php";
 		require_once "Auth/OpenID/FileStore.php";
 
-		$store = new Auth_OpenID_FileStore('./oid_store');
+		$store = new Auth_OpenID_FileStore('../oid_store');
 		$consumer = new Auth_OpenID_Consumer($store);
 
 		$auth = $consumer->begin($_POST['openid']);
@@ -60,7 +60,7 @@ class User extends Controller
 		require_once "Auth/OpenID/Consumer.php";
 		require_once "Auth/OpenID/FileStore.php";
 
-		$store = new Auth_OpenID_FileStore('./oid_store');
+		$store = new Auth_OpenID_FileStore('../oid_store');
 		$consumer = new Auth_OpenID_Consumer($store);
 		$response = $consumer->complete('http://dev.trezker.net/user/Finish_openid_login');
 
