@@ -173,7 +173,7 @@ class Actor extends Controller
 		}
 		
 		$this->Load_model('Event_model');
-		$r = $this->Event_model->Speak($actor_id, $message);
+		$r = $this->Event_model->Save_event($actor_id, NULL, '{From_actor_name} says: '.$message);
 		if($r == false) {
 			echo json_encode(array('success' => false, 'reason' => 'Could not save your message'));
 			return;
