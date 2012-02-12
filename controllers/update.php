@@ -9,6 +9,15 @@ class Update extends Controller
 		echo $this->Travel_model->Tick();
 		return;
 	}
+	
+	public function Get_time_units($time) {
+		return array(
+			'hour' => ($time % 16) + 1,
+			'day' => (intval($time / 16) % 16) + 1,
+			'month' => (intval($time / 256) % 16) +1,
+			'year' => intval($time / 4096)
+		);
+	}
 }
 
 ?>

@@ -30,7 +30,7 @@
 					Time
 				</td>
 				<td>
-					<?php echo "$year:$month:$day:$hour" ?> (Y:M:D:H)
+					<?php echo $time['year'].':'.$time['month'].':'.$time['day'].':'.$time['hour'] ?> (Y:M:D:H)
 				</td>
 			</tr>
 		</table>
