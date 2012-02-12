@@ -8,8 +8,7 @@
 	</head>
 	<body>
 		<p>
-			Viewing <span id="actor_name"><?= $actor['Name']; ?></span>
-			<span id='changeactorname_<?=$actor_id?>' class="action namechange" onclick="set_actor_changer(<?=$actor_id?>);">Change name</span>
+			Viewing <span id="actor_name" class="action" onclick="set_actor_changer(<?=$actor_id?>);"><?= $actor['Name']; ?></span>
 		</p>
 		<p>
 			Current location: <span id="location_name" class="action" onclick="set_location_changer(<?=$actor['Location_ID']?>);"><?= $actor['Location']; ?></span> [<?= $actor['Biome_name']; ?>]
