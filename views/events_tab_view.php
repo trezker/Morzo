@@ -4,6 +4,7 @@
 <table class="event_list">
 	<?php
 	$actor_name_template = "<span class='action' onclick='set_actor_changer(\"{id}\");'>{name}</span>";
+	$location_name_template = "<span class='action' onclick='set_location_changer(\"{id}\");'>{name}</span>";
 	$alternate = '';
 	foreach ($events as $event) {
 		$alternate = ($alternate == 'alternate1')? 'alternate2': 'alternate1';
@@ -22,8 +23,13 @@
 				$event['From_location_name'] = 'Unnamed actor';
 			if($event['To_location_name'] == NULL)
 				$event['To_location_name'] = 'Unnamed actor';
-			$message = preg_replace('/{From_location}/', $event['From_location_name'], $message);
-			$message = preg_replace('/{To_location}/', $event['To_location_name'], $message);
+			$location_name = preg_replace('/{id}/', $event['From_location_ID'], $location_name_template);
+			$location_name = preg_replace('/{name}/', $event['From_location_name'], $location_name);
+			$message = preg_replace('/{From_location}/', $location_name, $message);
+
+			$location_name = preg_replace('/{id}/', $event['To_location_ID'], $location_name_template);
+			$location_name = preg_replace('/{name}/', $event['To_location_name'], $location_name);
+			$message = preg_replace('/{To_location}/', $location_name, $message);
 
 			
 			echo "
