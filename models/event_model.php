@@ -8,12 +8,28 @@ class Event_model
 		$db = Load_database();
 
 		$rs = $db->Execute('
-			SELECT E.From_actor_ID, FAN.Name AS From_actor_name, E.To_actor_ID, E.Message, E.Ingame_time, E.Real_time FROM Event E
+			SELECT
+				E.From_actor_ID,
+				FAN.Name AS From_actor_name,
+				E.To_actor_ID,
+				TAN.Name AS To_actor_name,
+				E.To_actor_ID,
+				E.Message,
+				E.Ingame_time,
+				E.Real_time,
+				E.From_location_ID,
+				FLN.Name AS From_location_name,
+				E.To_location_ID,
+				TLN.Name AS To_location_name
+			FROM Event E
 			JOIN Actor_event AE on AE.Event_ID = E.ID
-			LEFT JOIN Actor_name FAN ON FAN.Named_actor_ID = E.From_actor_ID AND FAN.Actor_ID = ?
+			LEFT JOIN Actor_name FAN ON FAN.Named_actor_ID = E.From_actor_ID AND FAN.Actor_ID = AE.Actor_ID
+			LEFT JOIN Actor_name TAN ON TAN.Named_actor_ID = E.To_actor_ID AND TAN.Actor_ID = AE.Actor_ID
+			LEFT JOIN Location_name FLN ON FLN.Location_ID = E.From_location_ID AND FLN.Actor_ID = AE.Actor_ID
+			LEFT JOIN Location_name TLN ON TLN.Location_ID = E.To_location_ID AND TLN.Actor_ID = AE.Actor_ID
 			WHERE AE.Actor_ID = ?
 			ORDER BY E.Real_time DESC
-			', array($actor_id, $actor_id));
+			', array($actor_id));
 		if(!$rs) {
 			return false;
 		}
@@ -24,15 +40,14 @@ class Event_model
 		return false;
 	}
 
-	public function Save_event($from_actor_id, $to_actor_id, $message) {
+	public function Save_event($from_actor_id, $to_actor_id, $message, $from_location = NULL, $to_location = NULL) {
 		$db = Load_database();
 
-		//Make a transaction, no use storing an event that noone sees.
 		$db->StartTrans();
 		$rs = $db->Execute('
-			insert into Event(From_actor_ID, To_actor_ID, Message, Ingame_time, Real_time) 
-			select ?, ?, ?, C.Value, NOW() from Count C where Name = \'Update\' limit 1
-			', array($from_actor_id, $to_actor_id, $message));
+			insert into Event(From_actor_ID, To_actor_ID, Message, Ingame_time, Real_time, From_location_ID, To_location_ID)
+			select ?, ?, ?, C.Value, NOW(), ?, ? from Count C where Name = \'Update\' limit 1
+			', array($from_actor_id, $to_actor_id, $message, $from_location, $to_location));
 		
 		$event_id = $db->Insert_ID();
 

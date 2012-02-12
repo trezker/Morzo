@@ -11,10 +11,21 @@
 			$message = $event["Message"];
 			if($event['From_actor_name'] == NULL)
 				$event['From_actor_name'] = 'Unnamed actor';
+			if($event['From_actor_ID'] == $actor_id)
+				$event['From_actor_name'] = 'You';
 			$actor_name = preg_replace('/{id}/', $event['From_actor_ID'], $actor_name_template);
 			$actor_name = preg_replace('/{name}/', $event['From_actor_name'], $actor_name);
-			$message = preg_replace('/{From_actor_name}/', $actor_name, $event["Message"]);
+			$message = preg_replace('/{From_actor_name}/', $actor_name, $message);
 			$event_time = $event["Time_values"];
+
+			if($event['From_location_name'] == NULL)
+				$event['From_location_name'] = 'Unnamed actor';
+			if($event['To_location_name'] == NULL)
+				$event['To_location_name'] = 'Unnamed actor';
+			$message = preg_replace('/{From_location}/', $event['From_location_name'], $message);
+			$message = preg_replace('/{To_location}/', $event['To_location_name'], $message);
+
+			
 			echo "
 				<td class='event_time'>
 					[".$event_time['year'].':'.$event_time['month'].':'.$event_time['day'].':'.$event_time['hour']."]

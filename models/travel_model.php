@@ -20,7 +20,7 @@ class Travel_model extends Model
 			', array($actor, $destination, $origin, $update, $origin));
 
 		$this->Load_model('Event_model');
-		$this->Event_model->Save_event($actor, NULL, '{From_actor_name} left {Location '.$origin.'} going towards {Location '.$destination.'}');
+		$this->Event_model->Save_event($actor, NULL, '{From_actor_name} left {From_location} going towards {To_location}', $origin, $destination);
 
 		$success = !$db->HasFailedTrans();
 		$db->CompleteTrans();
