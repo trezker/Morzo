@@ -35,8 +35,7 @@
 			</tr>
 		</table>
 
-		<div id="edit_popup">
-		</div>
+		<p id="Leave this actor"><a href='/user'>Leave this actor</a></p>
 		
 		<ul id="actor_tabs">
 			<li <?php if($tab=="events") echo 'class="current"';?> onclick="load_tab('events', <?=$actor_id?>)">
@@ -75,7 +74,5 @@
 				</div>
 			</div>
 		</div>
-
-		<p id="Leave this actor"><a href='/user'>Leave this actor</a></p>
 	</body>
 </html>

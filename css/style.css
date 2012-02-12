@@ -146,3 +146,21 @@ li.selected:hover {
 .event_time {
 	font-size: x-small;
 }
+
+.alternate1 {
+	background-color: #DDF;
+}
+
+.alternate2 {
+	background: #EEF;
+}
+
+.event_list {
+	border-width: 0px;
+	border-spacing: 0px;
+	border-collapse: collapse;
+}
+
+.event_list td {
+	padding: 3px;
+}

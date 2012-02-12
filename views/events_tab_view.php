@@ -4,8 +4,10 @@
 <table class="event_list">
 	<?php
 	$actor_name_template = "<span class='action' onclick='set_actor_changer(\"{id}\");'>{name}</span>";
+	$alternate = '';
 	foreach ($events as $event) {
-		echo '<tr>';
+		$alternate = ($alternate == 'alternate1')? 'alternate2': 'alternate1';
+		echo "<tr class='$alternate'>";
 			$message = $event["Message"];
 			if($event['From_actor_name'] == NULL)
 				$event['From_actor_name'] = 'Unnamed actor';
@@ -24,5 +26,5 @@
 		echo '</tr>';
 	}
 	?>
-</ul>
+</table>
 
