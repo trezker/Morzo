@@ -1,5 +1,5 @@
 <?php
-require_once "controllers/controller.php";
+require_once "../controllers/controller.php";
 
 class User_admin extends Controller
 {
@@ -18,7 +18,7 @@ class User_admin extends Controller
 		$this->Load_model('User_model');
 		$users = $this->User_model->Get_users();
 		
-		include 'views/user_admin_view.php';
+		include '../views/user_admin_view.php';
 	}
 	
 	public function Kick_user()

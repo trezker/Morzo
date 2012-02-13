@@ -18,11 +18,11 @@ class Front
 			return;
 		}
 
-		include 'views/front_view.php';
+		include '../views/front_view.php';
 	}
 	
 	public function Get_login_view() {
-		include 'views/login_view.php';
+		include '../views/login_view.php';
 	}
 }
 ?>

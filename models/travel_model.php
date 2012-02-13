@@ -1,7 +1,7 @@
 <?php
 
-require_once 'models/database.php';
-require_once "models/model.php";
+require_once '../models/database.php';
+require_once "../models/model.php";
 
 class Travel_model extends Model
 {
@@ -162,25 +162,23 @@ class Travel_model extends Model
 	public function Arrive($arrives) {
 		$db = Load_database();
 
+		$this->Load_model('Event_model');
 		$db->StartTrans();
 		foreach($arrives as $arrive) {
 			$rs = $db->Execute('
 				update Actor set Location_ID = ? where ID = ?
 				', array($arrive['Destination'], $arrive['Actor']));
 			
-			if(!$rs) {
-				$db->FailTrans();
-				break;
-			}
+			$rs = $db->Execute('
+				select DestinationID, OriginID from Travel where ActorID = ?
+				', array($arrive['Actor']));
+
+			$this->Event_model->Save_event($arrive['Actor'], NULL, '{From_actor_name} Arrived at {To_location} coming from {From_location}', $rs->fields['OriginID'], $rs->fields['DestinationID']);
 
 			$rs = $db->Execute('
 				delete from Travel where ActorID = ?
 				', array($arrive['Actor']));
-			
-			if(!$rs) {
-				$db->FailTrans();
-				break;
-			}
+
 		}
 		if($db->HasFailedTrans()) {
 			$success = false;

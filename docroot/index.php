@@ -74,11 +74,11 @@ else
 	//Load requested controller
 	if(count($argv)>1)
 	{
-		$controller_path = 'controllers/'.$argv[1].'.php';
+		$controller_path = '../controllers/'.$argv[1].'.php';
 		if(!file_exists($controller_path))
 		{
 			header("HTTP/1.0 404 Not Found");
-			include 'blocked.php';
+			include '../blocked.php';
 		}
 		else
 		{
@@ -88,7 +88,7 @@ else
 				//Todo: Log error
 	//			echo 'Failed '.$r.': ' . $controller_path . '<br />';
 				header("HTTP/1.0 404 Not Found");
-				include 'blocked.php';
+				include '../blocked.php';
 			}
 			else
 			{
@@ -102,7 +102,7 @@ else
 				else if(!method_exists($obj, $argv[2]))
 				{
 					header("HTTP/1.0 404 Not Found");
-					include 'blocked.php';
+					include '../blocked.php';
 				}
 				else
 				{

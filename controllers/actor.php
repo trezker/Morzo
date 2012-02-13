@@ -1,5 +1,5 @@
 <?php
-require_once "controllers/controller.php";
+require_once "../controllers/controller.php";
 
 class Actor extends Controller
 {
@@ -60,12 +60,12 @@ class Actor extends Controller
 			$this->Load_controller('Location');
 			$locations = $this->Location->Get_neighbouring_locations($actor_id);
 			ob_start();
-			include 'views/locations_tab_view.php';
+			include '../views/locations_tab_view.php';
 			$tab_view = ob_get_clean();
 		} elseif ($tab == 'people') {
 			$actors = $this->Actor_model->Get_visible_actors($actor_id);
 			ob_start();
-			include 'views/people_tab_view.php';
+			include '../views/people_tab_view.php';
 			$tab_view = ob_get_clean();
 		} elseif ($tab == 'events') {
 			$this->Load_model("Event_model");
@@ -74,17 +74,17 @@ class Actor extends Controller
 				$events[$key]['Time_values'] = $this->Update->Get_time_units($event['Ingame_time']);
 			}
 			ob_start();
-			include 'views/events_tab_view.php';
+			include '../views/events_tab_view.php';
 			$tab_view = ob_get_clean();
 		} elseif ($tab == 'resources') {
 			$this->Load_model("Location_model");
 			$resources = $this->Location_model->Get_location_resources($actor['Location_ID']);
 			ob_start();
-			include 'views/resources_tab_view.php';
+			include '../views/resources_tab_view.php';
 			$tab_view = ob_get_clean();
 		}
 
-		include 'views/actor_view.php';
+		include '../views/actor_view.php';
 	}
 	
 	public function Change_actor_name()
@@ -127,7 +127,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		$actors = $this->Actor_model->Get_actors($_SESSION['userid']);
 
-		include 'views/actors_view.php';
+		include '../views/actors_view.php';
 	}
 	
 	private function Update_travel($actor_id) {

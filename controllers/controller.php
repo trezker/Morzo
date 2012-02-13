@@ -6,7 +6,7 @@ class Controller
 	{
 		if(isset($this->$model))
 			return;
-		require_once "models/".strtolower($model).".php";
+		require_once "../models/".strtolower($model).".php";
 		$this->$model = new $model();
 	}
 
@@ -14,7 +14,7 @@ class Controller
 	{
 		if(isset($this->$controller))
 			return;
-		require_once "controllers/".strtolower($controller).".php";
+		require_once "../controllers/".strtolower($controller).".php";
 		$this->$controller = new $controller();
 	}
 }

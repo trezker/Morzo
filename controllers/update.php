@@ -1,5 +1,5 @@
 <?php
-require_once "controllers/controller.php";
+require_once "../controllers/controller.php";
 
 class Update extends Controller
 {
