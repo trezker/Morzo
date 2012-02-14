@@ -1,5 +1,11 @@
 <?php
 
+error_reporting(~0);
+
+$protocol =  $_SERVER['HTTPS'] ? 'https' : 'http';
+$host = $_SERVER['SERVER_NAME'];
+$base_url = "$protocol://$host/";
+
 require_once '../util/htmltemplate.php';
 
 /* 1. parse the URL */
