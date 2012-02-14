@@ -169,4 +169,4 @@ class User_model
 		return $rs->fields['Session_ID'];
 	}
 }
-?>
+

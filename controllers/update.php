@@ -20,4 +20,4 @@ class Update extends Controller
 	}
 }
 
-?>
+

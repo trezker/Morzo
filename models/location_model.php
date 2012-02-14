@@ -302,4 +302,4 @@ class Location_model
 		return true;
 	}
 }
-?>
+

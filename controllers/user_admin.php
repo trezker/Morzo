@@ -69,4 +69,4 @@ class User_admin extends Controller
 	}
 }
 
-?>
+

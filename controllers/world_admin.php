@@ -193,4 +193,4 @@ class World_admin extends Controller
 	}
 }
 
-?>
+

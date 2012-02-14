@@ -144,4 +144,4 @@ class Actor_model
 		return $actors;
 	}
 }
-?>
+

@@ -16,4 +16,4 @@ if(!function_exists ('Load_database'))
 		return $db;
 	}
 }
-?>
+

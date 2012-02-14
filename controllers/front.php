@@ -25,4 +25,3 @@ class Front
 		include '../views/login_view.php';
 	}
 }
-?>

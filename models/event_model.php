@@ -66,4 +66,4 @@ class Event_model
 		return $success;
 	}
 }
-?>
+

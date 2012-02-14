@@ -189,4 +189,4 @@ class Travel_model extends Model
 		return $success;
 	}
 }
-?>
+
