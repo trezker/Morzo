@@ -6,7 +6,7 @@
 		else
 			$selected = '';
 		$id = "biome_".$biome['ID'];
-		sprintf('<li class="selectable%1$s" id="%2$d" onclick="toggle_biome(\'%2$d\')">%3$s</li>',
+		echo sprintf('<li class="selectable%1$s" id="%2$s" onclick="toggle_biome(\'%2$s\')">%3$s</li>',
 			$selected, $id, htmlspecialchars($biome['Name']));
 	}
 	?>

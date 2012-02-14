@@ -20,21 +20,21 @@ function expand_template($template, $params, $noencode = false) {
 	$replace = array();
 	if ($noencode) {
 		foreach ($params as $name => $value) {
-			$search[] = "{$name}";
+			$search[] = "{".$name."}";
 			$replace[] = $value;
-			$search[] = "{!$name}";
+			$search[] = "{!".$name."}";
 			$replace[] = $value;
-			$search[] = "{@$name}";
+			$search[] = "{@".$name."}";
 			$replace[] = $value;
 		}
 	}
 	else {
 		foreach ($params as $name => $value) {
-			$search[] = "{$name}";
+			$search[] = "{".$name."}";
 			$replace[] = htmlspecialchars($value);
-			$search[] = "{!$name}";
+			$search[] = "{!".$name."}";
 			$replace[] = $value;
-			$search[] = "{@$name}";
+			$search[] = "{@".$name."}";
 			$replace[] = rawurlencode($value);
 		}
 	}

@@ -2,7 +2,7 @@
 
 error_reporting(~0);
 
-$protocol =  $_SERVER['HTTPS'] ? 'https' : 'http';
+$protocol =  (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http';
 $host = $_SERVER['SERVER_NAME'];
 $base_url = "$protocol://$host/";
 
