@@ -100,6 +100,7 @@ class User extends Controller
 			$_SESSION['admin'] = $this->User_model->User_has_access($_SESSION['userid'], 'Admin');
 			header('Location: /user');
 		} elseif($r == 'Not found') {
+			$_SESSION['OPENID_AUTH'] = true;
 			$this->Sign_up();
 		} else {
 			echo 'TODO: openid login failure';
@@ -108,7 +109,7 @@ class User extends Controller
 	}
 	
 	private function Sign_up() {
-		include 'views/signup_view.php';
+		include '../views/signup_view.php';
 	}
 	
 	public function Create_user() {

@@ -32,11 +32,10 @@
 						{
 							type: 'POST',
 							url: '/user/Create_user',
-							dataType: "json",
 							data: { username: username },
 							success: function(data)
 							{
-								if(!data['success']) {
+								if(!data.success) {
 									$('#usernamefeedback').html(data.reason);
 								} else {
 									$('#usernamefeedback').html('Redirecting');
