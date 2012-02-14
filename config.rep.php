@@ -8,4 +8,4 @@ $config = array(
 	'db_password' => '',
 	'db_database' => ''
 ); 
-?>
+
