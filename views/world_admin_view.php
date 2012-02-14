@@ -17,7 +17,9 @@
 			<div id="locations">
 				<?php
 				foreach ($locations as $location) {
-					echo '<li><span class="action" onclick="edit_location('.$location['ID'].');">'.$location['X'].' '.$location['Y'].'</span></li>';
+					echo expand_template(
+						'<li><span class="action" onclick="edit_location({ID});">{X} {Y}</span></li>',
+						$location);
 				}
 				?>
 			</div>

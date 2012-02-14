@@ -4,7 +4,7 @@
 		echo '
 			<tr>
 				<td>
-					'.$resource['Name'].'
+					'.htmlspecialchars($resource['Name']).'
 				</td>
 			</tr>';
 	}

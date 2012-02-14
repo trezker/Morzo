@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title><?= $actor['Name']; ?> - <?= $tab; ?> - Morzo</title> 
+		<title><?= htmlspecialchars($actor['Name']); ?> - <?= $tab; ?> - Morzo</title> 
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/style.css">
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
@@ -15,7 +15,7 @@
 					Name
 				</td>
 				<td id="actor_name" class="action" onclick="set_actor_changer(<?=$actor_id?>);">
-					<?= $actor['Name']; ?>
+					<?= htmlspecialchars($actor['Name']); ?>
 				</td>
 			</tr>
 			<tr>
@@ -23,7 +23,7 @@
 					Location
 				</td>
 				<td>
-					<span id="location_name" class="action" onclick="set_location_changer(<?=$actor['Location_ID']?>);"><?= $actor['Location']; ?></span> [<?= $actor['Biome_name']; ?>]
+					<span id="location_name" class="action" onclick="set_location_changer(<?=$actor['Location_ID']?>);"><?= htmlspecialchars($actor['Location']); ?></span> [<?= htmlspecialchars($actor['Biome_name']); ?>]
 				</td>
 			</tr>
 			<tr>
@@ -31,7 +31,7 @@
 					Time
 				</td>
 				<td>
-					<?php echo $time['year'].':'.$time['month'].':'.$time['day'].':'.$time['hour'] ?> (Y:M:D:H)
+					<?php echo htmlspecialchars($time['year'].':'.$time['month'].':'.$time['day'].':'.$time['hour']); ?> (Y:M:D:H)
 				</td>
 			</tr>
 		</table>

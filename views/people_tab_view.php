@@ -2,11 +2,9 @@
 <div id="actors">
 	<ul class="actor_list">
 		<?php
-		$actor_name_template = "<span class='action' onclick='set_actor_changer(\"{id}\");'>{name}</span>";
+		$actor_name_template = "<li><span class='action' onclick='set_actor_changer(\"{ID}\");'>{NAME}</span></li>";
 		foreach ($actors as $person) {
-			$actor_name = preg_replace('/{id}/', $person['ID'], $actor_name_template);
-			$actor_name = preg_replace('/{name}/', $person['Name'], $actor_name);
-			echo "<li>$actor_name</li>";
+			echo expand_template($actor_name_template, $person);
 		}
 		?>
 	</ul>

@@ -8,8 +8,11 @@
 					$selected = ' selected';
 			}
 		}
-		$id = "resource_".$resource['ID'];
-		echo '<li class="selectable'.$selected.'" id="'.$id.'" onclick="toggle_resource(\''.$id.'\')">'.$resource['Name'].'</li>';
+		echo expand_template('<li class="selectable{selected}" id="{id}" onclick="toggle_resource(\'{id}\')">{name}</li>',
+			array(
+				'selected' => $selected,
+				'id' => "resource_" . $resource['ID'],
+				'name' => $resource['Name']));
 	}
 	?>
 </ul>

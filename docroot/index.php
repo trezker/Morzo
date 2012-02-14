@@ -1,5 +1,7 @@
 <?php
 
+require_once '../util/htmltemplate.php';
+
 /* 1. parse the URL */
 $argv = explode("/",$_SERVER['PATH_INFO']);
 

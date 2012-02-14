@@ -9,7 +9,7 @@
 		<script type="text/javascript" src="/js/user.js"></script>
 	</head>
 	<body>
-		<p>Hello <?php echo $_SESSION['username']; ?>!</p>
+		<p>Hello <?php echo htmlspecialchars($_SESSION['username']); ?>!</p>
 		<p>
 			<span class="action" id="new_actor" onclick='new_actor()'>New actor</span>
 		</p>
@@ -17,7 +17,7 @@
 			<ul class="actor_list">
 				<?php
 				foreach ($actors as $actor) {
-					echo "<li><a href='actor/show_actor/".$actor["ID"]."'>".$actor["Name"]."</a></li>";
+					expand_template("<li><a href='actor/show_actor/{ID}'>{Name}</a></li>", $actor);
 				}
 				?>
 			</ul>
