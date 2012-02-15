@@ -50,7 +50,8 @@
 			'alternate' => $alternate,
 			'event_year' => $event_time['year'],
 			'event_month' => $event_time['month'],
-			'event_day' => $event_time['day']));
+			'event_day' => $event_time['day'],
+			'event_hour' => $event_time['hour']));
 			
 	}
 	?>
