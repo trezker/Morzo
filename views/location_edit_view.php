@@ -11,6 +11,15 @@
 
 <div style="float: left;">
 	<h3 class="list_title">Resources</h3>
+	Landscape:
+	<select>
+	<?php
+		foreach ($landscapes as $landscape) {
+			echo sprintf('<option value="%1$d" onclick="toggle_landscape(\'%1$d\')">%2$s</option>',
+				$landscape['ID'], htmlspecialchars($landscape['Name']));
+		}
+	?>
+	</select> 
 	<div id="resource_list">
 		<?php include '../views/resources_view.php'; ?>
 	</div>

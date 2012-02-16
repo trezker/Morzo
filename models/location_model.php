@@ -160,6 +160,26 @@ class Location_model
 		return $biomes;
 	}
 	
+	public function Get_landscapes()
+	{
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			select L.ID, L.Name from Landscape L
+			', array());
+
+		if(!$rs)
+		{
+			return false;
+		}
+		
+		$landscapes = array();
+		foreach ($rs as $row) {
+    		$landscapes[] = $row;
+		}
+		return $landscapes;
+	}
+
 	public function Add_biome($name)
 	{
 		$db = Load_database();
@@ -180,7 +200,7 @@ class Location_model
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			select R.ID, R.Name from Resource R
+			select R.ID, R.Name	from Resource R
 			', array());
 
 		if(!$rs)
@@ -238,15 +258,15 @@ class Location_model
 		);
 	}
 
-	public function Get_location_resources($location_id)
+	public function Get_location_resources($location_id, $landscape)
 	{
 		$db = Load_database();
 		
 		$rs = $db->Execute('
 			select R.ID, R.Name from Location_resource LR
 			join Resource R on R.ID = LR.Resource_ID
-			where LR.Location_ID = ?
-			', array($location_id));
+			where LR.Location_ID = ? AND LR.Landscape_ID = ?
+			', array($location_id, $landscape));
 
 		if(!$rs)
 		{
@@ -273,13 +293,13 @@ class Location_model
 		}
 		return true;
 	}
-	public function Add_location_resource($location_id, $resource_id)
+	public function Add_location_resource($location_id, $resource_id, $landscape_id)
 	{
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			insert into Location_resource(Location_ID, Resource_ID) values(?, ?)
-			', array($location_id, $resource_id));
+			insert into Location_resource(Location_ID, Resource_ID, Landscape_ID) values(?, ?, ?)
+			', array($location_id, $resource_id, $landscape_id));
 
 		if(!$rs)
 		{
@@ -287,13 +307,13 @@ class Location_model
 		}
 		return true;
 	}
-	public function Remove_location_resource($location_id, $resource_id)
+	public function Remove_location_resource($location_id, $resource_id, $landscape_id)
 	{
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			delete from Location_resource where Location_ID=? and Resource_ID = ?
-			', array($location_id, $resource_id));
+			delete from Location_resource where Location_ID=? and Resource_ID = ? and Landscape_ID = ?
+			', array($location_id, $resource_id, $landscape_id));
 
 		if(!$rs)
 		{
@@ -302,4 +322,4 @@ class Location_model
 		return true;
 	}
 }
-
+?>

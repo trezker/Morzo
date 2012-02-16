@@ -35,16 +35,41 @@ class World_admin extends Controller
 
 		$this->Load_model('Location_model');
 		$location = $this->Location_model->Get_location($_POST['id']);
-		$location_resources = $this->Location_model->Get_location_resources($_POST['id']);
+		$location_resources = $this->Location_model->Get_location_resources($_POST['id'], 1);
 		if($location['Biome_name'] === NULL)
 			$location['Biome_name'] = "N/A";
 		$biomes = $this->Location_model->Get_biomes();
+		$landscapes = $this->Location_model->Get_landscapes();
 		$resources = $this->Location_model->Get_resources();
 		ob_start();
 		include '../views/location_edit_view.php';
 		$location_admin_view = ob_get_clean();
 
 		echo json_encode(array('success' => true, 'data' => $location_admin_view));
+	}
+	
+	public function get_landscape_resources()
+	{
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
+			return;
+		}
+
+		$this->Load_model('Location_model');
+		$location_resources = $this->Location_model->Get_location_resources($_POST['location'], $_POST['landscape']);
+		$resources = $this->Location_model->Get_resources();
+
+		ob_start();
+		include '../views/resources_view.php';
+		$resources_view = ob_get_clean();
+
+		echo json_encode(array('success' => true, 'data' => $resources_view));
 	}
 	
 	public function Add_biome()
@@ -154,9 +179,9 @@ class World_admin extends Controller
 			echo json_encode(array('success' => false, 'reason' => 'Must give a resource'));
 			return;
 		}
-		
+
 		$this->Load_model('Location_model');
-		if(!$this->Location_model->Add_location_resource($_POST['location'], $_POST['resource'])) {
+		if(!$this->Location_model->Add_location_resource($_POST['location'], $_POST['resource'], $_POST['landscape'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Failed to add resource'));
 			return;
 		}
@@ -184,7 +209,7 @@ class World_admin extends Controller
 		}
 		
 		$this->Load_model('Location_model');
-		if(!$this->Location_model->Remove_location_resource($_POST['location'], $_POST['resource'])) {
+		if(!$this->Location_model->Remove_location_resource($_POST['location'], $_POST['resource'], $_POST['landscape'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Failed to remove resource'));
 			return;
 		}
@@ -193,4 +218,4 @@ class World_admin extends Controller
 	}
 }
 
-
+?>
