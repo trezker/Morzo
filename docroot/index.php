@@ -5,6 +5,7 @@ error_reporting(~0);
 $protocol =  (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http';
 $host = $_SERVER['SERVER_NAME'];
 $base_url = "$protocol://$host/";
+$GLOBALS['base_url'] = $base_url;
 
 require_once '../util/htmltemplate.php';
 

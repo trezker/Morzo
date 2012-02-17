@@ -50,8 +50,7 @@ class User extends Controller
 			return;
 		}
 
-//		$url = $auth->redirectURL('http://dev.trezker.net/', 'http://dev.trezker.net/user/Finish_openid_login');
-		$url = $auth->redirectURL('http://193.11.160.138:1337/', 'http://193.11.160.138:1337/user/Finish_openid_login');
+		$url = $auth->redirectURL($GLOBALS['base_url'], $GLOBALS['base_url'].'/user/Finish_openid_login');
 		$_SESSION['OPENID'] = $_POST['openid'];
 		echo json_encode(array('success' => true, 'redirect_url' => $url));
 	}
@@ -63,8 +62,7 @@ class User extends Controller
 
 		$store = new Auth_OpenID_FileStore('../oid_store');
 		$consumer = new Auth_OpenID_Consumer($store);
-//		$response = $consumer->complete('http://dev.trezker.net/user/Finish_openid_login');
-		$response = $consumer->complete('http://193.11.160.138:1337/user/Finish_openid_login');
+		$response = $consumer->complete($GLOBALS['base_url'].'/user/Finish_openid_login');
 
 		if ($response->status == Auth_OpenID_SUCCESS) {
 			$this->Login_openid($_SESSION['OPENID']);
