@@ -258,15 +258,28 @@ class Location_model
 		);
 	}
 
-	public function Get_location_resources($location_id, $landscape)
+	public function Get_location_resources($location_id, $landscape = NULL)
 	{
 		$db = Load_database();
 		
-		$rs = $db->Execute('
-			select R.ID, R.Name from Location_resource LR
+		$query = '
+			select R.ID, R.Name, L.Name as Landscape_name from Location_resource LR
 			join Resource R on R.ID = LR.Resource_ID
-			where LR.Location_ID = ? AND LR.Landscape_ID = ?
-			', array($location_id, $landscape));
+			join Landscape L on L.ID = LR.Landscape_ID
+			where LR.Location_ID = ?
+			';
+		
+		$args = array($location_id);
+
+		if($landscape != NULL)
+		{
+			$query .= ' AND LR.Landscape_ID = ?';
+			$args[] = $landscape;
+		} else {
+			$query .= ' order by L.Name ASC';
+		}
+
+		$rs = $db->Execute($query, $args);
 
 		if(!$rs)
 		{
