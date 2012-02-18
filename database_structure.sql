@@ -42,9 +42,12 @@ CREATE TABLE `Actor` (
   `User_ID` bigint(20) DEFAULT NULL,
   `Location_ID` bigint(20) NOT NULL,
   `Inhabitable` tinyint(1) NOT NULL DEFAULT '1',
+  `Project_ID` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `Character_fk_User` (`User_ID`),
   KEY `Character_fk_Location` (`Location_ID`),
+  KEY `Actor_fk_Project` (`Project_ID`),
+  CONSTRAINT `Actor_fk_Project` FOREIGN KEY (`Project_ID`) REFERENCES `Project` (`ID`),
   CONSTRAINT `Character_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Character_fk_User` FOREIGN KEY (`User_ID`) REFERENCES `User` (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
@@ -68,6 +71,27 @@ CREATE TABLE `Actor_event` (
   CONSTRAINT `Actor_event_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Actor_event_fk_Event` FOREIGN KEY (`Event_ID`) REFERENCES `Event` (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=141 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Actor_inventory`
+--
+
+DROP TABLE IF EXISTS `Actor_inventory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Actor_inventory` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Actor_ID` bigint(20) NOT NULL,
+  `Resource_ID` bigint(20) NOT NULL,
+  `Amount` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `Actor_inventory_unique` (`Actor_ID`,`Resource_ID`),
+  KEY `Actor_inventory_fk_Actor` (`Actor_ID`),
+  KEY `Actor_inventory_fk_Resource` (`Resource_ID`),
+  CONSTRAINT `Actor_inventory_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
+  CONSTRAINT `Actor_inventory_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -227,6 +251,126 @@ CREATE TABLE `Location_resource` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Project`
+--
+
+DROP TABLE IF EXISTS `Project`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Project` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Creator_actor_ID` bigint(20) NOT NULL,
+  `Recipe_ID` bigint(20) NOT NULL,
+  `Cycles_left` int(11) NOT NULL,
+  `Created_time` bigint(20) NOT NULL,
+  `Progress` int(11) NOT NULL,
+  `Active` tinyint(1) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `Project_fk_Creator` (`Creator_actor_ID`),
+  KEY `Project_fk_Recipe` (`Recipe_ID`),
+  CONSTRAINT `Project_fk_Creator` FOREIGN KEY (`Creator_actor_ID`) REFERENCES `Actor` (`ID`),
+  CONSTRAINT `Project_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Project_input`
+--
+
+DROP TABLE IF EXISTS `Project_input`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Project_input` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Project_ID` bigint(20) NOT NULL,
+  `Resource_ID` bigint(20) NOT NULL,
+  `Amount` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `Project_input_fk_Project` (`Project_ID`),
+  KEY `Project_input_fk_Resource` (`Resource_ID`),
+  CONSTRAINT `Project_input_fk_Project` FOREIGN KEY (`Project_ID`) REFERENCES `Project` (`ID`),
+  CONSTRAINT `Project_input_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Recipe`
+--
+
+DROP TABLE IF EXISTS `Recipe`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Recipe` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(45) NOT NULL,
+  `Cycle_time` int(11) NOT NULL,
+  `Allow_fraction_output` tinyint(1) NOT NULL,
+  `Require_full_cycle` tinyint(1) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `Name_UNIQUE` (`Name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Recipe_input`
+--
+
+DROP TABLE IF EXISTS `Recipe_input`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Recipe_input` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Recipe_ID` bigint(20) NOT NULL,
+  `Resource_ID` bigint(20) NOT NULL,
+  `Amount` int(11) NOT NULL,
+  `From_nature` tinyint(1) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `Recipe_input_fk_Recipe` (`Recipe_ID`),
+  KEY `Recipe_input_fk_Resource` (`Resource_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Recipe_landscape`
+--
+
+DROP TABLE IF EXISTS `Recipe_landscape`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Recipe_landscape` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Recipe_ID` bigint(20) NOT NULL,
+  `Landscape_ID` bigint(20) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `Recipe_landscape_unique` (`Recipe_ID`,`Landscape_ID`),
+  KEY `Recipe_landscape_fk_Recipe` (`Recipe_ID`),
+  KEY `Recipe_landscape_fk_Landscape` (`Landscape_ID`),
+  CONSTRAINT `Recipe_landscape_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`),
+  CONSTRAINT `Recipe_landscape_fk_Landscape` FOREIGN KEY (`Landscape_ID`) REFERENCES `Landscape` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Recipe_output`
+--
+
+DROP TABLE IF EXISTS `Recipe_output`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Recipe_output` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Recipe_ID` bigint(20) NOT NULL,
+  `Resource_ID` bigint(20) NOT NULL,
+  `Amount` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `Recipe_output_fk_Recipe` (`Recipe_ID`),
+  KEY `Recipe_output_fk_Resource` (`Resource_ID`),
+  CONSTRAINT `Recipe_output_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`),
+  CONSTRAINT `Recipe_output_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Resource`
 --
 
@@ -239,7 +383,7 @@ CREATE TABLE `Resource` (
   `Is_natural` tinyint(1) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Name_UNIQUE` (`Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -354,4 +498,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-02-18  8:35:53
+-- Dump completed on 2012-02-18 12:27:29
