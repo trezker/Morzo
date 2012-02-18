@@ -47,7 +47,8 @@ function add_resource()
 		type: 'POST',
 		url: 'world_admin/add_resource',
 		data: {
-			name: $('#new_resource').val()
+			name: $('#new_resource').val(),
+			natural: true
 		},
 		success: function(data)
 		{

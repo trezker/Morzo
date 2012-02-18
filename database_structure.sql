@@ -236,9 +236,10 @@ DROP TABLE IF EXISTS `Resource`;
 CREATE TABLE `Resource` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `Name` varchar(45) NOT NULL,
+  `Is_natural` tinyint(1) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Name_UNIQUE` (`Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -353,4 +354,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-02-16 20:31:25
+-- Dump completed on 2012-02-18  8:35:53

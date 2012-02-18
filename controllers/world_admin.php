@@ -120,7 +120,7 @@ class World_admin extends Controller
 		}
 
 		$this->Load_model('Location_model');
-		if(!$this->Location_model->Add_resource($_POST['name'])) {
+		if(!$this->Location_model->Add_resource($_POST['name'], $_POST['natural'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Failed to add resource'));
 			return;
 		}

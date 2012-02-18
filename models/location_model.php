@@ -215,13 +215,18 @@ class Location_model
 		return $resources;
 	}
 
-	public function Add_resource($name)
+	public function Add_resource($name, $natural)
 	{
 		$db = Load_database();
-		
+
+		if(((boolean)$natural) or $natural == 'true')
+			$natural = 1;
+		else
+			$natural = 0;
+
 		$rs = $db->Execute('
-			insert into Resource(name) values(?)
-			', array($name));
+			insert into Resource(Name, Is_natural) values(?, ?)
+			', array($name, $natural));
 
 		if(!$rs)
 		{
