@@ -50,5 +50,37 @@ class Project_model
 
 		return $result;
 	}
+
+	public function Save_recipe($data)
+	{
+		$db = Load_database();
+
+		$result = array();
+		$result_id = -1;
+		
+		if($data['recipe']['id'] != -1) {
+			$args = array(
+						$data['recipe']['name'], 
+						$data['recipe']['cycle_time'], 
+						($data['recipe']['allow_fraction_output'] == 'true')?1:0, 
+						($data['recipe']['require_full_cycle'] == 'true')?1:0,
+						$data['recipe']['id']);
+			$recipe = $db->Execute('
+				update Recipe set 
+					Name = ?, 
+					Cycle_time = ?, 
+					Allow_fraction_output = ?, 
+					Require_full_cycle = ?
+				where ID = ?
+				', $args);
+			$result_id = $data['recipe']['id'];
+		} else {
+		}
+		
+		if(!$recipe) {
+			return false;
+		}
+		return $result_id;
+	}
 }
 ?>

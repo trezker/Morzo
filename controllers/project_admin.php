@@ -41,6 +41,50 @@ class Project_admin extends Controller
 
 		echo json_encode(array('success' => true, 'data' => $edit_recipe_view));
 	}
+
+	public function save_recipe() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			header("Location: front");
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo "You need to be admin to access this page";
+			return;
+		}
+
+		$data = array();
+		$data['recipe'] = array(
+				'id' => $_POST['id'],
+				'name' => $_POST['name'],
+				'cycle_time' => $_POST['cycle_time'],
+				'allow_fraction_output' => $_POST['allow_fraction_output'],
+				'require_full_cycle' => $_POST['require_full_cycle'],
+			);
+
+		$this->Load_model('Project_model');
+		$id = $this->Project_model->Save_recipe($data);
+
+		if($id != -1) {
+			$recipe = $this->Project_model->Get_recipe($id);
+		} else {
+			$recipe = array();
+			$recipe['recipe'] = array(
+					'ID' => -1,
+					'Name' => '',
+					'Cycle_time' => 1,
+					'Allow_fraction_output' => 1,
+					'Require_full_cycle' => 1
+				);
+		}
+
+		ob_start();
+		include '../views/recipe_edit_view.php';
+		$edit_recipe_view = ob_get_clean();
+
+		echo json_encode(array('success' => true, 'data' => $edit_recipe_view, 'id' => $id));
+	}
 }
 
 ?>
