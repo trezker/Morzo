@@ -1,6 +1,6 @@
 <h2>Edit recipe <?php echo htmlspecialchars($recipe['recipe']['Name']); ?></h2>
 <div id="recipe">
-	<div class="action" onclick="save_recipe()">Save</div>
+	<span class="action" onclick="save_recipe()">Save</span>
 	
 	<?php
 	if($recipe['recipe']['Allow_fraction_output'] == 1)
@@ -34,4 +34,27 @@
 	</table>',
 	$recipe['recipe']);
 	?>
+	
+	<span class="action">Add output</span>
+	<div id="recipe_outputs">
+		<?php
+		$output_template = '
+		<div id="output_{ID}">
+			<span class="resource" data-id="{Resource_ID}" onclick="select_output_resource({ID})">{Resource_Name}</span>
+			<input type="number" class="amount" value="{Amount}" />
+			<span class="action" onclick="remove_output({ID})">Remove</span>
+		</div>';
+
+		foreach ($recipe['recipe_outputs'] as $output) {
+			echo expand_template($output_template, $output);
+		}
+		?>
+	</div>
+
+	<select id="resource_select" style="display: none;">
+		<?php
+		foreach ($recipe['recipe_outputs'] as $output) {
+		}
+		?>
+	</select>
 </div>

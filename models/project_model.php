@@ -35,13 +35,17 @@ class Project_model
 		}
 
 		$recipe_inputs = $db->Execute('
-			select ID, Recipe_ID, Resource_ID, Amount, From_nature from Recipe_input
-			where Recipe_ID = ?
+			select RI.ID, RI.Recipe_ID, RI.Resource_ID, R.Name AS Resource_Name, RI.Amount, From_nature
+			from Recipe_input RI
+			join Resource R on R.ID = RI.Resource_ID
+			where RI.Recipe_ID = ?
 			', array($id));
 
 		$recipe_outputs = $db->Execute('
-			select ID, Recipe_ID, Resource_ID, Amount from Recipe_output
-			where Recipe_ID = ?
+			select RO.ID, RO.Recipe_ID, RO.Resource_ID, R.Name AS Resource_Name, RO.Amount
+			from Recipe_output RO
+			join Resource R on R.ID = RO.Resource_ID
+			where RO.Recipe_ID = ?
 			', array($id));
 		
 		$result['recipe'] = $recipe->fields;

@@ -24,7 +24,7 @@ class Project_admin extends Controller
 		header('Content-type: application/json');
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			header("Location: front");
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
 			return;
 		}
 		if($_SESSION['admin'] != true) {
@@ -46,7 +46,7 @@ class Project_admin extends Controller
 		header('Content-type: application/json');
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			header("Location: front");
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
 			return;
 		}
 		if($_SESSION['admin'] != true) {
