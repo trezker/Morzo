@@ -164,3 +164,7 @@ li.selected:hover {
 .event_list td {
 	padding: 3px;
 }
+
+#recipe .label {
+	text-align: right;
+}
