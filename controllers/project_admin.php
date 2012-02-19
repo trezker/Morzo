@@ -34,6 +34,8 @@ class Project_admin extends Controller
 
 		$this->Load_model('Project_model');
 		$recipe = $this->Project_model->Get_recipe($_POST['id']);
+		$this->Load_model('Location_model');
+		$resources = $this->Location_model->Get_resources();
 
 		ob_start();
 		include '../views/recipe_edit_view.php';

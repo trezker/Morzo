@@ -49,3 +49,20 @@ function save_recipe() {
 		}
 	});
 }
+
+function select_output_resource(id) {
+	$('#output_'+id).prepend($('#resource_select').html())
+	$('#output_'+id+' select').change(id, selected_output_resource);
+	$('#output_'+id+' .resource').css('display', 'none');
+}
+
+function selected_output_resource(e) {
+	console.log(e);
+	var value = $('#output_'+e.data+' select').val();
+	var name = $('#output_'+e.data+' select [value="'+value+'"]').html();
+
+	$('#output_'+e.data+' .resource').html(name);
+	$('#output_'+e.data+' .resource').attr('data-id', value);
+
+	console.log($('#output_'+e.data+' select').val());
+}
