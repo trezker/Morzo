@@ -90,7 +90,7 @@ class Project_model
 
 		if($result_id != -1) {
 			foreach($data['outputs'] as $o) {
-				if($o['id'] != -1) {
+				if($o['id'] != "-1") {
 					$args = array(
 								$o['amount'], 
 								$o['resource_id'],
@@ -102,6 +102,16 @@ class Project_model
 							Resource_ID = ?
 						where ID = ?
 						', $args);
+				} else {
+					$args = array(
+								$o['amount'], 
+								$o['resource_id'],
+								$data['recipe']['id']
+							);
+					$r = $db->Execute('
+						insert into Recipe_output (Amount, Resource_ID, Recipe_ID) values (?, ?, ?)
+						', $args);
+//				var_dump($r);
 				}
 			}
 		}
