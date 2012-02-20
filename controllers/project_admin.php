@@ -64,6 +64,15 @@ class Project_admin extends Controller
 				'allow_fraction_output' => $_POST['allow_fraction_output'],
 				'require_full_cycle' => $_POST['require_full_cycle'],
 			);
+		
+		$data['outputs'] = array();
+		foreach($_POST['outputs'] as $o) {
+			$data['outputs'][] = array(
+					'id' => $o['id'],
+					'amount' => $o['amount'],
+					'resource_id' => $o['resource']
+				);
+		}
 
 		$this->Load_model('Project_model');
 		$id = $this->Project_model->Save_recipe($data);
@@ -80,6 +89,9 @@ class Project_admin extends Controller
 					'Require_full_cycle' => 1
 				);
 		}
+
+		$this->Load_model('Location_model');
+		$resources = $this->Location_model->Get_resources();
 
 		ob_start();
 		include '../views/recipe_edit_view.php';

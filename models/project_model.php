@@ -80,6 +80,24 @@ class Project_model
 			$result_id = $data['recipe']['id'];
 		} else {
 		}
+
+		if($result_id != -1) {
+			foreach($data['outputs'] as $o) {
+				if($o['id'] != -1) {
+					$args = array(
+								$o['amount'], 
+								$o['resource_id'],
+								$o['id']
+							);
+					$r = $db->Execute('
+						update Recipe_output set 
+							Amount = ?,
+							Resource_ID = ?
+						where ID = ?
+						', $args);
+				}
+			}
+		}
 		
 		if(!$recipe) {
 			return false;

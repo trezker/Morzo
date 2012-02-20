@@ -39,9 +39,9 @@
 	<div id="recipe_outputs">
 		<?php
 		$output_template = '
-		<div id="output_{ID}">
+		<div class="output" id="{ID}">
 			<span class="resource action" data-id="{Resource_ID}" onclick="select_output_resource({ID})">{Resource_Name}</span>
-			<input type="number" class="amount" value="{Amount}" />
+			<input class="amount" type="number" value="{Amount}" />
 			<span class="action" onclick="remove_output({ID})">Remove</span>
 		</div>';
 

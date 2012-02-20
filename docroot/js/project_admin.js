@@ -27,6 +27,18 @@ function save_recipe() {
 	var allow_fraction_output = $('#allow_fraction_output').attr('checked');
 	var require_full_cycle = $('#require_full_cycle').attr('checked');
 
+	var outputs = new Array();
+	$('.output').each(
+		function(index, value){
+			var output = {
+					id: value.id,
+					amount: $(value).children('.amount').val(),
+					resource: $(value).children('.resource').attr('data-id')
+				};
+			outputs.push(output);
+		}
+	);
+
 	$.ajax(
 	{
 		type: 'POST',
@@ -36,7 +48,8 @@ function save_recipe() {
 			name: recipe_name,
 			cycle_time: cycle_time,
 			allow_fraction_output: allow_fraction_output,
-			require_full_cycle: require_full_cycle
+			require_full_cycle: require_full_cycle,
+			outputs: outputs
 		},
 		success: function(data)
 		{
@@ -51,18 +64,15 @@ function save_recipe() {
 }
 
 function select_output_resource(id) {
-	$('#output_'+id).prepend($('#resource_select').html())
-	$('#output_'+id+' select').change(id, selected_output_resource);
-	$('#output_'+id+' .resource').css('display', 'none');
+	$('.output#'+id).prepend($('#resource_select').html())
+	$('.output#'+id+' select').change(id, selected_output_resource);
+	$('.output#'+id+' .resource').css('display', 'none');
 }
 
 function selected_output_resource(e) {
-	console.log(e);
-	var value = $('#output_'+e.data+' select').val();
-	var name = $('#output_'+e.data+' select [value="'+value+'"]').html();
+	var value = $('.output#'+e.data+' select').val();
+	var name = $('.output#'+e.data+' select [value="'+value+'"]').html();
 
-	$('#output_'+e.data+' .resource').html(name);
-	$('#output_'+e.data+' .resource').attr('data-id', value);
-
-	console.log($('#output_'+e.data+' select').val());
+	$('.output#'+e.data+' .resource').html(name);
+	$('.output#'+e.data+' .resource').attr('data-id', value);
 }
