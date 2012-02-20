@@ -63,4 +63,9 @@
 			?>
 		</select>
 	</div>
+	<div id="new_output" style="display: none;">
+	<?php
+		echo expand_template($output_template, $recipe['new_output']);
+	?>
+	</div>
 </div>

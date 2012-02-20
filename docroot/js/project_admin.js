@@ -28,7 +28,7 @@ function save_recipe() {
 	var require_full_cycle = $('#require_full_cycle').attr('checked');
 
 	var outputs = new Array();
-	$('.output').each(
+	$('#recipe_outputs .output').each(
 		function(index, value){
 			var output = {
 					id: value.id,
@@ -75,4 +75,29 @@ function selected_output_resource(e) {
 
 	$('.output#'+e.data+' .resource').html(name);
 	$('.output#'+e.data+' .resource').attr('data-id', value);
+}
+
+function add_output() {
+	$('#recipe_outputs').append($('#new_output').html());
+}
+
+function remove_output(id) {
+	if(id == -1) {
+		$('.output#'+id).remove();
+	}
+	$.ajax(
+	{
+		type: 'POST',
+		url: 'project_admin/remove_recipe_output',
+		data: {
+			recipe_id: current_recipe,
+			id: id
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data !== false) {
+				$('.output#'+id).remove();
+			}
+		}
+	});
 }

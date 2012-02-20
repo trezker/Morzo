@@ -42,15 +42,22 @@ class Project_model
 			', array($id));
 
 		$recipe_outputs = $db->Execute('
-			select RO.ID, RO.Recipe_ID, RO.Resource_ID, R.Name AS Resource_Name, RO.Amount
+			select RO.ID, RO.Resource_ID, R.Name AS Resource_Name, RO.Amount
 			from Recipe_output RO
 			join Resource R on R.ID = RO.Resource_ID
 			where RO.Recipe_ID = ?
 			', array($id));
+
+		$new_output = $db->Execute('
+			select -1 AS ID, R.ID AS Resource_ID, R.Name AS Resource_Name, 1 AS Amount
+			from Resource R
+			limit 1
+			', array());
 		
 		$result['recipe'] = $recipe->fields;
 		$result['recipe_inputs'] = $recipe_inputs->GetArray();
 		$result['recipe_outputs'] = $recipe_outputs->GetArray();
+		$result['new_output'] = $new_output->fields;
 
 		return $result;
 	}

@@ -28,7 +28,7 @@ class Project_admin extends Controller
 			return;
 		}
 		if($_SESSION['admin'] != true) {
-			echo "You need to be admin to access this page";
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
 			return;
 		}
 
@@ -36,7 +36,7 @@ class Project_admin extends Controller
 		$recipe = $this->Project_model->Get_recipe($_POST['id']);
 		$this->Load_model('Location_model');
 		$resources = $this->Location_model->Get_resources();
-
+		
 		ob_start();
 		include '../views/recipe_edit_view.php';
 		$edit_recipe_view = ob_get_clean();
@@ -52,7 +52,7 @@ class Project_admin extends Controller
 			return;
 		}
 		if($_SESSION['admin'] != true) {
-			echo "You need to be admin to access this page";
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
 			return;
 		}
 
@@ -98,6 +98,21 @@ class Project_admin extends Controller
 		$edit_recipe_view = ob_get_clean();
 
 		echo json_encode(array('success' => true, 'data' => $edit_recipe_view, 'id' => $id));
+	}
+
+	public function remove_recipe_output() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		echo json_encode(array('success' => false, 'reason' => 'Not implemented'));
 	}
 }
 
