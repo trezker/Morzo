@@ -51,6 +51,22 @@
 		?>
 	</div>
 
+	<span class="action" onclick="add_input()">Add input</span>
+	<div id="recipe_inputs">
+		<?php
+		$input_template = '
+		<div class="input" id="{ID}">
+			<span class="resource action" data-id="{Resource_ID}" onclick="select_input_resource({ID})">{Resource_Name}</span>
+			<input class="amount" type="number" value="{Amount}" />
+			<span class="action" onclick="remove_input({ID})">Remove</span>
+		</div>';
+
+		foreach ($recipe['recipe_inputs'] as $input) {
+			echo expand_template($input_template, $input);
+		}
+		?>
+	</div>
+
 	<div id="resource_select" style="display: none;">
 		<select>
 			<?php
@@ -66,6 +82,11 @@
 	<div id="new_output" style="display: none;">
 	<?php
 		echo expand_template($output_template, $recipe['new_output']);
+	?>
+	</div>
+	<div id="new_input" style="display: none;">
+	<?php
+		echo expand_template($input_template, $recipe['new_input']);
 	?>
 	</div>
 </div>

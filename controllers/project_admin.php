@@ -74,6 +74,16 @@ class Project_admin extends Controller
 				);
 		}
 
+		$data['inputs'] = array();
+		foreach($_POST['inputs'] as $i) {
+			$data['inputs'][] = array(
+					'id' => $i['id'],
+					'amount' => $i['amount'],
+					'resource_id' => $i['resource'],
+					'from_nature' => $i['from_nature']
+				);
+		}
+
 		$this->Load_model('Project_model');
 		$id = $this->Project_model->Save_recipe($data);
 
@@ -114,6 +124,24 @@ class Project_admin extends Controller
 
 		$this->Load_model('Project_model');
 		$success = $this->Project_model->Remove_recipe_output($_POST['recipe_id'], $_POST['id']);
+
+		echo json_encode(array('success' => $success));
+	}
+
+	public function remove_recipe_input() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$this->Load_model('Project_model');
+		$success = $this->Project_model->Remove_recipe_input($_POST['recipe_id'], $_POST['id']);
 
 		echo json_encode(array('success' => $success));
 	}

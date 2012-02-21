@@ -39,6 +39,19 @@ function save_recipe() {
 		}
 	);
 
+	var inputs = new Array();
+	$('#recipe_inputs .input').each(
+		function(index, value){
+			var input = {
+					id: value.id,
+					amount: $(value).children('.amount').val(),
+					resource: $(value).children('.resource').attr('data-id'),
+					from_nature: $(value).children('.from_nature').attr('checked')
+				};
+			inputs.push(input);
+		}
+	);
+
 	$.ajax(
 	{
 		type: 'POST',
@@ -49,7 +62,8 @@ function save_recipe() {
 			cycle_time: cycle_time,
 			allow_fraction_output: allow_fraction_output,
 			require_full_cycle: require_full_cycle,
-			outputs: outputs
+			outputs: outputs,
+			inputs: inputs
 		},
 		success: function(data)
 		{
@@ -63,6 +77,9 @@ function save_recipe() {
 	});
 }
 
+/*
+ * Recipe output
+*/
 function select_output_resource(id) {
 	$('.output#'+id).prepend($('#resource_select').html())
 	$('.output#'+id+' select').change(id, selected_output_resource);
@@ -97,6 +114,48 @@ function remove_output(id) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
 				$('.output#'+id).remove();
+			}
+		}
+	});
+}
+
+/*
+ * Recipe input
+*/
+function select_input_resource(id) {
+	$('.input#'+id).prepend($('#resource_select').html())
+	$('.input#'+id+' select').change(id, selected_input_resource);
+	$('.input#'+id+' .resource').css('display', 'none');
+}
+
+function selected_input_resource(e) {
+	var value = $('.input#'+e.data+' select').val();
+	var name = $('.input#'+e.data+' select [value="'+value+'"]').html();
+
+	$('.input#'+e.data+' .resource').html(name);
+	$('.input#'+e.data+' .resource').attr('data-id', value);
+}
+
+function add_input() {
+	$('#recipe_inputs').append($('#new_input').html());
+}
+
+function remove_input(id) {
+	if(id == -1) {
+		$('.input#'+id).remove();
+	}
+	$.ajax(
+	{
+		type: 'POST',
+		url: 'project_admin/remove_recipe_input',
+		data: {
+			recipe_id: current_recipe,
+			id: id
+		},
+		success: function(data) {
+			if(ajax_logged_in(data)) return;
+			if(data !== false) {
+				$('.input#'+id).remove();
 			}
 		}
 	});
