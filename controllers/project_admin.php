@@ -112,7 +112,10 @@ class Project_admin extends Controller
 			return;
 		}
 
-		echo json_encode(array('success' => false, 'reason' => 'Not implemented'));
+		$this->Load_model('Project_model');
+		$success = $this->Project_model->Remove_recipe_output($_POST['recipe_id'], $_POST['id']);
+
+		echo json_encode(array('success' => $success));
 	}
 }
 

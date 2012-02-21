@@ -111,7 +111,6 @@ class Project_model
 					$r = $db->Execute('
 						insert into Recipe_output (Amount, Resource_ID, Recipe_ID) values (?, ?, ?)
 						', $args);
-//				var_dump($r);
 				}
 			}
 		}
@@ -120,6 +119,22 @@ class Project_model
 			return false;
 		}
 		return $result_id;
+	}
+	
+	public function Remove_recipe_output($recipe_id, $output_id)
+	{
+		$db = Load_database();
+		
+		$args = array($recipe_id, $output_id);
+
+		$r = $db->Execute('
+			delete from Recipe_output 
+			where Recipe_ID = ? and ID = ?
+			', $args);
+		
+		if($db->Affected_rows() > 0)
+			return true;
+		return false;
 	}
 }
 ?>
