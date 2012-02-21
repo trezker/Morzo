@@ -153,7 +153,7 @@ function remove_input(id) {
 			id: id
 		},
 		success: function(data) {
-			if(ajax_logged_in(data)) return;
+			if(ajax_logged_out(data)) return;
 			if(data !== false) {
 				$('.input#'+id).remove();
 			}

@@ -58,10 +58,15 @@
 		<div class="input" id="{ID}">
 			<span class="resource action" data-id="{Resource_ID}" onclick="select_input_resource({ID})">{Resource_Name}</span>
 			<input class="amount" type="number" value="{Amount}" />
+			From nature: <input type="checkbox" class="from_nature" {From_nature_checked} />
 			<span class="action" onclick="remove_input({ID})">Remove</span>
 		</div>';
 
 		foreach ($recipe['recipe_inputs'] as $input) {
+			if($input['From_nature'] == 1)
+				$input['From_nature_checked'] = 'checked=checked';
+			else
+				$input['From_nature_checked'] = '';
 			echo expand_template($input_template, $input);
 		}
 		?>
