@@ -198,8 +198,8 @@ class Actor extends Controller
 		$recipe_list = $this->Project_model->Get_recipes_with_nature_resource($actor_id, $resource_id);
 
 		ob_start();
-//		include '../views/recipe_selection_view.php';
-		var_dump($recipe_list);
+		include '../views/recipe_selection_view.php';
+//		var_dump($recipe_list);
 		$recipe_selection_view = ob_get_clean();
 		
 		echo json_encode(array('success' => true, 'data' => $recipe_selection_view));

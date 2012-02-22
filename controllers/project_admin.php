@@ -36,7 +36,16 @@ class Project_admin extends Controller
 		$recipe = $this->Project_model->Get_recipe($_POST['id']);
 		$this->Load_model('Location_model');
 		$resources = $this->Location_model->Get_resources();
-		
+
+		if($recipe['recipe'] == false) {
+			$recipe['recipe'] = array(
+					'ID' => '-1',
+					'Name' => '',
+					'Cycle_time' => '1',
+					'Allow_fraction_output' => '1',
+					'Require_full_cycle' => '1'
+				);
+		}
 		ob_start();
 		include '../views/recipe_edit_view.php';
 		$edit_recipe_view = ob_get_clean();
@@ -66,22 +75,26 @@ class Project_admin extends Controller
 			);
 		
 		$data['outputs'] = array();
-		foreach($_POST['outputs'] as $o) {
-			$data['outputs'][] = array(
-					'id' => $o['id'],
-					'amount' => $o['amount'],
-					'resource_id' => $o['resource']
-				);
+		if(is_array($_POST['outputs'])) {
+			foreach($_POST['outputs'] as $o) {
+				$data['outputs'][] = array(
+						'id' => $o['id'],
+						'amount' => $o['amount'],
+						'resource_id' => $o['resource']
+					);
+			}
 		}
 
 		$data['inputs'] = array();
-		foreach($_POST['inputs'] as $i) {
-			$data['inputs'][] = array(
-					'id' => $i['id'],
-					'amount' => $i['amount'],
-					'resource_id' => $i['resource'],
-					'from_nature' => $i['from_nature']
-				);
+		if(is_array($_POST['inputs'])) {
+			foreach($_POST['inputs'] as $i) {
+				$data['inputs'][] = array(
+						'id' => $i['id'],
+						'amount' => $i['amount'],
+						'resource_id' => $i['resource'],
+						'from_nature' => $i['from_nature']
+					);
+			}
 		}
 
 		$this->Load_model('Project_model');

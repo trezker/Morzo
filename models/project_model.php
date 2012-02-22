@@ -73,6 +73,8 @@ class Project_model
 	{
 		$db = Load_database();
 
+		$db->StartTrans();
+
 		$result = array();
 		$result_id = -1;
 		
@@ -93,6 +95,17 @@ class Project_model
 				', $args);
 			$result_id = $data['recipe']['id'];
 		} else {
+			$args = array(
+						$data['recipe']['name'], 
+						$data['recipe']['cycle_time'], 
+						($data['recipe']['allow_fraction_output'] == 'true')?1:0, 
+						($data['recipe']['require_full_cycle'] == 'true')?1:0
+					);
+			$recipe = $db->Execute('
+				insert into Recipe (Name, Cycle_time, Allow_fraction_output, Require_full_cycle)
+				values (?, ?, ?, ?)
+				', $args);
+			$result_id = $db->Insert_ID();
 		}
 
 		if($result_id != -1) {
@@ -113,7 +126,7 @@ class Project_model
 					$args = array(
 								$o['amount'], 
 								$o['resource_id'],
-								$data['recipe']['id']
+								$result_id
 							);
 					$r = $db->Execute('
 						insert into Recipe_output (Amount, Resource_ID, Recipe_ID) values (?, ?, ?)
@@ -140,7 +153,7 @@ class Project_model
 					$args = array(
 								$i['amount'], 
 								$i['resource_id'],
-								$data['recipe']['id'],
+								$result_id,
 								($i['from_nature'] == 'true')?1:0
 							);
 					$r = $db->Execute('
@@ -149,10 +162,12 @@ class Project_model
 				}
 			}
 		}
-		
-		if(!$recipe) {
+
+		$success = !$db->HasFailedTrans();
+		$db->CompleteTrans();
+		if($success != true)
 			return false;
-		}
+
 		return $result_id;
 	}
 	

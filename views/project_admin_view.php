@@ -15,13 +15,16 @@
 		<div class="recipes">
 			<h2>Recipes</h2>
 			<div id="recipes">
-				<?php
-				foreach ($recipes as $recipe) {
-					echo expand_template(
-						'<li><span class="action" onclick="edit_recipe({ID});">{Name}</span></li>',
-						$recipe);
-				}
-				?>
+				<ul>
+					<li><span class="action" onclick="edit_recipe(-1);">Create a new recipe</span></li>
+					<?php
+					foreach ($recipes as $recipe) {
+						echo expand_template(
+							'<li><span class="action" onclick="edit_recipe({ID});">{Name}</span></li>',
+							$recipe);
+					}
+					?>
+				</ul>
 			</div>
 		</div>
 
