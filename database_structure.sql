@@ -111,7 +111,7 @@ CREATE TABLE `Actor_name` (
   KEY `Actor_name_fk_Named_actor` (`Named_actor_ID`),
   CONSTRAINT `Actor_name_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Actor_name_fk_Named_actor` FOREIGN KEY (`Named_actor_ID`) REFERENCES `Actor` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,7 +126,7 @@ CREATE TABLE `Biome` (
   `Name` varchar(45) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Name_UNIQUE` (`Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -166,10 +166,10 @@ CREATE TABLE `Event` (
   KEY `Event_fk_To_actor` (`To_actor_ID`),
   KEY `Event_fk_From_location` (`From_location_ID`),
   KEY `Event_fk_To_location` (`To_location_ID`),
-  CONSTRAINT `Event_fk_From_location` FOREIGN KEY (`From_location_ID`) REFERENCES `Location` (`ID`),
-  CONSTRAINT `Event_fk_To_location` FOREIGN KEY (`To_location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Event_fk_From_actor` FOREIGN KEY (`From_actor_ID`) REFERENCES `Actor` (`ID`),
-  CONSTRAINT `Event_fk_To_actor` FOREIGN KEY (`To_actor_ID`) REFERENCES `Actor` (`ID`)
+  CONSTRAINT `Event_fk_From_location` FOREIGN KEY (`From_location_ID`) REFERENCES `Location` (`ID`),
+  CONSTRAINT `Event_fk_To_actor` FOREIGN KEY (`To_actor_ID`) REFERENCES `Actor` (`ID`),
+  CONSTRAINT `Event_fk_To_location` FOREIGN KEY (`To_location_ID`) REFERENCES `Location` (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -224,7 +224,7 @@ CREATE TABLE `Location_name` (
   KEY `Location_name_fk_Location` (`Location_ID`),
   CONSTRAINT `Location_name_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Location_name_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -308,7 +308,7 @@ CREATE TABLE `Recipe` (
   `Require_full_cycle` tinyint(1) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Name_UNIQUE` (`Name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -326,8 +326,10 @@ CREATE TABLE `Recipe_input` (
   `From_nature` tinyint(1) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `Recipe_input_fk_Recipe` (`Recipe_ID`),
-  KEY `Recipe_input_fk_Resource` (`Resource_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  KEY `Recipe_input_fk_Resource` (`Resource_ID`),
+  CONSTRAINT `Recipe_input_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`),
+  CONSTRAINT `Recipe_input_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -345,8 +347,8 @@ CREATE TABLE `Recipe_landscape` (
   UNIQUE KEY `Recipe_landscape_unique` (`Recipe_ID`,`Landscape_ID`),
   KEY `Recipe_landscape_fk_Recipe` (`Recipe_ID`),
   KEY `Recipe_landscape_fk_Landscape` (`Landscape_ID`),
-  CONSTRAINT `Recipe_landscape_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`),
-  CONSTRAINT `Recipe_landscape_fk_Landscape` FOREIGN KEY (`Landscape_ID`) REFERENCES `Landscape` (`ID`)
+  CONSTRAINT `Recipe_landscape_fk_Landscape` FOREIGN KEY (`Landscape_ID`) REFERENCES `Landscape` (`ID`),
+  CONSTRAINT `Recipe_landscape_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -367,7 +369,7 @@ CREATE TABLE `Recipe_output` (
   KEY `Recipe_output_fk_Resource` (`Resource_ID`),
   CONSTRAINT `Recipe_output_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`),
   CONSTRAINT `Recipe_output_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -383,7 +385,7 @@ CREATE TABLE `Resource` (
   `Is_natural` tinyint(1) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Name_UNIQUE` (`Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -408,7 +410,7 @@ CREATE TABLE `Travel` (
   CONSTRAINT `Travel_fk_Actor` FOREIGN KEY (`ActorID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Travel_fk_Destination` FOREIGN KEY (`DestinationID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Travel_fk_Origin` FOREIGN KEY (`OriginID`) REFERENCES `Location` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -498,4 +500,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-02-18 12:27:29
+-- Dump completed on 2012-02-22 20:19:17
