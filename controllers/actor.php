@@ -182,6 +182,26 @@ class Actor extends Controller
 			echo json_encode(array('success' => true));
 		}
 	}
+	
+	function Natural_resource_dialog() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+
+		$this->Load_model('Project_model');
+		
+		$actor_id = $_POST['actor'];
+		$resource_id = $_POST['resource'];
+		$recipe_list = $this->Project_model->Get_recipes_with_nature_resource($actor_id, $resource_id);
+
+		ob_start();
+//		include '../views/recipe_selection_view.php';
+		var_dump($recipe_list);
+		$recipe_selection_view = ob_get_clean();
+		
+		echo json_encode(array('success' => true, 'data' => $recipe_selection_view));
+	}
 }
-
-

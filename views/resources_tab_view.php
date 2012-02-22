@@ -14,7 +14,7 @@
 				';
 		}
 		echo '
-				<td>
+				<td class="action" onclick="get_natural_resource_dialog('.$actor_id.', '.$resource['ID'].')">
 					'.htmlspecialchars($resource['Name']).'
 				</td>
 			';
@@ -22,3 +22,5 @@
 	echo '</tr>';
 	?>
 </table>
+<div id="natural_resource_dialog">
+</div>

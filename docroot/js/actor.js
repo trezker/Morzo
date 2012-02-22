@@ -160,3 +160,23 @@ function speak(actor_id) {
 		}
 	});
 }
+
+function get_natural_resource_dialog(actor_id, resource_id) {
+	$.ajax(
+	{
+		type: 'POST',
+		url: '/actor/Natural_resource_dialog',
+		data: {
+			actor: actor_id,
+			resource: resource_id
+		},
+		dataType: "json",
+		success: function(data)
+		{
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				$('#natural_resource_dialog').html(data.data);
+			}
+		}
+	});
+}

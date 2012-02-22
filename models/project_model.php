@@ -187,5 +187,25 @@ class Project_model
 			return true;
 		return false;
 	}
+	
+	public function Get_recipes_with_nature_resource($actor_id, $resource_id) {
+		$db = Load_database();
+		
+		$args = array($resource_id, $actor_id);
+
+		$r = $db->Execute('
+			select R.ID, R.Name from Recipe R
+			join Recipe_input RI on R.ID = RI.Recipe_ID and RI.Resource_ID = ? and RI.From_nature = 1
+			join Location_resource LR on LR.Resource_ID = RI.Resource_ID
+			join Actor A on A.Location_ID = LR.Location_ID
+			where A.ID = ?
+			', $args);
+		
+		if(!$r) {
+			return false;
+		}
+
+		return $r->GetArray();
+	}
 }
 ?>
