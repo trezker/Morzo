@@ -50,27 +50,5 @@
 			?>
 		</ul>
 	</div>
-
-	<div id="resource_select" style="display: none;">
-		<select>
-			<?php
-			$resource_template = '
-				<option value="{ID}">{Name}</option>
-			';
-			foreach ($resources as $resource) {
-				echo expand_template($resource_template, $resource);
-			}
-			?>
-		</select>
-	</div>
-	<div id="new_output" style="display: none;">
-	<?php
-		echo expand_template($output_template, $recipe['new_output']);
-	?>
-	</div>
-	<div id="new_input" style="display: none;">
-	<?php
-		echo expand_template($input_template, $recipe['new_input']);
-	?>
-	</div>
+	<div class="action" onclick="start_project(<?php echo $actor_id.', '.$recipe['recipe']['ID'];?>)">Start project</div>
 </div>

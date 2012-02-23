@@ -101,6 +101,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 		$r = $this->Actor_model->Change_actor_name($actor_id, $named_actor_id, $new_name);
 		if($r == false) {
@@ -193,9 +194,15 @@ class Actor extends Controller
 
 		$this->Load_model('Project_model');
 		
-		$actor_id = $_POST['actor'];
+		$actor_id = $_POST['actor_id'];
 		$resource_id = $_POST['resource'];
 		$recipe_list = $this->Project_model->Get_recipes_with_nature_resource($actor_id, $resource_id);
+
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
+		}
 
 		ob_start();
 		include '../views/recipe_selection_view.php';
@@ -215,6 +222,12 @@ class Actor extends Controller
 		}
 		
 		$recipe_id = $_POST['recipe_id'];
+		$actor_id = $_POST['actor_id'];
+
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
 
 		$this->Load_model('Project_model');
 		$recipe = $this->Project_model->Get_recipe($recipe_id);

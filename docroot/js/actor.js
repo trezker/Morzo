@@ -167,7 +167,7 @@ function get_natural_resource_dialog(actor_id, resource_id) {
 		type: 'POST',
 		url: '/actor/Natural_resource_dialog',
 		data: {
-			actor: actor_id,
+			actor_id: actor_id,
 			resource: resource_id
 		},
 		dataType: "json",
@@ -188,7 +188,7 @@ function show_project_start_form(actor_id, id)
 		type: 'POST',
 		url: '/actor/Start_project_form',
 		data: {
-			actor: actor_id,
+			actor_id: actor_id,
 			recipe_id: id
 		},
 		dataType: "json",
@@ -198,6 +198,28 @@ function show_project_start_form(actor_id, id)
 			if(data.success == true) {
 				$('#natural_resource_dialog').append(data.data);
 				$('#recipe_'+id).addClass('selected');
+			}
+		}
+	});
+}
+
+function start_project(actor_id, recipe_id)
+{
+	$.ajax(
+	{
+		type: 'POST',
+		url: '/actor/Start_project',
+		data: {
+			actor: actor_id,
+			recipe_id: recipe_id
+		},
+		dataType: "json",
+		success: function(data)
+		{
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+//				$('#natural_resource_dialog').append(data.data);
+//				$('#recipe_'+id).addClass('selected');
 			}
 		}
 	});
