@@ -204,4 +204,25 @@ class Actor extends Controller
 		
 		echo json_encode(array('success' => true, 'data' => $recipe_selection_view));
 	}
+	
+	function Start_project_form()
+	{
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		
+		$recipe_id = $_POST['recipe_id'];
+
+		$this->Load_model('Project_model');
+		$recipe = $this->Project_model->Get_recipe($recipe_id);
+		
+		ob_start();
+		include '../views/start_project_view.php';
+		$start_project_view = ob_get_clean();
+
+		echo json_encode(array('success' => true, 'data' => $start_project_view));
+	}
 }
