@@ -80,7 +80,7 @@ class Actor extends Controller
 			$tab_view = $this->Load_view('projects_tab_view', array('projects' => $projects), true);
 		}
 		
-		$this->Load_view('actor_view', array('tab_view' => $tab_view, 'time' => $time, 'actor' => $actor), false);
+		$this->Load_view('actor_view', array('tab' => $tab, 'actor_id' => $actor_id, 'tab_view' => $tab_view, 'time' => $time, 'actor' => $actor), false);
 	}
 	
 	public function Change_actor_name()
@@ -114,19 +114,6 @@ class Actor extends Controller
 		}
 	}
 
-	public function Actors()
-	{	
-		if(!$this->Logged_in()) {
-			header("Location: front");
-			return;
-		}
-
-		$this->Load_model('Actor_model');
-		$actors = $this->Actor_model->Get_actors($_SESSION['userid']);
-
-		include '../views/actors_view.php';
-	}
-	
 	private function Update_travel($actor_id) {
 		$this->Load_model("Travel_model");
 
@@ -192,7 +179,6 @@ class Actor extends Controller
 		
 		$actor_id = $_POST['actor_id'];
 		$resource_id = $_POST['resource'];
-		$recipe_list = $this->Project_model->Get_recipes_with_nature_resource($actor_id, $resource_id);
 
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
@@ -200,10 +186,9 @@ class Actor extends Controller
 			return;
 		}
 
-		ob_start();
-		include '../views/recipe_selection_view.php';
-//		var_dump($recipe_list);
-		$recipe_selection_view = ob_get_clean();
+		$recipe_list = $this->Project_model->Get_recipes_with_nature_resource($actor_id, $resource_id);
+
+		$recipe_selection_view = $this->Load_view('recipe_selection_view', array('recipe_list' => $recipe_list, 'actor_id' => $actor_id), true);
 		
 		echo json_encode(array('success' => true, 'data' => $recipe_selection_view));
 	}
@@ -228,9 +213,7 @@ class Actor extends Controller
 		$this->Load_model('Project_model');
 		$recipe = $this->Project_model->Get_recipe($recipe_id);
 		
-		ob_start();
-		include '../views/start_project_view.php';
-		$start_project_view = ob_get_clean();
+		$start_project_view = $this->Load_view('start_project_view', array('recipe' => $recipe, 'actor_id' => $actor_id), true);
 
 		echo json_encode(array('success' => true, 'data' => $start_project_view));
 	}
