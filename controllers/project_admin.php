@@ -17,7 +17,7 @@ class Project_admin extends Controller
 
 		$this->Load_model('Project_model');
 		$recipes = $this->Project_model->Get_recipes();
-		include '../views/project_admin_view.php';
+		$this->Load_view('project_admin_view', array('recipes' => $recipes));
 	}
 	
 	public function edit_recipe() {
@@ -46,9 +46,8 @@ class Project_admin extends Controller
 					'Require_full_cycle' => '1'
 				);
 		}
-		ob_start();
-		include '../views/recipe_edit_view.php';
-		$edit_recipe_view = ob_get_clean();
+		$edit_recipe_view = $this->Load_view('recipe_edit_view',array('resources' => $resources, 
+																		'recipe' => $recipe), true);
 
 		echo json_encode(array('success' => true, 'data' => $edit_recipe_view));
 	}
@@ -116,9 +115,8 @@ class Project_admin extends Controller
 		$this->Load_model('Location_model');
 		$resources = $this->Location_model->Get_resources();
 
-		ob_start();
-		include '../views/recipe_edit_view.php';
-		$edit_recipe_view = ob_get_clean();
+		$edit_recipe_view = $this->Load_view('recipe_edit_view',array('resources' => $resources, 
+																		'recipe' => $recipe), true);
 
 		echo json_encode(array('success' => true, 'data' => $edit_recipe_view, 'id' => $id));
 	}
