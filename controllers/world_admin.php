@@ -41,10 +41,10 @@ class World_admin extends Controller
 		$landscapes = $this->Location_model->Get_landscapes();
 
 		$biomes = $this->Location_model->Get_biomes();
-		$biomes_view = $this->Load_view('biomes_view', array('biomes' => $biomes), true);
+		$biomes_view = $this->Load_view('biomes_view', array('biomes' => $biomes, 'location' => $location), true);
 
 		$resources = $this->Location_model->Get_resources();
-		$resources_view = $this->Load_view('resources_view', array('resources' => $resources), true);
+		$resources_view = $this->Load_view('resources_view', array('resources' => $resources, 'location_resources' => $location_resources), true);
 		
 		$location_admin_view = $this->Load_view('location_edit_view', 
 												array('biomes_view' => $biomes_view,
