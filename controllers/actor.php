@@ -59,38 +59,28 @@ class Actor extends Controller
 			}
 			$this->Load_controller('Location');
 			$locations = $this->Location->Get_neighbouring_locations($actor_id);
-			ob_start();
-			include '../views/locations_tab_view.php';
-			$tab_view = ob_get_clean();
+			$tab_view = $this->Load_view('locations_tab_view', array('locations' => $locations, 'travel' => $travel, 'actor' => $actor), true);
 		} elseif ($tab == 'people') {
 			$actors = $this->Actor_model->Get_visible_actors($actor_id);
-			ob_start();
-			include '../views/people_tab_view.php';
-			$tab_view = ob_get_clean();
+			$tab_view = $this->Load_view('people_tab_view', array('actors' => $actors), true);
 		} elseif ($tab == 'events') {
 			$this->Load_model("Event_model");
 			$events = $this->Event_model->Get_events($actor_id);
 			foreach ($events as $key => $event) {
 				$events[$key]['Time_values'] = $this->Update->Get_time_units($event['Ingame_time']);
 			}
-			ob_start();
-			include '../views/events_tab_view.php';
-			$tab_view = ob_get_clean();
+			$tab_view = $this->Load_view('events_tab_view', array('events' => $events, 'actor_id' => $actor_id), true);
 		} elseif ($tab == 'resources') {
 			$this->Load_model("Location_model");
 			$resources = $this->Location_model->Get_location_resources($actor['Location_ID']);
-			ob_start();
-			include '../views/resources_tab_view.php';
-			$tab_view = ob_get_clean();
+			$tab_view = $this->Load_view('resources_tab_view', array('resources' => $resources, 'actor_id' => $actor_id), true);
 		} elseif ($tab == 'projects') {
 			$this->Load_model("Project_model");
 			$projects = $this->Project_model->Get_projects($actor_id);
-			ob_start();
-			include '../views/projects_tab_view.php';
-			$tab_view = ob_get_clean();
+			$tab_view = $this->Load_view('projects_tab_view', array('projects' => $projects), true);
 		}
-
-		include '../views/actor_view.php';
+		
+		$this->Load_view('actor_view', array('tab_view' => $tab_view, 'time' => $time, 'actor' => $actor), false);
 	}
 	
 	public function Change_actor_name()
