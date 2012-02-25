@@ -260,17 +260,20 @@ DROP TABLE IF EXISTS `Project`;
 CREATE TABLE `Project` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `Creator_actor_ID` bigint(20) NOT NULL,
+  `Location_ID` bigint(20) NOT NULL,
   `Recipe_ID` bigint(20) NOT NULL,
   `Cycles_left` int(11) NOT NULL,
   `Created_time` bigint(20) NOT NULL,
-  `Progress` int(11) NOT NULL,
-  `Active` tinyint(1) NOT NULL,
+  `Progress` int(11) NOT NULL DEFAULT '0',
+  `Active` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`),
   KEY `Project_fk_Creator` (`Creator_actor_ID`),
   KEY `Project_fk_Recipe` (`Recipe_ID`),
+  KEY `Project_fk_Location` (`Location_ID`),
+  CONSTRAINT `Project_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Project_fk_Creator` FOREIGN KEY (`Creator_actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Project_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -500,4 +503,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-02-22 20:19:17
+-- Dump completed on 2012-02-25  8:27:15

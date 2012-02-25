@@ -210,7 +210,7 @@ function start_project(actor_id, recipe_id)
 		type: 'POST',
 		url: '/actor/Start_project',
 		data: {
-			actor: actor_id,
+			actor_id: actor_id,
 			recipe_id: recipe_id
 		},
 		dataType: "json",

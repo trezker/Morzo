@@ -238,4 +238,27 @@ class Actor extends Controller
 
 		echo json_encode(array('success' => true, 'data' => $start_project_view));
 	}
+
+	function Start_project()
+	{
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		
+		$recipe_id = $_POST['recipe_id'];
+		$actor_id = $_POST['actor_id'];
+
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+
+		$this->Load_model('Project_model');
+		$success = $this->Project_model->Start_project($actor_id, $recipe_id);
+
+		echo json_encode(array('success' => $success));
+	}
 }

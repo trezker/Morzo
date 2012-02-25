@@ -222,5 +222,30 @@ class Project_model
 
 		return $r->GetArray();
 	}
+	
+	public function Start_project($actor_id, $recipe_id)
+	{
+		$db = Load_database();
+		
+		$args = array($recipe_id, $actor_id);
+
+		//Figure out if you're allowed to create the project
+		
+		//Create the project
+		$r = $db->Execute('
+			insert into Project (Creator_actor_ID, Location_ID, Recipe_ID, Cycles_left, Created_time)
+			select A.ID, A.Location_ID, ?, 1, C.Value
+			from Count C, Actor A where 
+			C.Name = \'Update\' and A.ID = ?
+			', $args);
+		
+		if(!$r) {
+			return false;
+		}
+
+		//Add neccessary resources from actor inventory
+
+		return true;
+	}
 }
 ?>
