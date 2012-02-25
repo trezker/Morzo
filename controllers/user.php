@@ -27,7 +27,7 @@ class User extends Controller
 		$this->Load_model('Actor_model');
 		$actors = $this->Actor_model->Get_actors($_SESSION['userid']);
 
-		include '../views/user_view.php';
+		$this->Load_view('user_view', array('actors' => $actors));
 	}
 
 	public function Start_openid_login()
@@ -50,7 +50,7 @@ class User extends Controller
 			return;
 		}
 
-		$url = $auth->redirectURL($GLOBALS['base_url'], $GLOBALS['base_url'].'/user/Finish_openid_login');
+		$url = $auth->redirectURL($GLOBALS['base_url'], $GLOBALS['base_url'].'user/Finish_openid_login');
 		$_SESSION['OPENID'] = $_POST['openid'];
 		echo json_encode(array('success' => true, 'redirect_url' => $url));
 	}
@@ -62,7 +62,7 @@ class User extends Controller
 
 		$store = new Auth_OpenID_FileStore('../oid_store');
 		$consumer = new Auth_OpenID_Consumer($store);
-		$response = $consumer->complete($GLOBALS['base_url'].'/user/Finish_openid_login');
+		$response = $consumer->complete($GLOBALS['base_url'].'user/Finish_openid_login');
 
 		if ($response->status == Auth_OpenID_SUCCESS) {
 			$this->Login_openid($_SESSION['OPENID']);
@@ -105,7 +105,7 @@ class User extends Controller
 	}
 	
 	private function Sign_up() {
-		include '../views/signup_view.php';
+		$this->Load_view('signup_view');
 	}
 	
 	public function Create_user() {
