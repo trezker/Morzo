@@ -1,15 +1,8 @@
 <?php
+require_once "../controllers/controller.php";
 
-class Front
+class Front extends Controller
 {
-	function __construct()
-	{
-	}
-
-	function __destruct()
-	{
-	}
-
 	public function Index()
 	{
 		if(isset($_SESSION['userid']))
@@ -18,10 +11,10 @@ class Front
 			return;
 		}
 
-		include '../views/front_view.php';
+		$this->Load_view('front_view');
 	}
 	
 	public function Get_login_view() {
-		include '../views/login_view.php';
+		$this->Load_view('login_view');
 	}
 }
