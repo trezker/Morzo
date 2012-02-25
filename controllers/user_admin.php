@@ -18,7 +18,7 @@ class User_admin extends Controller
 		$this->Load_model('User_model');
 		$users = $this->User_model->Get_users();
 		
-		include '../views/user_admin_view.php';
+		$this->Load_view('user_admin_view', array('users' => $users));
 	}
 	
 	public function Kick_user()
