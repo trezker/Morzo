@@ -17,7 +17,7 @@ class World_admin extends Controller
 
 		$this->Load_model('Location_model');
 		$locations = $this->Location_model->Get_deficient_locations();
-		include '../views/world_admin_view.php';
+		$this->Load_view('world_admin_view', array('locations' => $locations));
 	}
 	
 	public function Edit_location()
@@ -41,9 +41,12 @@ class World_admin extends Controller
 		$biomes = $this->Location_model->Get_biomes();
 		$landscapes = $this->Location_model->Get_landscapes();
 		$resources = $this->Location_model->Get_resources();
-		ob_start();
-		include '../views/location_edit_view.php';
-		$location_admin_view = ob_get_clean();
+		$location_admin_view = $this->Load_view('location_edit_view', 
+												array('biomes' => $biomes,
+												'landscapes' => $landscapes,
+												'resources' => $resources,
+												'location' => $location,
+												'location_resources' => $location_resources), true);
 
 		echo json_encode(array('success' => true, 'data' => $location_admin_view));
 	}
@@ -65,9 +68,8 @@ class World_admin extends Controller
 		$location_resources = $this->Location_model->Get_location_resources($_POST['location'], $_POST['landscape']);
 		$resources = $this->Location_model->Get_resources();
 
-		ob_start();
-		include '../views/resources_view.php';
-		$resources_view = ob_get_clean();
+		$resources_view = $this->Load_view('resources_view', array('resources' => $resources,
+																'location_resources' => $location_resources), true);
 
 		echo json_encode(array('success' => true, 'data' => $resources_view));
 	}
@@ -95,9 +97,7 @@ class World_admin extends Controller
 			return;
 		}
 		$biomes = $this->Location_model->Get_biomes();
-		ob_start();
-		include '../views/biomes_view.php';
-		$biomes_view = ob_get_clean();
+		$biomes_view = $this->Load_view('biomes_view', array('biomes' => $biomes), true);
 
 		echo json_encode(array('success' => true, 'data' => $biomes_view));
 	}
@@ -125,9 +125,7 @@ class World_admin extends Controller
 			return;
 		}
 		$resources = $this->Location_model->Get_resources();
-		ob_start();
-		include '../views/resources_view.php';
-		$resources_view = ob_get_clean();
+		$resources_view = $this->Load_view('resources_view', array('resources' => $resources), true);
 
 		echo json_encode(array('success' => true, 'data' => $resources_view));
 	}
