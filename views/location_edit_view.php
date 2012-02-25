@@ -3,7 +3,7 @@
 <div style="float: left;">
 	<h3 class="list_title">Biome</h3>
 	<div id="biome_list">
-		<?php include '../views/biomes_view.php'; ?>
+		<?php echo $biomes_view; ?>
 	</div>
 	<input type="text" id="new_biome" />
 	<br/><span class="action" onclick="add_biome();">Add biome</span>
