@@ -82,6 +82,12 @@ class Actor extends Controller
 			ob_start();
 			include '../views/resources_tab_view.php';
 			$tab_view = ob_get_clean();
+		} elseif ($tab == 'projects') {
+			$this->Load_model("Project_model");
+			$projects = $this->Project_model->Get_projects($actor_id);
+			ob_start();
+			include '../views/projects_tab_view.php';
+			$tab_view = ob_get_clean();
 		}
 
 		include '../views/actor_view.php';

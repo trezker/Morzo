@@ -51,6 +51,9 @@
 			<li <?php if($tab=="resources") echo 'class="current"';?> onclick="load_tab('resources', <?=$actor_id?>)">
 				Resources
 			</li>
+			<li <?php if($tab=="projects") echo 'class="current"';?> onclick="load_tab('projects', <?=$actor_id?>)">
+				Projects
+			</li>
 		</ul>
 		<div id="tab_content" style="clear: both;">
 			<?=$tab_view?>

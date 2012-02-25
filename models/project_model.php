@@ -247,5 +247,36 @@ class Project_model
 
 		return true;
 	}
+	
+	public function Get_projects($actor_id)
+	{
+		$db = Load_database();
+		
+		$args = array($actor_id);
+
+		$r = $db->Execute('
+			select
+				P.ID,
+				P.Creator_actor_ID,
+				P.Recipe_ID,
+				R.Name as Recipe_Name,
+				R.Cycle_time,
+				P.Cycles_left,
+				P.Created_time,
+				P.Progress,
+				P.Active
+			from Project P
+			join Recipe R on R.ID = P.Recipe_ID
+			join Location L on L.ID = P.Location_ID
+			join Actor A on L.ID = A.Location_ID
+			where A.ID = ?
+			', $args);
+		
+		if(!$r) {
+			return false;
+		}
+
+		return $r->GetArray();;
+	}
 }
 ?>
