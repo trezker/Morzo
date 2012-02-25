@@ -21,7 +21,7 @@
 	?>
 	</select> 
 	<div id="resource_list">
-		<?php include '../views/resources_view.php'; ?>
+		<?php echo $resources_view; ?>
 	</div>
 	<input type="text" id="new_resource" />
 	<br/><span class="action" onclick="add_resource();">Add resource</span>

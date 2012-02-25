@@ -40,12 +40,15 @@ class World_admin extends Controller
 			$location['Biome_name'] = "N/A";
 		$biomes = $this->Location_model->Get_biomes();
 		$landscapes = $this->Location_model->Get_landscapes();
+
 		$resources = $this->Location_model->Get_resources();
+		$resources_view = $this->Load_view('resources_view', array('resources' => $resources), true);
+		
 		$location_admin_view = $this->Load_view('location_edit_view', 
 												array('biomes' => $biomes,
 												'landscapes' => $landscapes,
-												'resources' => $resources,
 												'location' => $location,
+												'resources_view' => $resources_view,
 												'location_resources' => $location_resources), true);
 
 		echo json_encode(array('success' => true, 'data' => $location_admin_view));

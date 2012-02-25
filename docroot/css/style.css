@@ -78,7 +78,6 @@ li.selectable:hover {
 li.selected {
 	cursor: pointer;
 	background: #AAAAFF;
-	display: inline;
 }
 
 li.selected:hover {
