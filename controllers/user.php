@@ -51,7 +51,6 @@ class User extends Controller
 		}
 
 		$url = $auth->redirectURL($GLOBALS['base_url'], $GLOBALS['base_url'].'user/Finish_openid_login');
-		$_SESSION['OPENID'] = $_POST['openid'];
 		echo json_encode(array('success' => true, 'redirect_url' => $url));
 	}
 
@@ -64,8 +63,9 @@ class User extends Controller
 		$consumer = new Auth_OpenID_Consumer($store);
 		$response = $consumer->complete($GLOBALS['base_url'].'user/Finish_openid_login');
 
-		if ($response->status == Auth_OpenID_SUCCESS) {
-			$this->Login_openid($_SESSION['OPENID']);
+  		if ($response->status == Auth_OpenID_SUCCESS) {
+			$_SESSION['OPENID'] = $response->identity_url;
+			$this->Login_openid($response->identity_url);
 		} else {
 			if ($response->status == Auth_OpenID_CANCEL) {
 				// This means the authentication was cancelled.
