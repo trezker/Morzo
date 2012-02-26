@@ -8,15 +8,9 @@ $base_url = "$protocol://$host/";
 $GLOBALS['base_url'] = $base_url;
 
 require_once '../util/htmltemplate.php';
+require_once '../util/log.php';
 
-/* 1. parse the URL */
 $argv = explode("/",$_SERVER['PATH_INFO']);
-
-/* 2 security check */
-//    [omitted for the sake of simplicity]
-
-/* 3 populate the page with uniqid's content */
-//    [omitted for the sake of simplicity]
 
 $memcache;
 $memcache = new Memcache;	
