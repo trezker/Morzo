@@ -11,7 +11,9 @@ class User_model
 		$query = '
 			SELECT
 				u.ID,
-				u.Username
+				u.Username,
+				u.Banned_from,
+				u.Banned_to
 			FROM User u
 			JOIN User_openID uo ON uo.UserID = u.ID
 			WHERE uo.OpenID = ?';
@@ -23,6 +25,15 @@ class User_model
 		if($rs->RecordCount()!=1)
 		{
 			return 'Not found';
+		}
+		
+		$banned_from = strtotime($rs->fields['Banned_from']);
+		$banned_to = strtotime($rs->fields['Banned_to']);
+		$now = time();
+
+		if($banned_from != NULL && $banned_from <= $now
+		&& ($banned_to == NULL || $banned_to > $now)) {
+			return 'Banned';
 		}
 
 		$l = $this->Login($rs->fields['ID']);

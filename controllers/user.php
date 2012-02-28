@@ -99,7 +99,7 @@ class User extends Controller
 			$_SESSION['OPENID_AUTH'] = true;
 			$this->Sign_up();
 		} else {
-			echo 'TODO: openid login failure';
+			echo 'TODO: openid login failure. '.$r;
 			//header('Location: /front')
 		}
 	}
