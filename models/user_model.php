@@ -130,7 +130,7 @@ class User_model
 		$db = Load_database();
 
 		$rs = $db->Execute('
-			select U.ID, U.Username
+			select U.ID, U.Username, U.Banned_from, U.Banned_to
 			from User U
 			', array());
 		if(!$rs)
@@ -167,6 +167,30 @@ class User_model
 			return false;
 		}
 		return $rs->fields['Session_ID'];
+	}
+
+	public function Set_ban($user_id, $to_date)
+	{
+		$db = Load_database();
+		if($to_date == "") {
+			$to_date = NULL;
+		}
+
+		$rs = $db->Execute('
+			update User set Banned_from = NOW(), Banned_to = ?
+			where ID = ?
+			', array($to_date, $user_id));
+		if(!$rs)
+		{
+			echo $db->ErrorMsg();
+			return false;
+		}
+
+		if($db->Affected_rows() == 0)
+		{
+			return false;
+		}
+		return true;
 	}
 }
 
