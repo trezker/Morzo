@@ -83,6 +83,8 @@ function save_recipe() {
 function select_output_resource(id) {
 	$('.output#'+id).prepend($('#resource_select').html())
 	$('.output#'+id+' select').change(id, selected_output_resource);
+	var resource_id = $('.output#'+id+' .resource').attr('data-id');
+	$('.output#'+id+' select').val(resource_id);
 	$('.output#'+id+' .resource').css('display', 'none');
 }
 
@@ -125,6 +127,8 @@ function remove_output(id) {
 function select_input_resource(id) {
 	$('.input#'+id).prepend($('#resource_select').html())
 	$('.input#'+id+' select').change(id, selected_input_resource);
+	var resource_id = $('.input#'+id+' .resource').attr('data-id');
+	$('.input#'+id+' select').val(resource_id);
 	$('.input#'+id+' .resource').css('display', 'none');
 }
 

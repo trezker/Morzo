@@ -29,7 +29,7 @@ class Project_model
 			select ID, Name, Cycle_time, Allow_fraction_output, Require_full_cycle from Recipe
 			where ID = ?
 			', array($id));
-		
+
 		if(!$recipe) {
 			return false;
 		}
@@ -59,7 +59,7 @@ class Project_model
 			from Resource R
 			limit 1
 			', array());
-		
+
 		$result['recipe'] = $recipe->fields;
 		$result['recipe_inputs'] = $recipe_inputs->GetArray();
 		$result['recipe_outputs'] = $recipe_outputs->GetArray();
@@ -145,7 +145,7 @@ class Project_model
 					$r = $db->Execute('
 						update Recipe_input set 
 							Amount = ?,
-							Resource_ID = ?
+							Resource_ID = ?,
 							From_nature = ?
 						where ID = ?
 						', $args);

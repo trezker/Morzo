@@ -6,7 +6,7 @@
 	if($recipe['recipe']['Allow_fraction_output'] == 1)
 		$recipe['recipe']['Allow_fraction_output_checked'] = 'checked=checked';
 	else
-		$recipe['recipe']['Require_full_cycle_checked'] = '';
+		$recipe['recipe']['Allow_fraction_output_checked'] = '';
 
 	if($recipe['recipe']['Require_full_cycle'] == 1)
 		$recipe['recipe']['Require_full_cycle_checked'] = 'checked=checked';

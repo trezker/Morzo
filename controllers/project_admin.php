@@ -98,6 +98,10 @@ class Project_admin extends Controller
 
 		$this->Load_model('Project_model');
 		$id = $this->Project_model->Save_recipe($data);
+		
+		if($id == false) {
+			$id = $_POST['id'];
+		}
 
 		if($id != -1) {
 			$recipe = $this->Project_model->Get_recipe($id);
@@ -117,7 +121,6 @@ class Project_admin extends Controller
 
 		$edit_recipe_view = $this->Load_view('recipe_edit_view',array('resources' => $resources, 
 																		'recipe' => $recipe), true);
-
 		echo json_encode(array('success' => true, 'data' => $edit_recipe_view, 'id' => $id));
 	}
 
