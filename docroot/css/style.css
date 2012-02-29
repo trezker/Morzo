@@ -178,3 +178,14 @@ li.selected:hover {
 #recipe .label {
 	text-align: right;
 }
+
+.user_admin_list {
+	border-width: 0px;
+	border-spacing: 0px;
+	border-collapse: collapse;
+}
+
+.user_admin_list td{
+	border: 1px solid #000;
+	padding: 0px 3px;
+}

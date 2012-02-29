@@ -12,14 +12,19 @@
 		<h1>User administration</h1>
 		<p><a class="action" href="user">Back</a></p>
 		<div id="users">
+			<table class="user_admin_list">
 			<?php
-			$template = '<li>' . 
-				'{Username}' . 
-				'<span class="action" onclick="login_as({ID}, \'{Username}\');">Login as </span>' .
-				'<span class="action" onclick="kick_user({ID});">Kick</span>' .
-				'{Banned_text}<input type="text" id="ban_to_date{ID}" value="" /><span class="action" onclick="ban_user({ID});">Set ban</span>' .
-				'</li>';
+			$template = '
+				<tr class="{alternate}">
+					<td>{Username}</td>
+					<td><span class="action" onclick="login_as({ID}, \'{Username}\');">Login as </span></td>
+					<td><span class="action" onclick="kick_user({ID});">Kick</span></td>
+					<td>{Banned_text}</td>
+					<td><input type="text" id="ban_to_date{ID}" value="" /><span class="action" onclick="ban_user({ID});">Set ban</span></td>
+				</tr>';
+			$alternate = '';
 			foreach ($users as $user) {
+				$alternate = ($alternate == 'alternate1')? 'alternate2': 'alternate1';
 				$user['Banned_text'] = '';
 				if($user['Banned_from'] != NULL) {
 					$user['Banned_text'] = "Banned from ".$user['Banned_from'];
@@ -29,9 +34,11 @@
 						$user['Banned_text'] .= " indefinitely.";
 					}
 				}
+				$user['alternate'] = $alternate;
 				echo expand_template($template, $user);
 			}
 			?>
+			</table>
 		</div>
 	</body>
 </html>
