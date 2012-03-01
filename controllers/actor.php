@@ -360,4 +360,30 @@ class Actor extends Controller
 			echo json_encode(array('success' => true));
 		}
 	}
+
+	public function Whisper() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		$actor_id = $_POST['actor_id'];
+		$whispree_id = $_POST['whispree_id'];
+		$message = $_POST['message'];
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+		
+		$this->Load_model('Event_model');
+		$r = $this->Event_model->Save_event($actor_id, $whispree_id, '{From_actor_name} whispered to {To_actor_name}: '.$message, NULL, NULL, true);
+		if($r == false) {
+			echo json_encode(array('success' => false, 'reason' => 'Could not save your message'));
+			return;
+		}
+		else {
+			echo json_encode(array('success' => true));
+		}
+	}
 }

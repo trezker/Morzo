@@ -244,3 +244,36 @@ function point_at_actor(actor_id, pointee_id) {
 		}
 	});
 }
+
+whispree_id = -1;
+function show_whisper(whispree) {
+	$('#whisper_dialog').show();
+	whispree_id = whispree;
+}
+
+function whisper(actor_id) {
+	var message = $('#whisper_message').val();
+	if(message == '')
+		return;
+	$('#whisper_dialog').hide();
+	$('#event_feedback').html("Sending...");
+
+	$.ajax(
+	{
+		type: 'POST',
+		url: '/actor/Whisper',
+		data: {
+			actor_id: actor_id,
+			whispree_id: whispree_id,
+			message: message
+		},
+		dataType: "json",
+		success: function(data)
+		{
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = '/actor/show_actor/'+actor_id+'/events';
+			}
+		}
+	});
+}

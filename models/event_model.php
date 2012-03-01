@@ -40,7 +40,7 @@ class Event_model
 		return false;
 	}
 
-	public function Save_event($from_actor_id, $to_actor_id, $message, $from_location = NULL, $to_location = NULL) {
+	public function Save_event($from_actor_id, $to_actor_id, $message, $from_location = NULL, $to_location = NULL, $private = false) {
 		$db = Load_database();
 
 		$db->StartTrans();
@@ -51,16 +51,38 @@ class Event_model
 		
 		$event_id = $db->Insert_ID();
 
-		$rs = $db->Execute('
-			insert into Actor_event(Actor_ID, Event_ID)
-			select B.ID, ? from Actor A
-			join Actor B on A.Location_ID = B.Location_ID
-			where A.ID = ?
-			', array($event_id, $from_actor_id));
-		
-		if($db->Affected_rows() == 0) {
-			$db->FailTrans();
+		if($private == false) {
+			$rs = $db->Execute('
+				insert into Actor_event(Actor_ID, Event_ID)
+				select B.ID, ? from Actor A
+				join Actor B on A.Location_ID = B.Location_ID
+				where A.ID = ?
+				', array($event_id, $from_actor_id));
+			if($db->Affected_rows() == 0) {
+				$db->FailTrans();
+			}
+		} else {
+			$rs = $db->Execute('
+				insert into Actor_event(Actor_ID, Event_ID)
+				values(?, ?)
+				', array($from_actor_id, $event_id));
+
+			if($db->Affected_rows() != 1) {
+				$db->FailTrans();
+			}
+			
+			if($to_actor_id != NULL) {
+				$rs = $db->Execute('
+					insert into Actor_event(Actor_ID, Event_ID)
+					values(?, ?)
+					', array($to_actor_id, $event_id));
+
+				if($db->Affected_rows() != 1) {
+					$db->FailTrans();
+				}
+			}
 		}
+		
 		$success = !$db->HasFailedTrans();
 		$db->CompleteTrans();
 		return $success;
