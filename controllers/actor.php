@@ -61,7 +61,7 @@ class Actor extends Controller
 			$tab_view = $this->Load_view('locations_tab_view', array('locations' => $locations, 'travel' => $travel, 'actor' => $actor), true);
 		} elseif ($tab == 'people') {
 			$actors = $this->Actor_model->Get_visible_actors($actor_id);
-			$tab_view = $this->Load_view('people_tab_view', array('actors' => $actors), true);
+			$tab_view = $this->Load_view('people_tab_view', array('actors' => $actors, 'actor_id' => $actor_id), true);
 		} elseif ($tab == 'events') {
 			$this->Load_model("Event_model");
 			$events = $this->Event_model->Get_events($actor_id);
@@ -334,5 +334,30 @@ class Actor extends Controller
 		unset($location);
 		usort($locations, 'compare_direction');
 		return $locations;
+	}
+	
+	public function Point_at_actor() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		$actor_id = $_POST['actor_id'];
+		$pointee_id = $_POST['pointee_id'];
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+		
+		$this->Load_model('Event_model');
+		$r = $this->Event_model->Save_event($actor_id, $pointee_id, '{From_actor_name} pointed at {To_actor_name}');
+		if($r == false) {
+			echo json_encode(array('success' => false, 'reason' => 'Could not save your message'));
+			return;
+		}
+		else {
+			echo json_encode(array('success' => true));
+		}
 	}
 }

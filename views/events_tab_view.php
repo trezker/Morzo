@@ -5,9 +5,13 @@
 	<?php
 	$actor_name_template = "<span class='action' onclick='set_actor_changer(\"{id}\");'>{name}</span>";
 	$location_name_template = "<span class='action' onclick='set_location_changer(\"{id}\");'>{name}</span>";
-	$row_template = '<tr class="{alternate}"><td class="event_time">' . 
-		'[{event_year}:{event_month}:{event_day}:{event_hour}]' .
-		'</td><td>{!message}</td></tr>';
+	$row_template = '
+		<tr class="{alternate}">
+			<td class="event_time">
+				[{event_year}:{event_month}:{event_day}:{event_hour}]
+			</td>
+			<td>{!message}</td>
+		</tr>';
 	
 	$alternate = '';
 	foreach ($events as $event) {
@@ -19,17 +23,27 @@
 			$event['From_actor_name'] = 'Unnamed actor';
 		if($event['From_actor_ID'] == $actor_id)
 			$event['From_actor_name'] = 'You';
-		$actor_name = expand_template($actor_name_template, array(
+		$from_actor_name = expand_template($actor_name_template, array(
 			'id' => $event['From_actor_ID'],
-			'name' => $event['From_actor_name']));
+			'name' => $event['From_actor_name']
+			));
+
+		if($event['To_actor_name'] == NULL)
+			$event['To_actor_name'] = 'Unnamed actor';
+		if($event['To_actor_ID'] == $actor_id)
+			$event['To_actor_name'] = 'You';
+		$to_actor_name = expand_template($actor_name_template, array(
+			'id' => $event['To_actor_ID'],
+			'name' => $event['To_actor_name']
+			));
 
 		$event_time = $event["Time_values"];
 
 		// build location name sub-template
 		if($event['From_location_name'] == NULL)
-			$event['From_location_name'] = 'Unnamed actor';
+			$event['From_location_name'] = 'Unnamed location';
 		if($event['To_location_name'] == NULL)
-			$event['To_location_name'] = 'Unnamed actor';
+			$event['To_location_name'] = 'Unnamed location';
 
 		$from_location_name = expand_template($location_name_template, array(
 			'id' => $event['From_location_ID'],
@@ -42,8 +56,9 @@
 		$message = expand_template($message, array(
 			'From_location' => $from_location_name,
 			'To_location' => $to_location_name,
-			'From_actor_name' => $actor_name),
-			true);
+			'From_actor_name' => $from_actor_name,
+			'To_actor_name' => $to_actor_name,
+			), true);
 
 		echo expand_template($row_template, array(
 			'message' => $message,

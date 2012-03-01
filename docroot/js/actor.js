@@ -224,3 +224,23 @@ function start_project(actor_id, recipe_id)
 		}
 	});
 }
+
+function point_at_actor(actor_id, pointee_id) {
+	$.ajax(
+	{
+		type: 'POST',
+		url: '/actor/Point_at_actor',
+		data: {
+			actor_id: actor_id,
+			pointee_id: pointee_id
+		},
+		dataType: "json",
+		success: function(data)
+		{
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = '/actor/show_actor/'+actor_id+'/events';
+			}
+		}
+	});
+}
