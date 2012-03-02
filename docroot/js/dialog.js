@@ -1,16 +1,26 @@
 function ajax_logged_out(data) {
 	if(data.success == false && data.reason == 'Not logged in') {
-		callurl = '/front/Get_login_view';
-		$.ajax({
-			type: 'POST',
-			url: callurl,
-			success: function(data) {
-				open_dialog(data);
-			}
-		});
+		show_login_dialog();
 		return true;
 	}
 	return false;
+}
+
+function show_login_dialog() {
+	callurl = '/front/Get_login_view';
+	$.ajax({
+		type: 'POST',
+		url: callurl,
+		success: function(data) {
+			open_dialog(data, 250, 120);
+			$('.openid_icon').mouseenter( function () {
+				$('#openidfeedback').html($(this).attr('data-tooltip'));
+			});
+			$('.openid_icon').mouseleave( function () {
+				$('#openidfeedback').html("");
+			});
+		}
+	});
 }
 
 function close_dialog() {
@@ -18,7 +28,14 @@ function close_dialog() {
 	$('body #grayout').remove();
 }
 
-function open_dialog(html) {
+function open_dialog(html, width, height) {
+	if (width == null){
+		width = 200;
+	}	
+	if (height == null){
+		height = 100;
+	}	
+
 	if($('#popup').length == 0) {
 		var grayout_div = '<div id="grayout" onclick="close_dialog()"></div>';
 		var popup_div = '<div id="popup"></div>';
@@ -28,12 +45,12 @@ function open_dialog(html) {
 	var popup = $('#popup');
 	popup.html(html);
 	popup.css({
-		width: '200px',
-		height:'100px',
+		width: width+'px',
+		height: height+'px',
 		position: 'absolute',
 		top: '50%',
 		left: '50%',
-		margin: '-50px 0 0 -100px'
+		margin: '-'+height+'px 0 0 -'+width+'px'
 	});
 	var grayout = $('#grayout');
 	grayout.css({
@@ -46,10 +63,12 @@ function open_dialog(html) {
 	});
 }
 
-function login()
+function login(openid)
 {
 	$('#openidfeedback').html('Processing...');
-	var openid = document.getElementById('openid').value;
+	if (openid == null){
+		openid = document.getElementById('openid').value;
+	}	
 	$.ajax(
 	{
 		type: 'POST',

@@ -4,11 +4,13 @@ RewriteEngine on
 
 RewriteRule ^$ /index.php/front [L]
 
+RewriteCond %{REQUEST_URI} !^/data/
 RewriteCond %{REQUEST_URI} !^/css/
 RewriteCond %{REQUEST_URI} !^/js/
 RewriteCond %{REQUEST_URI} !^/index\.php
 RewriteRule ^([a-zA-Z0-9'/@\._]+)$ /index.php/$1 [L]
 
+RewriteCond %{REQUEST_URI} !^/data/
 RewriteCond %{REQUEST_URI} !^/css/
 RewriteCond %{REQUEST_URI} !^/js/
 RewriteCond %{REQUEST_URI} !^/blocked\.php$
