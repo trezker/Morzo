@@ -30,7 +30,7 @@ function new_actor() {
 				window.location.reload();
 			}
 			else {
-				$('#new_actor').html('Request denied');
+				$('#new_actor').html(data.reason);
 			}
 		}
 	});

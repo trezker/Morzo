@@ -60,6 +60,22 @@ class Actor_model
 		$db = Load_database();
 
 		$rs = $db->Execute('
+			select count(*) >= U.Max_actors as Max_actors_reached, U.Max_actors
+			from Actor A 
+			join User U on U.ID = A.User_ID
+			where U.ID = ?
+			', array($user_id));
+			
+		if(!$rs)
+		{
+			return array('success' => false, 'reason' => 'Database failure');
+		}
+		
+		if($rs->fields['Max_actors_reached'] == 1) {
+			return array('success' => false, 'reason' => 'Reached max number of actors');
+		}
+
+		$rs = $db->Execute('
 			update Actor A
 			set A.User_ID = ?
 			where A.User_ID is null and A.Inhabitable = true
@@ -69,14 +85,14 @@ class Actor_model
 		
 		if(!$rs)
 		{
-			return false;
+			return array('success' => false, 'reason' => 'Database failure');
 		}
 		if($db->Affected_Rows() == 1)
 		{
-			return true;
+			return array('success' => true);
 		}
 
-		return false;
+		return array('success' => false, 'reason' => 'No actors available');
 	}
 	
 	public function Get_actors($user_id)
