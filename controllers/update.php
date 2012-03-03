@@ -49,7 +49,13 @@ class Update extends Controller
 	}
 
 	private function Spawn_actors($time) {
-		
+		$this->Load_model("Actor_model");
+		$success = $this->Actor_model->Spawn_actor(1);
+		if($success == true) {
+			echo "New actor ";
+		} else {
+			echo "No new actor ";
+		}
 	}
 }
 

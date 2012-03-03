@@ -26,6 +26,35 @@ class Actor_model
 		return false;
 	}
 	
+	public function Spawn_actor($location_id) {
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			select count(*)<C.Value as Allow_more_actors from Actor A join Count C on C.Name = \'Max_actors\';
+			', array());
+
+		if(!$rs || $rs->fields['Allow_more_actors'] != 1)
+		{
+			return false;
+		}
+
+		$rs = $db->Execute('
+			insert into Actor(Location_ID)
+			values (?)
+			', array($location_id));
+		
+		if(!$rs)
+		{
+			return false;
+		}
+		if($db->Affected_Rows() == 1)
+		{
+			return true;
+		}
+
+		return false;
+	}
+	
 	public function Request_actor($user_id)
 	{
 		$db = Load_database();
