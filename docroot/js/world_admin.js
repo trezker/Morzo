@@ -150,3 +150,25 @@ function remove_location_resource(resource, e) {
 		}
 	});
 }
+
+function set_max_actors() {
+	$('#actor_control_feedback').html("Saving...");
+	$.ajax(
+	{
+		type: 'POST',
+		url: 'world_admin/set_max_actors',
+		data: {
+			value: $('#max_actors_input').val()
+		},
+		success: function(data)
+		{
+			if(ajax_logged_out(data)) return;
+			if(data !== false)
+			{
+				$('#actor_control_feedback').html("Saved");
+			} else {
+				$('#actor_control_feedback').html("Failed to save");
+			}
+		}
+	});
+}
