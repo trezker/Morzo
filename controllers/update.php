@@ -6,9 +6,10 @@ class Update extends Controller
 	public function Index()
 	{
 		$this->Load_model("Travel_model");
-		echo $this->Travel_model->Tick();
-		$this->Update_travel();
-		return;
+		$time = $this->Travel_model->Tick();
+		$this->Update_travel($time);
+		$this->Spawn_actors($time);
+		echo $time;
 	}
 	
 	public function Get_time_units($time) {
@@ -20,13 +21,12 @@ class Update extends Controller
 		);
 	}
 
-	private function Update_travel() {
+	private function Update_travel($time) {
 		$this->Load_model("Travel_model");
 
-		$update = $this->Travel_model->Get_update_count();
-		$travels = $this->Travel_model->Get_outdated_travel($update);
+		$travels = $this->Travel_model->Get_outdated_travel($time);
 		foreach($travels as $travel) {
-			$time_difference = $update - $travel['UpdateTick'];
+			$time_difference = $time - $travel['UpdateTick'];
 			$dx = $travel['DestinationX'] - $travel['CurrentX'];
 			$dy = $travel['DestinationY'] - $travel['CurrentY'];
 			$d = sqrt($dx*$dx+$dy*$dy);
@@ -37,7 +37,7 @@ class Update extends Controller
 					'y' => $travel['CurrentY'] + $dy * $move_factor,
 					'actor' => $travel['ActorID']
 				));
-				$move_success = $this->Travel_model->Move($move, $update);
+				$move_success = $this->Travel_model->Move($move, $time);
 			} else {
 				$arrive = array(array(
 					'Actor' => $travel['ActorID'],
@@ -46,6 +46,10 @@ class Update extends Controller
 				$arrive_success = $this->Travel_model->Arrive($arrive);
 			}
 		}
+	}
+
+	private function Spawn_actors($time) {
+		
 	}
 }
 
