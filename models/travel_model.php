@@ -131,7 +131,7 @@ class Travel_model extends Model
 		if(!$rs)
 		{
 			echo $db->ErrorMsg();
-			return false;
+			return array();
 		}
 		return $rs->GetArray();
 	}
