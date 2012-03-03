@@ -19,6 +19,11 @@ function show_login_dialog() {
 			$('.openid_icon').mouseleave( function () {
 				$('#openidfeedback').html("");
 			});
+			$('#openid').keydown( function (event) {
+				if (event.keyCode == 13) {
+					login();
+				}
+			});
 		}
 	});
 }
