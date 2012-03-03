@@ -33,11 +33,8 @@ class Event_model
 		if(!$rs) {
 			return false;
 		}
-		if($rs->RecordCount() > 0) {
-			$events = $rs->GetArray();
-			return $events;
-		}
-		return false;
+		$events = $rs->GetArray();
+		return $events;
 	}
 
 	public function Save_event($from_actor_id, $to_actor_id, $message, $from_location = NULL, $to_location = NULL, $private = false) {

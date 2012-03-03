@@ -1,8 +1,9 @@
 <?php
 
+require_once '../models/model.php';
 require_once '../models/database.php';
 
-class Actor_model
+class Actor_model extends Model
 {
 	public function User_owns_actor($user_id, $actor_id)
 	{
@@ -49,6 +50,9 @@ class Actor_model
 		}
 		if($db->Affected_Rows() == 1)
 		{
+			$from_actor_id = $db->Insert_ID();
+			$this->Load_model('Event_model');
+			$this->Event_model->Save_event($from_actor_id, NULL, "{From_actor_name} was born.");
 			return true;
 		}
 
