@@ -59,12 +59,15 @@ class Location extends Controller
 		header('Content-type: application/json');
 		if(!isset($_POST['actor'])) {
 			echo json_encode(array('success' => false, 'reason' => 'No actor requested'));
+			return;
 		}
 		if(!isset($_POST['destination'])) {
 			echo json_encode(array('success' => false, 'reason' => 'No destination requested'));
+			return;
 		}
 		if(!isset($_POST['origin'])) {
 			echo json_encode(array('success' => false, 'reason' => 'No origin provided'));
+			return;
 		}
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
@@ -74,18 +77,21 @@ class Location extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $_POST['actor'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 		
 		$this->Load_model('Location_model');
 		$destination = $this->Get_location($_POST['actor'], $_POST['destination']);
 		if(!$destination) {
 			echo json_encode(array('success' => false, 'reason' => 'Could not get destination'));
+			return;
 		}
 		
 		$this->Load_model('Travel_model');
 		$r = $this->Travel_model->Travel($_POST['actor'], $destination, $_POST['origin']);
 		if(!$r) {
 			echo json_encode(array('success' => false, 'reason' => 'Could not initiate travel'));
+			return;
 		}
 		echo json_encode(array('success' => true));
 	}

@@ -21,6 +21,7 @@ else { ?>
 						$vars = array(
 							'alternate' => $alternate,
 							'id' => $location["ID"],
+							'actor_id' => $actor_id,
 							'name' => $location["Name"],
 							'compass' => $location["Compass"],
 							'x' => $location["x"],

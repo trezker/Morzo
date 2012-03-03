@@ -111,11 +111,12 @@ class Travel_model extends Model
 		return $rs->fields['Value'];
 	}
 
-	public function Get_outdated_travel($actor_id, $update) {
+	public function Get_outdated_travel($update) {
 		$db = Load_database();
 
 		$rs = $db->Execute('
 			select
+				t.ActorID,
 				t.X as CurrentX,
 				t.Y as CurrentY,
 				ld.X as DestinationX,
@@ -124,15 +125,15 @@ class Travel_model extends Model
 				t.UpdateTick
 			from Travel t
 			join Location ld on ld.ID = t.DestinationID
-			where t.UpdateTick < ? and t.ActorID = ?
-			', array($update, $actor_id));
+			where t.UpdateTick < ?
+			', array($update));
 		
 		if(!$rs)
 		{
 			echo $db->ErrorMsg();
 			return false;
 		}
-		return $rs->fields;
+		return $rs->GetArray();
 	}
 	
 	public function Move($moves, $update) {
