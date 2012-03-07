@@ -52,7 +52,7 @@ class Actor_model extends Model
 		{
 			$from_actor_id = $db->Insert_ID();
 			$this->Load_model('Event_model');
-			$this->Event_model->Save_event($from_actor_id, NULL, "{From_actor_name} was born.");
+			$this->Event_model->Save_event("{LNG_Actor_born}", $from_actor_id, NULL);
 			return true;
 		}
 

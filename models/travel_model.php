@@ -20,7 +20,7 @@ class Travel_model extends Model
 			', array($actor, $destination, $origin, $update, $origin));
 
 		$this->Load_model('Event_model');
-		$this->Event_model->Save_event($actor, NULL, '{From_actor_name} left {From_location} going towards {To_location}', $origin, $destination);
+		$this->Event_model->Save_event('{LNG_Actor_left}', $actor, NULL, NULL, $origin, $destination);
 
 		$success = !$db->HasFailedTrans();
 		$db->CompleteTrans();
@@ -174,7 +174,7 @@ class Travel_model extends Model
 				select DestinationID, OriginID from Travel where ActorID = ?
 				', array($arrive['Actor']));
 
-			$this->Event_model->Save_event($arrive['Actor'], NULL, '{From_actor_name} Arrived at {To_location} coming from {From_location}', $rs->fields['OriginID'], $rs->fields['DestinationID']);
+			$this->Event_model->Save_event('{LNG_Actor_arrived}', $arrive['Actor'], NULL, NULL, $rs->fields['OriginID'], $rs->fields['DestinationID']);
 
 			$rs = $db->Execute('
 				delete from Travel where ActorID = ?

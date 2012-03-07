@@ -9,6 +9,7 @@ class Event_model
 
 		$rs = $db->Execute('
 			SELECT
+				E.Translation_handle,
 				E.From_actor_ID,
 				FAN.Name AS From_actor_name,
 				E.To_actor_ID,
@@ -37,14 +38,14 @@ class Event_model
 		return $events;
 	}
 
-	public function Save_event($from_actor_id, $to_actor_id, $message, $from_location = NULL, $to_location = NULL, $private = false) {
+	public function Save_event($translation_handle, $from_actor_id, $to_actor_id, $message = NULL, $from_location = NULL, $to_location = NULL, $private = false) {
 		$db = Load_database();
 
 		$db->StartTrans();
 		$rs = $db->Execute('
-			insert into Event(From_actor_ID, To_actor_ID, Message, Ingame_time, Real_time, From_location_ID, To_location_ID)
-			select ?, ?, ?, C.Value, NOW(), ?, ? from Count C where Name = \'Update\' limit 1
-			', array($from_actor_id, $to_actor_id, $message, $from_location, $to_location));
+			insert into Event(From_actor_ID, To_actor_ID, Message, Ingame_time, Real_time, From_location_ID, To_location_ID, Translation_handle)
+			select ?, ?, ?, C.Value, NOW(), ?, ?, ? from Count C where Name = \'Update\' limit 1
+			', array($from_actor_id, $to_actor_id, $message, $from_location, $to_location, $translation_handle));
 		
 		$event_id = $db->Insert_ID();
 

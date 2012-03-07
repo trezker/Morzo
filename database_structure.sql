@@ -50,7 +50,7 @@ CREATE TABLE `Actor` (
   CONSTRAINT `Actor_fk_Project` FOREIGN KEY (`Project_ID`) REFERENCES `Project` (`ID`),
   CONSTRAINT `Character_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Character_fk_User` FOREIGN KEY (`User_ID`) REFERENCES `User` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -70,7 +70,7 @@ CREATE TABLE `Actor_event` (
   KEY `Actor_event_fk_Event` (`Event_ID`),
   CONSTRAINT `Actor_event_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Actor_event_fk_Event` FOREIGN KEY (`Event_ID`) REFERENCES `Event` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=298 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=412 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -111,7 +111,7 @@ CREATE TABLE `Actor_name` (
   KEY `Actor_name_fk_Named_actor` (`Named_actor_ID`),
   CONSTRAINT `Actor_name_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Actor_name_fk_Named_actor` FOREIGN KEY (`Named_actor_ID`) REFERENCES `Actor` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -154,14 +154,14 @@ DROP TABLE IF EXISTS `Event`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Event` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
-  `From_actor_ID` bigint(20) DEFAULT NULL,
-  `To_actor_ID` bigint(20) DEFAULT NULL,
-  `Message` varchar(256) NOT NULL,
+  `Translation_handle` varchar(64) NOT NULL DEFAULT '',
+  `Message` varchar(256) DEFAULT NULL,
   `Ingame_time` bigint(20) NOT NULL,
   `Real_time` datetime NOT NULL,
+  `From_actor_ID` bigint(20) DEFAULT NULL,
+  `To_actor_ID` bigint(20) DEFAULT NULL,
   `From_location_ID` bigint(20) DEFAULT NULL,
   `To_location_ID` bigint(20) DEFAULT NULL,
-  `Translation_handle` varchar(64) NOT NULL DEFAULT '',
   PRIMARY KEY (`ID`),
   KEY `Event_fk_From_actor` (`From_actor_ID`),
   KEY `Event_fk_To_actor` (`To_actor_ID`),
@@ -171,7 +171,7 @@ CREATE TABLE `Event` (
   CONSTRAINT `Event_fk_From_location` FOREIGN KEY (`From_location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Event_fk_To_actor` FOREIGN KEY (`To_actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Event_fk_To_location` FOREIGN KEY (`To_location_ID`) REFERENCES `Location` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=82 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -423,7 +423,7 @@ CREATE TABLE `Translation` (
   UNIQUE KEY `Translation_unique` (`Language_ID`,`Handle`),
   KEY `Translation_fk_Language` (`Language_ID`),
   CONSTRAINT `Translation_fk_Language` FOREIGN KEY (`Language_ID`) REFERENCES `Language` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -448,7 +448,7 @@ CREATE TABLE `Travel` (
   CONSTRAINT `Travel_fk_Actor` FOREIGN KEY (`ActorID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Travel_fk_Destination` FOREIGN KEY (`DestinationID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Travel_fk_Origin` FOREIGN KEY (`OriginID`) REFERENCES `Location` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -541,4 +541,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-03-03 23:10:11
+-- Dump completed on 2012-03-07 18:58:08

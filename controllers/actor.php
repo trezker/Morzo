@@ -61,8 +61,10 @@ class Actor extends Controller
 		} elseif ($tab == 'events') {
 			$this->Load_model("Event_model");
 			$events = $this->Event_model->Get_events($actor_id);
+			$this->Load_model("Language_model");
 			foreach ($events as $key => $event) {
 				$events[$key]['Time_values'] = $this->Update->Get_time_units($event['Ingame_time']);
+				$events[$key]['Text'] = $this->Language_model->Translate_event($events[$key]);
 			}
 			$tab_view = $this->Load_view('events_tab_view', array('events' => $events, 'actor_id' => $actor_id), true);
 		} elseif ($tab == 'resources') {
@@ -124,7 +126,7 @@ class Actor extends Controller
 		}
 		
 		$this->Load_model('Event_model');
-		$r = $this->Event_model->Save_event($actor_id, NULL, '{From_actor_name} said: '.$message);
+		$r = $this->Event_model->Save_event('{LNG_Actor_said}', $actor_id, NULL, $message);
 		if($r == false) {
 			echo json_encode(array('success' => false, 'reason' => 'Could not save your message'));
 			return;
@@ -319,7 +321,7 @@ class Actor extends Controller
 		}
 		
 		$this->Load_model('Event_model');
-		$r = $this->Event_model->Save_event($actor_id, $pointee_id, '{From_actor_name} pointed at {To_actor_name}');
+		$r = $this->Event_model->Save_event('{LNG_Actor_pointed}',$actor_id, $pointee_id);
 		if($r == false) {
 			echo json_encode(array('success' => false, 'reason' => 'Could not save your message'));
 			return;
@@ -345,7 +347,7 @@ class Actor extends Controller
 		}
 		
 		$this->Load_model('Event_model');
-		$r = $this->Event_model->Save_event($actor_id, $whispree_id, '{From_actor_name} whispered to {To_actor_name}: '.$message, NULL, NULL, true);
+		$r = $this->Event_model->Save_event('{LNG_Actor_whispered}', $actor_id, $whispree_id, $message, NULL, NULL, true);
 		if($r == false) {
 			echo json_encode(array('success' => false, 'reason' => 'Could not save your message'));
 			return;
