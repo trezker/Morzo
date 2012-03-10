@@ -32,5 +32,58 @@ class Language_model
 		
 		return $rs->fields['Text'];
 	}
-}
+	
+	public function Get_languages(){
+		$db = Load_database();
 
+		$query = '
+			SELECT
+				ID,
+				Name
+			FROM Language';
+		$rs = $db->Execute($query, array());
+		if(!$rs){
+			return false;
+		}
+
+		return $rs->getArray();
+	}
+	
+	public function Get_translations_for_translator($target_language){
+		$db = Load_database();
+
+		$query = '
+			SELECT
+				e.Handle,
+				e.Text as English,
+				t.Text
+			FROM Translation e
+			LEFT JOIN Translation t on t.Handle = e.Handle and t.Language_ID = ?
+			WHERE e.Language_ID = 1
+			ORDER BY e.Handle
+			';
+		$rs = $db->Execute($query, array($target_language));
+		if(!$rs){
+			return false;
+		}
+
+		return $rs->getArray();
+	}
+	
+	public function Save_translation($language_id, $handle, $text){
+		$db = Load_database();
+
+		$query = '
+			INSERT INTO Translation (Language_ID, Handle, Text)
+			VALUES (?, ?, ?)
+			ON DUPLICATE KEY
+			UPDATE Text = ?
+			';
+		$rs = $db->Execute($query, array($language_id, $handle, $text, $text));
+		if(!$rs){
+			return false;
+		}
+
+		return true;
+	}
+}

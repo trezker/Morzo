@@ -189,3 +189,18 @@ li.selected:hover {
 	border: 1px solid #000;
 	padding: 0px 3px;
 }
+
+.translations_list {
+	border-width: 0px;
+	border-spacing: 0px;
+	border-collapse: collapse;
+}
+
+.translations_list td{
+	border: 1px solid #000;
+	padding: 6px 3px;
+}
+
+.translation_input {
+	width: 99%;
+}

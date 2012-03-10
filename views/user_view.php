@@ -29,6 +29,7 @@
 			<p><span class="action" onclick='window.location="user_admin"'>Users</span></p>
 			<p><span class="action" onclick='window.location="world_admin"'>World</span></p>
 			<p><span class="action" onclick='window.location="project_admin"'>Projects</span></p>
+			<p><span class="action" onclick='window.location="language_admin"'>Translation</span></p>
 		<?php } ?>
 	</body>
 </html>
