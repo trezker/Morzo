@@ -64,7 +64,7 @@ class Actor extends Controller
 			$this->Load_model("Language_model");
 			foreach ($events as $key => $event) {
 				$events[$key]['Time_values'] = $this->Update->Get_time_units($event['Ingame_time']);
-				$events[$key]['Text'] = $this->Language_model->Translate_event($events[$key]);
+				$events[$key]['Text'] = $this->Language_model->Translate_event($events[$key], $actor_id);
 			}
 			$tab_view = $this->Load_view('events_tab_view', array('events' => $events, 'actor_id' => $actor_id), true);
 		} elseif ($tab == 'resources') {

@@ -4,9 +4,17 @@ require_once '../models/database.php';
 
 class Language_model
 {
-	public function Translate_event($event)
+	public function Translate_event($event, $actor_id)
 	{
 		$text = $this->Translate_handle($event['Translation_handle']);
+
+		$grammar = array();
+		if($event['From_actor_ID'] == $actor_id)
+			$grammar['EN_was'] = 'were';
+		else
+			$grammar['EN_was'] = 'was';
+
+		$text = expand_template($text, $grammar);
 
 		return $text;
 	}
