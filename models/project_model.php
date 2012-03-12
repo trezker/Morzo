@@ -332,7 +332,6 @@ class Project_model
 		
 		$args = array($active, $project_id);
 
-		//Create the project
 		$r = $db->Execute('
 			update Project P set P.Active = ?
 			where P.ID = ?
