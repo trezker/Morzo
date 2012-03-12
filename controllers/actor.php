@@ -242,7 +242,6 @@ class Actor extends Controller
 			return;
 		}
 		
-		$project_id = $_POST['project_id'];
 		$actor_id = $_POST['actor_id'];
 
 		$this->Load_model('Actor_model');
@@ -251,7 +250,7 @@ class Actor extends Controller
 		}
 
 		$this->Load_model('Project_model');
-		$success = $this->Project_model->Leave_project($actor_id, $project_id);
+		$success = $this->Project_model->Leave_project($actor_id);
 
 		echo json_encode(array('success' => $success));
 	}

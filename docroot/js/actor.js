@@ -239,29 +239,26 @@ function join_project(actor_id, project_id) {
 		{
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
-//				$('#natural_resource_dialog').append(data.data);
-//				$('#recipe_'+id).addClass('selected');
+				window.location.reload();
 			}
 		}
 	});
 }
 
-function leave_project(actor_id, project_id) {
+function leave_project(actor_id) {
 	$.ajax(
 	{
 		type: 'POST',
 		url: '/actor/Leave_project',
 		data: {
-			actor_id: actor_id,
-			project_id: project_id
+			actor_id: actor_id
 		},
 		dataType: "json",
 		success: function(data)
 		{
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
-//				$('#natural_resource_dialog').append(data.data);
-//				$('#recipe_'+id).addClass('selected');
+				window.location.reload();
 			}
 		}
 	});

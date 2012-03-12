@@ -204,3 +204,11 @@ li.selected:hover {
 .translation_input {
 	width: 99%;
 }
+
+.active_project {
+	color: #0F0;
+}
+
+.inactive_project {
+	color: #F00;
+}

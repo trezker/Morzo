@@ -250,13 +250,14 @@ class Project_model
 
 	public function Join_project($actor_id, $project_id)
 	{
+		$this->Leave_project($actor_id);
+
 		$db = Load_database();
-		
+
 		$args = array($project_id, $actor_id);
 
 		//TODO: Figure out if you're allowed to join the project
 		
-		//Create the project
 		$r = $db->Execute('
 			update Actor A set A.Project_ID = ?
 			where A.ID = ?
@@ -266,10 +267,12 @@ class Project_model
 			return false;
 		}
 
+		$this->Update_project_active_state($project_id);
+
 		return true;
 	}
 
-	public function Leave_project($actor_id, $project_id)
+	public function Leave_project($actor_id)
 	{
 		$db = Load_database();
 		
@@ -277,8 +280,62 @@ class Project_model
 
 		//Create the project
 		$r = $db->Execute('
-			update Actor A set A.Project_ID = NULL
+			select A.Project_ID from Actor A
 			where A.ID = ?
+			', $args);
+
+		if(!$r) {
+			return false;
+		}
+		
+		$project_id = $r->fields['Project_ID'];
+		if($project_id != NULL) {
+			$args = array($actor_id);
+
+			$r = $db->Execute('
+				update Actor A set A.Project_ID = NULL
+				where A.ID = ?
+				', $args);
+			
+			if(!$r) {
+				return false;
+			}
+
+			$this->Update_project_active_state($project_id);
+		}
+
+		return true;
+	}
+	
+	private function Update_project_active_state($project_id) {
+		//TODO: Check prerequisites
+		//Set active accordingly
+		$db = Load_database();
+
+		$args = array($project_id);
+
+		$r = $db->Execute('
+			select P.Active from Project P
+			join Actor A on A.Project_ID = P.ID
+			where P.ID = ?
+			', $args);
+		
+		if(!$r) {
+			return false;
+		}
+
+		if($r->RecordCount()>0) {
+			$active = 1;
+		} else {
+			$active = 0;
+		}
+		
+		$args = array($active, $project_id);
+
+		//Create the project
+		$r = $db->Execute('
+			update Project P set P.Active = ?
+			where P.ID = ?
 			', $args);
 		
 		if(!$r) {
