@@ -225,6 +225,48 @@ function start_project(actor_id, recipe_id)
 	});
 }
 
+function join_project(actor_id, project_id) {
+	$.ajax(
+	{
+		type: 'POST',
+		url: '/actor/Join_project',
+		data: {
+			actor_id: actor_id,
+			project_id: project_id
+		},
+		dataType: "json",
+		success: function(data)
+		{
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+//				$('#natural_resource_dialog').append(data.data);
+//				$('#recipe_'+id).addClass('selected');
+			}
+		}
+	});
+}
+
+function leave_project(actor_id, project_id) {
+	$.ajax(
+	{
+		type: 'POST',
+		url: '/actor/Leave_project',
+		data: {
+			actor_id: actor_id,
+			project_id: project_id
+		},
+		dataType: "json",
+		success: function(data)
+		{
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+//				$('#natural_resource_dialog').append(data.data);
+//				$('#recipe_'+id).addClass('selected');
+			}
+		}
+	});
+}
+
 function point_at_actor(actor_id, pointee_id) {
 	$.ajax(
 	{
