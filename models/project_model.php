@@ -252,7 +252,7 @@ class Project_model
 	{
 		$db = Load_database();
 		
-		$args = array($actor_id);
+		$args = array($actor_id, $actor_id);
 
 		$r = $db->Execute('
 			select
@@ -264,11 +264,13 @@ class Project_model
 				P.Cycles_left,
 				P.Created_time,
 				P.Progress,
-				P.Active
+				P.Active,
+				IF(AP.ID, true, false) AS Joined
 			from Project P
 			join Recipe R on R.ID = P.Recipe_ID
 			join Location L on L.ID = P.Location_ID
 			join Actor A on L.ID = A.Location_ID
+			left join Actor AP on AP.Project_ID = P.ID AND AP.ID = ?
 			where A.ID = ?
 			', $args);
 		
