@@ -229,7 +229,7 @@ class Project_model
 		
 		$args = array($recipe_id, $actor_id);
 
-		//Figure out if you're allowed to create the project
+		//TODO: Figure out if you're allowed to create the project
 		
 		//Create the project
 		$r = $db->Execute('
@@ -244,6 +244,46 @@ class Project_model
 		}
 
 		//Add neccessary resources from actor inventory
+
+		return true;
+	}
+
+	public function Join_project($actor_id, $project_id)
+	{
+		$db = Load_database();
+		
+		$args = array($project_id, $actor_id);
+
+		//TODO: Figure out if you're allowed to join the project
+		
+		//Create the project
+		$r = $db->Execute('
+			update Actor A set A.Project_ID = ?
+			where A.ID = ?
+			', $args);
+		
+		if(!$r) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public function Leave_project($actor_id, $project_id)
+	{
+		$db = Load_database();
+		
+		$args = array($actor_id);
+
+		//Create the project
+		$r = $db->Execute('
+			update Actor A set A.Project_ID = NULL
+			where A.ID = ?
+			', $args);
+		
+		if(!$r) {
+			return false;
+		}
 
 		return true;
 	}
