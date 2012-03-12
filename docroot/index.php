@@ -4,7 +4,13 @@ error_reporting(~0);
 
 $protocol =  (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http';
 $host = $_SERVER['SERVER_NAME'];
-$base_url = "$protocol://$host/";
+$port = $_SERVER['SERVER_PORT'];
+if(($protocol == 'http' && $port != 80) || ($protocol == 'https' && $port != 443)) {
+	$port = ':'.$port;
+} else {
+	$port = '';
+}
+$base_url = "$protocol://$host$port/";
 $GLOBALS['base_url'] = $base_url;
 
 require_once '../util/htmltemplate.php';
