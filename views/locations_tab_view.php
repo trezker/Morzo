@@ -2,7 +2,7 @@
 	echo expand_template('Travelling from {OriginName} to {DestinationName}.', $travel);
 	if($travel['Has_moved'] == 0) {
 		echo '
-		<div class="action" onclick="turn_back('.$actor_id.')">
+		<div class="action" onclick="cancel_travel('.$actor_id.')">
 			Cancel travel
 		</div>
 		';
