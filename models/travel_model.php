@@ -40,7 +40,8 @@ class Travel_model extends Model
 				lnd.Name as DestinationName,
 				lno.Name as OriginName,
 				t.X,
-				t.Y
+				t.Y,
+				t.Has_moved
 			from Travel t
 			left join Location_name lnd on t.DestinationID = lnd.Location_ID and lnd.Actor_ID = ?
 			left join Location_name lno on t.OriginID = lno.Location_ID and lno.Actor_ID = ?
@@ -145,7 +146,7 @@ class Travel_model extends Model
 		$db->StartTrans();
 		foreach($moves as $move) {
 			$rs = $db->Execute('
-				update Travel set X = ?, Y = ?, UpdateTick = ? where ActorID = ?
+				update Travel set X = ?, Y = ?, UpdateTick = ?, Has_moved = 1 where ActorID = ?
 				', array($move['x'], $move['y'], $update, $move['actor']));
 			
 			if(!$rs) {

@@ -1,7 +1,19 @@
 <?php if($travel) {
-	expand_template('Travelling from {OriginName} to {DestinationName}.', $travel);
-}
-else { ?>
+	echo expand_template('Travelling from {OriginName} to {DestinationName}.', $travel);
+	if($travel['Has_moved'] == 0) {
+		echo '
+		<div class="action" onclick="turn_back('.$actor_id.')">
+			Cancel travel
+		</div>
+		';
+	} else {
+		echo '
+		<div class="action" onclick="turn_back('.$actor_id.')">
+			Turn back
+		</div>
+		';
+	}
+} else { ?>
 			<div id="locations_feedback"></div>
 			<div id="locations">
 				<table class="location_list">
