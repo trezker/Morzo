@@ -22,6 +22,9 @@ class Travel_model extends Model
 		$this->Load_model('Event_model');
 		$this->Event_model->Save_event('{LNG_Actor_left}', $actor, NULL, NULL, $origin, $destination);
 
+		$this->Load_model('Project_model');
+		$this->Project_model->Leave_project($actor);
+
 		$success = !$db->HasFailedTrans();
 		$db->CompleteTrans();
 		return $success;

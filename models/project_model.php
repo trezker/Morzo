@@ -243,7 +243,7 @@ class Project_model
 			return false;
 		}
 
-		//Add neccessary resources from actor inventory
+		//TODO: Add neccessary resources from actor inventory
 
 		return true;
 	}
@@ -257,6 +257,8 @@ class Project_model
 		$args = array($project_id, $actor_id);
 
 		//TODO: Figure out if you're allowed to join the project
+		//At same location
+		//Not travelling
 		
 		$r = $db->Execute('
 			update Actor A set A.Project_ID = ?
