@@ -259,6 +259,25 @@ class Project_model
 		//TODO: Figure out if you're allowed to join the project
 		//At same location
 		//Not travelling
+		$r = $db->Execute('
+			select 
+				T.ID as Travelling,
+				P.ID as Location
+			from Actor A
+			left join Project P on P.Location_ID = A.Location_ID and P.ID = ?
+			left join Travel T on T.ActorID = A.ID
+			where A.ID = ?
+			', $args);
+
+		if(!$r) {
+			return false;
+		}
+		
+		if($r->fields['Travelling'] !== NULL || $r->fields['Location'] == NULL) {
+			return false;
+		}
+
+		$args = array($project_id, $actor_id);
 		
 		$r = $db->Execute('
 			update Actor A set A.Project_ID = ?
