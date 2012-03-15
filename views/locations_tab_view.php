@@ -8,8 +8,8 @@
 		';
 	} else {
 		echo '
-		<div class="action" onclick="turn_back('.$actor_id.')">
-			Turn back
+		<div class="action" onclick="turn_around('.$actor_id.')">
+			Turn around
 		</div>
 		';
 	}

@@ -129,6 +129,50 @@ function travel(destination_id, actor_id, Location_ID)
 	});
 }
 
+function cancel_travel(actor_id) {
+	$.ajax(
+	{
+		type: 'POST',
+		url: '/location/Cancel_travel',
+		data: {
+			actor: actor_id,
+		},
+		dataType: "json",
+		success: function(data)
+		{
+			if(ajax_logged_out(data)) return;
+			if(data.success) {
+				$('#locations_feedback').html("Cancelling.");
+				window.location.reload();
+			} else {
+				$('#locations_feedback').html("Can't cancel now.");
+			}
+		}
+	});
+}
+
+function turn_around(actor_id) {
+	$.ajax(
+	{
+		type: 'POST',
+		url: '/location/Turn_around',
+		data: {
+			actor: actor_id,
+		},
+		dataType: "json",
+		success: function(data)
+		{
+			if(ajax_logged_out(data)) return;
+			if(data.success) {
+				$('#locations_feedback').html("Turning around.");
+				window.location.reload();
+			} else {
+				$('#locations_feedback').html("Can't turn around now.");
+			}
+		}
+	});
+}
+
 function load_tab(tab_name, actor_id) {
 	$('#tab_content').html("Loading...");
 	window.location = '/actor/show_actor/'+actor_id+'/'+tab_name;
