@@ -193,5 +193,24 @@ class Travel_model extends Model
 		$db->CompleteTrans();
 		return $success;
 	}
+	
+	function Cancel_travel($actor_id) {
+		$db = Load_database();
+
+		$this->Load_model('Event_model');
+		$db->StartTrans();
+
+		$rs = $db->Execute('
+			delete from Travel where ActorID = ? and Has_moved = 0
+			', array($actor_id));
+
+		if($db->HasFailedTrans()) {
+			$success = false;
+		} else {
+			$success = true;
+		}
+		$db->CompleteTrans();
+		return $success;
+	}
 }
 
