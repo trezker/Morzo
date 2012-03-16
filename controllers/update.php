@@ -5,13 +5,12 @@ class Update extends Controller
 {
 	public function Index()
 	{
-		echo '<p>';
 		$this->Load_model("Travel_model");
 		$time = $this->Travel_model->Tick();
 		$this->Update_travel($time);
 		$this->Spawn_actors($time);
 		echo $time;
-		echo '</p>
+		echo '
 
 ';
 	}
