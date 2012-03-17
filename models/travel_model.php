@@ -212,5 +212,28 @@ class Travel_model extends Model
 		$db->CompleteTrans();
 		return $success;
 	}
+
+	function Turn_around($actor_id) {
+		$db = Load_database();
+
+		$this->Load_model('Event_model');
+		$db->StartTrans();
+
+		$rs = $db->Execute('
+			update Travel set 
+				DestinationID=(@temp:=DestinationID), 
+				DestinationID = OriginID, 
+				OriginID = @temp 
+			where ActorID = ?
+			', array($actor_id));
+
+		if($db->HasFailedTrans()) {
+			$success = false;
+		} else {
+			$success = true;
+		}
+		$db->CompleteTrans();
+		return $success;
+	}
 }
 
