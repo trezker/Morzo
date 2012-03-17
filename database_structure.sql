@@ -70,7 +70,7 @@ CREATE TABLE `Actor_event` (
   KEY `Actor_event_fk_Event` (`Event_ID`),
   CONSTRAINT `Actor_event_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Actor_event_fk_Event` FOREIGN KEY (`Event_ID`) REFERENCES `Event` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=996 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1537 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -111,7 +111,7 @@ CREATE TABLE `Actor_name` (
   KEY `Actor_name_fk_Named_actor` (`Named_actor_ID`),
   CONSTRAINT `Actor_name_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Actor_name_fk_Named_actor` FOREIGN KEY (`Named_actor_ID`) REFERENCES `Actor` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -171,7 +171,7 @@ CREATE TABLE `Event` (
   CONSTRAINT `Event_fk_From_location` FOREIGN KEY (`From_location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Event_fk_To_actor` FOREIGN KEY (`To_actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Event_fk_To_location` FOREIGN KEY (`To_location_ID`) REFERENCES `Location` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=121 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=145 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -240,7 +240,7 @@ CREATE TABLE `Location_name` (
   KEY `Location_name_fk_Location` (`Location_ID`),
   CONSTRAINT `Location_name_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Location_name_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -282,6 +282,7 @@ CREATE TABLE `Project` (
   `Created_time` bigint(20) NOT NULL,
   `Progress` int(11) NOT NULL DEFAULT '0',
   `Active` tinyint(1) NOT NULL DEFAULT '0',
+  `UpdateTick` bigint(20) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `Project_fk_Creator` (`Creator_actor_ID`),
   KEY `Project_fk_Recipe` (`Recipe_ID`),
@@ -449,7 +450,7 @@ CREATE TABLE `Travel` (
   CONSTRAINT `Travel_fk_Actor` FOREIGN KEY (`ActorID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Travel_fk_Destination` FOREIGN KEY (`DestinationID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Travel_fk_Origin` FOREIGN KEY (`OriginID`) REFERENCES `Location` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -542,4 +543,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-03-13 21:01:07
+-- Dump completed on 2012-03-17 12:33:45

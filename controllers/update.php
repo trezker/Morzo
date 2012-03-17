@@ -9,6 +9,7 @@ class Update extends Controller
 		$time = $this->Travel_model->Tick();
 		$this->Update_travel($time);
 		$this->Spawn_actors($time);
+		$this->Update_projects($time);
 		echo $time;
 		echo '
 
@@ -59,6 +60,11 @@ class Update extends Controller
 		} else {
 			echo "No new actor ";
 		}
+	}
+
+	private function Update_projects($time) {
+		$this->Load_model("Project_model");
+		$projects = $this->Project_model->Update_projects($time);
 	}
 }
 

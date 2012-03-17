@@ -29,7 +29,7 @@
 				'Join/Leave' => $joinleave,
 				'id' => $project["ID"],
 				'name' => $project["Recipe_Name"],
-				'progress_percent' => $project["Progress"] / $project["Cycle_time"],
+				'progress_percent' => 100 * $project["Progress"] / $project["Cycle_time"],
 				'actor_id' => $actor_id,
 				'active_class' => $active_class
 			);

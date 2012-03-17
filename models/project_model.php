@@ -351,13 +351,30 @@ class Project_model
 			$active = 0;
 		}
 		
-		$args = array($active, $project_id);
+		if($active == 1) {
+			$rs = $db->Execute("
+				select Value from Count where Name = 'Update'
+				");
+			$update = $rs->fields['Value'];
 
-		$r = $db->Execute('
-			update Project P set P.Active = ?
-			where P.ID = ?
-			', $args);
-		
+			$args = array($update, $project_id);
+
+			$r = $db->Execute('
+				update Project P set 
+					P.Active = 1,
+					P.UpdateTick = ?
+				where P.ID = ? and P.Active = 0
+				', $args);
+		} else {
+			$args = array($project_id);
+
+			$r = $db->Execute('
+				update Project P set 
+					P.Active = 0
+				where P.ID = ?
+				', $args);
+		}
+
 		if(!$r) {
 			return false;
 		}
@@ -395,7 +412,26 @@ class Project_model
 			return false;
 		}
 
-		return $r->GetArray();;
+		return $r->GetArray();
+	}
+	
+	public function Update_projects($time) {
+		$db = Load_database();
+		
+		$args = array($time, $time, $time);
+
+		$r = $db->Execute('
+			update Project P
+			set P.Progress = P.Progress + ? - P.UpdateTick,
+			P.UpdateTick = ?
+			where P.UpdateTick < ? and P.Active = 1
+			', $args);
+		
+		if(!$r) {
+			return false;
+		}
+
+		return true;
 	}
 }
 ?>
