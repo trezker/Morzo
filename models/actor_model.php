@@ -98,6 +98,25 @@ class Actor_model extends Model
 
 		return array('success' => false, 'reason' => 'No actors available');
 	}
+
+	public function Get_users_actor_limit($user_id)
+	{
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			select count(*) >= U.Max_actors as Max_actors_reached, U.Max_actors, count(*) as Num_actors
+			from Actor A 
+			join User U on U.ID = A.User_ID
+			where U.ID = ?
+			', array($user_id));
+			
+		if(!$rs)
+		{
+			return false;
+		}
+
+		return $rs->fields;
+	}
 	
 	public function Get_actors($user_id)
 	{

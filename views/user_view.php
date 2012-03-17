@@ -11,7 +11,14 @@
 	<body>
 		<p>Hello <?php echo htmlspecialchars($_SESSION['username']); ?>!</p>
 		<p>
-			<span class="action" id="new_actor" onclick='new_actor()'>New actor</span>
+			<?php
+			if($actor_limit['Max_actors_reached'] == 0) {
+				echo '<span class="action" id="new_actor" onclick="new_actor()">New actor</span>';
+			} else {
+				echo 'You can not request any more actors.';
+			}
+			echo '<br />You have '.$actor_limit["Num_actors"].'/'.$actor_limit["Max_actors"].' actors.';
+			?>
 		</p>
 		<div id="actors">
 			<ul class="actor_list">

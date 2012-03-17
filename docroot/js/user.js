@@ -31,6 +31,7 @@ function new_actor() {
 			}
 			else {
 				$('#new_actor').html(data.reason);
+				window.location.reload();
 			}
 		}
 	});

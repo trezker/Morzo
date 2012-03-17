@@ -26,8 +26,9 @@ class User extends Controller
 
 		$this->Load_model('Actor_model');
 		$actors = $this->Actor_model->Get_actors($_SESSION['userid']);
+		$actor_limit = $this->Actor_model->Get_users_actor_limit($_SESSION['userid']);
 
-		$this->Load_view('user_view', array('actors' => $actors));
+		$this->Load_view('user_view', array('actors' => $actors, 'actor_limit' => $actor_limit));
 	}
 
 	public function Start_openid_login()
