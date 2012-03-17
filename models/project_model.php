@@ -433,5 +433,28 @@ class Project_model
 
 		return true;
 	}
+
+	public function Get_output_from_finished_cycles() {
+		$db = Load_database();
+		
+		$args = array();
+
+		$r = $db->Execute('
+			select
+				P.ID,
+				O.Resource_ID,
+				O.Amount
+			from Project P
+			join Recipe R on R.ID = P.Recipe_ID
+			join Recipe_output O on R.ID = O.Recipe_ID
+			where P.Progress >= R.Cycle_time
+			', $args);
+		
+		if(!$r) {
+			return false;
+		}
+
+		return $r->getArray();
+	}
 }
 ?>

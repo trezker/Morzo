@@ -64,8 +64,12 @@ class Update extends Controller
 
 	private function Update_projects($time) {
 		$this->Load_model("Project_model");
-		$projects = $this->Project_model->Update_projects($time);
+		$update_success = $this->Project_model->Update_projects($time);
+		if($update_success == false) {
+			echo "Projects failed to update";
+		} else {
+			$outputs = $this->Project_model->Get_output_from_finished_cycles();
+			var_dump($outputs);
+		}
 	}
 }
-
-
