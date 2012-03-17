@@ -442,6 +442,8 @@ class Project_model
 		$r = $db->Execute('
 			select
 				P.ID,
+				P.Creator_actor_ID,
+				P.Cycles_left,
 				O.Resource_ID,
 				O.Amount
 			from Project P
@@ -455,6 +457,58 @@ class Project_model
 		}
 
 		return $r->getArray();
+	}
+	
+	public function Process_finished_projects($projects) {
+		$db = Load_database();
+
+		$success = true;
+
+		foreach($projects as $project) {
+			$db->StartTrans();
+
+			//Put output into inventory
+			foreach($project['outputs'] as $output) {
+				$query = '
+					insert into Actor_inventory (Actor_ID, Resource_ID, Amount)
+					values(?,?,?)
+					on duplicate key update Amount = Amount + ?
+				';
+				$args = array($output['actor_id'], $output['resource_id'], $output['amount']);
+				$rs = $db->Execute($query, $args);
+				
+				if(!$rs) {
+					$db->FailTrans();
+					break;
+				}
+			}
+
+			//Update/delete project
+			if(!$db->HasFailedTrans()) {
+				$args = array($project['project_id']);
+				if($project['Cycles_left'] > 0) {
+					$query = '
+						update Project set Cycles_left = Cycles_left - 1
+						where ID = ?
+					';
+				} else {
+					$query = '
+						delete from Project where ID = ?
+					';
+				}
+				$rs = $db->Execute($query, $args);
+				
+				if(!$rs) {
+					$db->FailTrans();
+				}
+			}
+
+			if($db->HasFailedTrans()) {
+				echo $db->ErrorMsg();
+			}
+			$db->CompleteTrans();
+		}
+		return $success;
 	}
 }
 ?>
