@@ -98,14 +98,14 @@ class User extends Controller
 			header('Location: /user');
 		} elseif($r == 'Not found') {
 			$_SESSION['OPENID_AUTH'] = true;
-			$this->Sign_up();
+			header('Location: /user/create_account');
 		} else {
 			echo 'TODO: openid login failure. '.$r;
 			//header('Location: /front')
 		}
 	}
-	
-	private function Sign_up() {
+
+	public function Create_account() {
 		$this->Load_view('signup_view');
 	}
 	
