@@ -441,9 +441,9 @@ class Project_model
 
 		$r = $db->Execute('
 			select
-				P.ID,
-				P.Creator_actor_ID,
+				P.ID as Project_ID,
 				P.Cycles_left,
+				P.Creator_actor_ID,
 				O.Resource_ID,
 				O.Amount
 			from Project P
@@ -474,7 +474,7 @@ class Project_model
 					values(?,?,?)
 					on duplicate key update Amount = Amount + ?
 				';
-				$args = array($output['actor_id'], $output['resource_id'], $output['amount']);
+				$args = array($output['Creator_actor_ID'], $output['Resource_ID'], $output['Amount'], $output['Amount']);
 				$rs = $db->Execute($query, $args);
 				
 				if(!$rs) {
@@ -485,22 +485,24 @@ class Project_model
 
 			//Update/delete project
 			if(!$db->HasFailedTrans()) {
-				$args = array($project['project_id']);
-				if($project['Cycles_left'] > 0) {
+				if($project['Cycles_left'] > 1) {
 					$query = '
 						update Project set Cycles_left = Cycles_left - 1
 						where ID = ?
 					';
 				} else {
 					$query = '
+						Update Actor set Project_ID = NULL where Project_ID = ?
+					';
+					$args = array($project['Project_ID']);
+					$rs = $db->Execute($query, $args);
+
+					$query = '
 						delete from Project where ID = ?
 					';
 				}
+				$args = array($project['Project_ID']);
 				$rs = $db->Execute($query, $args);
-				
-				if(!$rs) {
-					$db->FailTrans();
-				}
 			}
 
 			if($db->HasFailedTrans()) {
