@@ -51,3 +51,19 @@ function ban_user(id)
 		}
 	});
 }
+
+function set_user_actor_limit(id) {
+	var actor_limit = $('#actor_limit'+id).val();
+	$.ajax({
+		type: 'POST',
+		url: 'user_admin/set_user_actor_limit',
+		data: {
+			id: id,
+			actor_limit: actor_limit
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			window.location = '/user_admin';
+		}
+	});
+}

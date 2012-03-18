@@ -21,6 +21,11 @@
 					<td><span class="action" onclick="kick_user({ID});">Kick</span></td>
 					<td>{Banned_text}</td>
 					<td><input type="text" id="ban_to_date{ID}" value="" /><span class="action" onclick="ban_user({ID});">Set ban</span></td>
+					<td>Max actors {Max_actors}</td>
+					<td>
+						<input type="number" id="actor_limit{ID}" value="{Max_actors}" />
+						<span class="action" onclick="set_user_actor_limit({ID});">Set actor limit</span>
+					</td>
 				</tr>';
 			$alternate = '';
 			foreach ($users as $user) {

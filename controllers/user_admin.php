@@ -68,6 +68,29 @@ class User_admin extends Controller
 		echo json_encode(array('success' => $success));
 	}
 	
+	public function set_user_actor_limit() {
+		header('Content-type: application/json');
+
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
+			return;
+		}
+		if(!is_numeric($_POST['id'])) {
+			echo json_encode(array('success' => false, 'reason' => 'Must give a user id'));
+			return;
+		}
+		
+		$this->Load_model('User_model');
+		$success = $this->User_model->Set_user_actor_limit($_POST['id'], $_POST['actor_limit']);
+		
+		echo json_encode(array('success' => $success));
+	}
+	
 	public function Login_as()
 	{
 		header('Content-type: application/json');

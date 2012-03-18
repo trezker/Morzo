@@ -141,7 +141,7 @@ class User_model
 		$db = Load_database();
 
 		$rs = $db->Execute('
-			select U.ID, U.Username, U.Banned_from, U.Banned_to
+			select U.ID, U.Username, U.Banned_from, U.Banned_to, U.Max_actors
 			from User U
 			', array());
 		if(!$rs)
@@ -191,6 +191,28 @@ class User_model
 			update User set Banned_from = NOW(), Banned_to = ?
 			where ID = ?
 			', array($to_date, $user_id));
+		if(!$rs)
+		{
+			echo $db->ErrorMsg();
+			return false;
+		}
+
+		if($db->Affected_rows() == 0)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	public function Set_user_actor_limit($user_id, $actor_limit) {
+		$db = Load_database();
+		$actor_limit = intval($actor_limit);
+
+		$rs = $db->Execute('
+			update User set Max_actors = ?
+			where ID = ?
+			', array($actor_limit, $user_id));
+
 		if(!$rs)
 		{
 			echo $db->ErrorMsg();
