@@ -6,27 +6,7 @@
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/style.css">
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
 		<script type="text/javascript" src="/js/dialog.js"></script>
-		<script type="text/javascript">
-			function sign_up() {
-				$('#signupfeedback').html('Processing...');
-				var username = document.getElementById('username').value;
-				$.ajax(
-				{
-					type: 'POST',
-					url: '/user/Create_user',
-					data: { username: username },
-					success: function(data)
-					{
-						if(!data.success) {
-							$('#signupfeedback').html(data.reason);
-						} else {
-							$('#signupfeedback').html('Redirecting...');
-							window.location = '/user';
-						}
-					}
-				});
-			}
-		</script>
+		<script type="text/javascript" src="/js/user.js"></script>
 	</head>
 	<body>
 		<h1>Create an account</h1>

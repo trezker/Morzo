@@ -115,7 +115,7 @@ class User extends Controller
 			echo json_encode(array('success' => false, 'reason' => 'No authorized openid'));
 			return;
 		}
-		if(!isset($_POST['username'])) {
+		if(!isset($_POST['username']) || $_POST['username'] == "") {
 			echo json_encode(array('success' => false, 'reason' => 'No username'));
 			return;
 		}

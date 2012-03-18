@@ -1,3 +1,24 @@
+function sign_up() {
+	$('#signupfeedback').html('Processing...');
+	var username = document.getElementById('username').value;
+	$.ajax(
+	{
+		type: 'POST',
+		url: '/user/Create_user',
+		data: { username: username },
+		success: function(data)
+		{
+			if(ajax_logged_out(data)) return;
+			if(!data.success) {
+				$('#signupfeedback').html(data.reason);
+			} else {
+				$('#signupfeedback').html('Redirecting...');
+				window.location = '/user';
+			}
+		}
+	});
+}
+
 function logout()
 {
 	$('#logout').html('Logging out...');
