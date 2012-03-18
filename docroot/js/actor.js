@@ -328,6 +328,26 @@ function point_at_actor(actor_id, pointee_id) {
 	});
 }
 
+function attack_actor(actor_id, attacked_actor_id) {
+	$.ajax(
+	{
+		type: 'POST',
+		url: '/actor/Attack_actor',
+		data: {
+			actor_id: actor_id,
+			attacked_actor_id: attacked_actor_id
+		},
+		dataType: "json",
+		success: function(data)
+		{
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = '/actor/show_actor/'+actor_id+'/events';
+			}
+		}
+	});
+}
+
 whispree_id = -1;
 function show_whisper(whispree) {
 	$('#whisper_dialog').show();

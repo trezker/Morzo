@@ -18,6 +18,9 @@
 				<td>
 					<span class='action' onclick='show_whisper({ID});'>Whisper to</span>
 				</td>
+				<td>
+					<span class='action' onclick='attack_actor({My_actor_ID}, {ID});'>Attack</span>
+				</td>
 			</tr>";
 		foreach ($actors as $person) {
 			$person['My_actor_ID'] = $actor_id;
