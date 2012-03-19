@@ -129,7 +129,10 @@ function add_location_resource(resource, e) {
 		success: function(data)
 		{
 			if(ajax_logged_out(data)) return;
-			e.addClass('selected');
+			if(data.success == true) {
+				e.addClass('selected');
+				$('#landscape_'+current_landscape).addClass('selected');
+			}
 		}
 	});
 }
@@ -146,7 +149,12 @@ function remove_location_resource(resource, e) {
 		success: function(data)
 		{
 			if(ajax_logged_out(data)) return;
-			e.removeClass('selected');
+			if(data.success == true) {
+				e.removeClass('selected');
+				if(data.landscape_resource_count == 0) {
+					$('#landscape_'+current_landscape).removeClass('selected');
+				}
+			}
 		}
 	});
 }

@@ -58,10 +58,15 @@ class World_admin extends Controller
 		$location_resources = $this->Location_model->Get_location_resources($_POST['id'], 1);
 		if($location['Biome_name'] === NULL)
 			$location['Biome_name'] = "N/A";
+
+		$all_location_resources = $this->Location_model->Get_location_resources($_POST['id']);
 		$landscapes = $this->Location_model->Get_landscapes();
 
 		$biomes = $this->Location_model->Get_biomes();
 		$biomes_view = $this->Load_view('biomes_view', array('biomes' => $biomes, 'location' => $location), true);
+
+		$landscapes = $this->Location_model->Get_landscapes();
+		$landscapes_view = $this->Load_view('landscapes_view', array('landscapes' => $landscapes, 'location_resources' => $all_location_resources), true);
 
 		$resources = $this->Location_model->Get_resources();
 		$resources_view = $this->Load_view('resources_view', array('resources' => $resources, 'location_resources' => $location_resources), true);
@@ -71,6 +76,7 @@ class World_admin extends Controller
 												'landscapes' => $landscapes,
 												'location' => $location,
 												'resources_view' => $resources_view,
+												'landscapes_view' => $landscapes_view,
 												'location_resources' => $location_resources), true);
 
 		echo json_encode(array('success' => true, 'data' => $location_admin_view));
@@ -232,12 +238,14 @@ class World_admin extends Controller
 		}
 		
 		$this->Load_model('Location_model');
+		
 		if(!$this->Location_model->Remove_location_resource($_POST['location'], $_POST['resource'], $_POST['landscape'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Failed to remove resource'));
 			return;
 		}
+		$landscape_resource_count = $this->Location_model->Landscape_resource_count($_POST['location'], $_POST['landscape']);
 
-		echo json_encode(array('success' => true));
+		echo json_encode(array('success' => true, 'landscape_resource_count' => $landscape_resource_count));
 	}
 }
 

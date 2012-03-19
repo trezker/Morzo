@@ -268,7 +268,12 @@ class Location_model
 		$db = Load_database();
 		
 		$query = '
-			select R.ID, R.Name, L.Name as Landscape_name from Location_resource LR
+			select 
+				R.ID, 
+				R.Name, 
+				L.ID as Landscape_ID, 
+				L.Name as Landscape_name
+			from Location_resource LR
 			join Resource R on R.ID = LR.Resource_ID
 			join Landscape L on L.ID = LR.Landscape_ID
 			where LR.Location_ID = ?
@@ -338,6 +343,21 @@ class Location_model
 			return false;
 		}
 		return true;
+	}
+
+	public function Landscape_resource_count($location_id, $landscape_id)
+	{
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			select count(*) as C from Location_resource where Location_ID=? and Landscape_ID = ?
+			', array($location_id, $landscape_id));
+
+		if(!$rs)
+		{
+			return false;
+		}
+		return $rs->fields['C'];
 	}
 	
 	public function Get_max_actors() {
