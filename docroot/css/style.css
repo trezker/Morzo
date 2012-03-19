@@ -84,6 +84,10 @@ li.selected:hover {
 	background: #CCCCFF;
 }
 
+.contains_resources {
+	background: #BBFFBB;
+}
+
 .deficient_locations {
 	float: left;
 	margin-right: 20px;

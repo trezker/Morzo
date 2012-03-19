@@ -110,8 +110,12 @@ function toggle_landscape(landscape) {
 		success: function(data)
 		{
 			if(ajax_logged_out(data)) return;
-			current_landscape = landscape;
-			$('#resource_list').html(data.data);
+			if(data.success == true) {
+				$('#landscape_'+current_landscape).removeClass('selected');
+				current_landscape = landscape;
+				$('#landscape_'+current_landscape).addClass('selected');
+				$('#resource_list').html(data.data);
+			}
 		}
 	});
 }
@@ -131,7 +135,7 @@ function add_location_resource(resource, e) {
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
 				e.addClass('selected');
-				$('#landscape_'+current_landscape).addClass('selected');
+				$('#landscape_'+current_landscape).addClass('contains_resources');
 			}
 		}
 	});
@@ -152,7 +156,7 @@ function remove_location_resource(resource, e) {
 			if(data.success == true) {
 				e.removeClass('selected');
 				if(data.landscape_resource_count == 0) {
-					$('#landscape_'+current_landscape).removeClass('selected');
+					$('#landscape_'+current_landscape).removeClass('contains_resources');
 				}
 			}
 		}
