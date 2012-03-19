@@ -69,7 +69,7 @@ class World_admin extends Controller
 		$landscapes_view = $this->Load_view('landscapes_view', array('landscapes' => $landscapes, 'location_resources' => $all_location_resources), true);
 
 		$resources = $this->Location_model->Get_resources();
-		$resources_view = $this->Load_view('resources_view', array('resources' => $resources, 'location_resources' => $location_resources), true);
+		$resources_view = "";//$this->Load_view('resources_view', array('resources' => $resources, 'location_resources' => $location_resources), true);
 		
 		$location_admin_view = $this->Load_view('location_edit_view', 
 												array('biomes_view' => $biomes_view,
@@ -156,7 +156,8 @@ class World_admin extends Controller
 			return;
 		}
 		$resources = $this->Location_model->Get_resources();
-		$resources_view = $this->Load_view('resources_view', array('resources' => $resources), true);
+		$location_resources = $this->Location_model->Get_location_resources($_POST['location_id'], $_POST['landscape_id']);
+		$resources_view = $this->Load_view('resources_view', array('resources' => $resources, 'location_resources' => $location_resources), true);
 
 		echo json_encode(array('success' => true, 'data' => $resources_view));
 	}

@@ -48,7 +48,9 @@ function add_resource()
 		url: 'world_admin/add_resource',
 		data: {
 			name: $('#new_resource').val(),
-			natural: true
+			natural: true,
+			location_id: current_location,
+			landscape_id: current_landscape
 		},
 		success: function(data)
 		{
