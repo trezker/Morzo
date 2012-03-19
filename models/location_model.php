@@ -194,6 +194,21 @@ class Location_model
 		}
 		return true;
 	}
+
+	public function Add_landscape($name)
+	{
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			insert into Landscape(name) values(?)
+			', array($name));
+
+		if(!$rs)
+		{
+			return false;
+		}
+		return true;
+	}
 	
 	public function Get_resources()
 	{

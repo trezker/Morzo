@@ -161,6 +161,35 @@ class World_admin extends Controller
 		echo json_encode(array('success' => true, 'data' => $resources_view));
 	}
 
+	public function Add_landscape()
+	{
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
+			return;
+		}
+		if(!is_string($_POST['name']) || $_POST['name'] == '') {
+			echo json_encode(array('success' => false, 'reason' => $_POST['name'].'Must give a name'));
+			return;
+		}
+
+		$this->Load_model('Location_model');
+		if(!$this->Location_model->Add_landscape($_POST['name'])) {
+			echo json_encode(array('success' => false, 'reason' => 'Failed to add landscape'));
+			return;
+		}
+		$landscapes = $this->Location_model->Get_landscapes();
+		$all_location_resources = $this->Location_model->Get_location_resources($_POST['location_id']);
+		$landscapes_view = $this->Load_view('landscapes_view', array('landscapes' => $landscapes, 'location_resources' => $all_location_resources), true);
+
+		echo json_encode(array('success' => true, 'data' => $landscapes_view));
+	}
+
 	public function Set_location_biome() {
 		header('Content-type: application/json');
 		$this->Load_controller('User');

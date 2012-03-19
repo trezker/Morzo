@@ -61,6 +61,23 @@ function add_resource()
 	});
 }
 
+function add_landscape() {
+	$.ajax({
+		type: 'POST',
+		url: 'world_admin/add_landscape',
+		data: {
+			name: $('#new_landscape').val(),
+			location_id: current_location
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data !== false) {
+				$('#landscape_list').html(data.data);
+			}
+		}
+	});
+}
+
 function toggle_resource(id) {
 	var e = $('#'+id);
 	var resource_id = e.attr('id').substr(9);
