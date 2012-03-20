@@ -211,5 +211,21 @@ class Actor_model extends Model
 		}
 		return $actors;
 	}
+	
+	public function Get_inventory($actor_ID) {
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			select AI.ID, AI.Resource_ID, AI.Amount, R.Name
+			from Actor_inventory AI
+			left join Resource R on AI.Resource_ID = R.ID
+			where AI.Actor_ID = ?
+			', array($actor_ID));
+		
+		if(!$rs) {
+			return false;
+		}
+		return $rs->getArray();
+	}
 }
 

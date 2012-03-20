@@ -75,6 +75,9 @@ class Actor extends Controller
 			$this->Load_model("Project_model");
 			$projects = $this->Project_model->Get_projects($actor_id);
 			$tab_view = $this->Load_view('projects_tab_view', array('projects' => $projects, 'actor_id' => $actor_id), true);
+		} elseif ($tab == 'inventory') {
+			$actor_inventory = $this->Actor_model->Get_inventory($actor_id);
+			$tab_view = $this->Load_view('inventory_tab_view', array('actor_inventory' => $actor_inventory, 'actor_id' => $actor_id), true);
 		}
 		
 		$this->Load_view('actor_view', array('tab' => $tab, 'actor_id' => $actor_id, 'tab_view' => $tab_view, 'time' => $time, 'actor' => $actor), false);
