@@ -18,7 +18,7 @@ class Project_model
 		}
 		return $rs->GetArray();
 	}
-
+	
 	public function Get_recipe($id)
 	{
 		$db = Load_database();
@@ -221,6 +221,22 @@ class Project_model
 		}
 
 		return $r->GetArray();
+	}
+
+	public function Get_recipes_without_nature_resource() {
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			select R.ID, R.Name from Recipe R
+			left join Recipe_input RI on R.ID = RI.Recipe_ID and RI.From_nature = 1
+			where RI.ID is null
+			', array());
+		
+		if(!$rs)
+		{
+			return false;
+		}
+		return $rs->GetArray();
 	}
 	
 	public function Start_project($actor_id, $recipe_id)

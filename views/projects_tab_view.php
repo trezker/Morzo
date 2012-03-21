@@ -1,3 +1,11 @@
+<div id="recipe_menu_container">
+	<span class="action" id="open_recipe_menu" onclick="toggle_recipe_menu(<?php echo $actor_id;?>);">Start a new project</span>
+	<div id="recipe_menu_content" style="display: none;">
+		<span class="action" onclick="toggle_recipe_menu();">Close recipe menu</span>
+		<?php echo $recipe_selection_view;?>
+	</div>
+</div>
+
 <div id="projects_feedback"></div>
 <div id="projects">
 	<table class="recipe_list">

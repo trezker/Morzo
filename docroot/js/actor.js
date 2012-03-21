@@ -240,7 +240,7 @@ function show_project_start_form(actor_id, id)
 		{
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
-				$('#natural_resource_dialog').append(data.data);
+				$('#view_recipe').html(data.data);
 				$('#recipe_'+id).addClass('selected');
 			}
 		}
@@ -379,4 +379,9 @@ function whisper(actor_id) {
 			}
 		}
 	});
+}
+
+function toggle_recipe_menu() {
+	$('#open_recipe_menu').toggle();
+	$('#recipe_menu_content').toggle();
 }

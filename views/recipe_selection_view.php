@@ -6,3 +6,4 @@
 	}
 	?>
 </ul>
+<div id="view_recipe"></div>

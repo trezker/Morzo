@@ -74,7 +74,9 @@ class Actor extends Controller
 		} elseif ($tab == 'projects') {
 			$this->Load_model("Project_model");
 			$projects = $this->Project_model->Get_projects($actor_id);
-			$tab_view = $this->Load_view('projects_tab_view', array('projects' => $projects, 'actor_id' => $actor_id), true);
+			$recipe_list = $this->Project_model->Get_recipes_without_nature_resource();
+			$recipe_selection_view = $this->Load_view('recipe_selection_view', array('recipe_list' => $recipe_list, 'actor_id' => $actor_id), true);
+			$tab_view = $this->Load_view('projects_tab_view', array('projects' => $projects, 'actor_id' => $actor_id, 'recipe_selection_view' => $recipe_selection_view), true);
 		} elseif ($tab == 'inventory') {
 			$actor_inventory = $this->Actor_model->Get_inventory($actor_id);
 			$tab_view = $this->Load_view('inventory_tab_view', array('actor_inventory' => $actor_inventory, 'actor_id' => $actor_id), true);
