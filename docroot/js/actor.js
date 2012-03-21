@@ -262,8 +262,7 @@ function start_project(actor_id, recipe_id)
 		{
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
-//				$('#natural_resource_dialog').append(data.data);
-//				$('#recipe_'+id).addClass('selected');
+				window.location = "/actor/show_actor/3/projects";
 			}
 		}
 	});
