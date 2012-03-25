@@ -183,6 +183,10 @@ li.selected:hover {
 	text-align: right;
 }
 
+.project_list {
+	width: 100%;
+}
+
 .user_admin_list {
 	border-width: 0px;
 	border-spacing: 0px;

@@ -431,4 +431,23 @@ class Actor extends Controller
 			echo json_encode(array('success' => true));
 		}
 	}
+	
+	public function Show_project_details() {
+		$actor_id = $_POST['actor_id'];
+		$project_id = $_POST['project_id'];
+		
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+
+		$this->Load_model('Project_model');
+		$project = $this->Project_model->Get_project($project_id, $actor_id);
+		$project_details_view = $this->Load_view('project_details_view', array(
+									'actor_id' => $actor_id, 
+									'project' => $project
+								), true);
+		
+		echo json_encode(array('success' => true, 'data' => $project_details_view));
+	}
 }

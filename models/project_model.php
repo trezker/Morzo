@@ -431,6 +431,67 @@ class Project_model
 		return $r->GetArray();
 	}
 	
+	public function Get_project($project_id, $actor_id) {
+		$db = Load_database();
+		
+		$args = array($actor_id, $actor_id, $project_id);
+
+		$info = $db->Execute('
+			select
+				P.ID,
+				P.Creator_actor_ID,
+				P.Recipe_ID,
+				R.Name as Recipe_Name,
+				R.Cycle_time,
+				P.Cycles_left,
+				P.Created_time,
+				P.Progress,
+				P.Active,
+				IF(AP.ID, true, false) AS Joined
+			from Project P
+			join Recipe R on R.ID = P.Recipe_ID
+			join Location L on L.ID = P.Location_ID
+			join Actor A on L.ID = A.Location_ID
+			left join Actor AP on AP.Project_ID = P.ID AND AP.ID = ?
+			where A.ID = ? and P.ID = ?
+			', $args);
+		
+		if(!$info) {
+			return false;
+		}
+
+		$recipe_inputs = $db->Execute('
+			select R.ID, R.Name, RI.Amount, RI.From_nature
+			from Project P
+			join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID
+			join Resource R on R.ID = RI.Resource_ID
+			where P.ID = ?
+			', array($project_id));
+
+		if(!$recipe_inputs) {
+			return false;
+		}
+
+		$recipe_outputs = $db->Execute('
+			select R.ID, R.Name, RO.Amount
+			from Project P
+			join Recipe_output RO on RO.Recipe_ID = P.Recipe_ID
+			join Resource R on R.ID = RO.Resource_ID
+			where P.ID = ?
+			', array($project_id));
+
+		if(!$recipe_outputs) {
+			return false;
+		}
+
+		$project = array();
+		$project['info'] = $info->fields;
+		$project['recipe_inputs'] = $recipe_inputs->getArray();
+		$project['recipe_outputs'] = $recipe_outputs->getArray();
+
+		return $project;
+	}
+	
 	public function Update_projects($time) {
 		$db = Load_database();
 		

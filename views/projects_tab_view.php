@@ -8,10 +8,10 @@
 
 <div id="projects_feedback"></div>
 <div id="projects">
-	<table class="recipe_list">
+	<table class="project_list">
 		<?php
 		$row_template = '
-			<tr>
+			<tr id="project_row_{id}">
 				<td>
 					<span class="action" onclick="show_project({actor_id}, {id});">{name}</span>
 				</td>
@@ -43,6 +43,12 @@
 			);
 			echo expand_template($row_template, $vars);
 		}
+		echo '
+			<tr id="project_details_row" style="display: none;">
+				<td id="project_details_container" colspan="3" style="max-width: 300px;">
+					Here comes the details, later, when it is implemented. Need to do a bit of styling on this table to make things loook alright.
+				</td>
+			</tr>';
 		?>
 	</table>
 </div>

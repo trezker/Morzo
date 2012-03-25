@@ -384,3 +384,29 @@ function toggle_recipe_menu() {
 	$('#open_recipe_menu').toggle();
 	$('#recipe_menu_content').toggle();
 }
+
+var project_details_at_id = -1;
+function show_project(actor_id, project_id) {
+	if(project_details_at_id == project_id) {
+		project_details_at_id = -1;
+		$('#project_details_row').hide();
+		return;
+	}
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Show_project_details',
+		data: {
+			actor_id: actor_id,
+			project_id: project_id
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				project_details_at_id = project_id;
+				$('#project_details_row').insertAfter($('#project_row_'+project_id)).show();
+				$('#project_details_container').html(data.data);
+			}
+		}
+	});
+}
