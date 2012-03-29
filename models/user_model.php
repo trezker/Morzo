@@ -64,26 +64,27 @@ class User_model
 	public function Create_user_openid($username, $openid)
 	{
 		$db = Load_database();
-		
 		$db->StartTrans();
 		$query = 'INSERT INTO User (Username) VALUES(?)';
 		$rs = $db->Execute($query, array($username));
 		if(!$rs) {
+			$reason = $db->ErrorMsg();
 			$db->FailTrans();
 			$db->CompleteTrans();
 			return array(
 				'success' => false,
-				'reason' => $db->ErrorMsg(),
+				'reason' => $reason
 			);
 		}
 		$query = 'SELECT ID FROM User WHERE Username = ?';
 		$rs = $db->Execute($query, array($username));
 		if(!$rs) {
+			$reason = $db->ErrorMsg();
 			$db->FailTrans();
 			$db->CompleteTrans();
 			return array(
 				'success' => false,
-				'reason' => $db->ErrorMsg(),
+				'reason' => $reason
 			);
 		}
 		if($rs->RecordCount()!=1) {
@@ -99,11 +100,12 @@ class User_model
 		$query = 'INSERT INTO User_openID (OpenID, UserID) VALUES(?, ?)';
 		$rs = $db->Execute($query, array($openid, $userid));
 		if(!$rs) {
+			$reason = $db->ErrorMsg();
 			$db->FailTrans();
 			$db->CompleteTrans();
 			return array(
 				'success' => false,
-				'reason' => $db->ErrorMsg(),
+				'reason' => $reason
 			);
 		}
 		
