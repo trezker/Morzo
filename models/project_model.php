@@ -589,5 +589,69 @@ class Project_model
 		}
 		return $success;
 	}
+	
+	public function Supply_project($project_id, $actor_id) {
+		$db = Load_database();
+		$db->StartTrans();
+		
+		$args = array($project_id, $actor_id);
+
+		$r = $db->Execute('
+			select 	RI.Resource_ID, 
+					RI.Amount AS Needed_amount, 
+					PI.Amount AS Project_amount,
+					AI.Amount AS Actor_amount
+			from Project P
+			join Actor A on P.Location_ID = A.Location_ID
+			join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID
+			join Actor_inventory AI on RI.Resource_ID = AI.Resource_ID and AI.Actor_ID = A.ID
+			left join Project_input PI on PI.Project_ID = P.ID and PI.Resource_ID = RI.Resource_ID and PI.Amount < RI.Amount
+			where P.ID = ? and A.ID = ?
+			', $args);
+		
+		$inputs = $r->getArray();
+		
+		foreach($inputs as $input) {
+			if($input['Project_amount'] == NULL) {
+				$supply_amount = min($input['Needed_amount'], $input['Actor_amount']);
+
+				$args = array($project_id, $input['Resource_ID'], $supply_amount);
+
+				$r = $db->Execute('
+					insert into Project_input (Project_ID, Resource_ID, Amount)
+					values (?,?,?)
+					', $args);
+				if(!$r)
+					break;
+			} else {
+				$supply_amount = min($input['Needed_amount']-$input['Project_amount'], $input['Actor_amount']);
+
+				$args = array($input['Project_amount']+$supply_amount, $project_id, $input['Resource_ID']);
+
+				$r = $db->Execute('
+					update Project_input set Amount = ?
+					where Project_ID = ? and Resource_ID = ?
+					', $args);
+				if(!$r)
+					break;
+			}
+
+			$args = array($actor_id, $input['Resource_ID'], $input['Actor_amount']-$supply_amount);
+
+			$r = $db->Execute('
+				update Actor_inventory set Amount = ?
+				where Actor_ID = ? and Resource_ID = ?
+				', $args);
+			if(!$r)
+				break;
+		}
+
+		if($db->HasFailedTrans()) {
+			echo $db->ErrorMsg();
+		}
+		$db->CompleteTrans();
+
+		return true;
+	}
 }
 ?>

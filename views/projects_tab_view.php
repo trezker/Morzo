@@ -11,7 +11,7 @@
 	<table class="project_list">
 		<?php
 		$row_template = '
-			<tr id="project_row_{id}">
+			<tr id="project_row_{id}" class="{alternate}">
 				<td>
 					<span class="action" onclick="show_project({actor_id}, {id});">{name}</span>
 				</td>
@@ -22,7 +22,9 @@
 					{!Join/Leave}
 				</td>
 			</tr>';
+		$alternate = '';
 		foreach ($projects as $project) {
+			$alternate = ($alternate == 'alternate1')? 'alternate2': 'alternate1';
 			if($project["Joined"] == 0) {
 				$joinleave = '<span class="action" onclick="join_project({actor_id}, {id})">Join</span>';
 			} else {
@@ -39,7 +41,8 @@
 				'name' => $project["Recipe_Name"],
 				'progress_percent' => 100 * $project["Progress"] / $project["Cycle_time"],
 				'actor_id' => $actor_id,
-				'active_class' => $active_class
+				'active_class' => $active_class,
+				'alternate' => $alternate
 			);
 			echo expand_template($row_template, $vars);
 		}

@@ -38,11 +38,15 @@
 					{Amount} {Name} {From_nature_text}
 				</li>
 			';
-
+			
+			$needs_resources = false;
 			foreach ($project['recipe_inputs'] as $input) {
 				$from_nature_text = "";
-				if($input['From_nature'] == 1)
+				if($input['From_nature'] == 1) {
 					$from_nature_text = "from nature";
+				} else {
+					$needs_resources = true;
+				}
 
 				echo expand_template($input_template, 
 												array(
@@ -53,5 +57,10 @@
 			}
 			?>
 		</ul>
+		<?php 
+			if($needs_resources) {
+				echo '<span class="action" onclick="supply_project('.$project['info']['ID'].')">Supply resources to this project</span>';
+			}
+		?>
 	</div>
 </div>
