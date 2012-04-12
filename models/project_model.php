@@ -461,10 +461,16 @@ class Project_model
 		}
 
 		$recipe_inputs = $db->Execute('
-			select R.ID, R.Name, RI.Amount, RI.From_nature
+			select 
+				R.ID, 
+				R.Name, 
+				RI.Amount, 
+				RI.From_nature,
+				IFNULL(PI.Amount, 0) as Project_amount
 			from Project P
 			join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID
 			join Resource R on R.ID = RI.Resource_ID
+			left join Project_input PI on PI.Project_ID = P.ID and PI.Resource_ID = RI.Resource_ID
 			where P.ID = ?
 			', array($project_id));
 

@@ -30,12 +30,12 @@
 	</div>
 
 	<div id="recipe_inputs">
-		Requires
+		Requirements
 		<ul class="selectable">
 			<?php
 			$input_template = '
 				<li>
-					{Amount} {Name} {From_nature_text}
+					{Project_amount}/{Amount} {Name} {From_nature_text}
 				</li>
 			';
 			
@@ -51,6 +51,7 @@
 				echo expand_template($input_template, 
 												array(
 													'Amount' => $input['Amount'],
+													'Project_amount' => $input['Project_amount'],
 													'Name' => $input['Name'],
 													'From_nature_text' => $from_nature_text
 												));
@@ -59,7 +60,7 @@
 		</ul>
 		<?php 
 			if($needs_resources) {
-				echo '<span class="action" onclick="supply_project('.$project['info']['ID'].')">Supply resources to this project</span>';
+				echo '<span class="action" onclick="supply_project('.$actor_id.', '.$project['info']['ID'].')">Supply resources to this project</span>';
 			}
 		?>
 	</div>

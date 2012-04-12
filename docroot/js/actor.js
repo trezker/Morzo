@@ -410,3 +410,23 @@ function show_project(actor_id, project_id) {
 		}
 	});
 }
+
+function supply_project(actor_id, project_id) {
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Supply_project',
+		data: {
+			actor_id: actor_id,
+			project_id: project_id
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				project_details_at_id = project_id;
+				$('#project_details_row').insertAfter($('#project_row_'+project_id)).show();
+				$('#project_details_container').html(data.data);
+			}
+		}
+	});
+}
