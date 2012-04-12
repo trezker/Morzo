@@ -60,8 +60,9 @@
 		</ul>
 		<?php 
 			if($needs_resources) {
-				echo '<span class="action" onclick="supply_project('.$actor_id.', '.$project['info']['ID'].')">Supply resources to this project</span>';
+				echo '<span class="action" onclick="supply_project('.$actor_id.', '.$project['info']['ID'].')">Supply resources</span>';
 			}
+			echo ' <span class="action" onclick="cancel_project('.$actor_id.', '.$project['info']['ID'].')">Cancel</span>';
 		?>
 	</div>
 </div>

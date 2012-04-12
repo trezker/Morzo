@@ -210,7 +210,7 @@ class Actor extends Controller
 		}
 
 		$this->Load_model('Project_model');
-		$success = $this->Project_model->Start_project($actor_id, $recipe_id);
+		$success = $this->Project_model->Start_project($actor_id, $recipe_id, $_POST['supply']);
 
 		echo json_encode(array('success' => $success));
 	}
@@ -470,5 +470,20 @@ class Actor extends Controller
 								), true);
 		
 		echo json_encode(array('success' => true, 'data' => $project_details_view));
+	}
+
+	public function Cancel_project() {
+		$actor_id = $_POST['actor_id'];
+		$project_id = $_POST['project_id'];
+		
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+
+		$this->Load_model('Project_model');
+		$cancel_result = $this->Project_model->Cancel_project($project_id, $actor_id);
+		
+		echo json_encode(array('success' => $cancel_result));
 	}
 }

@@ -239,7 +239,7 @@ class Project_model
 		return $rs->GetArray();
 	}
 	
-	public function Start_project($actor_id, $recipe_id)
+	public function Start_project($actor_id, $recipe_id, $supply)
 	{
 		$db = Load_database();
 		
@@ -259,7 +259,10 @@ class Project_model
 			return false;
 		}
 
-		//TODO: Add neccessary resources from actor inventory
+		$project_id = $db->Insert_id();
+		if($supply == true) {
+			$supply_result = $this->Supply_project($project_id, $actor_id);
+		}
 
 		return true;
 	}
@@ -658,6 +661,27 @@ class Project_model
 		$db->CompleteTrans();
 
 		return true;
+	}
+	public function Cancel_project($project_id, $actor_id) {
+		$db = Load_database();
+		$db->StartTrans();
+		
+		$args = array($project_id, $actor_id);
+
+		$r = $db->Execute('
+			delete P from Project P
+			join Actor A on A.Location_ID = P.Location_ID
+			where P.ID = ? and A.ID = ?
+			', $args);
+		
+		$success = true;
+		if($db->HasFailedTrans()) {
+			$success = false;
+			echo $db->ErrorMsg();
+		}
+		$db->CompleteTrans();
+
+		return $success;
 	}
 }
 ?>

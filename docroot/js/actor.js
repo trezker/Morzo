@@ -247,22 +247,21 @@ function show_project_start_form(actor_id, id)
 	});
 }
 
-function start_project(actor_id, recipe_id)
-{
-	$.ajax(
-	{
+function start_project(actor_id, recipe_id) {
+	var supply = $('#supply_resources_option').attr('checked');
+	$.ajax({
 		type: 'POST',
 		url: '/actor/Start_project',
 		data: {
 			actor_id: actor_id,
-			recipe_id: recipe_id
+			recipe_id: recipe_id,
+			supply: supply
 		},
 		dataType: "json",
-		success: function(data)
-		{
+		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
-				window.location = "/actor/show_actor/3/projects";
+				window.location = "/actor/show_actor/"+actor_id+"/projects";
 			}
 		}
 	});
@@ -426,6 +425,24 @@ function supply_project(actor_id, project_id) {
 				project_details_at_id = project_id;
 				$('#project_details_row').insertAfter($('#project_row_'+project_id)).show();
 				$('#project_details_container').html(data.data);
+			}
+		}
+	});
+}
+
+function cancel_project(actor_id, project_id) {
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Cancel_project',
+		data: {
+			actor_id: actor_id,
+			project_id: project_id
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = "/actor/show_actor/"+actor_id+"/projects";
 			}
 		}
 	});

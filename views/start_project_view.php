@@ -50,5 +50,6 @@
 			?>
 		</ul>
 	</div>
+	<input type="checkbox" id="supply_resources_option">Supply requirements from inventory</input>
 	<div class="action" onclick="start_project(<?php echo $actor_id.', '.$recipe['recipe']['ID'];?>)">Start project</div>
 </div>
