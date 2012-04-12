@@ -210,7 +210,7 @@ class Actor extends Controller
 		}
 
 		$this->Load_model('Project_model');
-		$success = $this->Project_model->Start_project($actor_id, $recipe_id, $_POST['supply']);
+		$success = $this->Project_model->Start_project($actor_id, $recipe_id, $_POST['supply'] == "true");
 
 		echo json_encode(array('success' => $success));
 	}

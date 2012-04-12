@@ -662,6 +662,7 @@ class Project_model
 
 		return true;
 	}
+
 	public function Cancel_project($project_id, $actor_id) {
 		$db = Load_database();
 		$db->StartTrans();
