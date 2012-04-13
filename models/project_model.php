@@ -645,12 +645,22 @@ class Project_model
 					break;
 			}
 
-			$args = array($actor_id, $input['Resource_ID'], $input['Actor_amount']-$supply_amount);
+			$inv_left = $input['Actor_amount']-$supply_amount;
+			if($inv_left <= 0) {
+				$args = array($actor_id, $input['Resource_ID']);
 
-			$r = $db->Execute('
-				update Actor_inventory set Amount = ?
-				where Actor_ID = ? and Resource_ID = ?
-				', $args);
+				$r = $db->Execute('
+					delete from Actor_inventory
+					where Actor_ID = ? and Resource_ID = ?
+					', $args);
+			} else {
+				$args = array($inv_left, $actor_id, $input['Resource_ID']);
+
+				$r = $db->Execute('
+					update Actor_inventory set Amount = ?
+					where Actor_ID = ? and Resource_ID = ?
+					', $args);
+			}
 			if(!$r)
 				break;
 		}
