@@ -354,21 +354,37 @@ class Project_model
 
 		$args = array($project_id);
 
-		$r = $db->Execute('
+		//Check that enough workers are on the project.
+		$workers = $db->Execute('
 			select P.Active from Project P
 			join Actor A on A.Project_ID = P.ID
 			where P.ID = ?
 			', $args);
 		
-		if(!$r) {
+		if(!$workers) {
 			return false;
 		}
 
-		if($r->RecordCount()>0) {
+		$missing_input = $db->Execute('
+			select 	RI.Resource_ID, 
+					RI.Amount AS Needed_amount, 
+					PI.Amount AS Project_amount
+			from Project P
+			join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID and RI.From_nature = 0
+			left join Project_input PI on PI.Project_ID = P.ID and PI.Resource_ID = RI.Resource_ID and PI.Amount < RI.Amount
+			where P.ID = ? and PI.Amount is not NULL
+			', $args);
+
+		if(!$missing_input) {
+			return false;
+		}
+
+		if($workers->RecordCount()>0 && $missing_input->RecordCount() == 0) {
 			$active = 1;
 		} else {
 			$active = 0;
 		}
+
 		
 		if($active == 1) {
 			$rs = $db->Execute("
@@ -584,6 +600,12 @@ class Project_model
 					$rs = $db->Execute($query, $args);
 
 					$query = '
+						delete from Project_input where Project_ID = ?
+					';
+					$args = array($project['Project_ID']);
+					$rs = $db->Execute($query, $args);
+
+					$query = '
 						delete from Project where ID = ?
 					';
 				}
@@ -605,14 +627,14 @@ class Project_model
 		
 		$args = array($project_id, $actor_id);
 
-		$r = $db->Execute('
+		$r = $db->Execute('http://www.youtube.com/watch?v=9HE1OJiq7GQ
 			select 	RI.Resource_ID, 
 					RI.Amount AS Needed_amount, 
 					PI.Amount AS Project_amount,
 					AI.Amount AS Actor_amount
 			from Project P
 			join Actor A on P.Location_ID = A.Location_ID
-			join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID
+			join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID and RI.From_nature = 0
 			join Actor_inventory AI on RI.Resource_ID = AI.Resource_ID and AI.Actor_ID = A.ID
 			left join Project_input PI on PI.Project_ID = P.ID and PI.Resource_ID = RI.Resource_ID and PI.Amount < RI.Amount
 			where P.ID = ? and A.ID = ?
@@ -665,9 +687,12 @@ class Project_model
 				break;
 		}
 
+		$this->Update_project_active_state($project_id);
+
 		if($db->HasFailedTrans()) {
 			echo $db->ErrorMsg();
 		}
+
 		$db->CompleteTrans();
 
 		return true;
