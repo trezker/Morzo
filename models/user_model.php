@@ -65,7 +65,8 @@ class User_model
 	{
 		$db = Load_database();
 		$db->StartTrans();
-		$query = 'INSERT INTO User (Username) VALUES(?)';
+		$query = '	INSERT INTO User (Username, Max_actors)
+					select ?, Value from Count where Name = \'Max_actors_account\'';
 		$rs = $db->Execute($query, array($username));
 		if(!$rs) {
 			$reason = $db->ErrorMsg();

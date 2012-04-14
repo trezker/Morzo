@@ -31,6 +31,13 @@
 			Maximum number of actors in the world
 			<input name="max_actors_input" id="max_actors_input" type="text" value="<?php echo $max_actors;?>" />
 			<span class="action" onclick="set_max_actors();">Update</span>
+
+			<div></div>
+
+			Default max actors for new accounts
+			<input name="max_actors_account_input" id="max_actors_account_input" type="text" value="<?php echo $max_actors_account;?>" />
+			<span class="action" onclick="set_max_actors_account();">Update</span>
+
 			<div id="actor_control_feedback"></div>
 		</div>
 	</body>

@@ -18,8 +18,9 @@ class World_admin extends Controller
 		$this->Load_model('Location_model');
 		$locations = $this->Location_model->Get_deficient_locations();
 		$max_actors = $this->Location_model->Get_max_actors();
+		$max_actors_account = $this->Location_model->Get_max_actors_account();
 
-		$this->Load_view('world_admin_view', array('locations' => $locations, 'max_actors' => $max_actors));
+		$this->Load_view('world_admin_view', array('locations' => $locations, 'max_actors' => $max_actors, 'max_actors_account' => $max_actors_account));
 	}
 	
 	public function Set_max_actors(){
@@ -36,6 +37,24 @@ class World_admin extends Controller
 
 		$this->Load_model('Location_model');
 		$success = $this->Location_model->Set_max_actors($_POST['value']);
+		
+		echo json_encode(array('success' => $success));
+	}
+	
+	public function Set_max_actors_account(){
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
+			return;
+		}
+
+		$this->Load_model('Location_model');
+		$success = $this->Location_model->Set_max_actors_account($_POST['value']);
 		
 		echo json_encode(array('success' => $success));
 	}

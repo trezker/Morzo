@@ -402,5 +402,33 @@ class Location_model
 		}
 		return true;
 	}
+
+	public function Get_max_actors_account() {
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			select Value from Count where Name = \'Max_actors_account\';
+			', array());
+
+		if(!$rs)
+		{
+			return false;
+		}
+		return $rs->fields['Value'];
+	}
+
+	public function Set_max_actors_account($value) {
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			update Count set Value = ? where Name = \'Max_actors_account\';
+			', array($value));
+
+		if(!$rs)
+		{
+			return false;
+		}
+		return true;
+	}
 }
 ?>

@@ -203,3 +203,25 @@ function set_max_actors() {
 		}
 	});
 }
+
+function set_max_actors_account() {
+	$('#actor_control_feedback').html("Saving...");
+	$.ajax(
+	{
+		type: 'POST',
+		url: 'world_admin/set_max_actors_account',
+		data: {
+			value: $('#max_actors_account_input').val()
+		},
+		success: function(data)
+		{
+			if(ajax_logged_out(data)) return;
+			if(data !== false)
+			{
+				$('#actor_control_feedback').html("Saved");
+			} else {
+				$('#actor_control_feedback').html("Failed to save");
+			}
+		}
+	});
+}
