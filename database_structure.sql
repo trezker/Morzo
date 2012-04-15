@@ -420,6 +420,8 @@ CREATE TABLE `Resource` (
   `Name` varchar(45) NOT NULL,
   `Is_natural` tinyint(1) NOT NULL,
   `Measure` bigint(20) NOT NULL DEFAULT '1',
+  `Mass` double NOT NULL,
+  `Volume` double NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Name_UNIQUE` (`Name`),
   KEY `Resource_fk_Measure` (`Measure`),
@@ -562,4 +564,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-04-15 15:34:14
+-- Dump completed on 2012-04-15 20:43:07

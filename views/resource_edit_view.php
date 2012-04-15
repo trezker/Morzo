@@ -37,6 +37,14 @@
 				</select>
 			</td>
 		</tr>
+		<tr>
+			<td class="label">Mass (gram):</td>
+			<td><input type="number" id="mass" value="{Mass}" /></td>
+		</tr>
+		<tr>
+			<td class="label">Volume (litre):</td>
+			<td><input type="number" id="volume" value="{Volume}" /></td>
+		</tr>
 	</table>',
 	$resource);
 	?>

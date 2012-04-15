@@ -188,6 +188,8 @@ function save_resource() {
 	var name = $('#resource_name').val();
 	var is_natural = $('#is_natural').attr('checked');
 	var measure = $('#measure').val();
+	var mass = $('#mass').val();
+	var volume = $('#volume').val();
 
 	$.ajax({
 		type: 'POST',
@@ -196,7 +198,9 @@ function save_resource() {
 			id: id,
 			name: name,
 			is_natural: is_natural,
-			measure: measure
+			measure: measure,
+			mass: mass,
+			volume: volume
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;

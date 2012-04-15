@@ -32,7 +32,7 @@ class Resource_model
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			select ID, Name, Is_natural, Measure from Resource where ID = ?
+			select ID, Name, Is_natural, Measure, Mass, Volume from Resource where ID = ?
 			', array($resource_id));
 
 		if(!$rs || $rs->RecordCount() == 0) {
@@ -53,21 +53,25 @@ class Resource_model
 		if($resource['id'] == -1) {
 			$args = array(	$resource['name'], 
 							$resource['is_natural'],
-							$resource['measure']
+							$resource['measure'],
+							$resource['mass'],
+							$resource['volume']
 						);
 
 			$rs = $db->Execute('
-				insert into Resource (Name, Is_natural, Measure) values (?, ?, ?)
+				insert into Resource (Name, Is_natural, Measure, Mass, Volume) values (?, ?, ?, ?, ?)
 				', $args);
 		} else {
 			$args = array(	$resource['name'], 
 							$resource['is_natural'],
 							$resource['measure'],
+							$resource['mass'],
+							$resource['volume'],
 							$resource['id']
 						);
 
 			$rs = $db->Execute('
-				update Resource set Name = ?, Is_natural = ?, Measure = ? where ID = ?
+				update Resource set Name = ?, Is_natural = ?, Measure = ?, Mass = ?, Volume = ? where ID = ?
 				', $args);
 		}
 
