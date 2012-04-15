@@ -13,7 +13,7 @@ else
 	elif [ $1 = "initdata" ]
 	then
 		echo "This backup requires game database access";
-		mysqldump --skip-triggers --compact --no-create-info -u morzo -p morzo Access Count Language Translation > database_initial_data.sql
+		mysqldump --skip-triggers --compact --no-create-info -u morzo -p morzo Access Count Language Translation Measure > database_initial_data.sql
 	elif [ $1 = "alldata" ]
 	then
 		echo "This backup requires game database access";
