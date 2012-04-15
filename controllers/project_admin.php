@@ -17,7 +17,9 @@ class Project_admin extends Controller
 
 		$this->Load_model('Project_model');
 		$recipes = $this->Project_model->Get_recipes();
-		$this->Load_view('project_admin_view', array('recipes' => $recipes));
+		$this->Load_model('Resource_model');
+		$resources = $this->Resource_model->Get_resources();
+		$this->Load_view('project_admin_view', array('recipes' => $recipes, 'resources' => $resources));
 	}
 	
 	public function edit_recipe() {
@@ -34,8 +36,8 @@ class Project_admin extends Controller
 
 		$this->Load_model('Project_model');
 		$recipe = $this->Project_model->Get_recipe($_POST['id']);
-		$this->Load_model('Location_model');
-		$resources = $this->Location_model->Get_resources();
+		$this->Load_model('Resource_model');
+		$resources = $this->Resource_model->Get_resources();
 
 		if($recipe['recipe'] == false) {
 			$recipe['recipe'] = array(
@@ -158,6 +160,54 @@ class Project_admin extends Controller
 		$success = $this->Project_model->Remove_recipe_input($_POST['recipe_id'], $_POST['id']);
 
 		echo json_encode(array('success' => $success));
+	}
+
+	public function edit_resource() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$this->Load_model('Resource_model');
+		$resource = $this->Resource_model->Get_resource($_POST['id']);
+		$measures = $this->Resource_model->Get_measures();
+
+		if($resource == false) {
+			$resource = array(
+					'ID' => '-1',
+					'Name' => '',
+					'Measure' => NULL,
+					'Is_natural' => false
+				);
+		}
+		$edit_resource_view = $this->Load_view('resource_edit_view',array('resource' => $resource, 
+																		'measures' => $measures), true);
+
+		echo json_encode(array('success' => true, 'data' => $edit_resource_view));
+	}
+
+	public function save_resource() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$this->Load_model('Resource_model');
+		$result = $this->Resource_model->Save_resource($_POST);
+
+		echo json_encode(array('success' => $result));
 	}
 }
 

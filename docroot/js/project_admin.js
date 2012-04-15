@@ -1,4 +1,5 @@
 var current_recipe = -1;
+var current_resource = -1;
 
 function edit_recipe(id)
 {
@@ -161,6 +162,49 @@ function remove_input(id) {
 			if(data !== false) {
 				$('.input#'+id).remove();
 			}
+		}
+	});
+}
+
+function edit_resource(id) {
+	$.ajax({
+		type: 'POST',
+		url: 'project_admin/edit_resource',
+		data: {
+			id: id
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data !== false) {
+				current_resource = id;
+				$('#edit_resource').html(data.data);
+			}
+		}
+	});
+}
+
+function save_resource() {
+	var id = current_resource;
+	var name = $('#resource_name').val();
+	var is_natural = $('#is_natural').attr('checked');
+	var measure = $('#measure').val();
+
+	$.ajax({
+		type: 'POST',
+		url: 'project_admin/save_resource',
+		data: {
+			id: id,
+			name: name,
+			is_natural: is_natural,
+			measure: measure
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data !== false) {
+				current_resource = id;
+				$('#edit_resource').html(data.data);
+			}
+			edit_resource(id);
 		}
 	});
 }

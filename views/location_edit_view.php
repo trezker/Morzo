@@ -21,8 +21,5 @@
 <div style="float: left;">
 	<h3 class="list_title">Resources</h3>
 	<div id="resource_list">
-		<?php echo $resources_view; ?>
 	</div>
-	<input type="text" id="new_resource" />
-	<br/><span class="action" onclick="add_resource();">Add resource</span>
 </div>

@@ -87,14 +87,13 @@ class World_admin extends Controller
 		$landscapes = $this->Location_model->Get_landscapes();
 		$landscapes_view = $this->Load_view('landscapes_view', array('landscapes' => $landscapes, 'location_resources' => $all_location_resources), true);
 
-		$resources = $this->Location_model->Get_resources();
-		$resources_view = "";//$this->Load_view('resources_view', array('resources' => $resources, 'location_resources' => $location_resources), true);
+		$this->Load_model('Resource_model');
+		$resources = $this->Resource_model->Get_resources();
 		
 		$location_admin_view = $this->Load_view('location_edit_view', 
 												array('biomes_view' => $biomes_view,
 												'landscapes' => $landscapes,
 												'location' => $location,
-												'resources_view' => $resources_view,
 												'landscapes_view' => $landscapes_view,
 												'location_resources' => $location_resources), true);
 
@@ -116,7 +115,8 @@ class World_admin extends Controller
 
 		$this->Load_model('Location_model');
 		$location_resources = $this->Location_model->Get_location_resources($_POST['location'], $_POST['landscape']);
-		$resources = $this->Location_model->Get_resources();
+		$this->Load_model('Resource_model');
+		$resources = $this->Resource_model->Get_resources();
 
 		$resources_view = $this->Load_view('resources_view', array('resources' => $resources,
 																'location_resources' => $location_resources), true);
@@ -150,35 +150,6 @@ class World_admin extends Controller
 		$biomes_view = $this->Load_view('biomes_view', array('biomes' => $biomes), true);
 
 		echo json_encode(array('success' => true, 'data' => $biomes_view));
-	}
-
-	public function Add_resource()
-	{
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
-		if(!is_string($_POST['name']) || $_POST['name'] == '') {
-			echo json_encode(array('success' => false, 'reason' => $_POST['name'].'Must give a name'));
-			return;
-		}
-
-		$this->Load_model('Location_model');
-		if(!$this->Location_model->Add_resource($_POST['name'], $_POST['natural'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Failed to add resource'));
-			return;
-		}
-		$resources = $this->Location_model->Get_resources();
-		$location_resources = $this->Location_model->Get_location_resources($_POST['location_id'], $_POST['landscape_id']);
-		$resources_view = $this->Load_view('resources_view', array('resources' => $resources, 'location_resources' => $location_resources), true);
-
-		echo json_encode(array('success' => true, 'data' => $resources_view));
 	}
 
 	public function Add_landscape()

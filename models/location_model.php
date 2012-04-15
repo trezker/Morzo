@@ -210,46 +210,6 @@ class Location_model
 		return true;
 	}
 	
-	public function Get_resources()
-	{
-		$db = Load_database();
-		
-		$rs = $db->Execute('
-			select R.ID, R.Name	from Resource R
-			', array());
-
-		if(!$rs)
-		{
-			return false;
-		}
-		
-		$resources = array();
-		foreach ($rs as $row) {
-    		$resources[] = $row;
-		}
-		return $resources;
-	}
-
-	public function Add_resource($name, $natural)
-	{
-		$db = Load_database();
-
-		if(((boolean)$natural) or $natural == 'true')
-			$natural = 1;
-		else
-			$natural = 0;
-
-		$rs = $db->Execute('
-			insert into Resource(Name, Is_natural) values(?, ?)
-			', array($name, $natural));
-
-		if(!$rs)
-		{
-			return false;
-		}
-		return true;
-	}
-	
 	public function Get_location($id)
 	{
 		$db = Load_database();
