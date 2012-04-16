@@ -53,8 +53,7 @@ function save_recipe() {
 		}
 	);
 
-	$.ajax(
-	{
+	$.ajax({
 		type: 'POST',
 		url: 'project_admin/save_recipe',
 		data: {
@@ -66,13 +65,11 @@ function save_recipe() {
 			outputs: outputs,
 			inputs: inputs
 		},
-		success: function(data)
-		{
+		success: function(data) {
 			if(ajax_logged_out(data)) return;
-			if(data !== false)
-			{
+			if(data !== false) {
 				current_recipe = data.id;
-				$('#edit_recipe').html(data.data);
+				window.location.reload();
 			}
 		}
 	});
@@ -206,7 +203,7 @@ function save_resource() {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
 				current_resource = id;
-				$('#edit_resource').html(data.data);
+				window.location.reload();
 			}
 			edit_resource(id);
 		}

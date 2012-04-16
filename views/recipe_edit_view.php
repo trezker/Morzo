@@ -1,7 +1,5 @@
 <h2>Edit recipe <?php echo htmlspecialchars($recipe['recipe']['Name']); ?></h2>
 <div id="recipe">
-	<span class="action" onclick="save_recipe()">Save</span>
-	
 	<?php
 	if($recipe['recipe']['Allow_fraction_output'] == 1)
 		$recipe['recipe']['Allow_fraction_output_checked'] = 'checked=checked';
@@ -94,4 +92,5 @@
 		echo expand_template($input_template, $recipe['new_input']);
 	?>
 	</div>
+	<span class="action" style="float: right;" onclick="save_recipe()">Save</span>
 </div>

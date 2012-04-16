@@ -119,11 +119,7 @@ class Project_admin extends Controller
 		}
 
 		$this->Load_model('Location_model');
-		$resources = $this->Location_model->Get_resources();
-
-		$edit_recipe_view = $this->Load_view('recipe_edit_view',array('resources' => $resources, 
-																		'recipe' => $recipe), true);
-		echo json_encode(array('success' => true, 'data' => $edit_recipe_view, 'id' => $id));
+		echo json_encode(array('success' => true, 'id' => $id));
 	}
 
 	public function remove_recipe_output() {
@@ -182,7 +178,9 @@ class Project_admin extends Controller
 			$resource = array(
 					'ID' => '-1',
 					'Name' => '',
-					'Measure' => NULL,
+					'Measure' => '1',
+					'Mass' => '',
+					'Volume' => '',
 					'Is_natural' => false
 				);
 		}
