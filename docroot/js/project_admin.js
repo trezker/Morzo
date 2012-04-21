@@ -89,8 +89,11 @@ function selected_output_resource(e) {
 function add_output() {
 	var resource_id = $('#new_output_form select').val();
 	var resource_name = $('#new_output_form select option[value="'+resource_id+'"]').html();
+	var measure_id = $('#new_output_form select option[value="'+resource_id+'"]').attr('data-measure');
+	var measure_desc = $('#measuredesc_'+measure_id).html();
 	$('#new_output .resource').attr("data-id", resource_id);
 	$('#new_output .resource').html(resource_name);
+	$('#new_output .measuredesc').html(measure_desc);
 	$('#recipe_outputs').append($('#new_output').html());
 }
 
@@ -129,8 +132,11 @@ function selected_input_resource(e) {
 function add_input() {
 	var resource_id = $('#new_input_form select').val();
 	var resource_name = $('#new_input_form select option[value="'+resource_id+'"]').html();
+	var measure_id = $('#new_input_form select option[value="'+resource_id+'"]').attr('data-measure');
+	var measure_desc = $('#measuredesc_'+measure_id).html();
 	$('#new_input .resource').attr("data-id", resource_id);
 	$('#new_input .resource').html(resource_name);
+	$('#new_input .measuredesc').html(measure_desc);
 	$('#recipe_inputs').append($('#new_input').html());
 }
 

@@ -9,7 +9,7 @@ foreach($measures as $key => $measure) {
 	elseif($measure['Name'] == 'Volume') {
 		$measure_descriptions[$measure['ID']] = 'l';
 	}
-	echo '<span id="measuredesc_"'.$measure['ID'].'>'.$measure_descriptions[$measure['ID']].'</span>';
+	echo '<span id="measuredesc_'.$measure['ID'].'">'.$measure_descriptions[$measure['ID']].'</span>';
 }
 ?>
 </div>
