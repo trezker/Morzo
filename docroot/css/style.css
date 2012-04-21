@@ -220,3 +220,7 @@ li.selected:hover {
 .inactive_project {
 	color: #F00;
 }
+
+.amount {
+	width: 50px;
+}

@@ -78,14 +78,6 @@ function save_recipe() {
 /*
  * Recipe output
 */
-function select_output_resource(id) {
-	$('.output#'+id).prepend($('#resource_select').html())
-	$('.output#'+id+' select').change(id, selected_output_resource);
-	var resource_id = $('.output#'+id+' .resource').attr('data-id');
-	$('.output#'+id+' select').val(resource_id);
-	$('.output#'+id+' .resource').css('display', 'none');
-}
-
 function selected_output_resource(e) {
 	var value = $('.output#'+e.data+' select').val();
 	var name = $('.output#'+e.data+' select [value="'+value+'"]').html();
@@ -95,6 +87,10 @@ function selected_output_resource(e) {
 }
 
 function add_output() {
+	var resource_id = $('#new_output_form select').val();
+	var resource_name = $('#new_output_form select option[value="'+resource_id+'"]').html();
+	$('#new_output .resource').attr("data-id", resource_id);
+	$('#new_output .resource').html(resource_name);
 	$('#recipe_outputs').append($('#new_output').html());
 }
 
@@ -122,14 +118,6 @@ function remove_output(id) {
 /*
  * Recipe input
 */
-function select_input_resource(id) {
-	$('.input#'+id).prepend($('#resource_select').html())
-	$('.input#'+id+' select').change(id, selected_input_resource);
-	var resource_id = $('.input#'+id+' .resource').attr('data-id');
-	$('.input#'+id+' select').val(resource_id);
-	$('.input#'+id+' .resource').css('display', 'none');
-}
-
 function selected_input_resource(e) {
 	var value = $('.input#'+e.data+' select').val();
 	var name = $('.input#'+e.data+' select [value="'+value+'"]').html();
@@ -139,6 +127,10 @@ function selected_input_resource(e) {
 }
 
 function add_input() {
+	var resource_id = $('#new_input_form select').val();
+	var resource_name = $('#new_input_form select option[value="'+resource_id+'"]').html();
+	$('#new_input .resource').attr("data-id", resource_id);
+	$('#new_input .resource').html(resource_name);
 	$('#recipe_inputs').append($('#new_input').html());
 }
 
