@@ -38,6 +38,7 @@ class Project_admin extends Controller
 		$recipe = $this->Project_model->Get_recipe($_POST['id']);
 		$this->Load_model('Resource_model');
 		$resources = $this->Resource_model->Get_resources();
+		$measures = $this->Resource_model->Get_measures();
 
 		if($recipe['recipe'] == false) {
 			$recipe['recipe'] = array(
@@ -48,7 +49,8 @@ class Project_admin extends Controller
 					'Require_full_cycle' => '1'
 				);
 		}
-		$edit_recipe_view = $this->Load_view('recipe_edit_view',array('resources' => $resources, 
+		$edit_recipe_view = $this->Load_view('recipe_edit_view',array(	'resources' => $resources,
+																		'measures' => $measures,
 																		'recipe' => $recipe), true);
 
 		echo json_encode(array('success' => true, 'data' => $edit_recipe_view));

@@ -1,3 +1,19 @@
+<div id="measure_descriptions" style="display: none;">
+<?php
+$measure_descriptions = array();
+foreach($measures as $key => $measure) {
+	$measure_descriptions[$measure['ID']] = '';
+	if($measure['Name'] == 'Mass') {
+		$measure_descriptions[$measure['ID']] = 'kg';
+	}
+	elseif($measure['Name'] == 'Volume') {
+		$measure_descriptions[$measure['ID']] = 'l';
+	}
+	echo '<span id="measuredesc_"'.$measure['ID'].'>'.$measure_descriptions[$measure['ID']].'</span>';
+}
+?>
+</div>
+
 <h2>Edit recipe <?php echo htmlspecialchars($recipe['recipe']['Name']); ?></h2>
 <div id="recipe">
 	<?php
@@ -34,7 +50,7 @@
 
 	$resource_select = '<select>';
 	$resource_template = '
-		<option value="{ID}">{Name}</option>
+		<option value="{ID}" data-measure="{Measure}">{Name}</option>
 	';
 	foreach ($resources as $resource) {
 		$resource_select .= expand_template($resource_template, $resource);
@@ -47,11 +63,13 @@
 		$output_template = '
 		<div class="output" id="{ID}">
 			<input class="amount" type="number" value="{Amount}" />
+			<span class="measuredesc">{Measuredesc}</span>
 			<span class="resource" data-id="{Resource_ID}">{Resource_Name}</span>
 			<span class="action" style="float: right;" onclick="remove_output({ID})">Remove</span>
 		</div>';
 
 		foreach ($recipe['recipe_outputs'] as $output) {
+			$output['Measuredesc'] = $measure_descriptions[$output['Measure_ID']];
 			echo expand_template($output_template, $output);
 		}
 		?>
@@ -66,8 +84,9 @@
 		$input_template = '
 		<div class="input" id="{ID}">
 			<input class="amount" type="number" value="{Amount}" />
+			<span class="measuredesc">{Measuredesc}</span>
 			<span class="resource" data-id="{Resource_ID}">{Resource_Name}</span>
-			From nature: <input type="checkbox" class="from_nature" {From_nature_checked} />
+			(from nature: <input type="checkbox" class="from_nature" {From_nature_checked} />)
 			<span class="action" style="float: right;" onclick="remove_input({ID})">Remove</span>
 		</div>';
 
@@ -76,6 +95,7 @@
 				$input['From_nature_checked'] = 'checked=checked';
 			else
 				$input['From_nature_checked'] = '';
+			$input['Measuredesc'] = $measure_descriptions[$input['Measure_ID']];
 			echo expand_template($input_template, $input);
 		}
 		?>

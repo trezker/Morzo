@@ -9,7 +9,7 @@ class Resource_model
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			select R.ID, R.Name	from Resource R
+			select R.ID, R.Name, R.Measure from Resource R
 			', array());
 
 		if(!$rs)
