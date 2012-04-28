@@ -83,6 +83,7 @@ class Project_admin extends Controller
 				$data['outputs'][] = array(
 						'id' => $o['id'],
 						'amount' => $o['amount'],
+						'measure' => $o['measure'],
 						'resource_id' => $o['resource']
 					);
 			}
@@ -94,6 +95,7 @@ class Project_admin extends Controller
 				$data['inputs'][] = array(
 						'id' => $i['id'],
 						'amount' => $i['amount'],
+						'measure' => $i['measure'],
 						'resource_id' => $i['resource'],
 						'from_nature' => $i['from_nature']
 					);

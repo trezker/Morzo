@@ -4,12 +4,15 @@ $measure_descriptions = array();
 foreach($measures as $key => $measure) {
 	$measure_descriptions[$measure['ID']] = '';
 	if($measure['Name'] == 'Mass') {
-		$measure_descriptions[$measure['ID']] = 'kg';
+		$measure_descriptions[$measure['ID']] = 'g';
 	}
 	elseif($measure['Name'] == 'Volume') {
 		$measure_descriptions[$measure['ID']] = 'l';
 	}
-	echo '<span id="measuredesc_'.$measure['ID'].'">'.$measure_descriptions[$measure['ID']].'</span>';
+	echo '
+		<div id="measuredesc_'.$measure['ID'].'">
+			<span class="measure_desc" data-id="'.$measure['ID'].'">'.$measure_descriptions[$measure['ID']].'</span>
+		</div>';
 }
 ?>
 </div>
@@ -63,13 +66,19 @@ foreach($measures as $key => $measure) {
 		$output_template = '
 		<div class="output" id="{ID}">
 			<input class="amount" type="number" value="{Amount}" />
-			<span class="measuredesc">{Measuredesc}</span>
+			<span class="measuredesc" data-id="{Measure_ID}">{Measuredesc}</span>
 			<span class="resource" data-id="{Resource_ID}">{Resource_Name}</span>
 			<span class="action" style="float: right;" onclick="remove_output({ID})">Remove</span>
 		</div>';
 
 		foreach ($recipe['recipe_outputs'] as $output) {
 			$output['Measuredesc'] = $measure_descriptions[$output['Measure_ID']];
+			if($output['Measure_name'] == 'Mass') {
+				$output['Amount'] = $output['Mass'];
+			}
+			if($output['Measure_name'] == 'Volume') {
+				$output['Amount'] = $output['Volume'];
+			}
 			echo expand_template($output_template, $output);
 		}
 		?>
@@ -84,7 +93,7 @@ foreach($measures as $key => $measure) {
 		$input_template = '
 		<div class="input" id="{ID}">
 			<input class="amount" type="number" value="{Amount}" />
-			<span class="measuredesc">{Measuredesc}</span>
+			<span class="measuredesc" data-id="{Measure_ID}">{Measuredesc}</span>
 			<span class="resource" data-id="{Resource_ID}">{Resource_Name}</span>
 			(from nature: <input type="checkbox" class="from_nature" {From_nature_checked} />)
 			<span class="action" style="float: right;" onclick="remove_input({ID})">Remove</span>
@@ -95,6 +104,12 @@ foreach($measures as $key => $measure) {
 				$input['From_nature_checked'] = 'checked=checked';
 			else
 				$input['From_nature_checked'] = '';
+			if($input['Measure_name'] == 'Mass') {
+				$input['Amount'] = $input['Mass'];
+			}
+			if($input['Measure_name'] == 'Volume') {
+				$input['Amount'] = $input['Volume'];
+			}
 			$input['Measuredesc'] = $measure_descriptions[$input['Measure_ID']];
 			echo expand_template($input_template, $input);
 		}

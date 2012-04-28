@@ -34,6 +34,7 @@ function save_recipe() {
 			var output = {
 					id: value.id,
 					amount: $(value).children('.amount').val(),
+					measure: $(value).children('.measuredesc').attr('data-id'),
 					resource: $(value).children('.resource').attr('data-id')
 				};
 			outputs.push(output);
@@ -46,6 +47,7 @@ function save_recipe() {
 			var input = {
 					id: value.id,
 					amount: $(value).children('.amount').val(),
+					measure: $(value).children('.measuredesc').attr('data-id'),
 					resource: $(value).children('.resource').attr('data-id'),
 					from_nature: $(value).children('.from_nature').attr('checked')
 				};
@@ -69,7 +71,7 @@ function save_recipe() {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
 				current_recipe = data.id;
-				window.location.reload();
+//				window.location.reload();
 			}
 		}
 	});
@@ -93,7 +95,7 @@ function add_output() {
 	var measure_desc = $('#measuredesc_'+measure_id).html();
 	$('#new_output .resource').attr("data-id", resource_id);
 	$('#new_output .resource').html(resource_name);
-	$('#new_output .measuredesc').html(measure_desc);
+	$('#new_output .measuredesc').replaceWith(measure_desc);
 	$('#recipe_outputs').append($('#new_output').html());
 }
 
@@ -136,7 +138,7 @@ function add_input() {
 	var measure_desc = $('#measuredesc_'+measure_id).html();
 	$('#new_input .resource').attr("data-id", resource_id);
 	$('#new_input .resource').html(resource_name);
-	$('#new_input .measuredesc').html(measure_desc);
+	$('#new_input .measuredesc').replaceWith(measure_desc);
 	$('#recipe_inputs').append($('#new_input').html());
 }
 

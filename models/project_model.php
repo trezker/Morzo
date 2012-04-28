@@ -40,10 +40,14 @@ class Project_model
 				RI.Resource_ID,
 				R.Name AS Resource_Name,
 				R.Measure AS Measure_ID,
+				M.Name AS Measure_name,
 				RI.Amount,
+				(RI.Amount * R.Mass) AS Mass,
+				(RI.Amount * R.Volume) AS Volume,
 				From_nature
 			from Recipe_input RI
 			join Resource R on R.ID = RI.Resource_ID
+			join Measure M on R.Measure = M.ID
 			where RI.Recipe_ID = ?
 			', array($id));
 
@@ -53,9 +57,13 @@ class Project_model
 				RO.Resource_ID,
 				R.Name AS Resource_Name,
 				R.Measure AS Measure_ID,
-				RO.Amount
+				M.Name AS Measure_name,
+				RO.Amount,
+				(RO.Amount * R.Mass) AS Mass,
+				(RO.Amount * R.Volume) AS Volume
 			from Recipe_output RO
 			join Resource R on R.ID = RO.Resource_ID
+			join Measure M on R.Measure = M.ID
 			where RO.Recipe_ID = ?
 			', array($id));
 
@@ -119,9 +127,37 @@ class Project_model
 			$result_id = $db->Insert_ID();
 		}
 
+		
+		$args = array();
+		$r = $db->Execute('
+			select ID, Mass, Volume, 1 as Object from Resource
+			', $args);
+			
+		$amount_factors = array();
+		foreach($r->GetArray() as $resource) {
+			$amount_factors[$resource['ID']] = $resource;
+		}
+
+		$args = array();
+		$r = $db->Execute('
+			select ID, Name from Measure
+			', $args);
+			
+		$measures = array();
+		foreach($r->GetArray() as $measure) {
+			$measures[$measure['ID']] = $measure['Name'];
+		}
+
 		if($result_id != -1) {
 			foreach($data['outputs'] as $o) {
-				if($o['id'] != "-1") {
+				$o['amount'] /= $amount_factors[$o['resource_id']][$measures[$o['measure']]];
+/*				if($o['measure'] == $measures['Mass']) {
+					$o['Amount'] /= $amount_factors['resource_id']['Mass'];
+				}
+				if($o['measure'] == $measures['Volume']) {
+					$o['Amount'] /= $amount_factors['resource_id']['Volume'];
+				}
+*/				if($o['id'] != "-1") {
 					$args = array(
 								$o['amount'], 
 								$o['resource_id'],
@@ -146,6 +182,7 @@ class Project_model
 			}
 
 			foreach($data['inputs'] as $i) {
+				$i['amount'] /= $amount_factors[$i['resource_id']][$measures[$i['measure']]];
 				if($i['id'] != "-1") {
 					$args = array(
 								$i['amount'], 
@@ -569,7 +606,7 @@ class Project_model
 			return false;
 		}
 
-		return $r->getArray();
+		return $r->GetArray();
 	}
 	
 	public function Process_finished_projects($projects) {
