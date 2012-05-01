@@ -216,9 +216,17 @@ class Actor_model extends Model
 		$db = Load_database();
 
 		$rs = $db->Execute('
-			select AI.ID, AI.Resource_ID, AI.Amount, R.Name
+			select
+				AI.ID,
+				AI.Resource_ID,
+				AI.Amount,
+				R.Name,
+				R.Mass,
+				R.Volume,
+				M.Name as Measure_name
 			from Actor_inventory AI
 			left join Resource R on AI.Resource_ID = R.ID
+			join Measure M on R.Measure = M.ID
 			where AI.Actor_ID = ?
 			', array($actor_ID));
 		

@@ -53,6 +53,7 @@
 				$from_nature_text = "";
 				if($input['From_nature'] == 1) {
 					$from_nature_text = "from nature";
+					continue;
 				} else {
 					$needs_resources = true;
 				}
