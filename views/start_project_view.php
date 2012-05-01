@@ -15,10 +15,19 @@
 			<?php
 			$output_template = '
 			<li>
-				{Amount} {Resource_Name}
+				{Amount}{Measure_desc} {Resource_Name}
 			</li>';
 
 			foreach ($recipe['recipe_outputs'] as $output) {
+				$output['Measure_desc'] = '';
+				if($output['Measure_name'] == 'Mass') {
+					$output['Amount'] = $output['Mass'];
+					$output['Measure_desc'] = ' g';
+				}
+				if($output['Measure_name'] == 'Volume') {
+					$output['Amount'] = $output['Volume'];
+					$output['Measure_desc'] = ' l';
+				}
 				echo expand_template($output_template, $output);
 			}
 			?>
@@ -31,7 +40,7 @@
 			<?php
 			$input_template = '
 				<li>
-					{Amount} {Resource_Name} {From_nature_text}
+					{Amount}{Measure_desc} {Resource_Name} {From_nature_text}
 				</li>
 			';
 
@@ -39,10 +48,20 @@
 				$from_nature_text = "";
 				if($input['From_nature'] == 1)
 					$from_nature_text = "from nature";
+				$input['Measure_desc'] = '';
+				if($input['Measure_name'] == 'Mass') {
+					$input['Amount'] = $input['Mass'];
+					$input['Measure_desc'] = ' g';
+				}
+				if($input['Measure_name'] == 'Volume') {
+					$input['Amount'] = $input['Volume'];
+					$input['Measure_desc'] = ' l';
+				}
 
 				echo expand_template($input_template, 
 												array(
 													'Amount' => $input['Amount'],
+													'Measure_desc' => $input['Measure_desc'],
 													'Resource_Name' => $input['Resource_Name'],
 													'From_nature_text' => $from_nature_text
 												));

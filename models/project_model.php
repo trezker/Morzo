@@ -531,12 +531,17 @@ class Project_model
 			select 
 				R.ID, 
 				R.Name, 
-				RI.Amount, 
+				R.Measure AS Measure_ID,
+				M.Name AS Measure_name,
+				RI.Amount,
+				R.Mass AS Mass_factor,
+				R.Volume AS Volume_factor,
 				RI.From_nature,
 				IFNULL(PI.Amount, 0) as Project_amount
 			from Project P
 			join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID
 			join Resource R on R.ID = RI.Resource_ID
+			join Measure M on R.Measure = M.ID
 			left join Project_input PI on PI.Project_ID = P.ID and PI.Resource_ID = RI.Resource_ID
 			where P.ID = ?
 			', array($project_id));
@@ -546,10 +551,18 @@ class Project_model
 		}
 
 		$recipe_outputs = $db->Execute('
-			select R.ID, R.Name, RO.Amount
+			select 
+				R.ID, 
+				R.Name, 
+				R.Measure AS Measure_ID,
+				M.Name AS Measure_name,
+				RO.Amount,
+				R.Mass AS Mass_factor,
+				R.Volume AS Volume_factor
 			from Project P
 			join Recipe_output RO on RO.Recipe_ID = P.Recipe_ID
 			join Resource R on R.ID = RO.Resource_ID
+			join Measure M on R.Measure = M.ID
 			where P.ID = ?
 			', array($project_id));
 

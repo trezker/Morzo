@@ -19,10 +19,19 @@
 			<?php
 			$output_template = '
 			<li>
-				{Amount} {Name}
+				{Amount}{Measure_desc} {Name}
 			</li>';
 
 			foreach ($project['recipe_outputs'] as $output) {
+				$output['Measure_desc'] = '';
+				if($output['Measure_name'] == 'Mass') {
+					$output['Amount'] *= $output['Mass_factor'];
+					$output['Measure_desc'] = ' g';
+				}
+				if($output['Measure_name'] == 'Volume') {
+					$output['Amount'] *= $output['Volume_factor'];
+					$output['Measure_desc'] = ' l';
+				}
 				echo expand_template($output_template, $output);
 			}
 			?>
@@ -35,7 +44,7 @@
 			<?php
 			$input_template = '
 				<li>
-					{Project_amount}/{Amount} {Name} {From_nature_text}
+					{Project_amount}/{Amount}{Measure_desc} {Name} {From_nature_text}
 				</li>
 			';
 			
@@ -47,10 +56,22 @@
 				} else {
 					$needs_resources = true;
 				}
+				$input['Measure_desc'] = '';
+				if($input['Measure_name'] == 'Mass') {
+					$input['Amount'] *= $input['Mass_factor'];
+					$input['Project_amount'] *= $input['Mass_factor'];
+					$input['Measure_desc'] = ' g';
+				}
+				if($input['Measure_name'] == 'Volume') {
+					$input['Amount'] *= $input['Volume_factor'];
+					$input['Project_amount'] *= $input['Volume_factor'];
+					$input['Measure_desc'] = ' l';
+				}
 
 				echo expand_template($input_template, 
 												array(
 													'Amount' => $input['Amount'],
+													'Measure_desc' => $input['Measure_desc'],
 													'Project_amount' => $input['Project_amount'],
 													'Name' => $input['Name'],
 													'From_nature_text' => $from_nature_text
