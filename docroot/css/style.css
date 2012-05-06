@@ -224,3 +224,7 @@ li.selected:hover {
 .amount {
 	width: 50px;
 }
+
+#view_recipe {
+	margin-bottom: 10px;
+}

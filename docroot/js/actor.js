@@ -225,10 +225,8 @@ function get_natural_resource_dialog(actor_id, resource_id) {
 	});
 }
 
-function show_project_start_form(actor_id, id)
-{
-	$.ajax(
-	{
+function show_project_start_form(actor_id, id) {
+	$.ajax({
 		type: 'POST',
 		url: '/actor/Start_project_form',
 		data: {
@@ -236,11 +234,11 @@ function show_project_start_form(actor_id, id)
 			recipe_id: id
 		},
 		dataType: "json",
-		success: function(data)
-		{
+		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
 				$('#view_recipe').html(data.data);
+				$('#recipes .selected').removeClass('selected');
 				$('#recipe_'+id).addClass('selected');
 			}
 		}
