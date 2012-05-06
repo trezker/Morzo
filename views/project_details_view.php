@@ -44,19 +44,22 @@
 			<?php
 			$input_template = '
 				<li>
-					{Project_amount}/{Amount}{Measure_desc} {Name} {From_nature_text}
+					{Project_amount}/{Amount}{Measure_desc} {Name}
 				</li>
 			';
 			
 			$needs_resources = false;
+			$only_from_nature = true;
 			foreach ($project['recipe_inputs'] as $input) {
-				$from_nature_text = "";
 				if($input['From_nature'] == 1) {
-					$from_nature_text = "from nature";
 					continue;
 				} else {
-					$needs_resources = true;
+					$only_from_nature = false;
+					if($input['Project_amount'] < $input['Amount']) {
+						$needs_resources = true;
+					}
 				}
+
 				$input['Measure_desc'] = '';
 				if($input['Measure_name'] == 'Mass') {
 					$input['Amount'] *= $input['Mass_factor'];
@@ -74,9 +77,15 @@
 													'Amount' => $input['Amount'],
 													'Measure_desc' => $input['Measure_desc'],
 													'Project_amount' => $input['Project_amount'],
-													'Name' => $input['Name'],
-													'From_nature_text' => $from_nature_text
+													'Name' => $input['Name']
 												));
+			}
+			if($only_from_nature == true) {
+				echo '
+					<li>
+						None
+					</li>
+				';
 			}
 			?>
 		</ul>

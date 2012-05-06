@@ -688,7 +688,7 @@ class Project_model
 		
 		$args = array($project_id, $actor_id);
 
-		$r = $db->Execute('http://www.youtube.com/watch?v=9HE1OJiq7GQ
+		$r = $db->Execute('
 			select 	RI.Resource_ID, 
 					RI.Amount AS Needed_amount, 
 					PI.Amount AS Project_amount,
@@ -697,12 +697,12 @@ class Project_model
 			join Actor A on P.Location_ID = A.Location_ID
 			join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID and RI.From_nature = 0
 			join Actor_inventory AI on RI.Resource_ID = AI.Resource_ID and AI.Actor_ID = A.ID
-			left join Project_input PI on PI.Project_ID = P.ID and PI.Resource_ID = RI.Resource_ID and PI.Amount < RI.Amount
-			where P.ID = ? and A.ID = ?
+			left join Project_input PI on PI.Project_ID = P.ID and PI.Resource_ID = RI.Resource_ID
+			where P.ID = ? and A.ID = ? and (PI.Amount < RI.Amount or PI.Amount is NULL)
 			', $args);
 		
 		$inputs = $r->getArray();
-		
+
 		foreach($inputs as $input) {
 			if($input['Project_amount'] == NULL) {
 				$supply_amount = min($input['Needed_amount'], $input['Actor_amount']);
