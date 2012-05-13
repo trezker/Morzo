@@ -1,37 +1,77 @@
-<h1>Actor inventory</h1>
-<table class="inventory_list">
-	<?php
-	$row_template = '
-		<tr class="{alternate}">
-			<td>
-				{Name}
-			</td>
-			<td>
-				{Amount}{Measure_desc}
-			</td>
-		</tr>';
+<div style="float: left; margin-right: 20px;">
+	<h3>Actor inventory</h3>
+	<table class="inventory_list">
+		<?php
+		$row_template = '
+			<tr class="{alternate}">
+				<td>
+					{Name}
+				</td>
+				<td>
+					{Amount}{Measure_desc}
+				</td>
+			</tr>';
 
-	$alternate = '';
-	foreach ($actor_inventory as $inventory) {
-		$alternate = ($alternate == 'alternate1')? 'alternate2': 'alternate1';
-		
-		$inventory['Measure_desc'] = '';
-		if($inventory['Measure_name'] == 'Mass') {
-			$inventory['Amount'] *= $inventory['Mass'];
-			$inventory['Measure_desc'] = ' g';
+		$alternate = '';
+		foreach ($actor_inventory as $inventory) {
+			$alternate = ($alternate == 'alternate1')? 'alternate2': 'alternate1';
+			
+			$inventory['Measure_desc'] = '';
+			if($inventory['Measure_name'] == 'Mass') {
+				$inventory['Amount'] *= $inventory['Mass'];
+				$inventory['Measure_desc'] = ' g';
+			}
+			if($inventory['Measure_name'] == 'Volume') {
+				$inventory['Amount'] *= $inventory['Volume'];
+				$inventory['Measure_desc'] = ' l';
+			}
+
+			echo expand_template($row_template, array(
+					'alternate' => $alternate,
+					'Name' => $inventory['Name'],
+					'Amount' => $inventory['Amount'],
+					'Measure_desc' => $inventory['Measure_desc']
+				));
 		}
-		if($inventory['Measure_name'] == 'Volume') {
-			$inventory['Amount'] *= $inventory['Volume'];
-			$inventory['Measure_desc'] = ' l';
+		?>
+	</table>
+</div>
+
+<div style="float: left;">
+	<h3>Location inventory</h3>
+	<table class="inventory_list">
+		<?php
+		$row_template = '
+			<tr class="{alternate}">
+				<td>
+					{Name}
+				</td>
+				<td>
+					{Amount}{Measure_desc}
+				</td>
+			</tr>';
+
+		$alternate = '';
+		foreach ($location_inventory as $inventory) {
+			$alternate = ($alternate == 'alternate1')? 'alternate2': 'alternate1';
+			
+			$inventory['Measure_desc'] = '';
+			if($inventory['Measure_name'] == 'Mass') {
+				$inventory['Amount'] *= $inventory['Mass'];
+				$inventory['Measure_desc'] = ' g';
+			}
+			if($inventory['Measure_name'] == 'Volume') {
+				$inventory['Amount'] *= $inventory['Volume'];
+				$inventory['Measure_desc'] = ' l';
+			}
+
+			echo expand_template($row_template, array(
+					'alternate' => $alternate,
+					'Name' => $inventory['Name'],
+					'Amount' => $inventory['Amount'],
+					'Measure_desc' => $inventory['Measure_desc']
+				));
 		}
-
-		echo expand_template($row_template, array(
-				'alternate' => $alternate,
-				'Name' => $inventory['Name'],
-				'Amount' => $inventory['Amount'],
-				'Measure_desc' => $inventory['Measure_desc']
-			));
-	}
-	?>
-</table>
-
+		?>
+	</table>
+</div>

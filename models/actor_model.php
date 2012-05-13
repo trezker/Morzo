@@ -212,25 +212,43 @@ class Actor_model extends Model
 		return $actors;
 	}
 	
-	public function Get_inventory($actor_ID) {
+	public function Get_actor_inventory($actor_id) {
+		return $this->Get_inventory($actor_id, 'Actor_inventory');
+	}
+
+	public function Get_location_inventory($actor_id) {
+		return $this->Get_inventory($actor_id, 'Location_inventory');
+	}
+	
+	private function Get_inventory($actor_id, $table) {
 		$db = Load_database();
 
+		if($table == 'Actor_inventory') {
+			$tail = 'where I.Actor_ID = ?';
+		} elseif($table == 'Location_inventory') {
+			$tail = 'join Actor A on A.Location_ID = I.Location_ID
+					where A.ID = ?';
+		} else {
+			return false;
+		}
+		
 		$rs = $db->Execute('
 			select
-				AI.ID,
-				AI.Resource_ID,
-				AI.Amount,
+				I.ID,
+				I.Resource_ID,
+				I.Amount,
 				R.Name,
 				R.Mass,
 				R.Volume,
 				M.Name as Measure_name
-			from Actor_inventory AI
-			left join Resource R on AI.Resource_ID = R.ID
+			from '.$table.' I
+			left join Resource R on I.Resource_ID = R.ID
 			join Measure M on R.Measure = M.ID
-			where AI.Actor_ID = ?
-			', array($actor_ID));
+			'.$tail
+			, array($actor_id));
 		
 		if(!$rs) {
+			echo $db->ErrorMsg();
 			return false;
 		}
 		return $rs->getArray();

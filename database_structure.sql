@@ -91,7 +91,7 @@ CREATE TABLE `Actor_inventory` (
   KEY `Actor_inventory_fk_Resource` (`Resource_ID`),
   CONSTRAINT `Actor_inventory_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Actor_inventory_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -224,6 +224,28 @@ CREATE TABLE `Location` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Location_inventory`
+--
+
+DROP TABLE IF EXISTS `Location_inventory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Location_inventory` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Location_ID` bigint(20) NOT NULL,
+  `Resource_ID` bigint(20) NOT NULL,
+  `Amount` double NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID_UNIQUE` (`ID`),
+  UNIQUE KEY `Location_inventory_Unique` (`Location_ID`,`Resource_ID`),
+  KEY `Location_inventory_fk_Location` (`Location_ID`),
+  KEY `Location_inventory_fk_Resource` (`Resource_ID`),
+  CONSTRAINT `Location_inventory_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
+  CONSTRAINT `Location_inventory_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Location_name`
 --
 
@@ -306,7 +328,7 @@ CREATE TABLE `Project` (
   CONSTRAINT `Project_fk_Creator` FOREIGN KEY (`Creator_actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Project_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Project_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -322,11 +344,12 @@ CREATE TABLE `Project_input` (
   `Resource_ID` bigint(20) NOT NULL,
   `Amount` double NOT NULL,
   PRIMARY KEY (`ID`),
+  UNIQUE KEY `Project_input_Unique` (`Project_ID`,`Resource_ID`),
   KEY `Project_input_fk_Project` (`Project_ID`),
   KEY `Project_input_fk_Resource` (`Resource_ID`),
   CONSTRAINT `Project_input_fk_Project` FOREIGN KEY (`Project_ID`) REFERENCES `Project` (`ID`),
   CONSTRAINT `Project_input_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -344,7 +367,7 @@ CREATE TABLE `Recipe` (
   `Require_full_cycle` tinyint(1) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Name_UNIQUE` (`Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -365,7 +388,7 @@ CREATE TABLE `Recipe_input` (
   KEY `Recipe_input_fk_Resource` (`Resource_ID`),
   CONSTRAINT `Recipe_input_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`),
   CONSTRAINT `Recipe_input_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -405,7 +428,7 @@ CREATE TABLE `Recipe_output` (
   KEY `Recipe_output_fk_Resource` (`Resource_ID`),
   CONSTRAINT `Recipe_output_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`),
   CONSTRAINT `Recipe_output_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -426,7 +449,7 @@ CREATE TABLE `Resource` (
   UNIQUE KEY `Name_UNIQUE` (`Name`),
   KEY `Resource_fk_Measure` (`Measure`),
   CONSTRAINT `Resource_fk_Measure` FOREIGN KEY (`Measure`) REFERENCES `Measure` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -564,4 +587,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-04-15 20:43:07
+-- Dump completed on 2012-05-13 18:44:55
