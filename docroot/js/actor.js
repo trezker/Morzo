@@ -445,3 +445,45 @@ function cancel_project(actor_id, project_id) {
 		}
 	});
 }
+
+function drop_resource(actor_id, resource_id) {
+	var amount = $('#drop_amount_'+resource_id).val();
+	
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Drop_resource',
+		data: {
+			actor_id: actor_id,
+			resource_id: resource_id,
+			amount: amount
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = "/actor/show_actor/"+actor_id+"/inventory";
+			}
+		}
+	});
+}
+
+function pick_up_resource(actor_id, resource_id) {
+	var amount = $('#pick_up_amount_'+resource_id).val();
+	
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Pick_up_resource',
+		data: {
+			actor_id: actor_id,
+			resource_id: resource_id,
+			amount: amount
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = "/actor/show_actor/"+actor_id+"/inventory";
+			}
+		}
+	});
+}

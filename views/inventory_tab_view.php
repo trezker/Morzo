@@ -10,6 +10,10 @@
 				<td>
 					{Amount}{Measure_desc}
 				</td>
+				<td>
+					<input id="drop_amount_{Resource_ID}" type="number" value="0" size="4" style="text-align: right;" />
+					<span class="action" onclick="drop_resource({actor_id}, {Resource_ID})">Drop</span>
+				</td>
 			</tr>';
 
 		$alternate = '';
@@ -28,8 +32,10 @@
 
 			echo expand_template($row_template, array(
 					'alternate' => $alternate,
+					'actor_id' => $actor_id,
 					'Name' => $inventory['Name'],
 					'Amount' => $inventory['Amount'],
+					'Resource_ID' => $inventory['Resource_ID'],
 					'Measure_desc' => $inventory['Measure_desc']
 				));
 		}
@@ -49,6 +55,10 @@
 				<td>
 					{Amount}{Measure_desc}
 				</td>
+				<td>
+					<input id="pick_up_amount_{Resource_ID}" type="number" value="0" size="4" style="text-align: right;" />
+					<span class="action" onclick="pick_up_resource({actor_id}, {Resource_ID})">Pick up</span>
+				</td>
 			</tr>';
 
 		$alternate = '';
@@ -67,8 +77,10 @@
 
 			echo expand_template($row_template, array(
 					'alternate' => $alternate,
+					'actor_id' => $actor_id,
 					'Name' => $inventory['Name'],
 					'Amount' => $inventory['Amount'],
+					'Resource_ID' => $inventory['Resource_ID'],
 					'Measure_desc' => $inventory['Measure_desc']
 				));
 		}

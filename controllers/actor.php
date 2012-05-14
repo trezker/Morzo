@@ -487,4 +487,34 @@ class Actor extends Controller
 		
 		echo json_encode(array('success' => $cancel_result));
 	}
+
+	public function Drop_resource() {
+		$actor_id = $_POST['actor_id'];
+		$resource_id = $_POST['resource_id'];
+		$amount = $_POST['amount'];
+		
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+
+		$drop_result = $this->Actor_model->Drop_resource($actor_id, $resource_id, $amount);
+		
+		echo json_encode(array('success' => $drop_result));
+	}
+
+	public function Pick_up_resource() {
+		$actor_id = $_POST['actor_id'];
+		$resource_id = $_POST['resource_id'];
+		$amount = $_POST['amount'];
+		
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+
+		$pick_up_result = $this->Actor_model->Pick_up_resource($actor_id, $resource_id, $amount);
+		
+		echo json_encode(array('success' => $pick_up_result));
+	}
 }

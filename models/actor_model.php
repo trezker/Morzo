@@ -253,5 +253,56 @@ class Actor_model extends Model
 		}
 		return $rs->getArray();
 	}
+
+	public function Drop_resource($actor_id, $resource_id, $amount) {
+		$db = Load_database();
+		$db->debug = true;
+		
+		$db->StartTrans();
+
+		$rs = $db->Execute('
+			select
+				AI.Amount as Actor_amount,
+				LI.Amount as Location_amount
+			from Actor A
+			join Actor_inventory AI on A.ID = AI.Actor_ID
+			left join Location_inventory LI on A.Location_ID = LI.Location_ID and LI.Resource_ID = AI.Resource_ID
+			where A.ID = ? and AI.Resource_ID = ?
+			'
+			, array($actor_id, $resource_id));
+
+		//TODO: update or delete in actor inventory
+		
+		$rs = $db->Execute('
+			update Actor_inventory set Amount = Amount - ?
+			where Actor_ID = ? and Resource_ID = ? and Amount >= ?
+			'
+			, array($amount, $actor_id, $resource_id, $amount));
+			
+		if(!$rs || $db->Affected_Rows() !== 1) {
+			$db->FailTrans();
+		}
+
+		if(!$db->HasFailedTrans()) {
+			$rs = $db->Execute('
+				insert into Location_inventory (Location_ID, Resource_ID, Amount)
+				select Location_ID, ?, ? from Actor where ID = ? limit 1
+				on duplicate key update Amount = Amount + ?
+				'
+				, array($resource_id, $amount, $actor_id, $amount));
+		}
+
+		if(!$rs || $db->Affected_Rows() !== 1) {
+			echo $db->ErrorMsg();
+			$db->FailTrans();
+		}
+		
+		$success = !$db->HasFailedTrans();
+		$db->CompleteTrans();
+		if($success != true)
+			return false;
+
+		return true;
+	}
 }
 
