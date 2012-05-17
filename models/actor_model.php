@@ -256,7 +256,7 @@ class Actor_model extends Model
 
 	public function Drop_resource($actor_id, $resource_id, $amount) {
 		$db = Load_database();
-		$db->debug = true;
+		//$db->debug = true;
 		
 		$db->StartTrans();
 
@@ -271,32 +271,42 @@ class Actor_model extends Model
 			'
 			, array($actor_id, $resource_id));
 
-		//TODO: update or delete in actor inventory
-		
-		$rs = $db->Execute('
-			update Actor_inventory set Amount = Amount - ?
-			where Actor_ID = ? and Resource_ID = ? and Amount >= ?
-			'
-			, array($amount, $actor_id, $resource_id, $amount));
+		if(!$rs || $rs->RecordCount() != 1) {
+			echo "fail 1";
+			$db->FailTrans();
+		} else {
+			$actor_amount = $rs->fields['Actor_amount'];
+			$location_amount = $rs->fields['Location_amount'];
 			
-		if(!$rs || $db->Affected_Rows() !== 1) {
-			$db->FailTrans();
+			if($actor_amount >= $amount) {
+				if($actor_amount > $amount) {
+					$rs = $db->Execute('
+						update Actor_inventory set Amount = Amount - ?
+						where Actor_ID = ? and Resource_ID = ? and Amount >= ?
+						', array($amount, $actor_id, $resource_id, $amount));
+				} else {
+					$rs = $db->Execute('
+						delete from Actor_inventory
+						where Actor_ID = ? and Resource_ID = ?
+						', array($actor_id, $resource_id));
+				}
+				if(!$rs || $db->Affected_Rows() !== 1) {
+					$db->FailTrans();
+				} else {
+					$rs = $db->Execute('
+						insert into Location_inventory (Location_ID, Resource_ID, Amount)
+						select Location_ID, ?, ? from Actor where ID = ? limit 1
+						on duplicate key update Amount = Amount + ?
+						', array($resource_id, $amount, $actor_id, $amount));
+
+					if(!$rs) {
+						echo $db->ErrorMsg();
+						$db->FailTrans();
+					}
+				}
+			}
 		}
 
-		if(!$db->HasFailedTrans()) {
-			$rs = $db->Execute('
-				insert into Location_inventory (Location_ID, Resource_ID, Amount)
-				select Location_ID, ?, ? from Actor where ID = ? limit 1
-				on duplicate key update Amount = Amount + ?
-				'
-				, array($resource_id, $amount, $actor_id, $amount));
-		}
-
-		if(!$rs || $db->Affected_Rows() !== 1) {
-			echo $db->ErrorMsg();
-			$db->FailTrans();
-		}
-		
 		$success = !$db->HasFailedTrans();
 		$db->CompleteTrans();
 		if($success != true)
@@ -305,4 +315,3 @@ class Actor_model extends Model
 		return true;
 	}
 }
-
