@@ -326,4 +326,79 @@ class Actor_model extends Model
 
 		return true;
 	}
+
+	public function Pick_up_resource($actor_id, $resource_id, $amount) {
+		$db = Load_database();
+		//$db->debug = true;
+		
+		$db->StartTrans();
+
+		$rs = $db->Execute('
+			select
+				A.Location_ID,
+				LI.Amount as Location_amount,
+				R.Mass,
+				R.Volume,
+				M.Name as Measure_name
+			from Location_inventory LI
+			join Actor A on A.Location_ID = LI.Location_ID
+			join Resource R on R.ID = LI.Resource_ID
+			join Measure M on R.Measure = M.ID
+			where A.ID = ? and LI.Resource_ID = ?
+			', array($actor_id, $resource_id));
+
+		if(!$rs || $rs->RecordCount() != 1) {
+			echo $db->ErrorMsg();
+			echo "fail 1";
+			$db->FailTrans();
+		} else {
+			$location_amount = $rs->fields['Location_amount'];
+			$location_id = $rs->fields['Location_ID'];
+			$measure_name = $rs->fields['Measure_name'];
+			if($measure_name == 'Mass') {
+				$amount_factor = $rs->fields['Mass'];
+			} elseif($measure_name == 'Volume') {
+				$amount_factor = $rs->fields['Volume'];
+			} else {
+				$amount_factor = 1;
+			}
+			
+			$amount /= $amount_factor;
+			
+			if($location_amount >= $amount) {
+				if($location_amount > $amount) {
+					$rs = $db->Execute('
+						update Location_inventory set Amount = Amount - ?
+						where Location_ID = ? and Resource_ID = ? and Amount >= ?
+						', array($amount, $location_id, $resource_id, $amount));
+				} else {
+					$rs = $db->Execute('
+						delete from Location_inventory
+						where Location_ID = ? and Resource_ID = ?
+						', array($location_id, $resource_id));
+				}
+				if(!$rs || $db->Affected_Rows() !== 1) {
+					$db->FailTrans();
+				} else {
+					$rs = $db->Execute('
+						insert into Actor_inventory (Actor_ID, Resource_ID, Amount)
+						values (?, ?, ?)
+						on duplicate key update Amount = Amount + ?
+						', array($actor_id, $resource_id, $amount, $amount));
+
+					if(!$rs) {
+						echo $db->ErrorMsg();
+						$db->FailTrans();
+					}
+				}
+			}
+		}
+
+		$success = !$db->HasFailedTrans();
+		$db->CompleteTrans();
+		if($success != true)
+			return false;
+
+		return true;
+	}
 }
