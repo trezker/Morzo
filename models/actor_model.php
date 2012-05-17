@@ -263,20 +263,32 @@ class Actor_model extends Model
 		$rs = $db->Execute('
 			select
 				AI.Amount as Actor_amount,
-				LI.Amount as Location_amount
-			from Actor A
-			join Actor_inventory AI on A.ID = AI.Actor_ID
-			left join Location_inventory LI on A.Location_ID = LI.Location_ID and LI.Resource_ID = AI.Resource_ID
-			where A.ID = ? and AI.Resource_ID = ?
+				R.Mass,
+				R.Volume,
+				M.Name as Measure_name
+			from Actor_inventory AI
+			join Resource R on R.ID = AI.Resource_ID
+			join Measure M on R.Measure = M.ID
+			where AI.Actor_ID = ? and AI.Resource_ID = ?
 			'
 			, array($actor_id, $resource_id));
 
 		if(!$rs || $rs->RecordCount() != 1) {
+			echo $db->ErrorMsg();
 			echo "fail 1";
 			$db->FailTrans();
 		} else {
 			$actor_amount = $rs->fields['Actor_amount'];
-			$location_amount = $rs->fields['Location_amount'];
+			$measure_name = $rs->fields['Measure_name'];
+			if($measure_name == 'Mass') {
+				$amount_factor = $rs->fields['Mass'];
+			} elseif($measure_name == 'Volume') {
+				$amount_factor = $rs->fields['Volume'];
+			} else {
+				$amount_factor = 1;
+			}
+			
+			$amount /= $amount_factor;
 			
 			if($actor_amount >= $amount) {
 				if($actor_amount > $amount) {
