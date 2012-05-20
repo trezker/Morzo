@@ -12,13 +12,17 @@
 		<h1>World administration</h1>
 		<p><span class="action" onclick="window.location = 'user'">Back</span></p>
 
-		<div class="deficient_locations">
-			<h2>Deficient locations</h2>
+		<div class="locations">
+			<h2>Locations (Deficient=red)</h2>
 			<div id="locations">
 				<?php
 				foreach ($locations as $location) {
+					$location['deficient_class'] = '';
+					if($location['Resource_count'] == 0 || $location['Biome_ID'] == NULL) {
+						$location['deficient_class'] = ' deficient_location';
+					}
 					echo expand_template(
-						'<li><span class="action" onclick="edit_location({ID});">{X} {Y}</span></li>',
+						'<li><span class="action{deficient_class}" onclick="edit_location({ID});">{X} {Y}</span></li>',
 						$location);
 				}
 				?>

@@ -117,16 +117,22 @@ class Location_model
 		return $rs->fields['ID'];
 	}
 	
-	public function Get_deficient_locations()
+	public function Get_locations()
 	{
 		$db = Load_database();
 		$rs = $db->Execute('
-			select L.ID, L.X, L.Y, L.Biome_ID, B.Name from Location L
+			select
+				L.ID,
+				L.X,
+				L.Y,
+				L.Biome_ID,
+				B.Name,
+				count(LR.ID) as Resource_count
+			from Location L
 			left join Biome B on L.Biome_ID = B.ID
-			where Biome_ID is NULL or not exists (
-				select * from Location_resource LR where L.ID = LR.Location_ID
-			);
-			', array());
+			left join Location_resource LR on L.ID = LR.Location_ID
+			group by L.ID
+			;', array());
 
 		if(!$rs)
 		{

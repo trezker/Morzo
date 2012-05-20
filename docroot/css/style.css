@@ -88,7 +88,7 @@ li.selected:hover {
 	background: #BBFFBB;
 }
 
-.deficient_locations {
+.locations {
 	float: left;
 	margin-right: 20px;
 }
@@ -227,4 +227,8 @@ li.selected:hover {
 
 #view_recipe {
 	margin-bottom: 10px;
+}
+
+.deficient_location {
+	color: #F00;
 }
