@@ -157,6 +157,16 @@ class User extends Controller
 		$this->Kick_user();
 		echo json_encode(array('success' => true));
 	}
+	
+	public function Settings() {
+		$this->Load_model('User_model');
+		if(!$this->Logged_in()) {
+			header("Location: /front");
+			return;
+		}
+		$openids = $this->User_model->Get_user_openids($_SESSION['userid']);
+		$this->Load_view('user_settings_view', array('openids' => $openids));
+	}
 }
 
 ?>

@@ -228,5 +228,19 @@ class User_model
 		}
 		return true;
 	}
-}
+	
+	public function Get_user_openids($userid) {
+		$db = Load_database();
 
+		$rs = $db->Execute('
+			select OpenID from User_openID where UserID = ?
+			', array($userid));
+
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return false;
+		}
+		
+		return $rs->getArray();
+	}
+}
