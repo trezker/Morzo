@@ -116,6 +116,25 @@ class User_model
 			'ID' => $userid
 		);
 	}
+	
+	public function Add_user_openid($userid, $openid) {
+		$db = Load_database();
+
+		$query = 'INSERT INTO User_openID (OpenID, UserID) VALUES(?, ?)';
+		$rs = $db->Execute($query, array($openid, $userid));
+		if(!$rs) {
+			$reason = $db->ErrorMsg();
+			return array(
+				'success' => false,
+				'reason' => $reason
+			);
+		}
+		
+		return array(
+			'success' => true,
+			'ID' => $userid
+		);
+	}
 
 	public function User_has_access($user_id, $accessname)
 	{
@@ -242,5 +261,17 @@ class User_model
 		}
 		
 		return $rs->getArray();
+	}
+	
+	public function Get_openid_icons() {
+		$openid_icons = array(
+			array(	'icon' => '/data/openid_icons/google.ico.png',
+					'URI'	=> 'https://www.google.com/accounts/o8/id',
+					'name'	=> 'Google'),
+			array(	'icon' => '/data/openid_icons/myopenid.ico.png',
+					'URI'	=> 'https://www.myopenid.com',
+					'name'	=> 'myOpenID')
+		);
+		return $openid_icons;
 	}
 }

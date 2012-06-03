@@ -86,6 +86,7 @@ else
 		$controller_path = '../controllers/'.$argv[1].'.php';
 		if(!file_exists($controller_path))
 		{
+			Log_message("Could not load controller: ".$controller_path);
 			header("HTTP/1.0 404 Not Found");
 			include '../blocked.php';
 		}

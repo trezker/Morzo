@@ -31,8 +31,7 @@ class User extends Controller
 		$this->Load_view('user_view', array('actors' => $actors, 'actor_limit' => $actor_limit));
 	}
 
-	public function Start_openid_login()
-	{
+	private function Start_openid_verification($finish_path) {
 		header('Content-type: application/json');
 		if(!isset($_POST['openid'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Must give an openid'));
@@ -51,22 +50,31 @@ class User extends Controller
 			return;
 		}
 
-		$url = $auth->redirectURL($GLOBALS['base_url'], $GLOBALS['base_url'].'user/Finish_openid_login');
+		$url = $auth->redirectURL($GLOBALS['base_url'], $GLOBALS['base_url'].$finish_path);
 		echo json_encode(array('success' => true, 'redirect_url' => $url));
 	}
 
-	public function Finish_openid_login()
+	public function Start_openid_login() {
+		$this->Start_openid_verification('user/Finish_openid_login');
+	}
+
+	public function Start_add_openid()
+	{
+		$this->Start_openid_verification('user/Finish_add_openid');
+	}
+
+	public function Finish_openid_verification($finish_path)
 	{
 		require_once "Auth/OpenID/Consumer.php";
 		require_once "Auth/OpenID/FileStore.php";
 
 		$store = new Auth_OpenID_FileStore('../oid_store');
 		$consumer = new Auth_OpenID_Consumer($store);
-		$response = $consumer->complete($GLOBALS['base_url'].'user/Finish_openid_login');
+		$response = $consumer->complete($GLOBALS['base_url'].$finish_path);
 
   		if ($response->status == Auth_OpenID_SUCCESS) {
 			$_SESSION['OPENID'] = $response->identity_url;
-			$this->Login_openid($response->identity_url);
+			return true;
 		} else {
 			if ($response->status == Auth_OpenID_CANCEL) {
 				// This means the authentication was cancelled.
@@ -76,6 +84,24 @@ class User extends Controller
 				echo "OpenID authentication failed: " . $response->message;
 			}
 			echo ' = Denied!';
+		}
+		return false;
+	}
+
+	public function Finish_openid_login() {
+		if($this->Finish_openid_verification('user/Finish_openid_login') == true)
+			$this->Login_openid($_SESSION['OPENID']);
+	}
+
+	public function Finish_add_openid() {
+		if($this->Finish_openid_verification('user/Finish_add_openid')) {
+			$this->Load_model('User_model');
+			$r = $this->User_model->Add_user_openid($_SESSION['userid'], $_SESSION['OPENID']);
+			if($r == false) {
+				echo "Failed to add id";
+			} else {
+				echo "Adding id was successful";
+			}
 		}
 	}
 
@@ -165,7 +191,12 @@ class User extends Controller
 			return;
 		}
 		$openids = $this->User_model->Get_user_openids($_SESSION['userid']);
-		$this->Load_view('user_settings_view', array('openids' => $openids));
+		$openid_icons = $this->User_model->Get_openid_icons();
+
+		$this->Load_view('user_settings_view', array(
+														'openids' => $openids,
+														'openid_icons' => $openid_icons, 
+													));
 	}
 }
 

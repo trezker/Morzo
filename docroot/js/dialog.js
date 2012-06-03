@@ -90,3 +90,26 @@ function login(openid)
 		}
 	});
 }
+
+function add_openid(openid)
+{
+	$('#openidfeedback').html('Processing...');
+	if (openid == null){
+		openid = document.getElementById('openid').value;
+	}	
+	$.ajax(
+	{
+		type: 'POST',
+		url: '/user/Start_add_openid',
+		data: { openid: openid },
+		success: function(data)
+		{
+			if(data.success == false) {
+				$('#openidfeedback').html('Process failed: ' + data.reason);
+			} else {
+				$('#openidfeedback').html('Redirecting');
+				window.location = data.redirect_url;
+			}
+		}
+	});
+}

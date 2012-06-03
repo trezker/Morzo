@@ -24,5 +24,19 @@
 			  </table>';
 		?>
 		<h3>Add an OpenID identifier</h3>
+		<div class="login_content">
+			<div class="openid_icons">
+			<?php
+			if(isset($openid_icons)) {
+				foreach($openid_icons as $icon) {
+					echo '<span class="action openid_icon" data-tooltip="'.$icon['name'].'"><img src="'.$icon['icon'].'" height="16" width="16" onclick="add_openid(\''.$icon['URI'].'\');" /></span>';
+				}
+			}
+			?>
+			</div>
+			<span><input type="text" name="openid" id="openid" /></span>
+			<span class="login_action action" onclick="add_openid();">Log in</span>
+			<div id="openidfeedback"></div>
+		</div>
 	</body>
 </html>
