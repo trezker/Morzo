@@ -98,9 +98,11 @@ class User extends Controller
 			$this->Load_model('User_model');
 			$r = $this->User_model->Add_user_openid($_SESSION['userid'], $_SESSION['OPENID']);
 			if($r == false) {
-				echo "Failed to add id";
+				header( 'Location: /user/Settings' );
+//				echo "Failed to add id";
 			} else {
-				echo "Adding id was successful";
+				header( 'Location: /user/Settings' );
+//				echo "Adding id was successful";
 			}
 		}
 	}
@@ -197,6 +199,19 @@ class User extends Controller
 														'openids' => $openids,
 														'openid_icons' => $openid_icons, 
 													));
+	}
+	
+	public function Delete_openid() {
+		header('Content-type: application/json');
+		$this->Load_model('User_model');
+		if(!$this->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		
+		$r = $this->User_model->Delete_user_openid($_SESSION['userid'], $_POST['id']);
+		
+		echo json_encode($r);
 	}
 }
 

@@ -10,7 +10,7 @@
 	</head>
 	<body>
 		<h1>User administration</h1>
-		<p><a class="action" href="user">Back</a></p>
+		<p><a class="action" href="/user">Back</a></p>
 		<div id="users">
 			<table class="user_admin_list">
 			<?php

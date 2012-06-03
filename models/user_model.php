@@ -252,7 +252,7 @@ class User_model
 		$db = Load_database();
 
 		$rs = $db->Execute('
-			select OpenID from User_openID where UserID = ?
+			select ID, OpenID from User_openID where UserID = ?
 			', array($userid));
 
 		if(!$rs) {
@@ -273,5 +273,31 @@ class User_model
 					'name'	=> 'myOpenID')
 		);
 		return $openid_icons;
+	}
+
+	public function Delete_user_openid($userid, $openid) {
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			select count(1) as Num_ids from User_openID where UserID = ?
+			', array($userid));
+
+		if(!$rs) {
+			return array('success' => false, 'reason' => $db->ErrorMsg());
+		}
+		
+		if($rs->fields['Num_ids'] < 2) {
+			return array('success' => false, 'reason' => 'You may not delete your last openid');
+		}
+
+		$rs = $db->Execute('
+			delete from User_openID where UserID = ? and ID = ?
+			', array($userid, $openid));
+
+		if(!$rs) {
+			return array('success' => false, 'reason' => $db->ErrorMsg());
+		}
+		
+		return array('success' => true);
 	}
 }

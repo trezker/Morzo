@@ -9,6 +9,7 @@
 		<script type="text/javascript" src="/js/user.js"></script>
 	</head>
 	<body>
+		<p><a class="action" href="/user">Back</a></p>
 		<h3>Current OpenID identifiers</h3>
 		<?php
 		echo '<table>
@@ -16,15 +17,19 @@
 		foreach($openids as $openid) {
 			echo '
 				  <tr>
-					  <td style="font-size: small;">'.$openid['OpenID'].'</td><td class="action">Delete</td>
-				  </tr>
+					  <td style="font-size: small;">'.$openid['OpenID'].'</td>';
+
+			if(count($openids) > 1)
+				echo '<td class="action" onclick="delete_openid('.$openid['ID'].');">Delete</td>';
+
+			echo '</tr>
 				  ';
 		}
 		echo '
 			  </table>';
 		?>
 		<h3>Add an OpenID identifier</h3>
-		<div class="login_content">
+		<div>
 			<div class="openid_icons">
 			<?php
 			if(isset($openid_icons)) {
