@@ -48,5 +48,24 @@
 
 		<div id="edit_resource" style="float: left;">
 		</div>
+
+		<div class="products" style="float: left;">
+			<h2>Products</h2>
+			<div id="products">
+				<ul>
+					<li><span class="action" onclick="edit_product(-1);">Create a new product</span></li>
+					<?php
+					foreach ($products as $product) {
+						echo expand_template(
+							'<li><span class="action" onclick="edit_product({ID});">{Name}</span></li>',
+							$product);
+					}
+					?>
+				</ul>
+			</div>
+		</div>
+
+		<div id="edit_product" style="float: left;">
+		</div>
 	</body>
 </html>

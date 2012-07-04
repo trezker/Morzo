@@ -280,7 +280,7 @@ CREATE TABLE `Location_inventory` (
   KEY `Location_inventory_fk_Resource` (`Resource_ID`),
   CONSTRAINT `Location_inventory_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Location_inventory_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -393,12 +393,14 @@ DROP TABLE IF EXISTS `Product`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Product` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(45) NOT NULL,
   `Mass` double NOT NULL,
   `Volume` double NOT NULL,
   `Rot_rate` double NOT NULL,
   PRIMARY KEY (`ID`),
-  UNIQUE KEY `ID_UNIQUE` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  UNIQUE KEY `ID_UNIQUE` (`ID`),
+  UNIQUE KEY `Name_UNIQUE` (`Name`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -728,7 +730,7 @@ CREATE TABLE `User_openID` (
   UNIQUE KEY `OpenID_UNIQUE` (`OpenID`),
   KEY `User_openID_fk_User` (`UserID`),
   CONSTRAINT `User_openID_fk_User` FOREIGN KEY (`UserID`) REFERENCES `User` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -767,4 +769,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-06-17 21:24:38
+-- Dump completed on 2012-07-04 11:46:54

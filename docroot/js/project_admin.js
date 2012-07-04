@@ -1,5 +1,6 @@
 var current_recipe = -1;
 var current_resource = -1;
+var current_product = -1;
 
 function edit_recipe(id)
 {
@@ -206,6 +207,51 @@ function save_resource() {
 				window.location.reload();
 			}
 			edit_resource(id);
+		}
+	});
+}
+
+function edit_product(id) {
+	$.ajax({
+		type: 'POST',
+		url: 'project_admin/edit_product',
+		data: {
+			id: id
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data !== false) {
+				current_product = id;
+				$('#edit_product').html(data.data);
+			}
+		}
+	});
+}
+
+function save_product() {
+	var id = current_product;
+	var name = $('#product_name').val();
+	var mass = $('#mass').val();
+	var volume = $('#volume').val();
+	var rot_rate = $('#rot_rate').val();
+
+	$.ajax({
+		type: 'POST',
+		url: 'project_admin/save_product',
+		data: {
+			id: id,
+			name: name,
+			mass: mass,
+			volume: volume,
+			rot_rate: rot_rate
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data !== false) {
+				current_product = id;
+				window.location.reload();
+			}
+			edit_product(id);
 		}
 	});
 }
