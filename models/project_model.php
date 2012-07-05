@@ -79,9 +79,40 @@ class Project_model
 			limit 1
 			', array());
 
+		$recipe_product_inputs = $db->Execute('
+			select
+				RPI.ID,
+				RPI.Product_ID,
+				P.Name AS Product_Name,
+				RPI.Amount
+			from Recipe_product_input RPI
+			join Product P on P.ID = RPI.Product_ID
+			where RPI.Recipe_ID = ?
+			', array($id));
+
+		$recipe_product_outputs = $db->Execute('
+			select
+				RPO.ID,
+				RPO.Product_ID,
+				P.Name AS Product_Name,
+				RPO.Amount
+			from Recipe_product_output RPO
+			join Product P on P.ID = RPO.Product_ID
+			where RPO.Recipe_ID = ?
+			', array($id));
+
+		$new_product_component = $db->Execute('
+			select -1 AS ID, P.ID AS Product_ID, P.Name AS Product_Name, 1 AS Amount
+			from Product P
+			limit 1
+			', array());
+
 		$result['recipe'] = $recipe->fields;
 		$result['recipe_inputs'] = $recipe_inputs->GetArray();
 		$result['recipe_outputs'] = $recipe_outputs->GetArray();
+		$result['recipe_product_inputs'] = $recipe_product_inputs->GetArray();
+		$result['recipe_product_outputs'] = $recipe_product_outputs->GetArray();
+		$result['new_product_component'] = $new_product_component->fields;
 		$result['new_output'] = $new_output->fields;
 		$result['new_input'] = $new_input->fields;
 
@@ -151,13 +182,7 @@ class Project_model
 		if($result_id != -1) {
 			foreach($data['outputs'] as $o) {
 				$o['amount'] /= $amount_factors[$o['resource_id']][$measures[$o['measure']]];
-/*				if($o['measure'] == $measures['Mass']) {
-					$o['Amount'] /= $amount_factors['resource_id']['Mass'];
-				}
-				if($o['measure'] == $measures['Volume']) {
-					$o['Amount'] /= $amount_factors['resource_id']['Volume'];
-				}
-*/				if($o['id'] != "-1") {
+				if($o['id'] != "-1") {
 					$args = array(
 								$o['amount'], 
 								$o['resource_id'],
@@ -209,6 +234,56 @@ class Project_model
 						', $args);
 				}
 			}
+
+			foreach($data['product_outputs'] as $o) {
+				if($o['id'] != "-1") {
+					$args = array(
+								$o['amount'], 
+								$o['product_id'],
+								$o['id']
+							);
+					$r = $db->Execute('
+						update Recipe_product_output set 
+							Amount = ?,
+							Product_ID = ?
+						where ID = ?
+						', $args);
+				} else {
+					$args = array(
+								$o['amount'], 
+								$o['product_id'],
+								$result_id
+							);
+					$r = $db->Execute('
+						insert into Recipe_product_output (Amount, Product_ID, Recipe_ID) values (?, ?, ?)
+						', $args);
+				}
+			}
+
+			foreach($data['product_inputs'] as $i) {
+				if($i['id'] != "-1") {
+					$args = array(
+								$i['amount'], 
+								$i['product_id'],
+								$i['id']
+							);
+					$r = $db->Execute('
+						update Recipe_product_input set 
+							Amount = ?,
+							Product_ID = ?,
+						where ID = ?
+						', $args);
+				} else {
+					$args = array(
+								$i['amount'], 
+								$i['product_id'],
+								$result_id
+							);
+					$r = $db->Execute('
+						insert into Recipe_product_input (Amount, Product_ID, Recipe_ID) values (?, ?, ?)
+						', $args);
+				}
+			}
 		}
 
 		$success = !$db->HasFailedTrans();
@@ -243,6 +318,38 @@ class Project_model
 
 		$r = $db->Execute('
 			delete from Recipe_input 
+			where Recipe_ID = ? and ID = ?
+			', $args);
+		
+		if($db->Affected_rows() > 0)
+			return true;
+		return false;
+	}
+
+	public function Remove_recipe_product_output($recipe_id, $output_id)
+	{
+		$db = Load_database();
+		
+		$args = array($recipe_id, $output_id);
+
+		$r = $db->Execute('
+			delete from Recipe_product_output 
+			where Recipe_ID = ? and ID = ?
+			', $args);
+		
+		if($db->Affected_rows() > 0)
+			return true;
+		return false;
+	}
+
+	public function Remove_recipe_product_input($recipe_id, $input_id)
+	{
+		$db = Load_database();
+		
+		$args = array($recipe_id, $input_id);
+
+		$r = $db->Execute('
+			delete from Recipe_product_input 
 			where Recipe_ID = ? and ID = ?
 			', $args);
 		

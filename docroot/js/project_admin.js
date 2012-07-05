@@ -56,6 +56,30 @@ function save_recipe() {
 		}
 	);
 
+	var product_outputs = new Array();
+	$('#recipe_product_outputs .product_output').each(
+		function(index, value){
+			var output = {
+					id: $(value).attr('data-id'),
+					amount: $(value).children('.amount').val(),
+					product: $(value).children('.product').attr('data-id')
+				};
+			product_outputs.push(output);
+		}
+	);
+
+	var product_inputs = new Array();
+	$('#recipe_product_inputs .product_input').each(
+		function(index, value){
+			var input = {
+					id: $(value).attr('data-id'),
+					amount: $(value).children('.amount').val(),
+					product: $(value).children('.product').attr('data-id'),
+				};
+			product_inputs.push(input);
+		}
+	);
+
 	$.ajax({
 		type: 'POST',
 		url: 'project_admin/save_recipe',
@@ -66,7 +90,9 @@ function save_recipe() {
 			allow_fraction_output: allow_fraction_output,
 			require_full_cycle: require_full_cycle,
 			outputs: outputs,
-			inputs: inputs
+			inputs: inputs,
+			product_outputs: product_outputs,
+			product_inputs: product_inputs
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
@@ -254,4 +280,62 @@ function save_product() {
 			edit_product(id);
 		}
 	});
+}
+
+function add_product_output() {
+	var product_id = $('#new_product_output_form select').val();
+	var product_name = $('#new_product_output_form select option[value="'+product_id+'"]').html();
+	$('#new_product_output .product').attr("data-id", product_id);
+	$('#new_product_output .product').html(product_name);
+	$('#recipe_product_outputs').append($('#new_product_output').html());
+}
+
+function remove_product_output(id) {
+	if(id == -1) {
+		$('#product_output_'+id).remove();
+	} else {
+		$.ajax({
+			type: 'POST',
+			url: 'project_admin/remove_recipe_product_output',
+			data: {
+				recipe_id: current_recipe,
+				id: id
+			},
+			success: function(data) {
+				if(ajax_logged_out(data)) return;
+				if(data !== false) {
+					$('#product_output_'+id).remove();
+				}
+			}
+		});
+	}
+}
+
+function add_product_input() {
+	var product_id = $('#new_product_input_form select').val();
+	var product_name = $('#new_product_input_form select option[value="'+product_id+'"]').html();
+	$('#new_product_input .product').attr("data-id", product_id);
+	$('#new_product_input .product').html(product_name);
+	$('#recipe_product_inputs').append($('#new_product_input').html());
+}
+
+function remove_product_input(id) {
+	if(id == -1) {
+		$('#product_input_'+id).remove();
+	} else {
+		$.ajax({
+			type: 'POST',
+			url: 'project_admin/remove_recipe_product_input',
+			data: {
+				recipe_id: current_recipe,
+				id: id
+			},
+			success: function(data) {
+				if(ajax_logged_out(data)) return;
+				if(data !== false) {
+					$('#product_input_'+id).remove();
+				}
+			}
+		});
+	}
 }

@@ -45,6 +45,8 @@ class Project_admin extends Controller
 		$this->Load_model('Resource_model');
 		$resources = $this->Resource_model->Get_resources();
 		$measures = $this->Resource_model->Get_measures();
+		$this->Load_model('Product_model');
+		$products = $this->Product_model->Get_products();
 
 		if($recipe['recipe'] == false) {
 			$recipe['recipe'] = array(
@@ -56,6 +58,7 @@ class Project_admin extends Controller
 				);
 		}
 		$edit_recipe_view = $this->Load_view('recipe_edit_view',array(	'resources' => $resources,
+																		'products' => $products,
 																		'measures' => $measures,
 																		'recipe' => $recipe), true);
 
@@ -104,6 +107,28 @@ class Project_admin extends Controller
 						'measure' => $i['measure'],
 						'resource_id' => $i['resource'],
 						'from_nature' => $i['from_nature']
+					);
+			}
+		}
+
+		$data['product_outputs'] = array();
+		if(is_array($_POST['product_outputs'])) {
+			foreach($_POST['product_outputs'] as $o) {
+				$data['product_outputs'][] = array(
+						'id' => $o['id'],
+						'amount' => $o['amount'],
+						'product_id' => $o['product']
+					);
+			}
+		}
+
+		$data['product_inputs'] = array();
+		if(is_array($_POST['product_inputs'])) {
+			foreach($_POST['product_inputs'] as $i) {
+				$data['product_inputs'][] = array(
+						'id' => $i['id'],
+						'amount' => $i['amount'],
+						'product_id' => $i['product'],
 					);
 			}
 		}
@@ -266,6 +291,41 @@ class Project_admin extends Controller
 		echo json_encode(array('success' => $result));
 	}
 
+	public function remove_recipe_product_output() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$this->Load_model('Project_model');
+		$success = $this->Project_model->Remove_recipe_product_output($_POST['recipe_id'], $_POST['id']);
+
+		echo json_encode(array('success' => $success));
+	}
+
+	public function remove_recipe_product_input() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$this->Load_model('Project_model');
+		$success = $this->Project_model->Remove_recipe_product_input($_POST['recipe_id'], $_POST['id']);
+
+		echo json_encode(array('success' => $success));
+	}
 }
 
 ?>

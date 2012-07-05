@@ -59,6 +59,15 @@ foreach($measures as $key => $measure) {
 		$resource_select .= expand_template($resource_template, $resource);
 	}
 	$resource_select .= '</select>';
+
+	$product_select = '<select>';
+	$product_template = '
+		<option value="{ID}">{Name}</option>
+	';
+	foreach ($products as $product) {
+		$product_select .= expand_template($product_template, $product);
+	}
+	$product_select .= '</select>';
 	?>
 	
 	<div id="recipe_outputs">
@@ -133,6 +142,60 @@ foreach($measures as $key => $measure) {
 	<div id="new_input" style="display: none;">
 	<?php
 		echo expand_template($input_template, $recipe['new_input']);
+	?>
+	</div>
+	
+	<div id="recipe_product_outputs">
+		<?php
+		$output_template = '
+		<div class="product_output" id="product_output_{ID}" data-id="{ID}">
+			<input class="amount" type="number" value="{Amount}" />
+			<span class="product" data-id="{Product_ID}">{Product_Name}</span>
+			<span class="action" style="float: right;" onclick="remove_product_output({ID})">Remove</span>
+		</div>';
+
+		foreach ($recipe['recipe_product_outputs'] as $output) {
+			echo expand_template($output_template, $output);
+		}
+		?>
+	</div>
+	<div id="new_product_output_form" style='margin-bottom: 10px;'>
+		<span class="action" onclick="add_product_output()">Add product output</span>
+		<?php echo $product_select; ?>
+	</div>
+
+	<div id="recipe_product_inputs">
+		<?php
+		$input_template = '
+		<div class="product_input" id="product_input_{ID}" data-id="{ID}">
+			<input class="amount" type="number" value="{Amount}" />
+			<span class="product" data-id="{Product_ID}">{Product_Name}</span>
+			<span class="action" style="float: right;" onclick="remove_product_input({ID})">Remove</span>
+		</div>';
+
+		foreach ($recipe['recipe_product_inputs'] as $input) {
+			echo expand_template($input_template, $input);
+		}
+		?>
+	</div>
+	<div id="new_product_input_form" style='margin-bottom: 10px;'>
+		<span class="action" onclick="add_product_input()">Add product input</span>
+		<?php echo $product_select; ?>
+	</div>
+
+	<div id="product_select" style="display: none;">
+		<?php
+		echo $product_select;
+		?>
+	</div>
+	<div id="new_product_output" style="display: none;">
+	<?php
+		echo expand_template($output_template, $recipe['new_product_component']);
+	?>
+	</div>
+	<div id="new_product_input" style="display: none;">
+	<?php
+		echo expand_template($input_template, $recipe['new_product_component']);
 	?>
 	</div>
 	<span class="action" style="float: right;" onclick="save_recipe()">Save</span>
