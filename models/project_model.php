@@ -270,7 +270,7 @@ class Project_model
 					$r = $db->Execute('
 						update Recipe_product_input set 
 							Amount = ?,
-							Product_ID = ?,
+							Product_ID = ?
 						where ID = ?
 						', $args);
 				} else {
