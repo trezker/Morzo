@@ -398,26 +398,49 @@ class Project_model
 	{
 		$db = Load_database();
 		
-		$args = array($recipe_id, $actor_id);
 
 		//TODO: Figure out if you're allowed to create the project
 		
-		//Create the project
+		$db->StartTrans();
+		
+		//Create project inventory
 		$r = $db->Execute('
-			insert into Project (Creator_actor_ID, Location_ID, Recipe_ID, Cycles_left, Created_time)
-			select A.ID, A.Location_ID, ?, 1, C.Value
-			from Count C, Actor A where 
-			C.Name = \'Update\' and A.ID = ?
-			', $args);
+			insert into Inventory values()', array());
 		
 		if(!$r) {
-			return false;
+			$db->FailTrans();
+		} else {
+			$project_inventory_id = $db->Insert_id();
 		}
 
-		$project_id = $db->Insert_id();
-		if($supply == true) {
-			$supply_result = $this->Supply_project($project_id, $actor_id);
+		if(!$db->HasFailedTrans()) {
+			//Create the project
+			$args = array($recipe_id, $project_inventory_id, $actor_id);
+
+			$r = $db->Execute('
+				insert into Project (Creator_actor_ID, Location_ID, Recipe_ID, Cycles_left, Created_time, Inventory_ID)
+				select A.ID, A.Location_ID, ?, 1, C.Value, ?
+				from Count C, Actor A where 
+				C.Name = \'Update\' and A.ID = ?
+				', $args);
+			
+			if(!$r) {
+				$db->FailTrans();
+			} else {
+				$project_id = $db->Insert_id();
+			}
 		}
+
+		if(!$db->HasFailedTrans()) {
+			if($supply == true) {
+				$supply_result = $this->Supply_project($project_id, $actor_id);
+			}
+		}
+		
+		if($db->HasFailedTrans()) {
+			echo $db->ErrorMsg();
+		}
+		$db->CompleteTrans();
 
 		return true;
 	}
@@ -677,10 +700,45 @@ class Project_model
 			return false;
 		}
 
+		$recipe_product_inputs = $db->Execute('
+			select 
+				R.ID, 
+				R.Name, 
+				RI.Amount,
+				count(O.ID) as Project_amount
+			from Project P
+			join Recipe_product_input RI on RI.Recipe_ID = P.Recipe_ID
+			join Product R on R.ID = RI.Product_ID
+			left join Object O on O.Inventory_ID = P.Inventory_ID and O.Product_ID = R.ID
+			where P.ID = ?
+			group by R.ID
+			', array($project_id));
+
+		if(!$recipe_product_inputs) {
+			return false;
+		}
+
+		$recipe_product_outputs = $db->Execute('
+			select 
+				R.ID, 
+				R.Name, 
+				RO.Amount
+			from Project P
+			join Recipe_product_output RO on RO.Recipe_ID = P.Recipe_ID
+			join Product R on R.ID = RO.Product_ID
+			where P.ID = ?
+			', array($project_id));
+
+		if(!$recipe_product_outputs) {
+			return false;
+		}
+
 		$project = array();
 		$project['info'] = $info->fields;
 		$project['recipe_inputs'] = $recipe_inputs->getArray();
 		$project['recipe_outputs'] = $recipe_outputs->getArray();
+		$project['recipe_product_inputs'] = $recipe_product_inputs->getArray();
+		$project['recipe_product_outputs'] = $recipe_product_outputs->getArray();
 
 		return $project;
 	}

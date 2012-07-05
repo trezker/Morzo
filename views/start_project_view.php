@@ -30,6 +30,14 @@
 				}
 				echo expand_template($output_template, $output);
 			}
+
+			$output_template = '
+			<li>
+				{Amount} {Product_Name}
+			</li>';
+			foreach ($recipe['recipe_product_outputs'] as $output) {
+				echo expand_template($output_template, $output);
+			}
 			?>
 		</ul>
 	</div>
@@ -65,6 +73,14 @@
 													'Resource_Name' => $input['Resource_Name'],
 													'From_nature_text' => $from_nature_text
 												));
+			}
+
+			$input_template = '
+			<li>
+				{Amount} {Product_Name}
+			</li>';
+			foreach ($recipe['recipe_product_inputs'] as $input) {
+				echo expand_template($input_template, $input);
 			}
 			?>
 		</ul>

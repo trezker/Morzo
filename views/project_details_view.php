@@ -34,6 +34,15 @@
 				}
 				echo expand_template($output_template, $output);
 			}
+
+			$output_template = '
+			<li>
+				{Amount} {Name}
+			</li>';
+
+			foreach ($project['recipe_product_outputs'] as $output) {
+				echo expand_template($output_template, $output);
+			}
 			?>
 		</ul>
 	</div>
@@ -86,6 +95,15 @@
 						None
 					</li>
 				';
+			}
+
+			$input_template = '
+			<li>
+				{Project_amount}/{Amount} {Name}
+			</li>';
+
+			foreach ($project['recipe_product_inputs'] as $input) {
+				echo expand_template($input_template, $input);
 			}
 			?>
 		</ul>
