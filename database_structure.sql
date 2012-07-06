@@ -43,10 +43,14 @@ CREATE TABLE `Actor` (
   `Location_ID` bigint(20) NOT NULL,
   `Inhabitable` tinyint(1) NOT NULL DEFAULT '1',
   `Project_ID` bigint(20) DEFAULT NULL,
+  `Inventory_ID` bigint(20) NOT NULL,
   PRIMARY KEY (`ID`),
+  UNIQUE KEY `Inventory_ID_UNIQUE` (`Inventory_ID`),
   KEY `Character_fk_User` (`User_ID`),
   KEY `Character_fk_Location` (`Location_ID`),
   KEY `Actor_fk_Project` (`Project_ID`),
+  KEY `Actor_fk_Inventory` (`Inventory_ID`),
+  CONSTRAINT `Actor_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Actor_fk_Project` FOREIGN KEY (`Project_ID`) REFERENCES `Project` (`ID`),
   CONSTRAINT `Character_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Character_fk_User` FOREIGN KEY (`User_ID`) REFERENCES `User` (`ID`)
@@ -187,7 +191,7 @@ CREATE TABLE `Inventory` (
   `Volume_limit` double DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -361,7 +365,7 @@ CREATE TABLE `Object` (
   KEY `Object_fk_Inventory` (`Inventory_ID`),
   CONSTRAINT `Object_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Object_fk_Product` FOREIGN KEY (`Product_ID`) REFERENCES `Product` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -582,7 +586,7 @@ CREATE TABLE `Recipe_product_input` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `Recipe_ID` bigint(20) NOT NULL,
   `Product_ID` bigint(20) NOT NULL,
-  `Amount` double NOT NULL,
+  `Amount` int(11) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   UNIQUE KEY `Recipe_product_input_UNIQUE` (`Recipe_ID`,`Product_ID`),
@@ -604,7 +608,7 @@ CREATE TABLE `Recipe_product_output` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `Recipe_ID` bigint(20) NOT NULL,
   `Product_ID` bigint(20) NOT NULL,
-  `Amount` double NOT NULL,
+  `Amount` int(11) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   UNIQUE KEY `Recipe_product_output_UNIQUE` (`Recipe_ID`,`Product_ID`),
@@ -773,4 +777,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-07-05 20:13:46
+-- Dump completed on 2012-07-06 21:00:58

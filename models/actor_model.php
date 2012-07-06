@@ -39,12 +39,29 @@ class Actor_model extends Model
 			return false;
 		}
 
-		$rs = $db->Execute('
-			insert into Actor(Location_ID)
-			values (?)
-			', array($location_id));
+		$db->StartTrans();
 		
-		if(!$rs)
+		//Create actor inventory
+		$r = $db->Execute('
+			insert into Inventory values()', array());
+		
+		if(!$r) {
+			$db->FailTrans();
+		} else {
+			$project_inventory_id = $db->Insert_id();
+		}
+
+		if(!$db->HasFailedTrans()) {
+			$rs = $db->Execute('
+				insert into Actor(Location_ID, Inventory_ID)
+				values (?,?)
+				', array($location_id, $inventory_ID));
+		}
+
+		$failed = $db->HasFailedTrans();
+		$db->CompleteTrans();
+		
+		if($failed)
 		{
 			return false;
 		}

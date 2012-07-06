@@ -784,7 +784,31 @@ class Project_model
 			return false;
 		}
 
-		return $r->GetArray();
+		$output = array();
+		$output['resources'] = $r->GetArray();
+
+		$r = $db->Execute('
+			select
+				P.ID as Project_ID,
+				P.Cycles_left,
+				P.Creator_actor_ID,
+				A.Inventory_ID,
+				O.Product_ID,
+				O.Amount
+			from Project P
+			join Actor A on P.Creator_actor_ID = A.ID
+			join Recipe R on R.ID = P.Recipe_ID
+			join Recipe_product_output O on R.ID = O.Recipe_ID
+			where P.Progress >= R.Cycle_time
+			', $args);
+		
+		if(!$r) {
+			return false;
+		}
+
+		$output['products'] = $r->GetArray();
+
+		return $output;
 	}
 	
 	public function Process_finished_projects($projects) {
@@ -796,18 +820,42 @@ class Project_model
 			$db->StartTrans();
 
 			//Put output into inventory
-			foreach($project['outputs'] as $output) {
-				$query = '
-					insert into Actor_inventory (Actor_ID, Resource_ID, Amount)
-					values(?,?,?)
-					on duplicate key update Amount = Amount + ?
-				';
-				$args = array($output['Creator_actor_ID'], $output['Resource_ID'], $output['Amount'], $output['Amount']);
-				$rs = $db->Execute($query, $args);
-				
-				if(!$rs) {
-					$db->FailTrans();
-					break;
+			if(isset($project['outputs'])) {
+				foreach($project['outputs'] as $output) {
+					$query = '
+						insert into Actor_inventory (Actor_ID, Resource_ID, Amount)
+						values(?,?,?)
+						on duplicate key update Amount = Amount + ?
+					';
+					$args = array($output['Creator_actor_ID'], $output['Resource_ID'], $output['Amount'], $output['Amount']);
+					$rs = $db->Execute($query, $args);
+					
+					if(!$rs) {
+						$db->FailTrans();
+						break;
+					}
+				}
+			}
+
+			if(isset($project['product_outputs'])) {
+				foreach($project['product_outputs'] as $output) {
+					for($i = 0; $i < $output['Amount']; $i++) {
+						$query = '
+							insert into Object (Product_ID, Inventory_ID, Quality, Rot)
+							values(?,?,1,0)
+						';
+						$args = array($output['Product_ID'], $output['Inventory_ID']);
+
+						$rs = $db->Execute($query, $args);
+						
+						if(!$rs) {
+							break;
+						}
+					}
+					if(!$rs) {
+						$db->FailTrans();
+						break;
+					}
 				}
 			}
 

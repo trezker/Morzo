@@ -73,7 +73,7 @@ class Update extends Controller
 //			var_dump($outputs);
 			echo '</pre>';
 			$projects = array();
-			foreach($outputs as $output) {
+			foreach($outputs['resources'] as $output) {
 				$project_id = $output['Project_ID'];
 				if(!isset($projects[$project_id])) {
 					$projects[$project_id]['outputs'] = array();
@@ -81,6 +81,15 @@ class Update extends Controller
 					$projects[$project_id]['Cycles_left'] = $output['Cycles_left'];
 				}
 				$projects[$project_id]['outputs'][] = $output;
+			}
+			foreach($outputs['products'] as $output) {
+				$project_id = $output['Project_ID'];
+				if(!isset($projects[$project_id])) {
+					$projects[$project_id]['product_outputs'] = array();
+					$projects[$project_id]['Project_ID'] = $output['Project_ID'];
+					$projects[$project_id]['Cycles_left'] = $output['Cycles_left'];
+				}
+				$projects[$project_id]['product_outputs'][] = $output;
 			}
 			echo '<pre>';
 //			var_dump($projects);
