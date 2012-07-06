@@ -268,7 +268,40 @@ class Actor_model extends Model
 			echo $db->ErrorMsg();
 			return false;
 		}
-		return $rs->getArray();
+
+		$result = array();
+		$result['resources'] = $rs->getArray();
+
+		if($table == 'Actor_inventory') {
+			$tail = 'join Actor A on A.Inventory_ID = O.Inventory_ID
+					where A.ID = ?';
+		} elseif($table == 'Location_inventory') {
+			$tail = 'join Location L on L.Inventory_ID = O.Inventory_ID
+					join Actor A on L.ID = A.Location_ID
+					where A.ID = ?';
+		} else {
+			return false;
+		}
+
+		$rs = $db->Execute('
+			select
+				P.ID,
+				count(P.ID) as Amount,
+				P.Name
+			from Object O
+			join Product P on P.ID = O.Product_ID
+			'.$tail.'
+			group by P.ID
+			', array($actor_id));
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return false;
+		}
+
+		$result['products'] = $rs->getArray();
+
+		return $result;
 	}
 
 	public function Drop_resource($actor_id, $resource_id, $amount) {
