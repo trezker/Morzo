@@ -557,7 +557,24 @@ class Project_model extends Model
 			return false;
 		}
 
-		if($workers->RecordCount()>0 && $missing_input->RecordCount() == 0) {
+		$missing_products = $db->Execute('
+			select 	RI.Product_ID, 
+					RI.Amount AS Needed_amount, 
+					count(PO.ID) AS Project_amount
+			from Project P
+			join Actor A on P.Location_ID = A.Location_ID
+			join Recipe_product_input RI on RI.Recipe_ID = P.Recipe_ID
+			left join Object PO on RI.Product_ID = PO.Product_ID and PO.Inventory_ID = P.Inventory_ID
+			where P.ID = ?
+			group by RI.ID
+			having(count(PO.ID) < RI.Amount)
+			', $args);
+
+		if(!$missing_products) {
+			return false;
+		}
+
+		if($workers->RecordCount()>0 && $missing_input->RecordCount() == 0 && $missing_products->RecordCount() == 0) {
 			$active = 1;
 		} else {
 			$active = 0;
@@ -980,7 +997,7 @@ class Project_model extends Model
 			from Project P
 			join Actor A on P.Location_ID = A.Location_ID
 			join Recipe_product_input RI on RI.Recipe_ID = P.Recipe_ID
-			left join Object PO on RI.Product_ID = PO.ID and PO.Inventory_ID = P.Inventory_ID
+			left join Object PO on RI.Product_ID = PO.Product_ID and PO.Inventory_ID = P.Inventory_ID
 			where P.ID = ? and A.ID = ?
 			group by RI.ID
 			having(count(PO.ID) < RI.Amount)
