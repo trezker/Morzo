@@ -1,6 +1,7 @@
 <?php
 
 require_once '../models/database.php';
+require_once '../models/model.php';
 
 class Project_model extends Model
 {
@@ -807,6 +808,7 @@ class Project_model extends Model
 		$r = $db->Execute('
 			select
 				P.ID as Project_ID,
+				P.Inventory_ID as Project_inventory,
 				P.Cycles_left,
 				P.Creator_actor_ID,
 				A.Inventory_ID,
@@ -894,6 +896,12 @@ class Project_model extends Model
 						delete from Project_input where Project_ID = ?
 					';
 					$args = array($project['Project_ID']);
+					$rs = $db->Execute($query, $args);
+
+					$query = '
+						delete from Object where Inventory_ID = ?
+					';
+					$args = array($project['Project_inventory']);
 					$rs = $db->Execute($query, $args);
 
 					$query = '
