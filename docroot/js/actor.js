@@ -487,3 +487,45 @@ function pick_up_resource(actor_id, resource_id) {
 		}
 	});
 }
+
+function drop_product(actor_id, product_id) {
+	var amount = $('#drop_amount_'+product_id).val();
+	
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Drop_product',
+		data: {
+			actor_id: actor_id,
+			product_id: product_id,
+			amount: amount
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = "/actor/show_actor/"+actor_id+"/inventory";
+			}
+		}
+	});
+}
+
+function pick_up_product(actor_id, product_id) {
+	var amount = $('#pick_up_amount_'+product_id).val();
+	
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Pick_up_product',
+		data: {
+			actor_id: actor_id,
+			product_id: product_id,
+			amount: amount
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = "/actor/show_actor/"+actor_id+"/inventory";
+			}
+		}
+	});
+}

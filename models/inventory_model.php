@@ -140,4 +140,20 @@ class Inventory_model extends Model
 
 		return array("success" => true);
 	}
+	
+	public function Transfer_product($from_id, $to_id, $product_id, $amount) {
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			update Object set Inventory_ID = ?
+			where Inventory_ID = ? and Product_ID = ?
+			limit '.intval($amount)
+			, array($to_id, $from_id, $product_id, $amount));
+
+		if(!$rs) {
+			return false;
+		}
+
+		return true;
+	}
 }

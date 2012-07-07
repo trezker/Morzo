@@ -451,4 +451,42 @@ class Actor_model extends Model
 
 		return true;
 	}
+
+	public function Drop_product($actor_id, $product_id, $amount) {
+		$inventories = $this->Get_actor_and_location_inventory($actor_id);
+		if(!$inventories) {
+			return false;
+		}
+		$this->Load_model('Inventory_model');
+		return $this->Inventory_model->Transfer_product($inventories['Actor_inventory'], $inventories['Location_inventory'], $product_id, $amount);
+	}
+
+	public function Pick_up_product($actor_id, $product_id, $amount) {
+		$inventories = $this->Get_actor_and_location_inventory($actor_id);
+		if(!$inventories) {
+			return false;
+		}
+		$this->Load_model('Inventory_model');
+		return $this->Inventory_model->Transfer_product($inventories['Location_inventory'], $inventories['Actor_inventory'], $product_id, $amount);
+	}
+	
+	public function Get_actor_and_location_inventory($actor_id) {
+		$db = Load_database();
+		//$db->debug = true;
+		
+		$rs = $db->Execute('
+			select
+				A.Inventory_ID as Actor_inventory,
+				L.Inventory_ID as Location_inventory
+			from Actor A
+			join Location L on A.Location_ID = L.ID
+			where A.ID = ?
+			'
+			, array($actor_id));
+		
+		if(!$rs) {
+			return false;
+		}
+		return $rs->fields;
+	}
 }
