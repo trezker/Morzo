@@ -788,6 +788,7 @@ class Project_model extends Model
 		$r = $db->Execute('
 			select
 				P.ID as Project_ID,
+				P.Inventory_ID as Project_inventory,
 				P.Cycles_left,
 				P.Creator_actor_ID,
 				O.Resource_ID,
@@ -842,11 +843,13 @@ class Project_model extends Model
 			if(isset($project['outputs'])) {
 				foreach($project['outputs'] as $output) {
 					$query = '
-						insert into Actor_inventory (Actor_ID, Resource_ID, Amount)
-						values(?,?,?)
+						insert into Inventory_resource (Inventory_ID, Resource_ID, Amount)
+						select A.Inventory_ID, ?, ?
+						from Actor A
+						where A.ID = ? limit 1
 						on duplicate key update Amount = Amount + ?
 					';
-					$args = array($output['Creator_actor_ID'], $output['Resource_ID'], $output['Amount'], $output['Amount']);
+					$args = array($output['Resource_ID'], $output['Amount'], $output['Creator_actor_ID'], $output['Amount']);
 					$rs = $db->Execute($query, $args);
 					
 					if(!$rs) {
@@ -928,13 +931,14 @@ class Project_model extends Model
 
 		$r = $db->Execute('
 			select 	RI.Resource_ID, 
+					AI.Inventory_ID,
 					RI.Amount AS Needed_amount, 
 					PI.Amount AS Project_amount,
 					AI.Amount AS Actor_amount
 			from Project P
 			join Actor A on P.Location_ID = A.Location_ID
 			join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID and RI.From_nature = 0
-			join Actor_inventory AI on RI.Resource_ID = AI.Resource_ID and AI.Actor_ID = A.ID
+			join Inventory_resource AI on RI.Resource_ID = AI.Resource_ID and AI.Inventory_ID = A.Inventory_ID
 			left join Project_input PI on PI.Project_ID = P.ID and PI.Resource_ID = RI.Resource_ID
 			where P.ID = ? and A.ID = ? and (PI.Amount < RI.Amount or PI.Amount is NULL)
 			', $args);
@@ -975,11 +979,11 @@ class Project_model extends Model
 					where Actor_ID = ? and Resource_ID = ?
 					', $args);
 			} else {
-				$args = array($inv_left, $actor_id, $input['Resource_ID']);
+				$args = array($inv_left, $input['Inventory_ID'], $input['Resource_ID']);
 
 				$r = $db->Execute('
-					update Actor_inventory set Amount = ?
-					where Actor_ID = ? and Resource_ID = ?
+					update Inventory_resource set Amount = ?
+					where Inventory_ID = ? and Resource_ID = ?
 					', $args);
 			}
 			if(!$r)

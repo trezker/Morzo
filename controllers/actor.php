@@ -529,7 +529,7 @@ class Actor extends Controller
 		}
 
 		$drop_result = $this->Actor_model->Drop_product($actor_id, $product_id, $amount);
-		
+
 		echo json_encode(array('success' => $drop_result));
 	}
 

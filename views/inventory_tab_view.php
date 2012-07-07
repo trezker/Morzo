@@ -50,7 +50,7 @@
 					{Amount}
 				</td>
 				<td>
-					<input id="drop_amount_{Product_ID}" type="number" value="0" size="4" style="text-align: right;" />
+					<input id="drop_product_amount_{Product_ID}" type="number" value="0" size="4" style="text-align: right;" />
 					<span class="action" onclick="drop_product({actor_id}, {Product_ID})">Drop</span>
 				</td>
 			</tr>';
@@ -122,7 +122,7 @@
 					{Amount}
 				</td>
 				<td>
-					<input id="pick_up_amount_{Product_ID}" type="number" value="0" size="4" style="text-align: right;" />
+					<input id="pick_up_product_amount_{Product_ID}" type="number" value="0" size="4" style="text-align: right;" />
 					<span class="action" onclick="pick_up_product({actor_id}, {Product_ID})">Pick up</span>
 				</td>
 			</tr>';

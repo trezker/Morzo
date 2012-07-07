@@ -241,9 +241,10 @@ class Actor_model extends Model
 		$db = Load_database();
 
 		if($table == 'Actor_inventory') {
-			$tail = 'where I.Actor_ID = ?';
+			$tail = 'join Actor A on A.Inventory_ID = I.Inventory_ID where A.ID = ?';
 		} elseif($table == 'Location_inventory') {
-			$tail = 'join Actor A on A.Location_ID = I.Location_ID
+			$tail = 'join Location L on L.Inventory_ID = I.Inventory_ID
+					join Actor A on A.Location_ID = L.ID
 					where A.ID = ?';
 		} else {
 			return false;
@@ -258,7 +259,7 @@ class Actor_model extends Model
 				R.Mass,
 				R.Volume,
 				M.Name as Measure_name
-			from '.$table.' I
+			from Inventory_resource I
 			left join Resource R on I.Resource_ID = R.ID
 			join Measure M on R.Measure = M.ID
 			'.$tail
@@ -312,14 +313,16 @@ class Actor_model extends Model
 
 		$rs = $db->Execute('
 			select
-				AI.Amount as Actor_amount,
+				I.Amount as Actor_amount,
+				I.Inventory_ID as Actor_inventory_ID,
 				R.Mass,
 				R.Volume,
 				M.Name as Measure_name
-			from Actor_inventory AI
-			join Resource R on R.ID = AI.Resource_ID
+			from Inventory_resource I
+			join Actor A on I.Inventory_ID = A.Inventory_ID
+			join Resource R on R.ID = I.Resource_ID
 			join Measure M on R.Measure = M.ID
-			where AI.Actor_ID = ? and AI.Resource_ID = ?
+			where A.ID = ? and I.Resource_ID = ?
 			'
 			, array($actor_id, $resource_id));
 
@@ -328,6 +331,7 @@ class Actor_model extends Model
 			echo "fail 1";
 			$db->FailTrans();
 		} else {
+			$actor_inventory_id = $rs->fields['Actor_inventory_ID'];
 			$actor_amount = $rs->fields['Actor_amount'];
 			$measure_name = $rs->fields['Measure_name'];
 			if($measure_name == 'Mass') {
@@ -343,21 +347,24 @@ class Actor_model extends Model
 			if($actor_amount >= $amount) {
 				if($actor_amount > $amount) {
 					$rs = $db->Execute('
-						update Actor_inventory set Amount = Amount - ?
-						where Actor_ID = ? and Resource_ID = ? and Amount >= ?
-						', array($amount, $actor_id, $resource_id, $amount));
+						update Inventory_resource set Amount = Amount - ?
+						where Inventory_ID = ? and Resource_ID = ? and Amount >= ?
+						', array($amount, $actor_inventory_id, $resource_id, $amount));
 				} else {
 					$rs = $db->Execute('
-						delete from Actor_inventory
-						where Actor_ID = ? and Resource_ID = ?
-						', array($actor_id, $resource_id));
+						delete from Inventory_resource
+						where Inventory_ID = ? and Resource_ID = ?
+						', array($actor_inventory_id, $resource_id));
 				}
 				if(!$rs || $db->Affected_Rows() !== 1) {
 					$db->FailTrans();
 				} else {
 					$rs = $db->Execute('
-						insert into Location_inventory (Location_ID, Resource_ID, Amount)
-						select Location_ID, ?, ? from Actor where ID = ? limit 1
+						insert into Inventory_resource (Inventory_ID, Resource_ID, Amount)
+						select L.Inventory_ID, ?, ?
+						from Actor A
+						join Location L on L.ID = A.Location_ID
+						where A.ID = ? limit 1
 						on duplicate key update Amount = Amount + ?
 						', array($resource_id, $amount, $actor_id, $amount));
 
@@ -387,11 +394,13 @@ class Actor_model extends Model
 			select
 				A.Location_ID,
 				LI.Amount as Location_amount,
+				LI.Inventory_ID as Location_inventory_ID,
 				R.Mass,
 				R.Volume,
 				M.Name as Measure_name
-			from Location_inventory LI
-			join Actor A on A.Location_ID = LI.Location_ID
+			from Inventory_resource LI
+			join Location L on L.Inventory_ID = LI.Inventory_ID
+			join Actor A on A.Location_ID = L.ID
 			join Resource R on R.ID = LI.Resource_ID
 			join Measure M on R.Measure = M.ID
 			where A.ID = ? and LI.Resource_ID = ?
@@ -402,6 +411,7 @@ class Actor_model extends Model
 			echo "fail 1";
 			$db->FailTrans();
 		} else {
+			$location_inventory_id = $rs->fields['Location_inventory_ID'];
 			$location_amount = $rs->fields['Location_amount'];
 			$location_id = $rs->fields['Location_ID'];
 			$measure_name = $rs->fields['Measure_name'];
@@ -418,23 +428,24 @@ class Actor_model extends Model
 			if($location_amount >= $amount) {
 				if($location_amount > $amount) {
 					$rs = $db->Execute('
-						update Location_inventory set Amount = Amount - ?
-						where Location_ID = ? and Resource_ID = ? and Amount >= ?
-						', array($amount, $location_id, $resource_id, $amount));
+						update Inventory_resource set Amount = Amount - ?
+						where Inventory_ID = ? and Resource_ID = ? and Amount >= ?
+						', array($amount, $location_inventory_id, $resource_id, $amount));
 				} else {
 					$rs = $db->Execute('
-						delete from Location_inventory
-						where Location_ID = ? and Resource_ID = ?
-						', array($location_id, $resource_id));
+						delete from Inventory_resource
+						where Inventory_ID = ? and Resource_ID = ?
+						', array($location_inventory_id, $resource_id));
 				}
 				if(!$rs || $db->Affected_Rows() !== 1) {
 					$db->FailTrans();
 				} else {
 					$rs = $db->Execute('
-						insert into Actor_inventory (Actor_ID, Resource_ID, Amount)
-						values (?, ?, ?)
+						insert into Inventory_resource (Inventory_ID, Resource_ID, Amount)
+						select A.Inventory_ID, ?, ?
+						from Actor A where A.ID = ? limit 1
 						on duplicate key update Amount = Amount + ?
-						', array($actor_id, $resource_id, $amount, $amount));
+						', array($resource_id, $amount, $actor_id, $amount));
 
 					if(!$rs) {
 						echo $db->ErrorMsg();

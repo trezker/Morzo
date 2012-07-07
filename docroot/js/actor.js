@@ -489,7 +489,7 @@ function pick_up_resource(actor_id, resource_id) {
 }
 
 function drop_product(actor_id, product_id) {
-	var amount = $('#drop_amount_'+product_id).val();
+	var amount = $('#drop_product_amount_'+product_id).val();
 	
 	$.ajax({
 		type: 'POST',
@@ -510,7 +510,7 @@ function drop_product(actor_id, product_id) {
 }
 
 function pick_up_product(actor_id, product_id) {
-	var amount = $('#pick_up_amount_'+product_id).val();
+	var amount = $('#pick_up_product_amount_'+product_id).val();
 	
 	$.ajax({
 		type: 'POST',
