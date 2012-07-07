@@ -2,7 +2,7 @@
 
 require_once '../models/database.php';
 
-class Project_model
+class Project_model extends Model
 {
 	public function Get_recipes()
 	{
@@ -960,6 +960,43 @@ class Project_model
 			if(!$r)
 				break;
 		}
+
+		$args = array($project_id, $actor_id);
+		$r = $db->Execute('
+			select  A.Inventory_ID as Actor_inventory,
+					P.Inventory_ID as Project_inventory
+			from Actor A
+			join Project P
+			where P.ID = ? and A.ID = ?
+			', $args);
+			
+		$inventories = $r->fields;
+
+		$args = array($project_id, $actor_id);
+		$r = $db->Execute('
+			select 	RI.Product_ID, 
+					RI.Amount AS Needed_amount, 
+					count(PO.ID) AS Project_amount
+			from Project P
+			join Actor A on P.Location_ID = A.Location_ID
+			join Recipe_product_input RI on RI.Recipe_ID = P.Recipe_ID
+			left join Object PO on RI.Product_ID = PO.ID and PO.Inventory_ID = P.Inventory_ID
+			where P.ID = ? and A.ID = ?
+			group by RI.ID
+			having(count(PO.ID) < RI.Amount)
+			', $args);
+		
+		$inputs = $r->getArray();
+		
+		foreach($inputs as $input) {
+			$this->Load_model('Inventory_model');
+			$this->Inventory_model->Transfer_product(
+													$inventories['Actor_inventory'], 
+													$inventories['Project_inventory'], 
+													$input['Product_ID'],
+													$input['Needed_amount'] - $input['Project_amount']
+												);
+		}		
 
 		$this->Update_project_active_state($project_id);
 

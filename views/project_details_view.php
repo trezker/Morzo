@@ -103,6 +103,9 @@
 			</li>';
 
 			foreach ($project['recipe_product_inputs'] as $input) {
+				if($input['Project_amount'] < $input['Amount']) {
+					$needs_resources = true;
+				}
 				echo expand_template($input_template, $input);
 			}
 			?>
