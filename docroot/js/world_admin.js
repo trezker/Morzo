@@ -1,6 +1,13 @@
 var current_location = 0;
 var current_landscape = 1;
 
+function move_map() {
+	
+	var x = $('#map_center_x').val();
+	var y = $('#map_center_y').val();
+	window.location = '/world_admin/map/'+x+'/'+y;
+}
+
 function edit_location(id)
 {
 	$.ajax(

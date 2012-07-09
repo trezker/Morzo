@@ -117,7 +117,7 @@ class Location_model
 		return $rs->fields['ID'];
 	}
 	
-	public function Get_locations()
+	public function Get_locations($center_x, $center_y)
 	{
 		$db = Load_database();
 		$rs = $db->Execute('
@@ -131,8 +131,10 @@ class Location_model
 			from Location L
 			left join Biome B on L.Biome_ID = B.ID
 			left join Location_resource LR on L.ID = LR.Location_ID
+			where L.X >= ? and L.Y >= ? && L.X <= ? && L.Y <= ? 
 			group by L.ID
-			;', array());
+			order by L.Y, L.X
+			;', array($center_x-5, $center_y-5, $center_x+5, $center_y+5));
 
 		if(!$rs)
 		{

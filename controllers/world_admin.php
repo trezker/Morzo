@@ -5,6 +5,11 @@ class World_admin extends Controller
 {
 	public function Index()
 	{
+		$this->Map(0, 0);
+	}
+	
+	public function Map($center_x, $center_y)
+	{
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
 			header("Location: front");
@@ -16,11 +21,17 @@ class World_admin extends Controller
 		}
 
 		$this->Load_model('Location_model');
-		$locations = $this->Location_model->Get_locations();
+		$locations = $this->Location_model->Get_locations($center_x, $center_y);
 		$max_actors = $this->Location_model->Get_max_actors();
 		$max_actors_account = $this->Location_model->Get_max_actors_account();
 
-		$this->Load_view('world_admin_view', array('locations' => $locations, 'max_actors' => $max_actors, 'max_actors_account' => $max_actors_account));
+		$this->Load_view('world_admin_view', array(
+												'locations' => $locations, 
+												'max_actors' => $max_actors,
+												'max_actors_account' => $max_actors_account,
+												'center_x' => $center_x,
+												'center_y' => $center_y
+											));
 	}
 	
 	public function Set_max_actors(){
