@@ -12,7 +12,7 @@ class World_admin extends Controller
 	{
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			header("Location: front");
+			header("Location: /front");
 			return;
 		}
 		if($_SESSION['admin'] != true) {
