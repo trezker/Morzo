@@ -96,11 +96,28 @@ class Location_model
 		else
 			return false;
 
-		$rs = $db->Execute('
-			insert into Location (x, y) values(?, ?)
-			', array($x, $y));
+		$db->StartTrans();
+		
+		//Create actor inventory
+		$r = $db->Execute('
+			insert into Inventory values()', array());
+		
+		if(!$r) {
+			$db->FailTrans();
+		} else {
+			$inventory_ID = $db->Insert_id();
+		}
 
-		if(!$rs)
+		if(!$db->HasFailedTrans()) {
+			$rs = $db->Execute('
+				insert into Location (x, y, Inventory_ID) values(?, ?, ?)
+				', array($x, $y, $inventory_ID));
+		}
+
+		$failed = $db->HasFailedTrans();
+		$db->CompleteTrans();
+		
+		if($failed)
 		{
 			return false;
 		}

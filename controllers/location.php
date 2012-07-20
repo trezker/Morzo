@@ -32,7 +32,7 @@ class Location extends Controller
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
 		}
 		$this->Load_model('Location_model');
-		$lcoation_id = $this->Get_location($actor_id, $location_id);
+		$location_id = $this->Get_location($actor_id, $location_id);
 		if(!$location_id) {
 			echo json_encode(array('success' => false, 'reason' => 'Location error'));
 			return;
