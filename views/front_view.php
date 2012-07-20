@@ -18,5 +18,9 @@
 				<span class="user_option" id="openid_link" onclick='show_login_dialog()'>Log in</span>
 			</div>
 		</div>
+		<div style="clear: both; margin-left: auto; margin-right: auto; width: 500px;">
+		<h2>Hello</h2>
+		<p>The game may not be in fully working order yet.</p>
+		</div>
 	</body>
 </html>

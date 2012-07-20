@@ -37,6 +37,9 @@
 								$location['deficient_class'] = ' deficient_location';
 							}
 							$location['Biome_single_letter'] = substr($location['Name'], 0, 1);
+							if($location['Biome_single_letter'] == "") {
+								$location['Biome_single_letter'] = "X";
+							}
 							echo expand_template(
 								'<td><span class="action{deficient_class}" onclick="edit_location({ID});">{Biome_single_letter}</span></td>',
 								$location);

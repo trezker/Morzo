@@ -48,7 +48,7 @@ class Actor_model extends Model
 		if(!$r) {
 			$db->FailTrans();
 		} else {
-			$project_inventory_id = $db->Insert_id();
+			$inventory_ID = $db->Insert_id();
 		}
 
 		if(!$db->HasFailedTrans()) {
@@ -65,15 +65,12 @@ class Actor_model extends Model
 		{
 			return false;
 		}
-		if($db->Affected_Rows() == 1)
-		{
-			$from_actor_id = $db->Insert_ID();
-			$this->Load_model('Event_model');
-			$this->Event_model->Save_event("{LNG_Actor_born}", $from_actor_id, NULL);
-			return true;
-		}
 
-		return false;
+		$from_actor_id = $db->Insert_id();
+		$from_actor_id = $db->Insert_ID();
+		$this->Load_model('Event_model');
+		$this->Event_model->Save_event("{LNG_Actor_born}", $from_actor_id, NULL);
+		return true;
 	}
 	
 	public function Request_actor($user_id)
