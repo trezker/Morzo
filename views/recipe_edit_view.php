@@ -11,7 +11,7 @@ foreach($measures as $key => $measure) {
 	}
 	echo '
 		<div id="measuredesc_'.$measure['ID'].'">
-			<span class="measure_desc" data-id="'.$measure['ID'].'">'.$measure_descriptions[$measure['ID']].'</span>
+			<span class="measuredesc" data-id="'.$measure['ID'].'">'.$measure_descriptions[$measure['ID']].'</span>
 		</div>';
 }
 ?>
