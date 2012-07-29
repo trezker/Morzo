@@ -31,6 +31,7 @@
 		</div>
 
 		<p><span class="action" onclick='window.location="user/settings"'>Settings</span></p>
+		<p><span class="action" onclick='window.location="blog/Control_panel"'>Blog</span></p>
 		<p id="logout"><span class="action" onclick='logout()'>Log out</span></p>
 		
 		<?php if($_SESSION['admin']===true) { ?>
