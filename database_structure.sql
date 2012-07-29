@@ -113,6 +113,47 @@ CREATE TABLE `Biome` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Blog`
+--
+
+DROP TABLE IF EXISTS `Blog`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Blog` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `User_ID` bigint(20) NOT NULL,
+  `Name` varchar(45) NOT NULL,
+  `Description` varchar(500) NOT NULL,
+  `Created_date` datetime NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID_UNIQUE` (`ID`),
+  UNIQUE KEY `Name_UNIQUE` (`Name`),
+  KEY `Blog_fk_User` (`User_ID`),
+  CONSTRAINT `Blog_fk_User` FOREIGN KEY (`User_ID`) REFERENCES `User` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Blogpost`
+--
+
+DROP TABLE IF EXISTS `Blogpost`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Blogpost` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Blog_ID` bigint(20) NOT NULL,
+  `Created_date` datetime NOT NULL,
+  `Content` text NOT NULL,
+  `Title` varchar(45) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID_UNIQUE` (`ID`),
+  KEY `Blogpost_fk_Blog` (`Blog_ID`),
+  CONSTRAINT `Blogpost_fk_Blog` FOREIGN KEY (`Blog_ID`) REFERENCES `Blog` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Count`
 --
 
@@ -192,7 +233,7 @@ CREATE TABLE `Inventory_resource` (
   KEY `Inventory_resource_fk_Resource` (`Resource_ID`),
   CONSTRAINT `Inventory_resource_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Inventory_resource_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -243,8 +284,8 @@ CREATE TABLE `Location` (
   UNIQUE KEY `Inventory_ID_UNIQUE` (`Inventory_ID`),
   KEY `Location_fk_Biome` (`Biome_ID`),
   KEY `Location_fk_Inventory` (`Inventory_ID`),
-  CONSTRAINT `Location_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
-  CONSTRAINT `Location_fk_Biome` FOREIGN KEY (`Biome_ID`) REFERENCES `Biome` (`ID`)
+  CONSTRAINT `Location_fk_Biome` FOREIGN KEY (`Biome_ID`) REFERENCES `Biome` (`ID`),
+  CONSTRAINT `Location_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -429,11 +470,11 @@ CREATE TABLE `Project` (
   KEY `Project_fk_Recipe` (`Recipe_ID`),
   KEY `Project_fk_Location` (`Location_ID`),
   KEY `Project_fk_Inventory` (`Inventory_ID`),
-  CONSTRAINT `Project_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Project_fk_Creator` FOREIGN KEY (`Creator_actor_ID`) REFERENCES `Actor` (`ID`),
+  CONSTRAINT `Project_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Project_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Project_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -454,7 +495,7 @@ CREATE TABLE `Project_input` (
   KEY `Project_input_fk_Resource` (`Resource_ID`),
   CONSTRAINT `Project_input_fk_Project` FOREIGN KEY (`Project_ID`) REFERENCES `Project` (`ID`),
   CONSTRAINT `Project_input_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -533,7 +574,7 @@ CREATE TABLE `Recipe_output` (
   KEY `Recipe_output_fk_Resource` (`Resource_ID`),
   CONSTRAINT `Recipe_output_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`),
   CONSTRAINT `Recipe_output_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -738,4 +779,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-07-07 23:01:13
+-- Dump completed on 2012-07-29 15:08:49
