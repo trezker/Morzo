@@ -7,10 +7,11 @@ class Blog extends Controller {
 		//List Blogs
 		$this->Load_model('Blog_model');
 		$titles = $this->Blog_model->Get_latest_titles();
+		//$posts = $this->Blog_model->Get_latest_posts();
 		$blogs = $this->Blog_model->Get_blogs();
 
 		$this->Load_view('blog_view', array(
-											'titles' => $titles,
+											'posts' => $titles,
 											'blogs' => $blogs
 											));
 	}
@@ -38,17 +39,48 @@ class Blog extends Controller {
 		//Get blog specific control panel through ajax Load_blog_control_panel
 	}
 	
-	private function Load_blog_control_panel($blog_name) {
+	private function Load_blog_control_panel($blog_name, $post_id = -1) {
 		if(!$this->Blog_model->User_owns_blog_name($blog_name, $_SESSION['userid'])) {
 			return 'Not your blog';
 		}
 		
 		$blog = $this->Blog_model->Get_blog_by_name($blog_name);
+		$titles = $this->Blog_model->Get_blog_post_titles($blog['ID']);
+		if($post_id == -1) {
+			$post = array(
+						'ID' => -1,
+						'Title' => '',
+						'Content' => ''
+					);
+		}
+		else {
+			$post = $this->Blog_model->Get_blog_post($post_id);
+		}
 		
-		return $this->Load_view('blog_control_panel_view', array('blog' => $blog), true);
+		return $this->Load_view('blog_control_panel_view', array(
+																'blog' => $blog,
+																'post' => $post,
+																'titles' => $titles
+																), true);
 		//Load post from file
 		//Write into form
 		//List of existing posts
+	}
+
+	public function Edit_blogpost() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+
+		$post_id = $_POST['post_id'];
+		$this->Load_model('Blog_model');
+		$blog_name = $this->Blog_model->Get_blog_name_from_post_id($post_id);
+		$blog_control_panel_view = $this->Load_blog_control_panel($blog_name, $post_id);
+		
+		echo json_encode(array('success' => true, 'blog_control_panel_view' => $blog_control_panel_view));
 	}
 	
 	public function Create_blog() {
@@ -65,7 +97,7 @@ class Blog extends Controller {
 		echo json_encode($r);
 	}
 	
-	public function Create_blog_post() {
+	public function Submit_blog_post() {
 		header('Content-type: application/json');
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
@@ -74,18 +106,33 @@ class Blog extends Controller {
 		}
 		
 		$blog_id = $_POST['blog_id'];
+		$post_id = $_POST['post_id'];
 		$title = $_POST['title'];
 		$content = $_POST['content'];
 		
 		$this->Load_model('Blog_model');
-		if(!$this->Blog_model->User_owns_blog($blog_id, $_SESSION['userid'])) {
+		$blog_name = $this->Blog_model->Get_blog_name_from_post_id($post_id);
+		if(!$this->Blog_model->User_owns_blog_name($blog_name, $_SESSION['userid'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your blog'));
 		}
 		
-		$r = $this->Blog_model->Create_blog_post($blog_id, $title, $content);
+		if($post_id == -1) {
+			$r = $this->Blog_model->Create_blog_post($blog_id, $title, $content);
+		} else {
+			$r = $this->Blog_model->Update_blog_post($post_id, $title, $content);
+		}
 		
 		echo json_encode($r);
 	}
+	
+	public function View($blog_name) {
+		$this->Load_model('Blog_model');
+		$titles = $this->Blog_model->Get_latest_titles();
+		$blogs = $this->Blog_model->Get_blogs();
+
+		$this->Load_view('blog_view', array(
+											'titles' => $titles,
+											'blogs' => $blogs
+											));
+	}
 }
-
-

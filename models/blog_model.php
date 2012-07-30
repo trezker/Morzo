@@ -66,6 +66,23 @@ class Blog_model {
 		return true;
 	}
 
+	public function Get_blog_name_from_post_id($post_id) {
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			select B.Name from Blogpost P
+			join Blog B on B.ID = P.Blog_ID
+			where P.ID = ?
+			', array($post_id));
+
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return false;
+		}
+		
+		return $rs->fields['Name'];
+	}
+
 	public function Get_user_blogs($user_id) {
 		$db = Load_database();
 		
@@ -86,12 +103,47 @@ class Blog_model {
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			select P.ID, P.Title, B.Name as Blog_name, B.ID as Blog_ID
+			select P.ID, P.Title, P.Content, B.Name as Blog_name, B.ID as Blog_ID
 			from Blogpost P
 			join Blog B on B.ID = P.Blog_ID
 			order by P.Created_date
 			limit 10
 			', array());
+
+		if(!$rs) {
+			return false;
+		}
+		
+		$titles = $rs->getArray();
+		return $titles;
+	}
+
+	public function Get_blog_post($post_id) {
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			select ID, Title, Content
+			from Blogpost
+			where ID = ?
+			', array($post_id));
+
+		if(!$rs) {
+			return false;
+		}
+
+		$post = $rs->fields;
+		return $post;
+	}
+	
+	public function Get_blog_post_titles($blog_id) {
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			select P.ID, P.Title, P.Created_date
+			from Blogpost P
+			where P.Blog_ID = ?
+			order by P.Created_date
+			', array($blog_id));
 
 		if(!$rs) {
 			return false;
@@ -132,6 +184,22 @@ class Blog_model {
 		
 		$blog_id = $db->Insert_id();
 		return array('success' => true, 'blog_id' => $blog_id);
+	}
+
+	public function Update_blog_post($post_id, $title, $content) {
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			update Blogpost set Title = ?, Content = ?
+			where ID = ?
+			', array($title, $content, $post_id));
+
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return array('success' => false, 'reason' => 'database failure');
+		}
+		
+		return array('success' => true);
 	}
 }
 ?>

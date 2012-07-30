@@ -12,7 +12,7 @@
 		<a class="action" href="/user">Back</a>
 		Select a blog
 		<?php
-		echo '<select id="select_blog" onchange="load_blog_control_panel();">';
+		echo '<select id="select_blog" onchange="load_blog_control_panel(-1);">';
 		$option_template = '
 			  <option value="{Name}">{Name}</option>
 			  ';
@@ -25,7 +25,7 @@
 		<input id="new_blog_name" />
 		<span class="action" onclick="create_blog();">Create blog</span>
 		
-		<div style="width: 500px;" id="blog_control_panel_container">
+		<div id="blog_control_panel_container">
 			<?php
 			echo $blog_control_panel_view;
 			?>
