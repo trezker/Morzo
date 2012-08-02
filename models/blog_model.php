@@ -18,6 +18,22 @@ class Blog_model {
 		return $blogs;
 	}
 
+	public function Get_blog($blog_id) {
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			select ID, Name from Blog
+			where ID = ?
+			', array($blog_id));
+
+		if(!$rs) {
+			return false;
+		}
+		
+		$blog = $rs->fields;
+		return $blog;
+	}
+
 	public function Get_blog_by_name($blog_name) {
 		$blog_name = str_replace('_', ' ', $blog_name);
 		$db = Load_database();
@@ -66,11 +82,11 @@ class Blog_model {
 		return true;
 	}
 
-	public function Get_blog_name_from_post_id($post_id) {
+	public function Get_blog_from_post_id($post_id) {
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			select B.Name from Blogpost P
+			select B.ID from Blogpost P
 			join Blog B on B.ID = P.Blog_ID
 			where P.ID = ?
 			', array($post_id));
@@ -80,7 +96,7 @@ class Blog_model {
 			return false;
 		}
 		
-		return $rs->fields['Name'];
+		return $rs->fields['ID'];
 	}
 
 	public function Get_user_blogs($user_id) {
@@ -99,23 +115,49 @@ class Blog_model {
 		return $blogs;
 	}
 
-	public function Get_latest_titles() {
+	public function Get_posts($blog = null, $limit = null, $offset = null) {
+		$args = array();
+		$wheretail = '';
+		if(is_numeric($blog)) {
+			$blog = intval($blog);
+			$wheretail = 'where B.ID = ?';
+			$args[] = $blog;
+		}
+		
+		$offsetsql = '';
+		if(is_int($offset)) {
+			$offsetsql = $offset . ',';
+		}
+
+		$limitsql = '';
+		if(is_int($limit)) {
+			$limitsql = 'limit ' . $offsetsql . $limit;
+		}
+		
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			select P.ID, P.Title, P.Content, B.Name as Blog_name, B.ID as Blog_ID
+			select 
+				P.ID, 
+				P.Title, 
+				P.Content, 
+				P.Created_date,
+				B.Name as Blog_name, 
+				B.ID as Blog_ID
 			from Blogpost P
 			join Blog B on B.ID = P.Blog_ID
-			order by P.Created_date
-			limit 10
-			', array());
+			'.$wheretail.'
+			order by P.Created_date DESC
+			'.$limitsql.'
+			', $args);
 
 		if(!$rs) {
+			echo $db->errorMsg();
 			return false;
 		}
 		
-		$titles = $rs->getArray();
-		return $titles;
+		$posts = $rs->getArray();
+		return $posts;
 	}
 
 	public function Get_blog_post($post_id) {

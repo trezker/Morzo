@@ -1,0 +1,13 @@
+.blogpost {
+	margin-bottom: 5px;
+	background: #EEEEFF;
+}
+
+.blogtitle {
+	background: #CCCCFF;
+	padding: 5px;
+}
+
+.blogcontent {
+	padding: 5px;
+}

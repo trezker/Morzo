@@ -11,7 +11,16 @@ class Front extends Controller
 			return;
 		}
 
-		$this->Load_view('front_view');
+		$this->Load_model('Blog_model');
+		$posts = $this->Blog_model->Get_posts(1, 5, 0);
+		$blogs = $this->Blog_model->Get_blogs();
+
+		$blogposts_view = $this->Load_view('blogposts_view', array(
+											'posts' => $posts,
+											'blogs' => $blogs
+											), true);
+
+		$this->Load_view('front_view', array('blogposts_view' => $blogposts_view));
 	}
 	
 	public function Get_login_view() {

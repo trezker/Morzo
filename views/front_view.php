@@ -4,6 +4,7 @@
 		<title>Morzo</title> 
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/style.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="/css/blog.css">
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
 		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
 		<script type="text/javascript" src="/js/dialog.js"></script>
@@ -19,8 +20,7 @@
 			</div>
 		</div>
 		<div style="clear: both; margin-left: auto; margin-right: auto; width: 500px;">
-		<h2>Hello</h2>
-		<p>The game may not be in fully working order yet.</p>
+			<?php echo $blogposts_view; ?>
 		</div>
 	</body>
 </html>

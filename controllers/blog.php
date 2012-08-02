@@ -6,13 +6,18 @@ class Blog extends Controller {
 		//List latest blogpost titles
 		//List Blogs
 		$this->Load_model('Blog_model');
-		$titles = $this->Blog_model->Get_latest_titles();
+		$posts = $this->Blog_model->Get_posts();
 		//$posts = $this->Blog_model->Get_latest_posts();
 		$blogs = $this->Blog_model->Get_blogs();
 
+		$blogposts_view = $this->Load_view('blogposts_view', array(
+											'posts' => $posts
+											), true);
+
 		$this->Load_view('blog_view', array(
-											'posts' => $titles,
-											'blogs' => $blogs
+											'posts' => $posts,
+											'blogs' => $blogs,
+											'blogposts_view' => $blogposts_view
 											));
 	}
 	
@@ -77,8 +82,12 @@ class Blog extends Controller {
 
 		$post_id = $_POST['post_id'];
 		$this->Load_model('Blog_model');
-		$blog_name = $this->Blog_model->Get_blog_name_from_post_id($post_id);
-		$blog_control_panel_view = $this->Load_blog_control_panel($blog_name, $post_id);
+		$blog_id = $this->Blog_model->Get_blog_from_post_id($post_id);
+		if(!$this->Blog_model->User_owns_blog($blog_id, $_SESSION['userid'])) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your blog'));
+		}
+		$blog = $this->Blog_model->Get_blog($blog_id);
+		$blog_control_panel_view = $this->Load_blog_control_panel($blog['Name'], $post_id);
 		
 		echo json_encode(array('success' => true, 'blog_control_panel_view' => $blog_control_panel_view));
 	}
@@ -111,8 +120,10 @@ class Blog extends Controller {
 		$content = $_POST['content'];
 		
 		$this->Load_model('Blog_model');
-		$blog_name = $this->Blog_model->Get_blog_name_from_post_id($post_id);
-		if(!$this->Blog_model->User_owns_blog_name($blog_name, $_SESSION['userid'])) {
+		if($post_id != -1) {
+			$blog_id = $this->Blog_model->Get_blog_from_post_id($post_id);
+		}
+		if(!$this->Blog_model->User_owns_blog($blog_id, $_SESSION['userid'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your blog'));
 		}
 		
@@ -127,12 +138,18 @@ class Blog extends Controller {
 	
 	public function View($blog_name) {
 		$this->Load_model('Blog_model');
-		$titles = $this->Blog_model->Get_latest_titles();
+		$posts = $this->Blog_model->Get_posts();
 		$blogs = $this->Blog_model->Get_blogs();
 
-		$this->Load_view('blog_view', array(
-											'titles' => $titles,
+		$blogposts_view = $this->Load_view('blogposts_view', array(
+											'posts' => $posts,
 											'blogs' => $blogs
+											), true);
+
+		$this->Load_view('blog_view', array(
+											'posts' => $posts,
+											'blogs' => $blogs,
+											'blogposts_view' => $blogposts_view
 											));
 	}
 }
