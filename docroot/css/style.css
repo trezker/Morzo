@@ -1,5 +1,5 @@
 body {
-	margin:0;
+	margin: 1em 2em;
 	background:#fff;
 	color:#333;
 }
@@ -12,13 +12,10 @@ blockquote {
 
 .title {
 	float: left;
-	margin-left: 50px;
 }
 
 .user_menu {
 	float: right;
-	margin-top: 20px;
-	margin-right: 20px;
 }
 
 .user_options {

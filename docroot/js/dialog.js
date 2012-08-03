@@ -17,7 +17,7 @@ function show_login_dialog() {
 				$('#openidfeedback').html($(this).attr('data-tooltip'));
 			});
 			$('.openid_icon').mouseleave( function () {
-				$('#openidfeedback').html("");
+				$('#openidfeedback').html("&nbsp;");
 			});
 			$('#openid').keydown( function (event) {
 				if (event.keyCode == 13) {
@@ -27,6 +27,20 @@ function show_login_dialog() {
 		}
 	});
 }
+
+$(document).ready(function() {
+	$('.openid_icon').mouseenter( function () {
+		$('#openidfeedback').html($(this).attr('data-tooltip'));
+	});
+	$('.openid_icon').mouseleave( function () {
+		$('#openidfeedback').html("&nbsp;");
+	});
+	$('#openid').keydown( function (event) {
+		if (event.keyCode == 13) {
+			login();
+		}
+	});
+});
 
 function close_dialog() {
 	$('body #popup').remove();

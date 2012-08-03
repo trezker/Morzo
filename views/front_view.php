@@ -15,11 +15,25 @@
 		</div>
 		
 		<div class="user_menu">
-			<div class="user_options">
-				<span class="user_option" id="openid_link" onclick='show_login_dialog()'>Log in</span>
-			</div>
+			<span>Log in with OpenID</span>
+			<span>
+				<div>
+					<span class="openid_icons">
+						<?php
+						if(isset($openid_icons)) {
+							foreach($openid_icons as $icon) {
+								echo '<span class="action openid_icon" data-tooltip="'.$icon['name'].'"><img src="'.$icon['icon'].'" height="16" width="16" onclick="login(\''.$icon['URI'].'\');" /></span>';
+							}
+						}
+						?>
+					</span>
+				</div>
+				<span><input type="text" name="openid" id="openid" /></span>
+				<span class="login_action action" onclick="login();">Log in</span>
+				<div id="openidfeedback">&nbsp;</div>
+			</span>
 		</div>
-		<div style="clear: both; margin-left: auto; margin-right: auto; width: 500px;">
+		<div style="clear: both;">
 			<?php echo $blogposts_view; ?>
 		</div>
 	</body>

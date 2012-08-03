@@ -20,7 +20,13 @@ class Front extends Controller
 											'blogs' => $blogs
 											), true);
 
-		$this->Load_view('front_view', array('blogposts_view' => $blogposts_view));
+		$this->Load_model('User_model');
+		$openid_icons = $this->User_model->Get_openid_icons();
+
+		$this->Load_view('front_view', array(
+											'blogposts_view' => $blogposts_view,
+											'openid_icons' => $openid_icons
+											));
 	}
 	
 	public function Get_login_view() {
