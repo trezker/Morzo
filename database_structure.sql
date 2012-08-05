@@ -150,7 +150,7 @@ CREATE TABLE `Blogpost` (
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   KEY `Blogpost_fk_Blog` (`Blog_ID`),
   CONSTRAINT `Blogpost_fk_Blog` FOREIGN KEY (`Blog_ID`) REFERENCES `Blog` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -779,4 +779,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-07-29 15:08:49
+-- Dump completed on 2012-08-05 10:33:51
