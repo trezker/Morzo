@@ -7,11 +7,23 @@ $post_template = '
 				{Title}
 				<span style="float:right; font-size: smaller;">
 					{YMD}
-				</span></div>
+	';
+if($show_owner_controls == true) {
+	$post_template .= '
+					<a class="action" href="/blog/Control_panel/{Blog_name_u}/{ID}">Edit</a>
+					<span onclick="delete_blogpost({ID});" class="action">Hide</span>
+		';
+}
+$post_template .= '
+				</span>
+			</div>
 			<div class="blogcontent"s>{!Content2}</div>
 		</div>
-	  ';
+	';
+
+
 foreach($posts as $post) {
+	$post['Blog_name_u'] = str_replace(" ", "_", $post['Blog_name']);
 	// parse and display input
 	$input = explode("\n", $post['Content']);
 

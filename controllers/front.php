@@ -17,7 +17,8 @@ class Front extends Controller
 
 		$blogposts_view = $this->Load_view('blogposts_view', array(
 											'posts' => $posts,
-											'blogs' => $blogs
+											'blogs' => $blogs,
+											'show_owner_controls' => false
 											), true);
 
 		$this->Load_model('User_model');

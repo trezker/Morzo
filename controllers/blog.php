@@ -21,7 +21,7 @@ class Blog extends Controller {
 											));
 	}
 	
-	public function Control_panel($blog_name = null) {
+	public function Control_panel($blog_name = null, $post_id = -1) {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
 			header("Location: /front");
@@ -33,15 +33,13 @@ class Blog extends Controller {
 		
 		$blog_control_panel_view = "";
 		if($blog_name) {
-			$blog_control_panel_view = $this->Load_blog_control_panel($blog_name);
+			$blog_control_panel_view = $this->Load_blog_control_panel($blog_name, $post_id);
 		}
 		
 		$this->Load_view('blog_control_panel_main_view', array(
 													'blogs' => $blogs,
 													'blog_control_panel_view' => $blog_control_panel_view)
 													);
-		//Create/Delete/Rename
-		//Get blog specific control panel through ajax Load_blog_control_panel
 	}
 	
 	private function Load_blog_control_panel($blog_name, $post_id = -1) {
@@ -67,9 +65,6 @@ class Blog extends Controller {
 																'post' => $post,
 																'titles' => $titles
 																), true);
-		//Load post from file
-		//Write into form
-		//List of existing posts
 	}
 
 	public function Edit_blogpost() {
@@ -137,13 +132,21 @@ class Blog extends Controller {
 	}
 	
 	public function View($blog_name) {
+		$this->Load_controller('User');
+		$show_owner_controls = false;
 		$this->Load_model('Blog_model');
+		if($this->User->Logged_in()) {
+			if($this->Blog_model->User_owns_blog_name($blog_name, $_SESSION['userid'])) {
+				$show_owner_controls = true;
+			}
+		}
 		$posts = $this->Blog_model->Get_posts();
 		$blogs = $this->Blog_model->Get_blogs();
 
 		$blogposts_view = $this->Load_view('blogposts_view', array(
 											'posts' => $posts,
-											'blogs' => $blogs
+											'blogs' => $blogs,
+											'show_owner_controls' => $show_owner_controls
 											), true);
 
 		$this->Load_view('blog_view', array(
