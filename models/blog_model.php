@@ -243,6 +243,22 @@ class Blog_model {
 		
 		return array('success' => true);
 	}
+
+	public function Delete_blogpost($post_id) {
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			delete from Blogpost
+			where ID = ?
+			', array($post_id));
+
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return array('success' => false, 'reason' => 'database failure');
+		}
+		
+		return array('success' => true);
+	}
 	
 	public function Hide_blogpost($post_id) {
 		$db = Load_database();

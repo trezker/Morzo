@@ -57,7 +57,25 @@ function submit_blog_post() {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success !== false) {
-				alert("Saved it");
+				window.location.reload();
+			}
+		}
+	});
+}
+
+function delete_blogpost() {
+	var post_id = $('#post_id').val();
+	callurl = '/blog/Delete_blogpost';
+	$.ajax({
+		type: 'POST',
+		url: callurl,
+		data: {
+			post_id: post_id
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success !== false) {
+				window.location.reload();
 			}
 		}
 	});
