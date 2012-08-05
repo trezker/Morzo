@@ -11,7 +11,7 @@ $post_template = '
 if($show_owner_controls == true) {
 	$post_template .= '
 					<a class="action" href="/blog/Control_panel/{Blog_name_u}/{ID}">Edit</a>
-					<span onclick="delete_blogpost({ID});" class="action">Hide</span>
+					<span onclick="hide_blogpost({ID});" class="action">Hide</span>
 		';
 }
 $post_template .= '

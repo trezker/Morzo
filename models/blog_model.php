@@ -120,7 +120,7 @@ class Blog_model {
 		$wheretail = '';
 		if(is_numeric($blog)) {
 			$blog = intval($blog);
-			$wheretail = 'where B.ID = ?';
+			$wheretail = ' and B.ID = ?';
 			$args[] = $blog;
 		}
 		
@@ -146,7 +146,7 @@ class Blog_model {
 				B.ID as Blog_ID
 			from Blogpost P
 			join Blog B on B.ID = P.Blog_ID
-			'.$wheretail.'
+			where P.Hidden = 0'.$wheretail.'
 			order by P.Created_date DESC
 			'.$limitsql.'
 			', $args);
@@ -164,7 +164,7 @@ class Blog_model {
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			select ID, Title, Content
+			select ID, Title, Content, Hidden
 			from Blogpost
 			where ID = ?
 			', array($post_id));
@@ -181,7 +181,7 @@ class Blog_model {
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			select P.ID, P.Title, P.Created_date
+			select P.ID, P.Title, P.Created_date, P.Hidden
 			from Blogpost P
 			where P.Blog_ID = ?
 			order by P.Created_date
@@ -212,13 +212,13 @@ class Blog_model {
 		return array('success' => true, 'blog_id' => $blog_id);
 	}
 
-	public function Create_blog_post($blog_id, $title, $content) {
+	public function Create_blog_post($blog_id, $title, $content, $hidden) {
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			insert into Blogpost(Blog_ID, Title, Content, Created_date)
-			values(?, ?, ?, NOW())
-			', array($blog_id, $title, $content));
+			insert into Blogpost(Blog_ID, Title, Content, Created_date, Hidden)
+			values(?, ?, ?, NOW(), ?)
+			', array($blog_id, $title, $content, $hidden));
 
 		if(!$rs) {
 			return array('success' => false, 'reason' => 'database failure');
@@ -228,13 +228,29 @@ class Blog_model {
 		return array('success' => true, 'blog_id' => $blog_id);
 	}
 
-	public function Update_blog_post($post_id, $title, $content) {
+	public function Update_blog_post($post_id, $title, $content, $hidden) {
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			update Blogpost set Title = ?, Content = ?
+			update Blogpost set Title = ?, Content = ?, Hidden = ?
 			where ID = ?
-			', array($title, $content, $post_id));
+			', array($title, $content, $hidden, $post_id));
+
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return array('success' => false, 'reason' => 'database failure');
+		}
+		
+		return array('success' => true);
+	}
+	
+	public function Hide_blogpost($post_id) {
+		$db = Load_database();
+		
+		$rs = $db->Execute('
+			update Blogpost set Hidden = ?
+			where ID = ?
+			', array(1, $post_id));
 
 		if(!$rs) {
 			echo $db->ErrorMsg();

@@ -14,6 +14,12 @@
 	<label for="new_post_content">Content: </label>
 	<textarea id="new_post_content" style="width: 99%;" rows="25"><?php echo $post['Content']; ?></textarea><br />
 	<?php
+		$hidden = '';
+		if($post['Hidden']==1)
+			$hidden = 'checked="true"'; 
+	?>
+	<input type="checkbox" id="new_post_hidden" value="hidden" <?php echo $hidden ?> /> Hidden
+	<?php
 	$template = '
 		<span class="action" onclick="submit_blog_post();">Submit blogpost</span>
 		<a class="action" href="/blog/View/{UnderscoredName}">View blog</a>

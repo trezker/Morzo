@@ -53,7 +53,8 @@ class Blog extends Controller {
 			$post = array(
 						'ID' => -1,
 						'Title' => '',
-						'Content' => ''
+						'Content' => '',
+						'Hidden' => '0'
 					);
 		}
 		else {
@@ -113,6 +114,7 @@ class Blog extends Controller {
 		$post_id = $_POST['post_id'];
 		$title = $_POST['title'];
 		$content = $_POST['content'];
+		$hidden = $_POST['hidden']=="true"?1:0;
 		
 		$this->Load_model('Blog_model');
 		if($post_id != -1) {
@@ -123,10 +125,33 @@ class Blog extends Controller {
 		}
 		
 		if($post_id == -1) {
-			$r = $this->Blog_model->Create_blog_post($blog_id, $title, $content);
+			$r = $this->Blog_model->Create_blog_post($blog_id, $title, $content, $hidden);
 		} else {
-			$r = $this->Blog_model->Update_blog_post($post_id, $title, $content);
+			$r = $this->Blog_model->Update_blog_post($post_id, $title, $content, $hidden);
 		}
+		
+		echo json_encode($r);
+	}
+
+	public function Hide_blogpost() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		
+		$post_id = $_POST['post_id'];
+		
+		$this->Load_model('Blog_model');
+		if($post_id != -1) {
+			$blog_id = $this->Blog_model->Get_blog_from_post_id($post_id);
+		}
+		if(!$this->Blog_model->User_owns_blog($blog_id, $_SESSION['userid'])) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your blog'));
+		}
+		
+		$r = $this->Blog_model->Hide_blogpost($post_id);
 		
 		echo json_encode($r);
 	}

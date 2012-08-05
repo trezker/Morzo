@@ -42,6 +42,7 @@ function submit_blog_post() {
 	var post_id = $('#post_id').val();
 	var title = $('#new_post_title').val();
 	var content = $('#new_post_content').val();
+	var hidden = $('#new_post_hidden').attr('checked');
 	callurl = '/blog/Submit_blog_post';
 	$.ajax({
 		type: 'POST',
@@ -50,12 +51,30 @@ function submit_blog_post() {
 			blog_id: blog_id,
 			post_id: post_id,
 			title: title,
-			content: content
+			content: content,
+			hidden: hidden
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success !== false) {
 				alert("Saved it");
+			}
+		}
+	});
+}
+
+function hide_blogpost(post_id) {
+	callurl = '/blog/Hide_blogpost';
+	$.ajax({
+		type: 'POST',
+		url: callurl,
+		data: {
+			post_id: post_id,
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success !== false) {
+				window.location.reload();
 			}
 		}
 	});

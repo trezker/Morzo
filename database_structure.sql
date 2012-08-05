@@ -146,11 +146,12 @@ CREATE TABLE `Blogpost` (
   `Created_date` datetime NOT NULL,
   `Content` text NOT NULL,
   `Title` varchar(45) NOT NULL,
+  `Hidden` tinyint(1) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   KEY `Blogpost_fk_Blog` (`Blog_ID`),
   CONSTRAINT `Blogpost_fk_Blog` FOREIGN KEY (`Blog_ID`) REFERENCES `Blog` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -779,4 +780,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-08-05 10:33:51
+-- Dump completed on 2012-08-05 11:53:45
