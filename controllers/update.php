@@ -3,8 +3,12 @@ require_once "../controllers/controller.php";
 
 class Update extends Controller
 {
-	public function Index()
-	{
+	public function Index($is_web_request = true) {
+		if($is_web_request != false) {
+			header("HTTP/1.0 404 Not Found");
+			include '../blocked.php';
+			return;
+		}
 		$this->Load_model("Travel_model");
 		$time = $this->Travel_model->Tick();
 		$this->Update_travel($time);
