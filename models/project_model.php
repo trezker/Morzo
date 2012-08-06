@@ -370,6 +370,7 @@ class Project_model extends Model
 			join Location_resource LR on LR.Resource_ID = RI.Resource_ID
 			join Actor A on A.Location_ID = LR.Location_ID
 			where A.ID = ?
+			group by R.ID
 			', $args);
 		
 		if(!$r) {
