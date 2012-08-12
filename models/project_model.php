@@ -183,57 +183,34 @@ class Project_model extends Model
 		if($result_id != -1) {
 			foreach($data['outputs'] as $o) {
 				$o['amount'] /= $amount_factors[$o['resource_id']][$measures[$o['measure']]];
-				if($o['id'] != "-1") {
-					$args = array(
-								$o['amount'], 
-								$o['resource_id'],
-								$o['id']
-							);
-					$r = $db->Execute('
-						update Recipe_output set 
-							Amount = ?,
-							Resource_ID = ?
-						where ID = ?
-						', $args);
-				} else {
-					$args = array(
-								$o['amount'], 
-								$o['resource_id'],
-								$result_id
-							);
-					$r = $db->Execute('
-						insert into Recipe_output (Amount, Resource_ID, Recipe_ID) values (?, ?, ?)
-						', $args);
-				}
+				$args = array(
+							$o['amount'], 
+							$o['resource_id'],
+							$o['id']
+						);
+				$r = $db->Execute('
+					update Recipe_output set 
+						Amount = ?,
+						Resource_ID = ?
+					where ID = ?
+					', $args);
 			}
 
 			foreach($data['inputs'] as $i) {
 				$i['amount'] /= $amount_factors[$i['resource_id']][$measures[$i['measure']]];
-				if($i['id'] != "-1") {
-					$args = array(
-								$i['amount'], 
-								$i['resource_id'],
-								($i['from_nature'] == 'true')?1:0,
-								$i['id']
-							);
-					$r = $db->Execute('
-						update Recipe_input set 
-							Amount = ?,
-							Resource_ID = ?,
-							From_nature = ?
-						where ID = ?
-						', $args);
-				} else {
-					$args = array(
-								$i['amount'], 
-								$i['resource_id'],
-								$result_id,
-								($i['from_nature'] == 'true')?1:0
-							);
-					$r = $db->Execute('
-						insert into Recipe_input (Amount, Resource_ID, Recipe_ID, From_nature) values (?, ?, ?, ?)
-						', $args);
-				}
+				$args = array(
+							$i['amount'], 
+							$i['resource_id'],
+							($i['from_nature'] == 'true')?1:0,
+							$i['id']
+						);
+				$r = $db->Execute('
+					update Recipe_input set 
+						Amount = ?,
+						Resource_ID = ?,
+						From_nature = ?
+					where ID = ?
+					', $args);
 			}
 
 			foreach($data['product_outputs'] as $o) {
@@ -309,6 +286,75 @@ class Project_model extends Model
 		if($db->Affected_rows() > 0)
 			return true;
 		return false;
+	}
+	
+	public function Get_measure_conversion_data() {
+		$db = Load_database();
+
+		$args = array();
+		$r = $db->Execute('
+			select ID, Mass, Volume, 1 as Object from Resource
+			', $args);
+
+		$amount_factors = array();
+		foreach($r->GetArray() as $resource) {
+			$amount_factors[$resource['ID']] = $resource;
+		}
+
+		$args = array();
+		$r = $db->Execute('
+			select ID, Name from Measure
+			', $args);
+			
+		$measures = array();
+		foreach($r->GetArray() as $measure) {
+			$measures[$measure['ID']] = $measure['Name'];
+		}
+		return array($measures, $amount_factors);
+	}
+
+	public function Add_recipe_output($recipe_id, $resource_id, $measure_id, $amount) {
+		$db = Load_database();
+
+		$mcd = $this->Get_measure_conversion_data();
+		$measures = $mcd[0];
+		$amount_factors = $mcd[1];
+
+		$amount /= $amount_factors[$resource_id][$measures[$measure_id]];
+		$args = array(
+					$amount,
+					$resource_id,
+					$recipe_id
+				);
+		$r = $db->Execute('
+			insert into Recipe_output (Amount, Resource_ID, Recipe_ID) values (?, ?, ?)
+			', $args);
+		
+		if(!$r)
+			return array('success' => false);
+		return array('success' => true, 'id' => $db->Insert_id());
+	}
+
+	public function Add_recipe_input($recipe_id, $resource_id, $measure_id, $amount) {
+		$db = Load_database();
+
+		$mcd = $this->Get_measure_conversion_data();
+		$measures = $mcd[0];
+		$amount_factors = $mcd[1];
+
+		$amount /= $amount_factors[$resource_id][$measures[$measure_id]];
+		$args = array(
+					$amount,
+					$resource_id,
+					$recipe_id
+				);
+		$r = $db->Execute('
+			insert into Recipe_input (Amount, Resource_ID, Recipe_ID) values (?, ?, ?)
+			', $args);
+		
+		if(!$r)
+			return array('success' => false);
+		return array('success' => true, 'id' => $db->Insert_id());
 	}
 
 	public function Remove_recipe_input($recipe_id, $input_id)

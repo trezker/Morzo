@@ -120,10 +120,27 @@ function add_output() {
 	var resource_name = $('#new_output_form select option[value="'+resource_id+'"]').html();
 	var measure_id = $('#new_output_form select option[value="'+resource_id+'"]').attr('data-measure');
 	var measure_desc = $('#measuredesc_'+measure_id).html();
-	$('#new_output .resource').attr("data-id", resource_id);
-	$('#new_output .resource').html(resource_name);
-	$('#new_output .measuredesc').replaceWith(measure_desc);
-	$('#recipe_outputs').append($('#new_output').html());
+	
+	$.ajax(
+	{
+		type: 'POST',
+		url: 'project_admin/add_recipe_output',
+		data: {
+			recipe_id: current_recipe,
+			resource_id: resource_id,
+			measure_id: measure_id
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success !== false) {
+				$('#new_output .output').attr("id", data.id);
+				$('#new_output .resource').attr("data-id", resource_id);
+				$('#new_output .resource').html(resource_name);
+				$('#new_output .measuredesc').replaceWith(measure_desc);
+				$('#recipe_outputs').append($('#new_output').html());
+			}
+		}
+	});
 }
 
 function remove_output(id) {
@@ -163,10 +180,27 @@ function add_input() {
 	var resource_name = $('#new_input_form select option[value="'+resource_id+'"]').html();
 	var measure_id = $('#new_input_form select option[value="'+resource_id+'"]').attr('data-measure');
 	var measure_desc = $('#measuredesc_'+measure_id).html();
-	$('#new_input .resource').attr("data-id", resource_id);
-	$('#new_input .resource').html(resource_name);
-	$('#new_input .measuredesc').replaceWith(measure_desc);
-	$('#recipe_inputs').append($('#new_input').html());
+	
+	$.ajax(
+	{
+		type: 'POST',
+		url: 'project_admin/add_recipe_input',
+		data: {
+			recipe_id: current_recipe,
+			resource_id: resource_id,
+			measure_id: measure_id
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success !== false) {
+				$('#new_input .input').attr("id", data.id);
+				$('#new_input .resource').attr("data-id", resource_id);
+				$('#new_input .resource').html(resource_name);
+				$('#new_input .measuredesc').replaceWith(measure_desc);
+				$('#recipe_inputs').append($('#new_input').html());
+			}
+		}
+	});
 }
 
 function remove_input(id) {
