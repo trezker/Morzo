@@ -345,6 +345,42 @@ class Project_admin extends Controller
 		echo json_encode(array('success' => $success));
 	}
 
+	public function add_recipe_product_output() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$this->Load_model('Project_model');
+		$r = $this->Project_model->Add_recipe_product_output($_POST['recipe_id'], $_POST['product_id'], 1);
+
+		echo json_encode($r);
+	}
+
+	public function add_recipe_product_input() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$this->Load_model('Project_model');
+		$r = $this->Project_model->Add_recipe_product_input($_POST['recipe_id'], $_POST['product_id'], 1);
+
+		echo json_encode($r);
+	}
+
 	public function remove_recipe_product_input() {
 		header('Content-type: application/json');
 		$this->Load_controller('User');

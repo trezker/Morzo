@@ -324,6 +324,30 @@ function add_product_output() {
 	$('#recipe_product_outputs').append($('#new_product_output').html());
 }
 
+function add_product_output() {
+	var product_id = $('#new_product_output_form select').val();
+	var product_name = $('#new_product_output_form select option[value="'+product_id+'"]').html();
+	
+	$.ajax({
+		type: 'POST',
+		url: 'project_admin/add_recipe_product_output',
+		data: {
+			recipe_id: current_recipe,
+			product_id: product_id,
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success !== false) {
+				$('#new_product_output .product_output').attr("id", "product_output_"+data.id);
+				$('#new_product_output .product_output').attr("data-id", data.id);
+				$('#new_product_output .product').attr("data-id", product_id);
+				$('#new_product_output .product').html(product_name);
+				$('#recipe_product_outputs').append($('#new_product_output').html());
+			}
+		}
+	});
+}
+
 function remove_product_output(id) {
 	if(id == -1) {
 		$('#product_output_'+id).remove();
@@ -348,9 +372,25 @@ function remove_product_output(id) {
 function add_product_input() {
 	var product_id = $('#new_product_input_form select').val();
 	var product_name = $('#new_product_input_form select option[value="'+product_id+'"]').html();
-	$('#new_product_input .product').attr("data-id", product_id);
-	$('#new_product_input .product').html(product_name);
-	$('#recipe_product_inputs').append($('#new_product_input').html());
+	
+	$.ajax({
+		type: 'POST',
+		url: 'project_admin/add_recipe_product_input',
+		data: {
+			recipe_id: current_recipe,
+			product_id: product_id,
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success !== false) {
+				$('#new_product_input .product_input').attr("id", "product_input_"+data.id);
+				$('#new_product_input .product_input').attr("data-id", data.id);
+				$('#new_product_input .product').attr("data-id", product_id);
+				$('#new_product_input .product').html(product_name);
+				$('#recipe_product_inputs').append($('#new_product_input').html());
+			}
+		}
+	});
 }
 
 function remove_product_input(id) {

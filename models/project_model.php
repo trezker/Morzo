@@ -214,53 +214,31 @@ class Project_model extends Model
 			}
 
 			foreach($data['product_outputs'] as $o) {
-				if($o['id'] != "-1") {
-					$args = array(
-								$o['amount'], 
-								$o['product_id'],
-								$o['id']
-							);
-					$r = $db->Execute('
-						update Recipe_product_output set 
-							Amount = ?,
-							Product_ID = ?
-						where ID = ?
-						', $args);
-				} else {
-					$args = array(
-								$o['amount'], 
-								$o['product_id'],
-								$result_id
-							);
-					$r = $db->Execute('
-						insert into Recipe_product_output (Amount, Product_ID, Recipe_ID) values (?, ?, ?)
-						', $args);
-				}
+				$args = array(
+							$o['amount'], 
+							$o['product_id'],
+							$o['id']
+						);
+				$r = $db->Execute('
+					update Recipe_product_output set 
+						Amount = ?,
+						Product_ID = ?
+					where ID = ?
+					', $args);
 			}
 
 			foreach($data['product_inputs'] as $i) {
-				if($i['id'] != "-1") {
-					$args = array(
-								$i['amount'], 
-								$i['product_id'],
-								$i['id']
-							);
-					$r = $db->Execute('
-						update Recipe_product_input set 
-							Amount = ?,
-							Product_ID = ?
-						where ID = ?
-						', $args);
-				} else {
-					$args = array(
-								$i['amount'], 
-								$i['product_id'],
-								$result_id
-							);
-					$r = $db->Execute('
-						insert into Recipe_product_input (Amount, Product_ID, Recipe_ID) values (?, ?, ?)
-						', $args);
-				}
+				$args = array(
+							$i['amount'], 
+							$i['product_id'],
+							$i['id']
+						);
+				$r = $db->Execute('
+					update Recipe_product_input set 
+						Amount = ?,
+						Product_ID = ?
+					where ID = ?
+					', $args);
 			}
 		}
 
@@ -387,6 +365,39 @@ class Project_model extends Model
 		if($db->Affected_rows() > 0)
 			return true;
 		return false;
+	}
+	public function Add_recipe_product_output($recipe_id, $product_id, $amount) {
+		$db = Load_database();
+
+		$args = array(
+					$amount,
+					$product_id,
+					$recipe_id
+				);
+		$r = $db->Execute('
+			insert into Recipe_product_output (Amount, Product_ID, Recipe_ID) values (?, ?, ?)
+			', $args);
+		
+		if(!$r)
+			return array('success' => false);
+		return array('success' => true, 'id' => $db->Insert_id());
+	}
+	
+	public function Add_recipe_product_input($recipe_id, $product_id, $amount) {
+		$db = Load_database();
+
+		$args = array(
+					$amount,
+					$product_id,
+					$recipe_id
+				);
+		$r = $db->Execute('
+			insert into Recipe_product_input (Amount, Product_ID, Recipe_ID) values (?, ?, ?)
+			', $args);
+		
+		if(!$r)
+			return array('success' => false);
+		return array('success' => true, 'id' => $db->Insert_id());
 	}
 
 	public function Remove_recipe_product_input($recipe_id, $input_id)
