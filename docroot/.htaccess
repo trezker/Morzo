@@ -4,12 +4,15 @@ RewriteEngine on
 
 RewriteRule ^$ /index.php/front [L]
 
+RewriteCond $1 !^(favicon\.ico|favicon\.png|robots\.txt|crossdomain\.xml)
 RewriteCond %{REQUEST_URI} !^/data/
 RewriteCond %{REQUEST_URI} !^/css/
 RewriteCond %{REQUEST_URI} !^/js/
+RewriteCond %{REQUEST_URI} !^/favicon\.ico
 RewriteCond %{REQUEST_URI} !^/index\.php
 RewriteRule ^([a-zA-Z0-9'/@\._-]+)$ /index.php/$1 [L]
 
+RewriteCond $1 !^(favicon\.ico|favicon\.png|robots\.txt|crossdomain\.xml)
 RewriteCond %{REQUEST_URI} !^/data/
 RewriteCond %{REQUEST_URI} !^/css/
 RewriteCond %{REQUEST_URI} !^/js/
