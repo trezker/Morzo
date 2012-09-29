@@ -1,6 +1,7 @@
 var current_recipe = -1;
 var current_resource = -1;
 var current_product = -1;
+var current_category = -1;
 
 function edit_recipe(id)
 {
@@ -224,6 +225,96 @@ function remove_input(id) {
 	});
 }
 
+function add_product_output() {
+	var product_id = $('#new_product_output_form select').val();
+	var product_name = $('#new_product_output_form select option[value="'+product_id+'"]').html();
+	
+	$.ajax({
+		type: 'POST',
+		url: 'project_admin/add_recipe_product_output',
+		data: {
+			recipe_id: current_recipe,
+			product_id: product_id,
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success !== false) {
+				$('#new_product_output .product_output').attr("id", "product_output_"+data.id);
+				$('#new_product_output .product_output').attr("data-id", data.id);
+				$('#new_product_output .product').attr("data-id", product_id);
+				$('#new_product_output .product').html(product_name);
+				$('#recipe_product_outputs').append($('#new_product_output').html());
+			}
+		}
+	});
+}
+
+function remove_product_output(id) {
+	if(id == -1) {
+		$('#product_output_'+id).remove();
+	} else {
+		$.ajax({
+			type: 'POST',
+			url: 'project_admin/remove_recipe_product_output',
+			data: {
+				recipe_id: current_recipe,
+				id: id
+			},
+			success: function(data) {
+				if(ajax_logged_out(data)) return;
+				if(data !== false) {
+					$('#product_output_'+id).remove();
+				}
+			}
+		});
+	}
+}
+
+function add_product_input() {
+	var product_id = $('#new_product_input_form select').val();
+	var product_name = $('#new_product_input_form select option[value="'+product_id+'"]').html();
+	
+	$.ajax({
+		type: 'POST',
+		url: 'project_admin/add_recipe_product_input',
+		data: {
+			recipe_id: current_recipe,
+			product_id: product_id,
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success !== false) {
+				$('#new_product_input .product_input').attr("id", "product_input_"+data.id);
+				$('#new_product_input .product_input').attr("data-id", data.id);
+				$('#new_product_input .product').attr("data-id", product_id);
+				$('#new_product_input .product').html(product_name);
+				$('#recipe_product_inputs').append($('#new_product_input').html());
+			}
+		}
+	});
+}
+
+function remove_product_input(id) {
+	if(id == -1) {
+		$('#product_input_'+id).remove();
+	} else {
+		$.ajax({
+			type: 'POST',
+			url: 'project_admin/remove_recipe_product_input',
+			data: {
+				recipe_id: current_recipe,
+				id: id
+			},
+			success: function(data) {
+				if(ajax_logged_out(data)) return;
+				if(data !== false) {
+					$('#product_input_'+id).remove();
+				}
+			}
+		});
+	}
+}
+
 function edit_resource(id) {
 	$.ajax({
 		type: 'POST',
@@ -316,100 +407,47 @@ function save_product() {
 	});
 }
 
-function add_product_output() {
-	var product_id = $('#new_product_output_form select').val();
-	var product_name = $('#new_product_output_form select option[value="'+product_id+'"]').html();
-	$('#new_product_output .product').attr("data-id", product_id);
-	$('#new_product_output .product').html(product_name);
-	$('#recipe_product_outputs').append($('#new_product_output').html());
-}
-
-function add_product_output() {
-	var product_id = $('#new_product_output_form select').val();
-	var product_name = $('#new_product_output_form select option[value="'+product_id+'"]').html();
-	
+function edit_category(id) {
 	$.ajax({
 		type: 'POST',
-		url: 'project_admin/add_recipe_product_output',
+		url: 'project_admin/edit_category',
 		data: {
-			recipe_id: current_recipe,
-			product_id: product_id,
+			id: id
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
-			if(data.success !== false) {
-				$('#new_product_output .product_output').attr("id", "product_output_"+data.id);
-				$('#new_product_output .product_output').attr("data-id", data.id);
-				$('#new_product_output .product').attr("data-id", product_id);
-				$('#new_product_output .product').html(product_name);
-				$('#recipe_product_outputs').append($('#new_product_output').html());
+			if(data !== false) {
+				current_category = id;
+				$('#edit_category').html(data.data);
 			}
 		}
 	});
 }
 
-function remove_product_output(id) {
-	if(id == -1) {
-		$('#product_output_'+id).remove();
-	} else {
-		$.ajax({
-			type: 'POST',
-			url: 'project_admin/remove_recipe_product_output',
-			data: {
-				recipe_id: current_recipe,
-				id: id
-			},
-			success: function(data) {
-				if(ajax_logged_out(data)) return;
-				if(data !== false) {
-					$('#product_output_'+id).remove();
-				}
-			}
-		});
-	}
-}
+function save_category() {
+	var id = current_category;
+	var name = $('#category_name').val();
+	var mass = $('#mass').val();
+	var volume = $('#volume').val();
+	var rot_rate = $('#rot_rate').val();
 
-function add_product_input() {
-	var product_id = $('#new_product_input_form select').val();
-	var product_name = $('#new_product_input_form select option[value="'+product_id+'"]').html();
-	
 	$.ajax({
 		type: 'POST',
-		url: 'project_admin/add_recipe_product_input',
+		url: 'project_admin/save_category',
 		data: {
-			recipe_id: current_recipe,
-			product_id: product_id,
+			id: id,
+			name: name,
+			mass: mass,
+			volume: volume,
+			rot_rate: rot_rate
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
-			if(data.success !== false) {
-				$('#new_product_input .product_input').attr("id", "product_input_"+data.id);
-				$('#new_product_input .product_input').attr("data-id", data.id);
-				$('#new_product_input .product').attr("data-id", product_id);
-				$('#new_product_input .product').html(product_name);
-				$('#recipe_product_inputs').append($('#new_product_input').html());
+			if(data !== false) {
+				current_category = id;
+				window.location.reload();
 			}
+			edit_category(id);
 		}
 	});
-}
-
-function remove_product_input(id) {
-	if(id == -1) {
-		$('#product_input_'+id).remove();
-	} else {
-		$.ajax({
-			type: 'POST',
-			url: 'project_admin/remove_recipe_product_input',
-			data: {
-				recipe_id: current_recipe,
-				id: id
-			},
-			success: function(data) {
-				if(ajax_logged_out(data)) return;
-				if(data !== false) {
-					$('#product_input_'+id).remove();
-				}
-			}
-		});
-	}
 }

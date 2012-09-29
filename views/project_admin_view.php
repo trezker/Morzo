@@ -30,7 +30,7 @@
 		<div id="edit_recipe" style="float: left;">
 		</div>
 
-		<div class="resources" style="float: left;">
+		<div class="resources" style="clear: both; float: left;">
 			<h2>Resources</h2>
 			<div id="resources">
 				<ul>
@@ -49,7 +49,7 @@
 		<div id="edit_resource" style="float: left;">
 		</div>
 
-		<div class="products" style="float: left;">
+		<div class="products" style="clear: both; float: left;">
 			<h2>Products</h2>
 			<div id="products">
 				<ul>
@@ -66,6 +66,25 @@
 		</div>
 
 		<div id="edit_product" style="float: left;">
+		</div>
+
+		<div class="categories" style="clear: both; float: left;">
+			<h2>Categories</h2>
+			<div id="categories">
+				<ul>
+					<li><span class="action" onclick="edit_category(-1);">Create a new category</span></li>
+					<?php
+					foreach ($categories as $category) {
+						echo expand_template(
+							'<li><span class="action" onclick="edit_category({ID});">{Name}</span></li>',
+							$category);
+					}
+					?>
+				</ul>
+			</div>
+		</div>
+
+		<div id="edit_category" style="float: left;">
 		</div>
 	</body>
 </html>
