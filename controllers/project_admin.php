@@ -21,10 +21,13 @@ class Project_admin extends Controller
 		$resources = $this->Resource_model->Get_resources();
 		$this->Load_model('Product_model');
 		$products = $this->Product_model->Get_products();
+		$this->Load_model('Category_model');
+		$categories = $this->Category_model->Get_categories();
 		$this->Load_view('project_admin_view', array(
 														'recipes' => $recipes, 
 														'resources' => $resources, 
-														'products' => $products
+														'products' => $products,
+														'categories' => $categories
 													));
 	}
 	
@@ -323,6 +326,51 @@ class Project_admin extends Controller
 
 		$this->Load_model('Product_model');
 		$result = $this->Product_model->Save_product($_POST);
+
+		echo json_encode(array('success' => $result));
+	}
+
+	public function edit_category() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$this->Load_model('Category_model');
+		$category = $this->Category_model->Get_category($_POST['id']);
+
+		if($category == false) {
+			$category = array(
+					'ID' => '-1',
+					'Name' => ''
+				);
+		}
+
+		$edit_category_view = $this->Load_view('category_edit_view',array('category' => $category), true);
+
+		echo json_encode(array('success' => true, 'data' => $edit_category_view));
+	}
+
+	public function save_category() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$this->Load_model('Category_model');
+		$result = $this->Category_model->Save_category($_POST);
 
 		echo json_encode(array('success' => $result));
 	}
