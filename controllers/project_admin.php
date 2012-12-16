@@ -344,6 +344,7 @@ class Project_admin extends Controller
 
 		$this->Load_model('Category_model');
 		$category = $this->Category_model->Get_category($_POST['id']);
+		$food = $this->Category_model->Get_food_properties($_POST['id']);
 
 		if($category == false) {
 			$category = array(
@@ -351,8 +352,12 @@ class Project_admin extends Controller
 					'Name' => ''
 				);
 		}
-
-		$edit_category_view = $this->Load_view('category_edit_view',array('category' => $category), true);
+		$edit_category_view = $this->Load_view('category_edit_view',
+												array(
+													'category' => $category,
+													'food' => $food
+												), 
+												true);
 
 		echo json_encode(array('success' => true, 'data' => $edit_category_view));
 	}
@@ -445,7 +450,6 @@ class Project_admin extends Controller
 		$success = $this->Project_model->Remove_recipe_product_input($_POST['recipe_id'], $_POST['id']);
 
 		echo json_encode(array('success' => $success));
-	}
+	}	
 }
-
 ?>

@@ -427,9 +427,7 @@ function edit_category(id) {
 function save_category() {
 	var id = current_category;
 	var name = $('#category_name').val();
-	var mass = $('#mass').val();
-	var volume = $('#volume').val();
-	var rot_rate = $('#rot_rate').val();
+	var food_nutrition = $('#food_nutrition').val();
 
 	$.ajax({
 		type: 'POST',
@@ -437,9 +435,9 @@ function save_category() {
 		data: {
 			id: id,
 			name: name,
-			mass: mass,
-			volume: volume,
-			rot_rate: rot_rate
+			food: {
+				nutrition: food_nutrition
+				}
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
@@ -450,4 +448,8 @@ function save_category() {
 			edit_category(id);
 		}
 	});
+}
+
+function show_category_food_properties() {
+	$("#food_properties_container").toggle();
 }

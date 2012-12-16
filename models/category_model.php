@@ -54,6 +54,21 @@ class Category_model
 		}
 		
 		//Todo: Save various type data here, like food/weapon etc...
+		$query = 'insert into Category_food(Category_ID, Nutrition) values(?, ?)
+					on duplicate key update Nutrition = ?';
+		$array = array($category['id'], $category['food']['nutrition'], $category['food']['nutrition']);
+		$rs = $db->Execute($query, $array);
+	}
+	
+	function Get_food_properties($category_id) {
+		$db = Load_database();
+		$query = 'select Nutrition from Category_food where Category_ID = ? ';
+		$array = array($category_id);
+		$rs = $db->Execute($query, $array);
+		if($rs != false && $rs->RecordCount() > 0) {
+			return $rs->fields;
+		}
+		return array('Nutrition' => null);
 	}
 }
 ?>
