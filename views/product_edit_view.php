@@ -5,7 +5,7 @@
 	foreach($categories as $category) {
 		$categorieshtml .= $category['Name'];
 	}
-	$categorymenuhtml = '<select>';
+	$categorymenuhtml = '<select id="product_category_select">';
 	foreach($category_list as $category) {
 		$categorymenuhtml .= expand_template(
 			'<option value="{ID}">{Name}</option>',

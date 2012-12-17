@@ -460,6 +460,48 @@ class Project_admin extends Controller
 		$success = $this->Project_model->Remove_recipe_product_input($_POST['recipe_id'], $_POST['id']);
 
 		echo json_encode(array('success' => $success));
-	}	
+	}
+	
+	public function add_product_category() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$product_id = $_POST['product_id'];
+		$category_id = $_POST['category_id'];
+		
+		$this->Load_model('Product_model');
+		$success = $this->Product_model->Add_product_category($product_id, $category_id);
+
+		echo json_encode(array('success' => $success));
+	}
+
+	public function remove_product_category() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$product_id = $_POST['product_id'];
+		$category_id = $_POST['category_id'];
+		
+		$this->Load_model('Product_model');
+		$success = $this->Product_model->Remove_product_category($product_id, $category_id);
+
+		echo json_encode(array('success' => $success));
+	}
 }
 ?>

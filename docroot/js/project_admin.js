@@ -453,3 +453,39 @@ function save_category() {
 function show_category_food_properties() {
 	$("#food_properties_container").toggle();
 }
+
+function add_product_category() {
+	var category_id = $('#product_category_select').val();
+	
+	$.ajax({
+		type: 'POST',
+		url: 'project_admin/add_product_category',
+		data: {
+			product_id: current_product,
+			category_id: category_id,
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data !== false) {
+				edit_product(current_product);
+			}
+		}
+	});
+}
+
+function remove_product_category(category_id) {
+	$.ajax({
+		type: 'POST',
+		url: 'project_admin/remove_product_category',
+		data: {
+			product_id: current_product,
+			category_id: category_id,
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data !== false) {
+				edit_product(product_id);
+			}
+		}
+	});
+}

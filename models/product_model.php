@@ -79,5 +79,22 @@ class Product_model {
 
 		return true;
 	}
+	
+	public function Add_product_category($product_id, $category_id) {
+		$db = Load_database();
+		$query = 'insert into Product_category(Product_id, Category_ID)
+		values(?, ?)';
+		$array = array($product_id, $category_id);
+		$rs = $db->Execute($query, $array);
+		return $rs;
+	}
+
+	public function Remove_product_category($product_id, $category_id) {
+		$db = Load_database();
+		$query = 'delete from Product_category where Product_ID = ? and Category_ID = ?';
+		$array = array($product_id, $category_id);
+		$rs = $db->Execute($query, $array);
+		return $rs;
+	}
 }
 ?>
