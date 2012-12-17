@@ -1,6 +1,23 @@
 <h2>Edit product <?php echo htmlspecialchars($product['Name']); ?></h2>
 <div id="product">
 	<?php
+	$categorieshtml = '';
+	foreach($categories as $category) {
+		$categorieshtml .= $category['Name'];
+	}
+	$categorymenuhtml = '<select>';
+	foreach($category_list as $category) {
+		$categorymenuhtml .= expand_template(
+			'<option value="{ID}">{Name}</option>',
+			$category
+		);
+	}
+	$categorymenuhtml .= '</select>
+	<span class="action" onclick="add_product_category()">Add</span>
+	';
+		
+	$product['categorieshtml'] = $categorieshtml;
+	$product['categorymenuhtml'] = $categorymenuhtml;
 	echo expand_template(
 	'<table>
 		<tr>
@@ -18,6 +35,14 @@
 		<tr>
 			<td class="label">Rot rate:</td>
 			<td><input type="number" id="rot_rate" value="{Rot_rate}" /></td>
+		</tr>
+		<tr>
+			<td class="label">Categories:</td>
+			<td>{!categorieshtml}</td>
+		</tr>
+		<tr>
+			<td class="label">Add category:</td>
+			<td>{!categorymenuhtml}</td>
 		</tr>
 	</table>',
 	$product);

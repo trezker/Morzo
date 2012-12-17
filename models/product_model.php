@@ -36,7 +36,14 @@ class Product_model {
 			return false;
 		}
 		
-		return $rs->fields;
+		$rs2 = $db->Execute('
+			select PC.Category_ID, C.Name from Product_category PC
+			join Category C on C.ID = PC.Category_ID
+			 where Product_ID = ?
+			', array($product_id));
+		
+		$r = array('product' => $rs->fields, 'categories' => $rs2->GetArray());
+		return $r;
 	}
 
 	public function Save_product($product) {

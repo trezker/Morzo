@@ -295,8 +295,9 @@ class Project_admin extends Controller
 		}
 
 		$this->Load_model('Product_model');
-		$product = $this->Product_model->Get_product($_POST['id']);
-
+		$r = $this->Product_model->Get_product($_POST['id']);
+		$product = $r['product'];
+		$categories = $r['categories'];
 		if($product == false) {
 			$product = array(
 					'ID' => '-1',
@@ -307,7 +308,16 @@ class Project_admin extends Controller
 				);
 		}
 
-		$edit_product_view = $this->Load_view('product_edit_view',array('product' => $product), true);
+		$this->Load_model('Category_model');
+		$category_list = $this->Category_model->Get_categories();
+
+		$edit_product_view = $this->Load_view('product_edit_view',
+												array(
+													'product' => $product,
+													'categories' => $categories,
+													'category_list' => $category_list
+												), 
+												true);
 
 		echo json_encode(array('success' => true, 'data' => $edit_product_view));
 	}

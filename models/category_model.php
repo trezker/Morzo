@@ -19,7 +19,8 @@ class Category_model
 		foreach ($rs as $row) {
     		$categories[] = $row;
 		}
-		return $categories;	}
+		return $categories;
+	}
 
 	public function Get_category($id) {
 		if($id == -1) {
