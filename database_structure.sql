@@ -155,6 +155,41 @@ CREATE TABLE `Blogpost` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Category`
+--
+
+DROP TABLE IF EXISTS `Category`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Category` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(45) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID_UNIQUE` (`ID`),
+  UNIQUE KEY `Name_UNIQUE` (`Name`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Category_food`
+--
+
+DROP TABLE IF EXISTS `Category_food`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Category_food` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Category_ID` bigint(20) NOT NULL,
+  `Nutrition` float NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID_UNIQUE` (`ID`),
+  UNIQUE KEY `Category_ID_UNIQUE` (`Category_ID`),
+  KEY `Category_food_fk_Category` (`Category_ID`),
+  CONSTRAINT `Category_food_fk_Category` FOREIGN KEY (`Category_ID`) REFERENCES `Category` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Count`
 --
 
@@ -330,7 +365,7 @@ CREATE TABLE `Location_resource` (
   CONSTRAINT `Location_resource_fk_Landscape` FOREIGN KEY (`Landscape_ID`) REFERENCES `Landscape` (`ID`),
   CONSTRAINT `Location_resource_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Location_resource_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -411,40 +446,24 @@ CREATE TABLE `Product` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `Product_group`
+-- Table structure for table `Product_category`
 --
 
-DROP TABLE IF EXISTS `Product_group`;
+DROP TABLE IF EXISTS `Product_category`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Product_group` (
-  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Name` varchar(45) NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `ID_UNIQUE` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `Product_group_member`
---
-
-DROP TABLE IF EXISTS `Product_group_member`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Product_group_member` (
+CREATE TABLE `Product_category` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `Product_ID` bigint(20) NOT NULL,
-  `Group_ID` bigint(20) NOT NULL,
-  `Fit` double NOT NULL,
+  `Category_ID` bigint(20) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`),
-  UNIQUE KEY `Product_group_unique` (`Product_ID`,`Group_ID`),
-  KEY `Product_group_member_fk_Product` (`Product_ID`),
-  KEY `Product_group_member_fk_Group` (`Group_ID`),
-  CONSTRAINT `Product_group_member_fk_Group` FOREIGN KEY (`Group_ID`) REFERENCES `Product_group` (`ID`),
-  CONSTRAINT `Product_group_member_fk_Product` FOREIGN KEY (`Product_ID`) REFERENCES `Product` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  UNIQUE KEY `Product_category_unique` (`Product_ID`,`Category_ID`),
+  KEY `Product_category_fk_Product` (`Product_ID`),
+  KEY `Product_category_fk_Category` (`Category_ID`),
+  CONSTRAINT `Product_category_fk_Category` FOREIGN KEY (`Category_ID`) REFERENCES `Category` (`ID`),
+  CONSTRAINT `Product_category_fk_Product` FOREIGN KEY (`Product_ID`) REFERENCES `Product` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -644,6 +663,27 @@ CREATE TABLE `Resource` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Resource_category`
+--
+
+DROP TABLE IF EXISTS `Resource_category`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Resource_category` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Category_ID` bigint(20) NOT NULL,
+  `Resource_ID` bigint(20) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID_UNIQUE` (`ID`),
+  UNIQUE KEY `Category_resource_unique` (`Category_ID`,`Resource_ID`) USING BTREE,
+  KEY `Resource_category_fk_Resource` (`Resource_ID`),
+  KEY `Resource_category_fk_Category` (`Category_ID`),
+  CONSTRAINT `Resource_category_fk_Category` FOREIGN KEY (`Category_ID`) REFERENCES `Category` (`ID`),
+  CONSTRAINT `Resource_category_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Translation`
 --
 
@@ -780,4 +820,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-08-05 11:53:45
+-- Dump completed on 2012-12-17 10:27:11
