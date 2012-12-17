@@ -3,7 +3,13 @@
 	<?php
 	$categorieshtml = '';
 	foreach($categories as $category) {
-		$categorieshtml .= $category['Name'];
+		$categorieshtml .= expand_template(
+			'<span style="margin-right: 5px;">
+				{Name} 
+				<span class="action" onclick="remove_product_category({ID})">X</span>
+			</span>',
+			$category
+		);
 	}
 	$categorymenuhtml = '<select id="product_category_select">';
 	foreach($category_list as $category) {

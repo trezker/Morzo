@@ -37,7 +37,7 @@ class Product_model {
 		}
 		
 		$rs2 = $db->Execute('
-			select PC.Category_ID, C.Name from Product_category PC
+			select C.ID, C.Name from Product_category PC
 			join Category C on C.ID = PC.Category_ID
 			 where Product_ID = ?
 			', array($product_id));

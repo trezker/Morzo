@@ -484,7 +484,7 @@ function remove_product_category(category_id) {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
-				edit_product(product_id);
+				edit_product(current_product);
 			}
 		}
 	});
