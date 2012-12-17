@@ -489,3 +489,39 @@ function remove_product_category(category_id) {
 		}
 	});
 }
+
+function add_resource_category() {
+	var category_id = $('#resource_category_select').val();
+	
+	$.ajax({
+		type: 'POST',
+		url: 'project_admin/add_resource_category',
+		data: {
+			resource_id: current_resource,
+			category_id: category_id,
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data !== false) {
+				edit_resource(current_resource);
+			}
+		}
+	});
+}
+
+function remove_resource_category(category_id) {
+	$.ajax({
+		type: 'POST',
+		url: 'project_admin/remove_resource_category',
+		data: {
+			resource_id: current_resource,
+			category_id: category_id,
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data !== false) {
+				edit_resource(current_resource);
+			}
+		}
+	});
+}

@@ -1,6 +1,31 @@
 <h2>Edit resource <?php echo htmlspecialchars($resource['Name']); ?></h2>
 <div id="resource">
 	<?php
+	$categorieshtml = '';
+	foreach($categories as $category) {
+		$categorieshtml .= expand_template(
+			'<span style="margin-right: 5px;">
+				{Name} 
+				<span class="action" onclick="remove_resource_category({ID})">X</span>
+			</span>',
+			$category
+		);
+	}
+	$categorymenuhtml = '<select id="resource_category_select">';
+	foreach($category_list as $category) {
+		$categorymenuhtml .= expand_template(
+			'<option value="{ID}">{Name}</option>',
+			$category
+		);
+	}
+	$categorymenuhtml .= '</select>
+	<span class="action" onclick="add_resource_category()">Add</span>
+	';
+		
+	$resource['categorieshtml'] = $categorieshtml;
+	$resource['categorymenuhtml'] = $categorymenuhtml;
+	
+	
 	if($resource['Is_natural'] == 1)
 		$resource['Is_natural'] = 'checked=checked';
 	else
@@ -44,6 +69,14 @@
 		<tr>
 			<td class="label">Volume (litre):</td>
 			<td><input type="number" id="volume" value="{Volume}" /></td>
+		</tr>
+		<tr>
+			<td class="label">Categories:</td>
+			<td>{!categorieshtml}</td>
+		</tr>
+		<tr>
+			<td class="label">Add category:</td>
+			<td>{!categorymenuhtml}</td>
 		</tr>
 	</table>',
 	$resource);

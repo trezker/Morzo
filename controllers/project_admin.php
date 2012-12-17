@@ -245,8 +245,13 @@ class Project_admin extends Controller
 		}
 
 		$this->Load_model('Resource_model');
-		$resource = $this->Resource_model->Get_resource($_POST['id']);
+		$r = $this->Resource_model->Get_resource($_POST['id']);
+		$resource = $r['resource'];
+		$categories = $r['categories'];
 		$measures = $this->Resource_model->Get_measures();
+
+		$this->Load_model('Category_model');
+		$category_list = $this->Category_model->Get_categories();
 
 		if($resource == false) {
 			$resource = array(
@@ -258,8 +263,11 @@ class Project_admin extends Controller
 					'Is_natural' => false
 				);
 		}
-		$edit_resource_view = $this->Load_view('resource_edit_view',array('resource' => $resource, 
-																		'measures' => $measures), true);
+		$edit_resource_view = $this->Load_view('resource_edit_view',array(	'resource' => $resource, 
+																			'measures' => $measures,
+																			'categories' => $categories,
+																			'category_list' => $category_list
+																		), true);
 
 		echo json_encode(array('success' => true, 'data' => $edit_resource_view));
 	}
@@ -500,6 +508,48 @@ class Project_admin extends Controller
 		
 		$this->Load_model('Product_model');
 		$success = $this->Product_model->Remove_product_category($product_id, $category_id);
+
+		echo json_encode(array('success' => $success));
+	}
+	
+	public function add_resource_category() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$resource_id = $_POST['resource_id'];
+		$category_id = $_POST['category_id'];
+		
+		$this->Load_model('Resource_model');
+		$success = $this->Resource_model->Add_resource_category($resource_id, $category_id);
+
+		echo json_encode(array('success' => $success));
+	}
+
+	public function remove_resource_category() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$resource_id = $_POST['resource_id'];
+		$category_id = $_POST['category_id'];
+		
+		$this->Load_model('Resource_model');
+		$success = $this->Resource_model->Remove_resource_category($resource_id, $category_id);
 
 		echo json_encode(array('success' => $success));
 	}

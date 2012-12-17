@@ -38,8 +38,16 @@ class Resource_model
 		if(!$rs || $rs->RecordCount() == 0) {
 			return false;
 		}
+
+		$rs2 = $db->Execute('
+			select C.ID, C.Name from Resource_category RC
+			join Category C on C.ID = RC.Category_ID
+			 where Resource_ID = ?
+			', array($resource_id));
 		
-		return $rs->fields;
+		$r = array('resource' => $rs->fields, 'categories' => $rs2->GetArray());
+		
+		return $r;
 	}
 
 	public function Save_resource($resource) {
@@ -95,6 +103,23 @@ class Resource_model
 		}
 		
 		return $rs->GetArray();
+	}
+
+	public function Add_resource_category($resource_id, $category_id) {
+		$db = Load_database();
+		$query = 'insert into Resource_category(Resource_id, Category_ID)
+		values(?, ?)';
+		$array = array($resource_id, $category_id);
+		$rs = $db->Execute($query, $array);
+		return $rs;
+	}
+
+	public function Remove_resource_category($resource_id, $category_id) {
+		$db = Load_database();
+		$query = 'delete from Resource_category where Resource_ID = ? and Category_ID = ?';
+		$array = array($resource_id, $category_id);
+		$rs = $db->Execute($query, $array);
+		return $rs;
 	}
 }
 ?>
