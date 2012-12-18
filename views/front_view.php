@@ -16,7 +16,7 @@
 		
 		<div class="user_menu">
 			<span>Log in with OpenID</span>
-			<span>
+			<span id="openid_selection_container">
 				<div>
 					<span class="openid_icons">
 						<?php
@@ -30,8 +30,8 @@
 				</div>
 				<span><input type="text" name="openid" id="openid" /></span>
 				<span class="login_action action" onclick="login();">Log in</span>
-				<div id="openidfeedback">&nbsp;</div>
 			</span>
+			<div id="openidfeedback">&nbsp;</div>
 		</div>
 		<div style="clear: both;">
 			<?php echo $blogposts_view; ?>

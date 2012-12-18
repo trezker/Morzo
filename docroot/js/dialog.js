@@ -82,20 +82,22 @@ function open_dialog(html, width, height) {
 	});
 }
 
-function login(openid)
-{
+function login(openid){
+	$('#openid_selection_container').hide();
+	
 	$('#openidfeedback').html('Processing...');
 	if (openid == null){
 		openid = document.getElementById('openid').value;
-	}	
-	$.ajax(
-	{
+	}
+	$.ajax({
 		type: 'POST',
 		url: '/user/Start_openid_login',
-		data: { openid: openid },
-		success: function(data)
-		{
+		data: {
+			openid: openid
+		},
+		success: function(data){
 			if(data.success == false) {
+				$('#openid_selection_container').show();
 				$('#openidfeedback').html('Process failed: ' + data.reason);
 			} else {
 				$('#openidfeedback').html('Redirecting');
@@ -105,8 +107,7 @@ function login(openid)
 	});
 }
 
-function add_openid(openid)
-{
+function add_openid(openid){
 	$('#openidfeedback').html('Processing...');
 	if (openid == null){
 		openid = document.getElementById('openid').value;
