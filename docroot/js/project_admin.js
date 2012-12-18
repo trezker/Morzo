@@ -151,7 +151,7 @@ function remove_output(id) {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
-				$('.output#'+id).remove();
+				edit_recipe(current_recipe);
 			}
 		}
 	});
@@ -204,7 +204,7 @@ function remove_input(id) {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
-				$('.input#'+id).remove();
+				edit_recipe(current_recipe);
 			}
 		}
 	});
@@ -241,7 +241,7 @@ function remove_product_output(id) {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
-				$('#product_output_'+id).remove();
+				edit_recipe(current_recipe);
 			}
 		}
 	});
@@ -278,7 +278,7 @@ function remove_product_input(id) {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
-				$('#product_input_'+id).remove();
+				edit_recipe(current_recipe);
 			}
 		}
 	});

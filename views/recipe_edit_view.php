@@ -31,24 +31,26 @@ foreach($measures as $key => $measure) {
 		$recipe['recipe']['Require_full_cycle_checked'] = '';
 
 	echo expand_template(
-	'<table>
-		<tr>
-			<td class="label">Name:</td>
-			<td><input type="text" id="recipe_name" value="{Name}" /></td>
-		</tr>
-		<tr>
-			<td class="label">Cycle time:</td>
-			<td><input type="number" id="cycle_time" value="{Cycle_time}" /></td>
-		</tr>
-		<tr>
-			<td class="label">Allow fraction output:</td>
-			<td><input type="checkbox" id="allow_fraction_output" {Allow_fraction_output_checked} /></td>
-		</tr>
-		<tr>
-			<td class="label">Require full cycle:</td>
-			<td><input type="checkbox" id="require_full_cycle" {Require_full_cycle_checked} /></td>
-		</tr>
-	</table>',
+	'<div class="edit_panel">
+		<table>
+			<tr>
+				<td class="label">Name:</td>
+				<td><input type="text" id="recipe_name" value="{Name}" /></td>
+			</tr>
+			<tr>
+				<td class="label">Cycle time:</td>
+				<td><input type="number" id="cycle_time" value="{Cycle_time}" /></td>
+			</tr>
+			<tr>
+				<td class="label">Allow fraction output:</td>
+				<td><input type="checkbox" id="allow_fraction_output" {Allow_fraction_output_checked} /></td>
+			</tr>
+			<tr>
+				<td class="label">Require full cycle:</td>
+				<td><input type="checkbox" id="require_full_cycle" {Require_full_cycle_checked} /></td>
+			</tr>
+		</table>
+	</div>',
 	$recipe['recipe']);
 
 	$resource_select = '<select>';
@@ -70,7 +72,8 @@ foreach($measures as $key => $measure) {
 	$product_select .= '</select>';
 	?>
 	
-	<div id="recipe_outputs">
+	<div id="recipe_outputs" class="edit_panel">
+		<div class="panel_header">Resource outputs</div>
 		<?php
 		$output_template = '
 		<div class="output" id="{ID}">
@@ -91,13 +94,14 @@ foreach($measures as $key => $measure) {
 			echo expand_template($output_template, $output);
 		}
 		?>
-	</div>
-	<div id="new_output_form" style='margin-bottom: 10px;'>
-		<span class="action" onclick="add_output()">Add output</span>
-		<?php echo $resource_select; ?>
+		<div id="new_output_form">
+			<span class="action" onclick="add_output()">Add output</span>
+			<?php echo $resource_select; ?>
+		</div>
 	</div>
 
-	<div id="recipe_inputs">
+	<div id="recipe_inputs" class="edit_panel">
+		<div class="panel_header">Resource inputs</div>
 		<?php
 		$input_template = '
 		<div class="input" id="{ID}">
@@ -123,13 +127,14 @@ foreach($measures as $key => $measure) {
 			echo expand_template($input_template, $input);
 		}
 		?>
-	</div>
-	<div id="new_input_form" style='margin-bottom: 10px;'>
-		<span class="action" onclick="add_input()">Add input</span>
-		<?php echo $resource_select; ?>
+		<div id="new_input_form">
+			<span class="action" onclick="add_input()">Add input</span>
+			<?php echo $resource_select; ?>
+		</div>
 	</div>
 
-	<div id="recipe_product_outputs">
+	<div id="recipe_product_outputs" class="edit_panel">
+		<div class="panel_header">Product outputs</div>
 		<?php
 		$output_template = '
 		<div class="product_output" id="product_output_{ID}" data-id="{ID}">
@@ -142,13 +147,14 @@ foreach($measures as $key => $measure) {
 			echo expand_template($output_template, $output);
 		}
 		?>
-	</div>
-	<div id="new_product_output_form" style='margin-bottom: 10px;'>
-		<span class="action" onclick="add_product_output()">Add product output</span>
-		<?php echo $product_select; ?>
+		<div id="new_product_output_form">
+			<span class="action" onclick="add_product_output()">Add product output</span>
+			<?php echo $product_select; ?>
+		</div>
 	</div>
 
-	<div id="recipe_product_inputs">
+	<div id="recipe_product_inputs" class="edit_panel">
+		<div class="panel_header">Product inputs</div>
 		<?php
 		$input_template = '
 		<div class="product_input" id="product_input_{ID}" data-id="{ID}">
@@ -161,10 +167,10 @@ foreach($measures as $key => $measure) {
 			echo expand_template($input_template, $input);
 		}
 		?>
-	</div>
-	<div id="new_product_input_form" style='margin-bottom: 10px;'>
-		<span class="action" onclick="add_product_input()">Add product input</span>
-		<?php echo $product_select; ?>
+		<div id="new_product_input_form">
+			<span class="action" onclick="add_product_input()">Add product input</span>
+			<?php echo $product_select; ?>
+		</div>
 	</div>
 
 	<span class="action" style="float: right;" onclick="save_recipe()">Save</span>

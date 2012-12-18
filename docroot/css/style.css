@@ -229,3 +229,14 @@ li.selected:hover {
 .deficient_location {
 	color: #F00;
 }
+
+.edit_panel {
+	margin: 5px;
+	padding: 5px;
+	background-color: #DDF;
+}
+
+.panel_header {
+	margin-bottom: 5px;
+	color: #008400;
+}
