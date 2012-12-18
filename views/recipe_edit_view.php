@@ -129,22 +129,6 @@ foreach($measures as $key => $measure) {
 		<?php echo $resource_select; ?>
 	</div>
 
-	<div id="resource_select" style="display: none;">
-		<?php
-		echo $resource_select;
-		?>
-	</div>
-	<div id="new_output" style="display: none;">
-	<?php
-		echo expand_template($output_template, $recipe['new_output']);
-	?>
-	</div>
-	<div id="new_input" style="display: none;">
-	<?php
-		echo expand_template($input_template, $recipe['new_input']);
-	?>
-	</div>
-	
 	<div id="recipe_product_outputs">
 		<?php
 		$output_template = '
@@ -183,20 +167,5 @@ foreach($measures as $key => $measure) {
 		<?php echo $product_select; ?>
 	</div>
 
-	<div id="product_select" style="display: none;">
-		<?php
-		echo $product_select;
-		?>
-	</div>
-	<div id="new_product_output" style="display: none;">
-	<?php
-		echo expand_template($output_template, $recipe['new_product_component']);
-	?>
-	</div>
-	<div id="new_product_input" style="display: none;">
-	<?php
-		echo expand_template($input_template, $recipe['new_product_component']);
-	?>
-	</div>
 	<span class="action" style="float: right;" onclick="save_recipe()">Save</span>
 </div>
