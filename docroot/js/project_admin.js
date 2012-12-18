@@ -134,22 +134,14 @@ function add_output() {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success !== false) {
-				$('#new_output .output').attr("id", data.id);
-				$('#new_output .resource').attr("data-id", resource_id);
-				$('#new_output .resource').html(resource_name);
-				$('#new_output .measuredesc').replaceWith(measure_desc);
-				$('#recipe_outputs').append($('#new_output').html());
+				edit_recipe(current_recipe);
 			}
 		}
 	});
 }
 
 function remove_output(id) {
-	if(id == -1) {
-		$('.output#'+id).remove();
-	}
-	$.ajax(
-	{
+	$.ajax({
 		type: 'POST',
 		url: 'project_admin/remove_recipe_output',
 		data: {
@@ -194,20 +186,13 @@ function add_input() {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success !== false) {
-				$('#new_input .input').attr("id", data.id);
-				$('#new_input .resource').attr("data-id", resource_id);
-				$('#new_input .resource').html(resource_name);
-				$('#new_input .measuredesc').replaceWith(measure_desc);
-				$('#recipe_inputs').append($('#new_input').html());
+				edit_recipe(current_recipe);
 			}
 		}
 	});
 }
 
 function remove_input(id) {
-	if(id == -1) {
-		$('.input#'+id).remove();
-	}
 	$.ajax(
 	{
 		type: 'POST',
