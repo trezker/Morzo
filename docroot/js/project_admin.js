@@ -224,35 +224,27 @@ function add_product_output() {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success !== false) {
-				$('#new_product_output .product_output').attr("id", "product_output_"+data.id);
-				$('#new_product_output .product_output').attr("data-id", data.id);
-				$('#new_product_output .product').attr("data-id", product_id);
-				$('#new_product_output .product').html(product_name);
-				$('#recipe_product_outputs').append($('#new_product_output').html());
+				edit_recipe(current_recipe);
 			}
 		}
 	});
 }
 
 function remove_product_output(id) {
-	if(id == -1) {
-		$('#product_output_'+id).remove();
-	} else {
-		$.ajax({
-			type: 'POST',
-			url: 'project_admin/remove_recipe_product_output',
-			data: {
-				recipe_id: current_recipe,
-				id: id
-			},
-			success: function(data) {
-				if(ajax_logged_out(data)) return;
-				if(data !== false) {
-					$('#product_output_'+id).remove();
-				}
+	$.ajax({
+		type: 'POST',
+		url: 'project_admin/remove_recipe_product_output',
+		data: {
+			recipe_id: current_recipe,
+			id: id
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data !== false) {
+				$('#product_output_'+id).remove();
 			}
-		});
-	}
+		}
+	});
 }
 
 function add_product_input() {
@@ -269,35 +261,27 @@ function add_product_input() {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success !== false) {
-				$('#new_product_input .product_input').attr("id", "product_input_"+data.id);
-				$('#new_product_input .product_input').attr("data-id", data.id);
-				$('#new_product_input .product').attr("data-id", product_id);
-				$('#new_product_input .product').html(product_name);
-				$('#recipe_product_inputs').append($('#new_product_input').html());
+				edit_recipe(current_recipe);
 			}
 		}
 	});
 }
 
 function remove_product_input(id) {
-	if(id == -1) {
-		$('#product_input_'+id).remove();
-	} else {
-		$.ajax({
-			type: 'POST',
-			url: 'project_admin/remove_recipe_product_input',
-			data: {
-				recipe_id: current_recipe,
-				id: id
-			},
-			success: function(data) {
-				if(ajax_logged_out(data)) return;
-				if(data !== false) {
-					$('#product_input_'+id).remove();
-				}
+	$.ajax({
+		type: 'POST',
+		url: 'project_admin/remove_recipe_product_input',
+		data: {
+			recipe_id: current_recipe,
+			id: id
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data !== false) {
+				$('#product_input_'+id).remove();
 			}
-		});
-	}
+		}
+	});
 }
 
 function edit_resource(id) {
