@@ -12,6 +12,18 @@
 		<h1>World administration</h1>
 		<p><span class="action" onclick="window.location = 'user'">Back</span></p>
 
+		<div id="actor_control">
+			Maximum number of actors in the world
+			<input name="max_actors_input" id="max_actors_input" type="text" value="<?php echo $max_actors;?>" />
+			<span class="action" onclick="set_max_actors();">Update</span>
+			<br />
+			Default max actors for new accounts
+			<input name="max_actors_account_input" id="max_actors_account_input" type="text" value="<?php echo $max_actors_account;?>" />
+			<span class="action" onclick="set_max_actors_account();">Update</span>
+
+			<div id="actor_control_feedback"></div>
+		</div>
+
 		<div class="locations">
 			<h2>Locations (Deficient=red)</h2>
 			<div id="locations">
@@ -56,20 +68,10 @@
 			</div>
 		</div>
 
-		<div id="edit_location" style="float: left;">
-		</div>
-		<div id="actor_control" style="clear: both;">
-			Maximum number of actors in the world
-			<input name="max_actors_input" id="max_actors_input" type="text" value="<?php echo $max_actors;?>" />
-			<span class="action" onclick="set_max_actors();">Update</span>
+		<div style="float: left;">
 
-			<div></div>
-
-			Default max actors for new accounts
-			<input name="max_actors_account_input" id="max_actors_account_input" type="text" value="<?php echo $max_actors_account;?>" />
-			<span class="action" onclick="set_max_actors_account();">Update</span>
-
-			<div id="actor_control_feedback"></div>
+			<div id="edit_location" style="clear: both;">
+			</div>
 		</div>
 	</body>
 </html>

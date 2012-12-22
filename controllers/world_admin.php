@@ -70,8 +70,7 @@ class World_admin extends Controller
 		echo json_encode(array('success' => $success));
 	}
 	
-	public function Edit_location()
-	{
+	public function Edit_location(){
 		header('Content-type: application/json');
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
@@ -85,7 +84,6 @@ class World_admin extends Controller
 
 		$this->Load_model('Location_model');
 		$location = $this->Location_model->Get_location($_POST['id']);
-		$location_resources = $this->Location_model->Get_location_resources($_POST['id'], 1);
 		if($location['Biome_name'] === NULL)
 			$location['Biome_name'] = "N/A";
 
@@ -98,15 +96,19 @@ class World_admin extends Controller
 		$landscapes = $this->Location_model->Get_landscapes();
 		$landscapes_view = $this->Load_view('landscapes_view', array('landscapes' => $landscapes, 'location_resources' => $all_location_resources), true);
 
-		$this->Load_model('Resource_model');
-		$resources = $this->Resource_model->Get_resources();
+		$this->Load_model('Species_model');
+		$location_species = $this->Species_model->Get_location_species($_POST['id']);
+		$species = $this->Species_model->Get_species();
+		$species_view = $this->Load_view('species_view', array('species' => $species, 'location_species' => $location_species), true);
 		
 		$location_admin_view = $this->Load_view('location_edit_view', 
-												array('biomes_view' => $biomes_view,
-												'landscapes' => $landscapes,
-												'location' => $location,
-												'landscapes_view' => $landscapes_view,
-												'location_resources' => $location_resources), true);
+												array(
+													'biomes_view' => $biomes_view,
+													'landscapes' => $landscapes,
+													'location' => $location,
+													'landscapes_view' => $landscapes_view,
+													'species_view' => $species_view
+												), true);
 
 		echo json_encode(array('success' => true, 'data' => $location_admin_view));
 	}
