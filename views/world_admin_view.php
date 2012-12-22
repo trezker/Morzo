@@ -58,7 +58,7 @@
 
 		<div id="edit_location" style="float: left;">
 		</div>
-		<div id="actor_control">
+		<div id="actor_control" style="clear: both;">
 			Maximum number of actors in the world
 			<input name="max_actors_input" id="max_actors_input" type="text" value="<?php echo $max_actors;?>" />
 			<span class="action" onclick="set_max_actors();">Update</span>
