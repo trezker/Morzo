@@ -24,9 +24,9 @@ class Species_model{
 		$rs = $db->Execute('
 			select S.ID, S.Name, S.Max_population, LS.Population
 			from Species S
-			left join Location_species LS on LS.Species_ID = S.ID
-			where S.ID = ? and LS.Location_ID = ?
-			', array($species_id, $location_id));
+			left join Location_species LS on LS.Species_ID = S.ID and LS.Location_ID = ?
+			where S.ID = ?
+			', array($location_id, $species_id));
 
 		if(!$rs || $rs->RecordCount() == 0) {
 			return false;
