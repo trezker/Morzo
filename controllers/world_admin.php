@@ -329,7 +329,7 @@ class World_admin extends Controller
 		}
 
 		$this->Load_model('Species_model');
-		$specie = $this->Species_model->Get_specie($_POST['id']);
+		$specie = $this->Species_model->Get_specie($_POST['id'], $_POST['location_id']);
 		if(!$specie) {
 			echo json_encode(array('success' => false, 'reason' => 'Failed to get_specie'));
 			return;

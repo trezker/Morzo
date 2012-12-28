@@ -213,6 +213,8 @@ function add_species() {
 	$('#edit_species .panel_header').html("New species");
 	$("#species_name").val("");
 	$("#species_max_population").val(100);
+	$("#species_population").val("");
+	$("#species_on_location").removeAttr('checked');
 }
 
 function edit_species(id) {
@@ -220,7 +222,8 @@ function edit_species(id) {
 		type: 'POST',
 		url: 'world_admin/get_specie',
 		data: {
-			id: id
+			id: id,
+			location_id: current_location
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
@@ -230,6 +233,13 @@ function edit_species(id) {
 				$('#edit_species .panel_header').html("Edit species");
 				$("#species_name").val(data.data.Name);
 				$("#species_max_population").val(data.data.Max_population);
+				if(data.data.Population) {
+					$("#species_population").val(data.data.Population);
+					$("#species_on_location").attr('checked', 'true');
+				} else {
+					$("#species_population").val("");
+					$("#species_on_location").removeAttr('checked');
+				}
 			}
 		}
 	});

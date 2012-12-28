@@ -18,12 +18,15 @@ class Species_model{
 		return $species;
 	}
 
-	public function Get_specie($species_id) {
+	public function Get_specie($species_id, $location_id) {
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			select ID, Name, Max_population from Species where ID = ?
-			', array($species_id));
+			select S.ID, S.Name, S.Max_population, LS.Population
+			from Species S
+			left join Location_species LS on LS.Species_ID = S.ID
+			where S.ID = ? and LS.Location_ID = ?
+			', array($species_id, $location_id));
 
 		if(!$rs || $rs->RecordCount() == 0) {
 			return false;
