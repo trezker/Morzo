@@ -280,6 +280,36 @@ class World_admin extends Controller
 
 		echo json_encode(array('success' => true, 'landscape_resource_count' => $landscape_resource_count));
 	}
+
+	public function Save_species()
+	{
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
+			return;
+		}
+		$name = $_POST['name'];
+		if(!is_string($name) || $name == '') {
+			echo json_encode(array('success' => false, 'reason' => 'Must give a name'));
+			return;
+		}
+
+		$this->Load_model('Species_model');
+		if(!$this->Species_model->Save_species($name, $_POST['id'], $_POST['max_population'])) {
+			echo json_encode(array('success' => false, 'reason' => 'Failed to add landscape'));
+			return;
+		}
+		$species = $this->Species_model->Get_species();
+		$all_location_species = $this->Species_model->Get_location_species($_POST['location_id']);
+		$species_view = $this->Load_view('species_view', array('species' => $species, 'location_species' => $all_location_species), true);
+
+		echo json_encode(array('success' => true, 'data' => $species_view));
+	}
 }
 
 ?>

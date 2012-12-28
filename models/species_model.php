@@ -33,21 +33,21 @@ class Species_model{
 		return $r;
 	}
 
-	public function Save_species($species) {
+	public function Save_species($name, $id, $max_population) {
 		$db = Load_database();
 		
-		if($species['id'] == -1) {
-			$args = array(	$species['name'],
-							$species['max_population']
+		if($id == -1) {
+			$args = array(	$name,
+							$max_population
 						);
 
 			$rs = $db->Execute('
 				insert into Species (Name, Max_population) values (?, ?)
 				', $args);
 		} else {
-			$args = array(	$species['name'], 
-							$species['max_population'],
-							$species['id']
+			$args = array(	$name,
+							$max_population,
+							$id
 						);
 
 			$rs = $db->Execute('
