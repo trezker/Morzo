@@ -59,8 +59,10 @@ class Species_model{
 			echo $db->ErrorMsg();
 			return false;
 		}
-
-		return true;
+		if($id == -1) {
+			return $db->Insert_id();
+		}
+		return $id;
 	}
 	
 	public function Get_location_species($location_id) {
@@ -77,6 +79,30 @@ class Species_model{
 		}
 		
 		return $rs->GetArray();
+	}
+
+	public function Save_location_species($species_id, $location_id, $on_location, $population) {
+		$db = Load_database();
+
+		if($on_location == true){
+			$args = array($location_id, $species_id, $population, $population);
+			$rs = $db->Execute('
+				insert into Location_species(Location_ID, Species_ID, Population)
+				values(?, ?, ?)
+				on duplicate key update Population = ?
+				', $args);
+		}
+		else {
+			$args = array($location_id, $species_id);
+			$rs = $db->Execute('
+				delete from Location_species where Location_ID = ? and Species_ID = ?
+				', $args);
+		}
+		if($rs == false) {
+			echo "Error: " . $db->ErrorMsg();
+			return false;
+		}
+		return $rs;
 	}
 }
 ?>

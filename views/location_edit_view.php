@@ -35,5 +35,13 @@
 	<div class="panel_header">Edit species</div>
 	Name: <input type="text" id="species_name" /><br />
 	Max population: <input type="number" id="species_max_population" /><br />
+	On location: <input type="checkbox" id="species_on_location" /><br />
+	Local population: <input type="number" id="species_population" /><br />
 	<span class="action" onclick="save_species()">Save species</span>
+	<br>
+	<p>
+	Note: Max population changes for all locations. <br />
+	It means how many there can be on each location the species exist.
+	</p>
+	On location sets whether it exists on this location.
 </div>

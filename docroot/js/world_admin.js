@@ -238,6 +238,8 @@ function edit_species(id) {
 function save_species() {
 	var name = $("#species_name").val();
 	var max_population = $("#species_max_population").val();
+	var on_location = $("#species_on_location").attr('checked');
+	var population = $("#species_population").val();
 	var id = current_species;
 	$.ajax({
 		type: 'POST',
@@ -246,7 +248,9 @@ function save_species() {
 			id: id,
 			name: name,
 			max_population: max_population,
-			location_id: current_location
+			location_id: current_location,
+			on_location: on_location,
+			population: population
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;

@@ -299,10 +299,16 @@ class World_admin extends Controller
 		}
 
 		$this->Load_model('Species_model');
-		if(!$this->Species_model->Save_species($name, $_POST['id'], $_POST['max_population'])) {
+		$id = $this->Species_model->Save_species($name, $_POST['id'], $_POST['max_population']);
+		if(!$id) {
 			echo json_encode(array('success' => false, 'reason' => 'Failed to save species'));
 			return;
 		}
+		if(!$this->Species_model->Save_location_species($id, $_POST['location_id'], $_POST['on_location'], $_POST['population'])) {
+			echo json_encode(array('success' => false, 'reason' => 'Failed to save species on location'));
+			return;
+		}
+		
 		$species = $this->Species_model->Get_species();
 		$all_location_species = $this->Species_model->Get_location_species($_POST['location_id']);
 		$species_view = $this->Load_view('species_view', array('species' => $species, 'location_species' => $all_location_species), true);
