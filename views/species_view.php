@@ -8,10 +8,10 @@
 					$selected = ' selected';
 			}
 		}
-		echo expand_template('<li class="selectable{selected}" id="{id}" onclick="edit_specie(\'{id}\')">{name}</li>',
+		echo expand_template('<li class="selectable{selected}" id="specie_{id}" onclick="edit_species(\'{id}\')">{name}</li>',
 			array(
 				'selected' => $selected,
-				'id' => "specie_" . $specie['ID'],
+				'id' => $specie['ID'],
 				'name' => $specie['Name']));
 	}
 	?>

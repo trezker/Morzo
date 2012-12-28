@@ -207,6 +207,34 @@ function set_max_actors_account() {
 	});
 }
 
+function add_species() {
+	current_species = -1;
+	$('#edit_species').show();
+	$('#edit_species .panel_header').html("New species");
+	$("#species_name").val("");
+	$("#species_max_population").val(100);
+}
+
+function edit_species(id) {
+	$.ajax({
+		type: 'POST',
+		url: 'world_admin/get_specie',
+		data: {
+			id: id
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success !== false) {
+				current_species = id;
+				$('#edit_species').show();
+				$('#edit_species .panel_header').html("Edit species");
+				$("#species_name").val(data.data.Name);
+				$("#species_max_population").val(data.data.Max_population);
+			}
+		}
+	});
+}
+
 function save_species() {
 	var name = $("#species_name").val();
 	var max_population = $("#species_max_population").val();
@@ -222,8 +250,9 @@ function save_species() {
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
-			if(data !== false) {
+			if(data.success !== false) {
 				$('#species_list').html(data.data);
+				$('#edit_species').hide();
 			}
 		}
 	});

@@ -31,7 +31,7 @@
 	</div>
 	<span class="action" onclick="add_species();">Add species</span>
 </div>
-<div class="edit_panel" id="edit_species" style="float: left; clear: both;">
+<div class="edit_panel" id="edit_species" style="display: none; float: left; clear: both;">
 	<div class="panel_header">Edit species</div>
 	Name: <input type="text" id="species_name" /><br />
 	Max population: <input type="number" id="species_max_population" /><br />

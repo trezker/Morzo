@@ -22,7 +22,7 @@ class Species_model{
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			select ID, Name from Species where ID = ?
+			select ID, Name, Max_population from Species where ID = ?
 			', array($species_id));
 
 		if(!$rs || $rs->RecordCount() == 0) {
