@@ -74,9 +74,11 @@ class Species_model{
 		$args = array($location_id);
 
 		$rs = $db->Execute('
-			select ID, Name from Species where Location_species = ?
+			select S.ID, S.Name from Species S
+			join Location_species LS on LS.Species_ID = S.ID
+			where LS.Location_ID = ?
 			', $args);
-		
+
 		if($rs == false) {
 			return array();
 		}
@@ -87,7 +89,7 @@ class Species_model{
 	public function Save_location_species($species_id, $location_id, $on_location, $population) {
 		$db = Load_database();
 
-		if($on_location == true){
+		if($on_location == "true"){
 			$args = array($location_id, $species_id, $population, $population);
 			$rs = $db->Execute('
 				insert into Location_species(Location_ID, Species_ID, Population)
