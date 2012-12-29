@@ -70,7 +70,15 @@ class Actor extends Controller
 		} elseif ($tab == 'resources') {
 			$this->Load_model("Location_model");
 			$resources = $this->Location_model->Get_location_resources($actor['Location_ID']);
-			$tab_view = $this->Load_view('resources_tab_view', array('resources' => $resources, 'actor_id' => $actor_id), true);
+			$this->Load_model("Species_model");
+			$species = $this->Species_model->Get_location_species($actor['Location_ID']);
+			$tab_view = $this->Load_view('resources_tab_view', 
+										array(
+											'resources' => $resources, 
+											'species' => $species, 
+											'actor_id' => $actor_id
+											), 
+										true);
 		} elseif ($tab == 'projects') {
 			$this->Load_model("Project_model");
 			$projects = $this->Project_model->Get_projects($actor_id);
