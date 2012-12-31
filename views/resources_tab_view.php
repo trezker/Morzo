@@ -34,6 +34,14 @@
 <div>
 	<div>Hunt wild Animals</div>
 	<table>
+		<tr>
+			<th>
+				Include
+			</th>
+			<th>
+				Amount
+			</th>
+		</tr>
 <?php
 	$speciestemplate = '<tr>
 							<td><input type="checkbox" id="huntcheck_{ID}" />{Name}</td>
@@ -45,4 +53,5 @@
 	}
 ?>
 	</table>
+	<span class="action">Start hunt</span>
 </div>
