@@ -1,3 +1,4 @@
+<h3>Resources</h3>
 <table>
 	<?php
 	$resource_template = '
@@ -32,20 +33,20 @@
 </div>
 
 <div>
-	<div>Hunt wild Animals</div>
+	<h3>Hunt wild Animals</h3>
 	<table>
 		<tr>
 			<th>
-				Include
+				Species
 			</th>
 			<th>
-				Amount
+				Max nr
 			</th>
 		</tr>
 <?php
 	$speciestemplate = '<tr>
-							<td><input type="checkbox" id="huntcheck_{ID}" />{Name}</td>
-							<td><input type="text" id="huntamount_{ID}" style="width: 30px;" /></td>
+							<td>{Name}</td>
+							<td><input type="number" id="huntamount_{ID}" style="width: 30px;" /></td>
 						</tr>
 						';
 	foreach($species as $specie) {
@@ -53,5 +54,6 @@
 	}
 ?>
 	</table>
+	Hunt for <input type="number" style="width: 30px;" id="hunthours" /> hours.<br />
 	<span class="action">Start hunt</span>
 </div>
