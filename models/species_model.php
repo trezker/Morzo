@@ -149,5 +149,36 @@ class Species_model{
 		
 		return array('success' => true);
 	}
+	
+	public function Get_hunts($actor_id) {
+		$db = Load_database();
+		/*TODO:
+			Joined			Are you part of this hunt?
+			Active			Is this hunt ongoing? Only needs one participant
+			Description		Combine names of species being hunted.
+		*/
+		$query = "	select
+						h.ID,
+						hs.Name AS Stage_name,
+						h.Prey_ID,
+						h.Duration,
+						h.Hours_left,
+						false AS Joined,
+						false AS Active,
+						'TODO' AS Description
+					from Hunt h
+					join Huntstage hs on hs.ID = h.Stage_ID
+					join Actor a on a.Location_ID = h.Location_ID
+					where a.ID = ?
+				";
+		$args = array($actor_id);
+		$rs = $db->Execute($query, $args);
+		
+		if(!$rs) {
+			return false;
+		}
+		
+		return $rs->GetArray();
+	}
 }
 ?>

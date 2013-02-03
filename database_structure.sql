@@ -247,11 +247,16 @@ CREATE TABLE `Hunt` (
   `Prey_ID` bigint(20) DEFAULT NULL,
   `Duration` int(11) NOT NULL,
   `Hours_left` int(11) NOT NULL,
+  `Location_ID` bigint(20) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   KEY `fk_Hunt_huntstage_idx` (`Stage_ID`),
   KEY `Hunt_fk_species_idx` (`Prey_ID`),
-  CONSTRAINT `Hunt_fk_huntstage` FOREIGN KEY (`Stage_ID`) REFERENCES `Huntstage` (`ID`)
+  KEY `Hunt_fk_prey_idx` (`Prey_ID`),
+  KEY `Hunt_fk_location_idx` (`Location_ID`),
+  CONSTRAINT `Hunt_fk_location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
+  CONSTRAINT `Hunt_fk_huntstage` FOREIGN KEY (`Stage_ID`) REFERENCES `Huntstage` (`ID`),
+  CONSTRAINT `Hunt_fk_prey` FOREIGN KEY (`Prey_ID`) REFERENCES `Species` (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -306,7 +311,7 @@ CREATE TABLE `Inventory` (
   `Volume_limit` double DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -575,7 +580,7 @@ CREATE TABLE `Project` (
   CONSTRAINT `Project_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Project_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Project_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -596,7 +601,7 @@ CREATE TABLE `Project_input` (
   KEY `Project_input_fk_Resource` (`Resource_ID`),
   CONSTRAINT `Project_input_fk_Project` FOREIGN KEY (`Project_ID`) REFERENCES `Project` (`ID`),
   CONSTRAINT `Project_input_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -919,4 +924,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-02-03 19:24:53
+-- Dump completed on 2013-02-03 21:10:20
