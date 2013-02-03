@@ -529,3 +529,30 @@ function pick_up_product(actor_id, product_id) {
 		}
 	});
 }
+
+function start_hunt(actor_id) {
+	var hours = $('#hunthours').val();
+	var species = {};
+	
+	$(".huntspecies").each(function( index ) {
+		var id = $(this).attr('data-species_id');
+		species[id] = $(this).val();
+	});
+	
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Start_hunt',
+		data: {
+			actor_id: actor_id,
+			hours: hours,
+			species: species
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = "/actor/show_actor/"+actor_id+"/projects";
+			}
+		}
+	});
+}

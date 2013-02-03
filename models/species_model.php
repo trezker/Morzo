@@ -109,5 +109,45 @@ class Species_model{
 		}
 		return $rs;
 	}
+	
+	public function Start_hunt($actor_id, $hours, $species) {
+		$db = Load_database();
+
+		$db->StartTrans();
+
+		$query = 'insert into Hunt(Duration, Hours_left) values(?, ?)';
+		$args = array($hours, $hours);
+		$rs = $db->Execute($query, $args);
+		if(!$rs) {
+			$errormsg = $db->ErrorMsg();
+			$db->FailTrans();
+		} else {
+			$hunt_id = $db->Insert_id();
+		}
+		
+		if(!$db->HasFailedTrans()) {
+			foreach($species as $species_id => $amount) {
+				if($amount < 1)
+					continue;
+				$query = 'insert into Hunt_species(Hunt_ID, Species_ID, Amount) values(?, ?, ?)';
+				$args = array($hunt_id, $species_id, $amount);
+				$rs = $db->Execute($query, $args);
+				if(!$rs) {
+					$errormsg = $db->ErrorMsg();
+					$db->FailTrans();
+					break;
+				}
+			}
+		}
+
+		$failed = $db->HasFailedTrans();
+		$db->CompleteTrans();
+		
+		if($failed) {
+			return array('success' => false, 'data' => $errormsg);
+		}
+		
+		return array('success' => true);
+	}
 }
 ?>

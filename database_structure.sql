@@ -74,7 +74,7 @@ CREATE TABLE `Actor_event` (
   KEY `Actor_event_fk_Event` (`Event_ID`),
   CONSTRAINT `Actor_event_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Actor_event_fk_Event` FOREIGN KEY (`Event_ID`) REFERENCES `Event` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=1645 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1631 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -244,14 +244,15 @@ DROP TABLE IF EXISTS `Hunt`;
 CREATE TABLE `Hunt` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `Stage_ID` bigint(20) NOT NULL DEFAULT '1',
-  `Prey_ID` bigint(20) NOT NULL DEFAULT '0',
+  `Prey_ID` bigint(20) DEFAULT NULL,
+  `Duration` int(11) NOT NULL,
+  `Hours_left` int(11) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   KEY `fk_Hunt_huntstage_idx` (`Stage_ID`),
   KEY `Hunt_fk_species_idx` (`Prey_ID`),
-  CONSTRAINT `Hunt_fk_species` FOREIGN KEY (`Prey_ID`) REFERENCES `Species` (`ID`),
   CONSTRAINT `Hunt_fk_huntstage` FOREIGN KEY (`Stage_ID`) REFERENCES `Huntstage` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -273,7 +274,7 @@ CREATE TABLE `Hunt_species` (
   KEY `Hunt_species_fk_species_idx` (`Species_ID`),
   CONSTRAINT `Hunt_species_fk_hunt` FOREIGN KEY (`Hunt_ID`) REFERENCES `Hunt` (`ID`),
   CONSTRAINT `Hunt_species_fk_species` FOREIGN KEY (`Species_ID`) REFERENCES `Species` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -445,7 +446,7 @@ CREATE TABLE `Location_species` (
   KEY `Location_species_fk_Species` (`Species_ID`),
   CONSTRAINT `Location_species_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Location_species_fk_Species` FOREIGN KEY (`Species_ID`) REFERENCES `Species` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -774,6 +775,7 @@ CREATE TABLE `Species` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `Name` varchar(45) NOT NULL,
   `Max_population` int(11) NOT NULL,
+  `Corpse_product_ID` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   UNIQUE KEY `Name_UNIQUE` (`Name`)
@@ -917,4 +919,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-12-31 13:52:06
+-- Dump completed on 2013-02-03 19:24:53

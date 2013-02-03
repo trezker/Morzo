@@ -555,4 +555,20 @@ class Actor extends Controller
 		
 		echo json_encode(array('success' => $pick_up_result));
 	}
+
+	public function Start_hunt() {
+		$actor_id = $_POST['actor_id'];
+		$hours = $_POST['hours'];
+		$species = $_POST['species'];
+		
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+
+		$this->Load_model('species_model');
+		$result = $this->species_model->Start_hunt($actor_id, $hours, $species);
+
+		echo json_encode($result);
+	}
 }

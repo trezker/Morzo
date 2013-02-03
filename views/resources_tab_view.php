@@ -46,7 +46,7 @@
 <?php
 	$speciestemplate = '<tr>
 							<td>{Name}</td>
-							<td><input type="number" id="huntamount_{ID}" style="width: 30px;" /></td>
+							<td><input type="number" class="huntspecies" data-species_id="{ID}" style="width: 30px;" /></td>
 						</tr>
 						';
 	foreach($species as $specie) {
@@ -55,5 +55,5 @@
 ?>
 	</table>
 	Hunt for <input type="number" style="width: 30px;" id="hunthours" /> hours.<br />
-	<span class="action">Start hunt</span>
+	<span class="action" onclick="start_hunt(<?php echo $actor_id; ?>);">Start hunt</span>
 </div>
