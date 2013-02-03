@@ -115,8 +115,11 @@ class Species_model{
 
 		$db->StartTrans();
 
-		$query = 'insert into Hunt(Duration, Hours_left) values(?, ?)';
-		$args = array($hours, $hours);
+		$query = '
+					insert into Hunt(Duration, Hours_left, Location_ID)
+					select ?, ?, a.Location_ID from Actor a where a.ID = ?
+				';
+		$args = array($hours, $hours, $actor_id);
 		$rs = $db->Execute($query, $args);
 		if(!$rs) {
 			$errormsg = $db->ErrorMsg();
