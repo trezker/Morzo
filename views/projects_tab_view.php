@@ -80,7 +80,7 @@
 				'Join/Leave' => $joinleave,
 				'id' => $hunt["ID"],
 				'name' => $hunt["Description"],
-				'progress_percent' => 100 * $hunt["Hours_left"] / $hunt["Duration"],
+				'progress_percent' => 100 * ($hunt["Duration"] - $hunt["Hours_left"]) / $hunt["Duration"],
 				'actor_id' => $actor_id,
 				'active_class' => $active_class,
 				'alternate' => $alternate
