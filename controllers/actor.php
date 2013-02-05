@@ -444,6 +444,7 @@ class Actor extends Controller
 	}
 	
 	public function Show_project_details() {
+		header('Content-type: application/json');
 		$actor_id = $_POST['actor_id'];
 		$project_id = $_POST['project_id'];
 		
@@ -463,6 +464,7 @@ class Actor extends Controller
 	}
 	
 	public function Supply_project() {
+		header('Content-type: application/json');
 		$actor_id = $_POST['actor_id'];
 		$project_id = $_POST['project_id'];
 		
@@ -484,6 +486,7 @@ class Actor extends Controller
 	}
 
 	public function Cancel_project() {
+		header('Content-type: application/json');
 		$actor_id = $_POST['actor_id'];
 		$project_id = $_POST['project_id'];
 		
@@ -499,6 +502,7 @@ class Actor extends Controller
 	}
 
 	public function Drop_resource() {
+		header('Content-type: application/json');
 		$actor_id = $_POST['actor_id'];
 		$resource_id = $_POST['resource_id'];
 		$amount = $_POST['amount'];
@@ -514,6 +518,7 @@ class Actor extends Controller
 	}
 
 	public function Pick_up_resource() {
+		header('Content-type: application/json');
 		$actor_id = $_POST['actor_id'];
 		$resource_id = $_POST['resource_id'];
 		$amount = $_POST['amount'];
@@ -529,6 +534,7 @@ class Actor extends Controller
 	}
 
 	public function Drop_product() {
+		header('Content-type: application/json');
 		$actor_id = $_POST['actor_id'];
 		$product_id = $_POST['product_id'];
 		$amount = $_POST['amount'];
@@ -544,6 +550,7 @@ class Actor extends Controller
 	}
 
 	public function Pick_up_product() {
+		header('Content-type: application/json');
 		$actor_id = $_POST['actor_id'];
 		$product_id = $_POST['product_id'];
 		$amount = $_POST['amount'];
@@ -559,6 +566,7 @@ class Actor extends Controller
 	}
 
 	public function Start_hunt() {
+		header('Content-type: application/json');
 		$actor_id = $_POST['actor_id'];
 		$hours = $_POST['hours'];
 		$species = $_POST['species'];
@@ -570,6 +578,37 @@ class Actor extends Controller
 
 		$this->Load_model('species_model');
 		$result = $this->species_model->Start_hunt($actor_id, $hours, $species);
+
+		echo json_encode($result);
+	}
+
+	public function Join_hunt() {
+		header('Content-type: application/json');
+		$actor_id = $_POST['actor_id'];
+		$hunt_id = $_POST['hunt_id'];
+		
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+
+		$this->Load_model('species_model');
+		$result = $this->species_model->Join_hunt($actor_id, $hunt_id);
+
+		echo json_encode($result);
+	}
+
+	public function Leave_hunt() {
+		header('Content-type: application/json');
+		$actor_id = $_POST['actor_id'];
+		
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+
+		$this->Load_model('species_model');
+		$result = $this->species_model->Leave_hunt($actor_id);
 
 		echo json_encode($result);
 	}

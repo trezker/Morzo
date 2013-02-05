@@ -166,8 +166,8 @@ class Species_model{
 						h.Prey_ID,
 						h.Duration,
 						h.Hours_left,
-						false AS Joined,
-						false AS Active,
+						IF(a.Hunt_ID = h.ID,true,false) AS Joined,
+						(SELECT COUNT(1) FROM Actor where Hunt_ID=h.ID) AS Participants,
 						'TODO' AS Description
 					from Hunt h
 					join Huntstage hs on hs.ID = h.Stage_ID
@@ -182,6 +182,45 @@ class Species_model{
 		}
 		
 		return $rs->GetArray();
+	}
+	
+	public function Join_hunt($actor_id, $hunt_id) {
+		$db = Load_database();
+
+		$query = " select H.ID from Hunt H
+					join Actor A on A.Location_ID = H.Location_ID
+					where H.ID = ? and A.ID = ?
+				";
+		$args = array($hunt_id, $actor_id);
+		$rs = $db->Execute($query, $args);
+		if(!$rs || $rs->RecordCount() < 1) {
+			$errormsg = $db->ErrorMsg();
+			return array('success' => false, 'data' => $errormsg);
+		}
+
+		$query = "update Actor set Hunt_ID = ? where ID = ?";
+		$args = array($hunt_id, $actor_id);
+		$rs = $db->Execute($query, $args);
+		if(!$rs) {
+			$errormsg = $db->ErrorMsg();
+			return array('success' => false, 'data' => $errormsg);
+		}
+		
+		return array('success' => true);
+	}
+
+	public function Leave_hunt($actor_id) {
+		$db = Load_database();
+
+		$query = "update Actor set Hunt_ID = NULL where ID = ?";
+		$args = array($actor_id);
+		$rs = $db->Execute($query, $args);
+		if(!$rs) {
+			$errormsg = $db->ErrorMsg();
+			return array('success' => false, 'data' => $errormsg);
+		}
+		
+		return array('success' => true);
 	}
 }
 ?>

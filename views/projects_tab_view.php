@@ -71,7 +71,7 @@
 			} else {
 				$joinleave = '<span class="action" onclick="leave_hunt({actor_id})">Leave</span>';
 			}
-			if($project["Active"] == 0) {
+			if($hunt["Participants"] == 0) {
 				$active_class = 'inactive_project';
 			} else {
 				$active_class = 'active_project';

@@ -556,3 +556,39 @@ function start_hunt(actor_id) {
 		}
 	});
 }
+
+function join_hunt(actor_id, hunt_id) {
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Join_hunt',
+		data: {
+			actor_id: actor_id,
+			hunt_id: hunt_id
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = "/actor/show_actor/"+actor_id+"/projects";
+			}
+		}
+	});
+}
+
+function leave_hunt(actor_id, hunt_id) {
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Leave_hunt',
+		data: {
+			actor_id: actor_id,
+			hunt_id: hunt_id
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = "/actor/show_actor/"+actor_id+"/projects";
+			}
+		}
+	});
+}

@@ -44,12 +44,15 @@ CREATE TABLE `Actor` (
   `Inhabitable` tinyint(1) NOT NULL DEFAULT '1',
   `Project_ID` bigint(20) DEFAULT NULL,
   `Inventory_ID` bigint(20) NOT NULL,
+  `Hunt_ID` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Inventory_ID_UNIQUE` (`Inventory_ID`),
   KEY `Character_fk_User` (`User_ID`),
   KEY `Character_fk_Location` (`Location_ID`),
   KEY `Actor_fk_Project` (`Project_ID`),
   KEY `Actor_fk_Inventory` (`Inventory_ID`),
+  KEY `Actor_fk_Hunt_idx` (`Hunt_ID`),
+  CONSTRAINT `Actor_fk_Hunt` FOREIGN KEY (`Hunt_ID`) REFERENCES `Hunt` (`ID`),
   CONSTRAINT `Actor_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Actor_fk_Project` FOREIGN KEY (`Project_ID`) REFERENCES `Project` (`ID`),
   CONSTRAINT `Character_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
@@ -257,7 +260,7 @@ CREATE TABLE `Hunt` (
   CONSTRAINT `Hunt_fk_location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Hunt_fk_huntstage` FOREIGN KEY (`Stage_ID`) REFERENCES `Huntstage` (`ID`),
   CONSTRAINT `Hunt_fk_prey` FOREIGN KEY (`Prey_ID`) REFERENCES `Species` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -279,7 +282,7 @@ CREATE TABLE `Hunt_species` (
   KEY `Hunt_species_fk_species_idx` (`Species_ID`),
   CONSTRAINT `Hunt_species_fk_hunt` FOREIGN KEY (`Hunt_ID`) REFERENCES `Hunt` (`ID`),
   CONSTRAINT `Hunt_species_fk_species` FOREIGN KEY (`Species_ID`) REFERENCES `Species` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -924,4 +927,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-02-03 21:10:20
+-- Dump completed on 2013-02-05 21:49:41
