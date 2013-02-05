@@ -512,7 +512,7 @@ class Project_model extends Model
 
 		$args = array($project_id, $actor_id);
 
-		//TODO: Figure out if you're allowed to join the project
+		//Figure out if you're allowed to join the project
 		//At same location
 		//Not travelling
 		$r = $db->Execute('
@@ -533,8 +533,15 @@ class Project_model extends Model
 			return false;
 		}
 
+		//Make sure actor leaves any participation in a hunt
+		$this->Load_model('Species_model');
+		$left = $this->Species_model->Leave_hunt($actor_id);
+		if($left != true) {
+			return array('success' => false, 'data' => 'Failed to leave hunt');
+		}
+
+		//Join the project
 		$args = array($project_id, $actor_id);
-		
 		$r = $db->Execute('
 			update Actor A set A.Project_ID = ?
 			where A.ID = ?

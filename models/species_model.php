@@ -1,9 +1,10 @@
 <?php
 
 require_once '../models/database.php';
+require_once '../models/model.php';
 
-class Species_model{
-	public function Get_species(){
+class Species_model extends Model {
+	public function Get_species() {
 		$db = Load_database();
 		
 		$rs = $db->Execute('
@@ -187,6 +188,7 @@ class Species_model{
 	public function Join_hunt($actor_id, $hunt_id) {
 		$db = Load_database();
 
+		//Check if allowed to join
 		$query = " select H.ID from Hunt H
 					join Actor A on A.Location_ID = H.Location_ID
 					where H.ID = ? and A.ID = ?
@@ -198,6 +200,14 @@ class Species_model{
 			return array('success' => false, 'data' => $errormsg);
 		}
 
+		//Make sure actor leaves any participation in a project
+		$this->Load_model('Project_model');
+		$left = $this->Project_model->Leave_project($actor_id);
+		if($left != true) {
+			return array('success' => false, 'data' => 'Failed to leave project');
+		}
+		
+		//Join
 		$query = "update Actor set Hunt_ID = ? where ID = ?";
 		$args = array($hunt_id, $actor_id);
 		$rs = $db->Execute($query, $args);
