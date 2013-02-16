@@ -199,11 +199,20 @@ li.selected:hover {
 	border-width: 0px;
 	border-spacing: 0px;
 	border-collapse: collapse;
+	width: 100%;
 }
 
 .translations_list td{
 	border: 1px solid #000;
 	padding: 6px 3px;
+}
+
+.translations_list .tdhandle{
+	width: 200px;
+}
+
+.translations_list .tdsave{
+	width: 100px;
 }
 
 .translation_input {

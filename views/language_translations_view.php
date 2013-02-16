@@ -2,12 +2,12 @@
 	<?php
 	$template = '
 		<tr class="{alternate}">
-			<td>{Handle}</td>
+			<td class="tdhandle">{Handle}</td>
 			<td>
 				{English}<br />
 				<input id="input_{C}" name="input_{C}" class="translation_input" style="width: 99%;" type="text" value="{Text}" />
 			</td>
-			<td>
+			<td class="tdsave">
 				<span class="action" onclick="save_translation({C}, \'{Handle}\');">Save</span><br />
 				<span id="feedback_{C}"></span>
 			</td>

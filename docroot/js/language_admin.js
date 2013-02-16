@@ -21,8 +21,7 @@ function save_translation(input_id, handle) {
 	$('#feedback_'+input_id).html("Saving...");
 	var language_id = $('#language').val();
 	var text = $('#input_'+input_id).val();
-	$.ajax(
-	{
+	$.ajax({
 		type: 'POST',
 		url: 'language_admin/Save_translation',
 		data: {
@@ -36,6 +35,28 @@ function save_translation(input_id, handle) {
 				$('#feedback_'+input_id).html("Saved");
 			} else {
 				$('#feedback_'+input_id).html("Failed");
+			}
+		}
+	});
+}
+
+function new_translation() {
+	$('#new_feedback').html("Saving...");
+	var handle = $('#new_handle').val();
+	var text = $('#new_text').val();
+	$.ajax({
+		type: 'POST',
+		url: 'language_admin/New_translation',
+		data: {
+			handle: handle,
+			text: text			
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				$('#new_feedback').html("Saved");
+			} else {
+				$('#new_feedback').html("Failed");
 			}
 		}
 	});

@@ -94,4 +94,18 @@ class Language_model
 
 		return true;
 	}
+
+	public function New_translation($handle, $text){
+		$db = Load_database();
+
+		$query = '
+			INSERT INTO Translation (Language_ID, Handle, Text)
+			VALUES (1, ?, ?)
+			';
+		$rs = $db->Execute($query, array($handle, $text));
+		if(!$rs){
+			return false;
+		}
+		return true;
+	}
 }
