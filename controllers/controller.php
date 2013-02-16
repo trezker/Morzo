@@ -25,11 +25,13 @@ class Controller
 		}
 		ob_start();
 		include "../views/".strtolower($view).".php";
-
+		$result = ob_get_clean();
+		$this->Load_model("Language_model");
+		$result = $this->Language_model->Translate_tokens($result);
 		if($return == true)
-			return ob_get_clean();
+			return $result;
 		else
-			ob_end_flush();
+			echo $result;
 	}
 }
 

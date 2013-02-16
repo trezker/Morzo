@@ -29,7 +29,7 @@ class Language_model
 			FROM Translation
 			WHERE Handle = ? AND Language_ID = ?';
 		$rs = $db->Execute($query, array($handle, 1));
-		if(!$rs ) 
+		if(!$rs) 
 		{
 			return $handle;
 		}
@@ -39,6 +39,15 @@ class Language_model
 		}
 		
 		return $rs->fields['Text'];
+	}
+
+	public function Replace_callback($matches) {
+		return $this->Translate_handle($matches[0]);
+	}
+	
+	public function Translate_tokens($text) {
+		$text = preg_replace_callback('/{LNG_[^}]*}/', array($this, 'Replace_callback'), $text);
+		return $text;
 	}
 	
 	public function Get_languages(){
@@ -67,7 +76,7 @@ class Language_model
 				t.Text
 			FROM Translation e
 			LEFT JOIN Translation t on t.Handle = e.Handle and t.Language_ID = ?
-			WHERE e.Language_ID = 1
+			WHERE e.Language_ID = 2
 			ORDER BY e.Handle
 			';
 		$rs = $db->Execute($query, array($target_language));

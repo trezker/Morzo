@@ -95,4 +95,5 @@
 			</tr>';
 		?>
 	</table>
+	{LNG_Bear}{LNG_Squirrel}
 </div>
