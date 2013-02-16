@@ -168,8 +168,14 @@ class Species_model extends Model {
 						h.Duration,
 						h.Hours_left,
 						IF(a.Hunt_ID = h.ID,true,false) AS Joined,
-						(SELECT COUNT(1) FROM Actor where Hunt_ID=h.ID) AS Participants,
-						'TODO' AS Description
+						(	SELECT COUNT(1) FROM Actor 
+							where Hunt_ID=h.ID
+						) AS Participants,
+						(	SELECT GROUP_CONCAT(Name SEPARATOR ', ') 
+							FROM Hunt_species hsp
+							JOIN Species s on s.ID = hsp.Species_ID
+							WHERE hsp.Hunt_ID = h.ID
+						) AS Description
 					from Hunt h
 					join Huntstage hs on hs.ID = h.Stage_ID
 					join Actor a on a.Location_ID = h.Location_ID
