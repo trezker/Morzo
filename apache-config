@@ -1,0 +1,27 @@
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+
+	DocumentRoot /home/your-username-here/morzo/docroot
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	<Directory /home/your-username-here/morzo/docroot/>
+		Options Indexes FollowSymLinks
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+	RewriteEngine On
+	RewriteRule ^(/data/|/css/|/js/|/favicon\.(ico|txt)|/robots\.txt|/crossdomain\.xml|/index.php) - [L]
+	RewriteRule ^.*$ /index.php [NC,L]
+</VirtualHost>
