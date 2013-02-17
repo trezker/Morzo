@@ -16,6 +16,10 @@ $GLOBALS['base_url'] = $base_url;
 require_once '../util/htmltemplate.php';
 require_once '../util/log.php';
 
+if (empty($_SERVER['PATH_INFO'])) {
+	$path = explode('?', $_SERVER['REQUEST_URI'], 2);
+	$_SERVER['PATH_INFO'] = reset($path);
+}
 $argv = explode("/",$_SERVER['PATH_INFO']);
 
 $memcache;
@@ -83,12 +87,14 @@ else
 	//Load requested controller
 	if(count($argv)>1)
 	{
+		$allowed_controllers = glob('../controllers/*.php');
 		$controller_path = '../controllers/'.$argv[1].'.php';
-		if(!file_exists($controller_path))
+		if(!in_array($controller_path, $allowed_controllers) || !file_exists($controller_path))
 		{
 			Log_message("Could not load controller: ".$controller_path);
 			header("HTTP/1.0 404 Not Found");
 			include '../blocked.php';
+			exit;
 		}
 		else
 		{
@@ -99,6 +105,7 @@ else
 	//			echo 'Failed '.$r.': ' . $controller_path . '<br />';
 				header("HTTP/1.0 404 Not Found");
 				include '../blocked.php';
+				exit;
 			}
 			else
 			{
@@ -113,6 +120,7 @@ else
 				{
 					header("HTTP/1.0 404 Not Found");
 					include '../blocked.php';
+					exit;
 				}
 				else
 				{
