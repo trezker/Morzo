@@ -41,7 +41,7 @@ class Event_model
 	public function Save_event($translation_handle, $from_actor_id, $to_actor_id, $message = NULL, $from_location = NULL, $to_location = NULL, $private = false) {
 		$db = Load_database();
 
-		$db->StartTrans();
+		//$db->StartTrans();
 		$rs = $db->Execute('
 			insert into Event(From_actor_ID, To_actor_ID, Message, Ingame_time, Real_time, From_location_ID, To_location_ID, Translation_handle)
 			select ?, ?, ?, C.Value, NOW(), ?, ?, ? from Count C where Name = \'Update\' limit 1
@@ -79,6 +79,31 @@ class Event_model
 					$db->FailTrans();
 				}
 			}
+		}
+		
+		$success = !$db->HasFailedTrans();
+		//$db->CompleteTrans();
+		return $success;
+	}
+
+	public function Save_hunt_event($translation_handle, $hunt_id) {
+		$db = Load_database();
+
+		$db->StartTrans();
+		$rs = $db->Execute('
+			insert into Event(Ingame_time, Real_time, Translation_handle)
+			select C.Value, NOW(), ? from Count C where Name = \'Update\' limit 1
+			', array($translation_handle));
+		
+		$event_id = $db->Insert_ID();
+
+		$rs = $db->Execute('
+			insert into Actor_event(Actor_ID, Event_ID)
+			select A.ID, ? from Actor A
+			where A.Hunt_ID = ?
+			', array($event_id, $hunt_id));
+		if($db->Affected_rows() == 0) {
+			$db->FailTrans();
 		}
 		
 		$success = !$db->HasFailedTrans();

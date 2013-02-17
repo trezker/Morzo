@@ -238,5 +238,125 @@ class Species_model extends Model {
 		
 		return array('success' => true);
 	}
+	
+	public function Update_hunts($time) {
+		$db = Load_database();
+		$errormsg = "";
+
+		$query = "
+				select
+					ID,
+					Stage_ID,
+					Prey_ID,
+					Hours_left,
+					Location_ID,
+					UpdateTick
+				from Hunt
+				where UpdateTick < ?
+				";
+		$args = array($time);
+		$rs = $db->Execute($query, $args);
+		if(!$rs) {
+			$errormsg = $db->ErrorMsg();
+			return array('success' => false, 'data' => $errormsg);
+		}
+		
+		$db->StartTrans();
+
+		foreach($rs->GetArray() as $hunt) {
+			echo '<pre>';
+			var_dump($hunt);
+			echo '</pre>';
+			$hunt['UpdateTick'] += 1;
+			$hunt['Hours_left'] -= 1;
+			
+			//Update hunt stage, create corpse...
+			if($hunt['Stage_ID'] == 1) { //Searching
+				//10% chance we run into animal directly
+				$animal = rand (0, 9);
+				//50% chance to find tracks
+				$tracks = rand (0, 1);
+				if($animal == 0) {
+					$hunt['Stage_ID'] = 3;
+				} else if($tracks == 0) {
+					$hunt['Stage_ID'] = 2;
+				}
+				//equal split which species we find
+				if($hunt['Stage_ID'] > 1) {
+					$query = "
+							select ID from Hunt_species
+							where Hunt_ID = ? and Amount > 0
+							";
+					$args = array($hunt['ID']);
+					$rs = $db->Execute($query, $args);
+					if(!$rs) {
+						$errormsg = $db->ErrorMsg();
+						break;
+					}
+					$species = $rs->GetArray();
+					$num_species = count($species);
+					$i = rand (0, $num_species-1);
+					$hunt['Prey_ID'] = $species[$i]['ID'];
+				}
+			}
+			if($hunt['Stage_ID'] == 2) { //Tracking
+				//50% chance to catch up to the animal
+			}
+			if($hunt['Stage_ID'] == 3) { //Chasing
+				//50% chance to kill
+			}
+			
+			if($hunt['Hours_left'] > 0) {
+				$query = "
+						update Hunt set
+							UpdateTick = ?,
+							Hours_left = ?,
+							Stage_ID = ?,
+							Prey_ID = ?
+						where ID = ?
+						";
+				$args = array(
+							$hunt['UpdateTick'],
+							$hunt['Hours_left'],
+							$hunt['Prey_ID'],
+							$hunt['Stage_ID'],
+							$hunt['ID']);
+				$rs = $db->Execute($query, $args);
+				if($db->Affected_rows() == 0) {
+					$errormsg = "No affected rows from update";
+					$db->FailTrans();
+					break;
+				}
+				if(!$rs) {
+					$errormsg = $db->ErrorMsg();
+					break;
+				}
+				if($db->HasFailedTrans()) {
+					$errormsg = $db->ErrorMsg();
+					break;
+				}
+			} else {
+				$this->Load_model('Event_model');
+				$this->Event_model->Save_hunt_event("{LNG_Hunt_ended}", $hunt['ID']);
+				if($db->HasFailedTrans()) {
+					$errormsg = "Saving event failed";
+					break;
+				}
+				$query = "
+						delete from Hunt where ID = ?
+						";
+				$args = array($hunt['ID']);
+				$rs = $db->Execute($query, $args);
+				if(!$rs) {
+					$errormsg = $db->ErrorMsg();
+					break;
+				}
+			}
+		}
+
+		$success = !$db->HasFailedTrans();
+		$db->CompleteTrans();
+		return array('success' => $success, 'data' => $errormsg);
+	}
 }
 ?>

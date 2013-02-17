@@ -52,7 +52,7 @@ CREATE TABLE `Actor` (
   KEY `Actor_fk_Project` (`Project_ID`),
   KEY `Actor_fk_Inventory` (`Inventory_ID`),
   KEY `Actor_fk_Hunt_idx` (`Hunt_ID`),
-  CONSTRAINT `Actor_fk_Hunt` FOREIGN KEY (`Hunt_ID`) REFERENCES `Hunt` (`ID`),
+  CONSTRAINT `Actor_fk_Hunt` FOREIGN KEY (`Hunt_ID`) REFERENCES `Hunt` (`ID`) ON DELETE SET NULL,
   CONSTRAINT `Actor_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Actor_fk_Project` FOREIGN KEY (`Project_ID`) REFERENCES `Project` (`ID`),
   CONSTRAINT `Character_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
@@ -77,7 +77,7 @@ CREATE TABLE `Actor_event` (
   KEY `Actor_event_fk_Event` (`Event_ID`),
   CONSTRAINT `Actor_event_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Actor_event_fk_Event` FOREIGN KEY (`Event_ID`) REFERENCES `Event` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=1631 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1636 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -234,7 +234,7 @@ CREATE TABLE `Event` (
   CONSTRAINT `Event_fk_From_location` FOREIGN KEY (`From_location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Event_fk_To_actor` FOREIGN KEY (`To_actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Event_fk_To_location` FOREIGN KEY (`To_location_ID`) REFERENCES `Location` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=153 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=160 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -251,14 +251,15 @@ CREATE TABLE `Hunt` (
   `Duration` int(11) NOT NULL,
   `Hours_left` int(11) NOT NULL,
   `Location_ID` bigint(20) NOT NULL,
+  `UpdateTick` bigint(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   KEY `fk_Hunt_huntstage_idx` (`Stage_ID`),
   KEY `Hunt_fk_species_idx` (`Prey_ID`),
   KEY `Hunt_fk_prey_idx` (`Prey_ID`),
   KEY `Hunt_fk_location_idx` (`Location_ID`),
-  CONSTRAINT `Hunt_fk_location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Hunt_fk_huntstage` FOREIGN KEY (`Stage_ID`) REFERENCES `Huntstage` (`ID`),
+  CONSTRAINT `Hunt_fk_location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Hunt_fk_prey` FOREIGN KEY (`Prey_ID`) REFERENCES `Species` (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -280,7 +281,7 @@ CREATE TABLE `Hunt_species` (
   UNIQUE KEY `Hunt_species_unique` (`Hunt_ID`,`Species_ID`),
   KEY `Hunt_species_fk_hunt_idx` (`Hunt_ID`),
   KEY `Hunt_species_fk_species_idx` (`Species_ID`),
-  CONSTRAINT `Hunt_species_fk_hunt` FOREIGN KEY (`Hunt_ID`) REFERENCES `Hunt` (`ID`),
+  CONSTRAINT `Hunt_species_fk_hunt` FOREIGN KEY (`Hunt_ID`) REFERENCES `Hunt` (`ID`) ON DELETE CASCADE,
   CONSTRAINT `Hunt_species_fk_species` FOREIGN KEY (`Species_ID`) REFERENCES `Species` (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -454,7 +455,7 @@ CREATE TABLE `Location_species` (
   KEY `Location_species_fk_Species` (`Species_ID`),
   CONSTRAINT `Location_species_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Location_species_fk_Species` FOREIGN KEY (`Species_ID`) REFERENCES `Species` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -806,7 +807,7 @@ CREATE TABLE `Translation` (
   UNIQUE KEY `Translation_unique` (`Language_ID`,`Handle`),
   KEY `Translation_fk_Language` (`Language_ID`),
   CONSTRAINT `Translation_fk_Language` FOREIGN KEY (`Language_ID`) REFERENCES `Language` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -927,4 +928,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-02-05 21:49:41
+-- Dump completed on 2013-02-17 16:14:51

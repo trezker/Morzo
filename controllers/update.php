@@ -14,6 +14,7 @@ class Update extends Controller
 		$this->Update_travel($time);
 		$this->Spawn_actors($time);
 		$this->Update_projects($time);
+		$this->Update_hunts($time);
 		echo $time;
 		echo '
 
@@ -103,5 +104,12 @@ class Update extends Controller
 			
 			$this->Project_model->Process_finished_projects($projects);
 		}
+	}
+	private function Update_hunts($time) {
+		$this->Load_model("Species_model");
+		$result = $this->Species_model->Update_hunts($time);
+		echo '<pre>';
+		var_dump($result);
+		echo '</pre>';
 	}
 }
