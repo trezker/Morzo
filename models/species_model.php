@@ -245,14 +245,15 @@ class Species_model extends Model {
 
 		$query = "
 				select
-					ID,
-					Stage_ID,
-					Prey_ID,
-					Hours_left,
-					Location_ID,
-					UpdateTick
-				from Hunt
-				where UpdateTick < ?
+					H.ID,
+					H.Stage_ID,
+					H.Prey_ID,
+					H.Hours_left,
+					H.Location_ID,
+					H.UpdateTick,
+					(select count(ID) from Actor A where A.Hunt_ID = H.ID) as Hunters
+				from Hunt H
+				where H.UpdateTick < ?
 				";
 		$args = array($time);
 		$rs = $db->Execute($query, $args);
@@ -260,7 +261,6 @@ class Species_model extends Model {
 			$errormsg = $db->ErrorMsg();
 			return array('success' => false, 'data' => $errormsg);
 		}
-		
 		$db->StartTrans();
 
 		foreach($rs->GetArray() as $hunt) {
@@ -268,42 +268,49 @@ class Species_model extends Model {
 			var_dump($hunt);
 			echo '</pre>';
 			$hunt['UpdateTick'] += 1;
-			$hunt['Hours_left'] -= 1;
-			
-			//Update hunt stage, create corpse...
-			if($hunt['Stage_ID'] == 1) { //Searching
-				//10% chance we run into animal directly
-				$animal = rand (0, 9);
-				//50% chance to find tracks
-				$tracks = rand (0, 1);
-				if($animal == 0) {
-					$hunt['Stage_ID'] = 3;
-				} else if($tracks == 0) {
-					$hunt['Stage_ID'] = 2;
-				}
-				//equal split which species we find
-				if($hunt['Stage_ID'] > 1) {
-					$query = "
-							select ID from Hunt_species
-							where Hunt_ID = ? and Amount > 0
-							";
-					$args = array($hunt['ID']);
-					$rs = $db->Execute($query, $args);
-					if(!$rs) {
-						$errormsg = $db->ErrorMsg();
-						break;
+			//TODO: Only decrement if someone is actively hunting
+			if($hunt['Hunters'] > 0) {
+				$hunt['Hours_left'] -= 1;
+				
+				//Update hunt stage, create corpse...
+				if($hunt['Stage_ID'] == 1) { //Searching
+					//50% chance to find tracks
+					$tracks = rand (0, 1);
+					if($tracks == 0) {
+						$hunt['Stage_ID'] = 2;
+						//equal split which species we find
+						$query = "
+								select ID from Hunt_species
+								where Hunt_ID = ? and Amount > 0
+								";
+						$args = array($hunt['ID']);
+						$rs = $db->Execute($query, $args);
+						if(!$rs) {
+							$errormsg = $db->ErrorMsg();
+							break;
+						}
+						$species = $rs->GetArray();
+						$num_species = count($species);
+						$i = rand (0, $num_species-1);
+						$hunt['Prey_ID'] = $species[$i]['ID'];
 					}
-					$species = $rs->GetArray();
-					$num_species = count($species);
-					$i = rand (0, $num_species-1);
-					$hunt['Prey_ID'] = $species[$i]['ID'];
 				}
-			}
-			if($hunt['Stage_ID'] == 2) { //Tracking
-				//50% chance to catch up to the animal
-			}
-			if($hunt['Stage_ID'] == 3) { //Chasing
-				//50% chance to kill
+				if($hunt['Stage_ID'] == 2) { //Tracking
+					//50% chance to catch up to the animal
+					$found = rand (0, 1);
+					if($found == 0) {
+						$hunt['Stage_ID'] = 3;
+					}
+				}
+				if($hunt['Stage_ID'] == 3) { //Chasing
+					//50% chance to kill
+					$kill = rand (0, 1);
+					if($kill == 0) {
+						//TODO: Create animal body
+						//Decrease amount for the species in hunt
+						$hunt['Stage_ID'] = 1;
+					}
+				}
 			}
 			
 			if($hunt['Hours_left'] > 0) {
@@ -318,8 +325,8 @@ class Species_model extends Model {
 				$args = array(
 							$hunt['UpdateTick'],
 							$hunt['Hours_left'],
-							$hunt['Prey_ID'],
 							$hunt['Stage_ID'],
+							$hunt['Prey_ID'],
 							$hunt['ID']);
 				$rs = $db->Execute($query, $args);
 				if($db->Affected_rows() == 0) {
