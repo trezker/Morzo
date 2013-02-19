@@ -36,10 +36,10 @@
 		
 		<?php if($_SESSION['admin']===true) { ?>
 			<p>You're an Admin!</p>
-			<p><span class="action" onclick='window.location="user_admin"'>Users</span></p>
-			<p><span class="action" onclick='window.location="world_admin"'>World</span></p>
-			<p><span class="action" onclick='window.location="project_admin"'>Projects</span></p>
-			<p><span class="action" onclick='window.location="language_admin"'>Translation</span></p>
+			<p><a href="/user_admin">Users</a></p>
+			<p><a href="/world_admin">World</a></p>
+			<p><a href="/project_admin">Projects</a></p>
+			<p><a href="/language_admin">Translation</a></p>
 		<?php } ?>
 	</body>
 </html>
