@@ -280,7 +280,7 @@ class Species_model extends Model {
 						$hunt['Stage_ID'] = 2;
 						//equal split which species we find
 						$query = "
-								select ID from Hunt_species
+								select Species_ID from Hunt_species
 								where Hunt_ID = ? and Amount > 0
 								";
 						$args = array($hunt['ID']);
@@ -292,7 +292,7 @@ class Species_model extends Model {
 						$species = $rs->GetArray();
 						$num_species = count($species);
 						$i = rand (0, $num_species-1);
-						$hunt['Prey_ID'] = $species[$i]['ID'];
+						$hunt['Prey_ID'] = $species[$i]['Species_ID'];
 					}
 				}
 				if($hunt['Stage_ID'] == 2) { //Tracking
@@ -314,6 +314,9 @@ class Species_model extends Model {
 			}
 			
 			if($hunt['Hours_left'] > 0) {
+			echo '<pre>';
+			var_dump($hunt);
+			echo '</pre>';
 				$query = "
 						update Hunt set
 							UpdateTick = ?,
