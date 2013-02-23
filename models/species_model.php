@@ -306,7 +306,6 @@ class Species_model extends Model {
 					//50% chance to find tracks
 					$tracks = rand (0, 1);
 					if($tracks == 0) {
-						$hunt['Stage_ID'] = 2;
 						//equal split which species we find
 						$query = "
 								select Species_ID from Hunt_species
@@ -320,8 +319,13 @@ class Species_model extends Model {
 						}
 						$species = $rs->GetArray();
 						$num_species = count($species);
-						$i = rand (0, $num_species-1);
-						$hunt['Prey_ID'] = $species[$i]['Species_ID'];
+						if($num_species == 0) {
+							$hunt['Hours_left'] = 0;
+						} else {
+							$i = rand (0, $num_species-1);
+							$hunt['Prey_ID'] = $species[$i]['Species_ID'];
+							$hunt['Stage_ID'] = 2;
+						}
 					}
 				}
 				if($hunt['Stage_ID'] == 2) { //Tracking
@@ -337,6 +341,35 @@ class Species_model extends Model {
 					if($kill == 0) {
 						//TODO: Create animal body
 						//Decrease amount for the species in hunt
+						$query = '
+							insert into Object (Product_ID, Inventory_ID, Quality, Rot)
+							select s.Corpse_product_ID, l.Inventory_ID, 1, 0 from Hunt h
+							join Species s on s.ID = h.Prey_ID
+							join Location l on l.ID = h.Location_ID
+							where h.ID = ?
+						';
+						$args = array($hunt['ID']);
+
+						$rs = $db->Execute($query, $args);
+						
+						if(!$rs) {
+							$errormsg = $db->ErrorMsg();
+							break;
+						}
+
+						$query = '
+							update Hunt_species set Amount = Amount - 1
+							where Hunt_ID = ? and Species_ID = ?
+						';
+						$args = array($hunt['ID'], $hunt['Prey_ID']);
+
+						$rs = $db->Execute($query, $args);
+						
+						if(!$rs) {
+							$errormsg = $db->ErrorMsg();
+							break;
+						}
+
 						$hunt['Stage_ID'] = 1;
 					}
 				}
