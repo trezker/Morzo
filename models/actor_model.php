@@ -73,6 +73,34 @@ class Actor_model extends Model
 		return true;
 	}
 	
+	public function Update_actors($time) {
+		$db = Load_database();
+
+		$query = 'update Actor set Health = Health - 1 where Hunger >= 128';
+		$args = array();
+		$rs = $db->Execute($query, $args);
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return false;
+		}
+
+		$query = 'update Actor set Health = Health + 1 where Hunger < 128 and Health < 128';
+		$args = array();
+		$rs = $db->Execute($query, $args);
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return false;
+		}
+
+		$query = 'update Actor set Hunger = Hunger + 1 where Hunger < 128';
+		$args = array();
+		$rs = $db->Execute($query, $args);
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return false;
+		}
+	}
+	
 	public function Request_actor($user_id)
 	{
 		$db = Load_database();

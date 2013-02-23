@@ -45,6 +45,8 @@ CREATE TABLE `Actor` (
   `Project_ID` bigint(20) DEFAULT NULL,
   `Inventory_ID` bigint(20) NOT NULL,
   `Hunt_ID` bigint(20) DEFAULT NULL,
+  `Hunger` double NOT NULL DEFAULT '0',
+  `Health` double NOT NULL DEFAULT '128',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Inventory_ID_UNIQUE` (`Inventory_ID`),
   KEY `Character_fk_User` (`User_ID`),
@@ -77,7 +79,7 @@ CREATE TABLE `Actor_event` (
   KEY `Actor_event_fk_Event` (`Event_ID`),
   CONSTRAINT `Actor_event_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Actor_event_fk_Event` FOREIGN KEY (`Event_ID`) REFERENCES `Event` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=1638 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1648 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -234,7 +236,7 @@ CREATE TABLE `Event` (
   CONSTRAINT `Event_fk_From_location` FOREIGN KEY (`From_location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Event_fk_To_actor` FOREIGN KEY (`To_actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Event_fk_To_location` FOREIGN KEY (`To_location_ID`) REFERENCES `Location` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=173 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -261,7 +263,7 @@ CREATE TABLE `Hunt` (
   CONSTRAINT `Hunt_fk_huntstage` FOREIGN KEY (`Stage_ID`) REFERENCES `Huntstage` (`ID`),
   CONSTRAINT `Hunt_fk_location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Hunt_fk_prey` FOREIGN KEY (`Prey_ID`) REFERENCES `Species` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -283,7 +285,7 @@ CREATE TABLE `Hunt_species` (
   KEY `Hunt_species_fk_species_idx` (`Species_ID`),
   CONSTRAINT `Hunt_species_fk_hunt` FOREIGN KEY (`Hunt_ID`) REFERENCES `Hunt` (`ID`) ON DELETE CASCADE,
   CONSTRAINT `Hunt_species_fk_species` FOREIGN KEY (`Species_ID`) REFERENCES `Species` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -493,7 +495,7 @@ CREATE TABLE `Object` (
   KEY `Object_fk_Inventory` (`Inventory_ID`),
   CONSTRAINT `Object_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Object_fk_Product` FOREIGN KEY (`Product_ID`) REFERENCES `Product` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -928,4 +930,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-02-23 11:25:38
+-- Dump completed on 2013-02-23 20:14:12
