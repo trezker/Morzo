@@ -40,15 +40,44 @@ class Species_model extends Model {
 	public function Save_species($name, $id, $max_population) {
 		$db = Load_database();
 		
+		$this->Load_model("Product_model");
 		if($id == -1) {
+			$product_spec = array(
+								'name' => "Dead " . $name, 
+								'mass' => 1,
+								'volume' => 1,
+								'rot_rate' => 1,
+								'id' => -1
+							);
+			if($this->Product_model->Save_product($product_spec)) {
+				$corpse_product_id = $db->Insert_id();
+			} else {
+				return false;
+			}
+
 			$args = array(	$name,
-							$max_population
+							$max_population,
+							$corpse_product_id
 						);
 
 			$rs = $db->Execute('
-				insert into Species (Name, Max_population) values (?, ?)
+				insert into Species (Name, Max_population, Corpse_product_ID) values (?, ?, ?)
 				', $args);
 		} else {
+			$args = array(	"Dead " . $name,
+							$id
+						);
+
+			$rs = $db->Execute('
+				update Product set Name = ?
+				where ID in (select Corpse_product_ID from Species where ID = ?)
+				', $args);
+				
+			if(!$rs) {
+				echo $db->ErrorMsg();
+				return false;
+			}
+
 			$args = array(	$name,
 							$max_population,
 							$id
