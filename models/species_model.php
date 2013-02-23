@@ -293,11 +293,12 @@ class Species_model extends Model {
 		$db->StartTrans();
 
 		foreach($rs->GetArray() as $hunt) {
+			/*
 			echo '<pre>';
 			var_dump($hunt);
 			echo '</pre>';
+			*/
 			$hunt['UpdateTick'] += 1;
-			//TODO: Only decrement if someone is actively hunting
 			if($hunt['Hunters'] > 0) {
 				$hunt['Hours_left'] -= 1;
 				
@@ -319,13 +320,9 @@ class Species_model extends Model {
 						}
 						$species = $rs->GetArray();
 						$num_species = count($species);
-						if($num_species == 0) {
-							$hunt['Hours_left'] = 0;
-						} else {
-							$i = rand (0, $num_species-1);
-							$hunt['Prey_ID'] = $species[$i]['Species_ID'];
-							$hunt['Stage_ID'] = 2;
-						}
+						$i = rand (0, $num_species-1);
+						$hunt['Prey_ID'] = $species[$i]['Species_ID'];
+						$hunt['Stage_ID'] = 2;
 					}
 				}
 				if($hunt['Stage_ID'] == 2) { //Tracking
@@ -339,8 +336,6 @@ class Species_model extends Model {
 					//50% chance to kill
 					$kill = rand (0, 1);
 					if($kill == 0) {
-						//TODO: Create animal body
-						//Decrease amount for the species in hunt
 						$query = '
 							insert into Object (Product_ID, Inventory_ID, Quality, Rot)
 							select s.Corpse_product_ID, l.Inventory_ID, 1, 0 from Hunt h
@@ -370,15 +365,34 @@ class Species_model extends Model {
 							break;
 						}
 
+						//Check if there are any animals left to hunt, if not we end the hunt.
+						$query = "
+								select Species_ID from Hunt_species
+								where Hunt_ID = ? and Amount > 0
+								";
+						$args = array($hunt['ID']);
+						$rs = $db->Execute($query, $args);
+						if(!$rs) {
+							$errormsg = $db->ErrorMsg();
+							break;
+						}
+						$species = $rs->GetArray();
+						$num_species = count($species);
+						if($num_species == 0) {
+							$hunt['Hours_left'] = 0;
+						}
+
 						$hunt['Stage_ID'] = 1;
 					}
 				}
 			}
 			
 			if($hunt['Hours_left'] > 0) {
-			echo '<pre>';
-			var_dump($hunt);
-			echo '</pre>';
+				/*
+				echo '<pre>';
+				var_dump($hunt);
+				echo '</pre>';
+				*/
 				$query = "
 						update Hunt set
 							UpdateTick = ?,
