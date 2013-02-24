@@ -24,6 +24,15 @@
 				</tr>
 				<tr>
 					<td>
+						Vitality
+					</td>
+					<td>
+						<?php echo intval(($actor['Health'] / 128)*100); ?>% health
+						<?php echo intval(($actor['Hunger'] / 128)*100); ?>% hungry
+					</td>
+				</tr>
+				<tr>
+					<td>
 						Location
 					</td>
 					<td>
