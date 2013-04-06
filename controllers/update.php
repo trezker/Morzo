@@ -4,15 +4,17 @@ require_once "../controllers/controller.php";
 class Update extends Controller
 {
 	public function Index($is_web_request = true) {
+		/*
 		if($is_web_request != false) {
 			header("HTTP/1.0 404 Not Found");
 			include '../blocked.php';
 			return;
 		}
+		*/
 		$this->Load_model("Travel_model");
 		$time = $this->Travel_model->Tick();
 		$this->Update_travel($time);
-		$this->Spawn_actors($time);
+		$this->Update_actors($time);
 		$this->Update_projects($time);
 		$this->Update_hunts($time);
 		echo $time;
@@ -57,7 +59,7 @@ class Update extends Controller
 		}
 	}
 
-	private function Spawn_actors($time) {
+	private function Update_actors($time) {
 		$this->Load_model("Actor_model");
 		$success = $this->Actor_model->Spawn_actor(1);
 		if($success == true) {
@@ -65,6 +67,7 @@ class Update extends Controller
 		} else {
 			echo "No new actor ";
 		}
+		$this->Actor_model->Update_actors($time);
 	}
 
 	private function Update_projects($time) {

@@ -88,7 +88,12 @@ else
 	if(count($argv)>1)
 	{
 		$allowed_controllers = glob('../controllers/*.php');
-		$controller_path = '../controllers/'.$argv[1].'.php';
+		if($argv[1] == "") {
+			$controller_name = "front";
+		} else {
+			$controller_name = $argv[1];
+		}
+		$controller_path = '../controllers/'.$controller_name.'.php';
 		if(!in_array($controller_path, $allowed_controllers) || !file_exists($controller_path))
 		{
 			Log_message("Could not load controller: ".$controller_path);
@@ -109,7 +114,7 @@ else
 			}
 			else
 			{
-				$obj = new $argv[1];
+				$obj = new $controller_name;
 
 				if(count($argv)<3)
 				{
