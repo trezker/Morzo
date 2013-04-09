@@ -67,7 +67,9 @@ class Update extends Controller
 		} else {
 			echo "No new actor ";
 		}
-		$this->Actor_model->Update_actors($time);
+		if(!$this->Actor_model->Update_actors($time)) {
+			echo "<br />Update actors failed";
+		}
 	}
 
 	private function Update_projects($time) {
