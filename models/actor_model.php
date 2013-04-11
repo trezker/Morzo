@@ -76,6 +76,7 @@ class Actor_model extends Model
 	public function Update_actors($time) {
 		$db = Load_database();
 
+		$this->Load_model('Event_model');
 		if(($time % 16) + 1 == 8)
 		{
 			$db->StartTrans();
@@ -142,6 +143,9 @@ class Actor_model extends Model
 				";
 				$args = array($hunger, $hungry_actor['ID']);
 				$rs = $db->Execute($query, $args);
+				if($hunger < $hungry_actor['Hunger']) {
+					$this->Event_model->Save_event("{LNG_Actor_ate}", $hungry_actor['ID'], NULL, NULL, NULL, NULL, true);
+				}
 			}
 			$success = !$db->HasFailedTrans();
 			$db->CompleteTrans();
