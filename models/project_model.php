@@ -453,7 +453,7 @@ class Project_model extends Model
 		return $rs->GetArray();
 	}
 	
-	public function Start_project($actor_id, $recipe_id, $supply)
+	public function Start_project($actor_id, $recipe_id, $supply, $cycles)
 	{
 		$db = Load_database();
 		
@@ -474,11 +474,11 @@ class Project_model extends Model
 
 		if(!$db->HasFailedTrans()) {
 			//Create the project
-			$args = array($recipe_id, $project_inventory_id, $actor_id);
+			$args = array($recipe_id, $cycles, $project_inventory_id, $actor_id);
 
 			$r = $db->Execute('
 				insert into Project (Creator_actor_ID, Location_ID, Recipe_ID, Cycles_left, Created_time, Inventory_ID)
-				select A.ID, A.Location_ID, ?, 1, C.Value, ?
+				select A.ID, A.Location_ID, ?, ?, C.Value, ?
 				from Count C, Actor A where 
 				C.Name = \'Update\' and A.ID = ?
 				', $args);
@@ -997,7 +997,7 @@ class Project_model extends Model
 		$r = $db->Execute('
 			select 	RI.Resource_ID, 
 					AI.Inventory_ID,
-					RI.Amount AS Needed_amount, 
+					RI.Amount * P.Cycles_left AS Needed_amount, 
 					PI.Amount AS Project_amount,
 					AI.Amount AS Actor_amount
 			from Project P
@@ -1069,7 +1069,7 @@ class Project_model extends Model
 		$args = array($project_id, $actor_id);
 		$r = $db->Execute('
 			select 	RI.Product_ID, 
-					RI.Amount AS Needed_amount, 
+					RI.Amount * P.Cycles_left AS Needed_amount, 
 					count(PO.ID) AS Project_amount
 			from Project P
 			join Actor A on P.Location_ID = A.Location_ID
@@ -1077,7 +1077,7 @@ class Project_model extends Model
 			left join Object PO on RI.Product_ID = PO.Product_ID and PO.Inventory_ID = P.Inventory_ID
 			where P.ID = ? and A.ID = ?
 			group by RI.ID
-			having(count(PO.ID) < RI.Amount)
+			having(count(PO.ID) < Needed_amount)
 			', $args);
 		
 		$inputs = $r->getArray();

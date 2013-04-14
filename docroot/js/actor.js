@@ -247,13 +247,15 @@ function show_project_start_form(actor_id, id) {
 
 function start_project(actor_id, recipe_id) {
 	var supply = $('#supply_resources_option').attr('checked');
+	var cycles = $('#cycle_count').val();
 	$.ajax({
 		type: 'POST',
 		url: '/actor/Start_project',
 		data: {
 			actor_id: actor_id,
 			recipe_id: recipe_id,
-			supply: supply
+			supply: supply,
+			cycles: cycles
 		},
 		dataType: "json",
 		success: function(data) {

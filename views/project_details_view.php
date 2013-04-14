@@ -8,6 +8,7 @@
 	<?php
 	echo expand_template(
 	'
+	Cycles left: {Cycles_left}<br />
 	Time: {Cycle_time} hours<br />
 	',
 	$project['info']);
@@ -48,7 +49,7 @@
 	</div>
 
 	<div id="recipe_inputs">
-		Requirements
+		Requirements (total supplied / required per cycle)
 		<ul class="selectable">
 			<?php
 			$input_template = '

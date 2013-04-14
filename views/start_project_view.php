@@ -85,6 +85,23 @@
 			?>
 		</ul>
 	</div>
-	<input type="checkbox" id="supply_resources_option">Supply requirements from inventory</input>
+	<table>
+		<tr>
+			<td>
+				<input type="checkbox" id="supply_resources_option" style="width: 30px;" />
+			</td>
+			<td>
+				Supply requirements from inventory
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="number" id="cycle_count" style="width: 30px;" />
+			</td>
+			<td>
+				Number of cycles
+			</td>
+		</tr>
+	</table>
 	<div class="action" onclick="start_project(<?php echo $actor_id.', '.$recipe['recipe']['ID'];?>)">Start project</div>
 </div>
