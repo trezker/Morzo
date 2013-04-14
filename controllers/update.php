@@ -89,6 +89,8 @@ class Update extends Controller
 					$projects[$project_id]['outputs'] = array();
 					$projects[$project_id]['Project_ID'] = $output['Project_ID'];
 					$projects[$project_id]['Cycles_left'] = $output['Cycles_left'];
+					$projects[$project_id]['Progress'] = $output['Progress'];
+					$projects[$project_id]['Cycle_time'] = $output['Cycle_time'];
 					$projects[$project_id]['Project_inventory'] = $output['Project_inventory'];
 				}
 				$projects[$project_id]['outputs'][] = $output;
@@ -99,6 +101,8 @@ class Update extends Controller
 					$projects[$project_id]['product_outputs'] = array();
 					$projects[$project_id]['Project_ID'] = $output['Project_ID'];
 					$projects[$project_id]['Cycles_left'] = $output['Cycles_left'];
+					$projects[$project_id]['Progress'] = $output['Progress'];
+					$projects[$project_id]['Cycle_time'] = $output['Cycle_time'];
 					$projects[$project_id]['Project_inventory'] = $output['Project_inventory'];
 				}
 				$projects[$project_id]['product_outputs'][] = $output;

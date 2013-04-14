@@ -855,6 +855,7 @@ class Project_model extends Model
 				P.ID as Project_ID,
 				P.Inventory_ID as Project_inventory,
 				P.Cycles_left,
+				P.Progress,
 				P.Creator_actor_ID,
 				O.Resource_ID,
 				O.Amount
@@ -876,6 +877,8 @@ class Project_model extends Model
 				P.ID as Project_ID,
 				P.Inventory_ID as Project_inventory,
 				P.Cycles_left,
+				P.Progress,
+				R.Cycle_time,
 				P.Creator_actor_ID,
 				A.Inventory_ID,
 				O.Product_ID,
@@ -950,9 +953,11 @@ class Project_model extends Model
 			if(!$db->HasFailedTrans()) {
 				if($project['Cycles_left'] > 1) {
 					$query = '
-						update Project set Cycles_left = Cycles_left - 1
+						update Project set Cycles_left = Cycles_left - 1, Progress = ?
 						where ID = ?
 					';
+					$args = array($project['Progress'] - $project['Cycle_time'], $project['Project_ID']);
+					$rs = $db->Execute($query, $args);
 				} else {
 					$query = '
 						Update Actor set Project_ID = NULL where Project_ID = ?
@@ -975,9 +980,9 @@ class Project_model extends Model
 					$query = '
 						delete from Project where ID = ?
 					';
+					$args = array($project['Project_ID']);
+					$rs = $db->Execute($query, $args);
 				}
-				$args = array($project['Project_ID']);
-				$rs = $db->Execute($query, $args);
 			}
 
 			if($db->HasFailedTrans()) {
