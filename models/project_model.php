@@ -960,7 +960,7 @@ class Project_model extends Model
 					$args = array($project['Progress'] - $project['Cycle_time'], $project['Project_ID']);
 					$rs = $db->Execute($query, $args);
 					
-					//TODO: Remove one cycles worth of input from project
+					//Remove one cycles worth of input resources from project
 					$query = '
 						select PI.ID, RI.Amount from Project P
 						join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID
@@ -969,11 +969,7 @@ class Project_model extends Model
 					';
 					$args = array($project['Project_ID']);
 					$rs = $db->Execute($query, $args);
-					/*
-					echo '<pre>';
-					var_dump($rs);
-					echo '</pre>';
-					*/
+
 					if(!$db->HasFailedTrans()) {
 						foreach($rs as $r) {
 							$query = '
@@ -981,8 +977,37 @@ class Project_model extends Model
 								where ID = ?
 							';
 							$args = array($r['Amount'], $r['ID']);
-							$rs = $db->Execute($query, $args);
-							
+							$prs = $db->Execute($query, $args);
+						}
+					}
+
+					//Remove one cycles worth of input objects from project
+					$query = '
+						select RPI.Product_ID, RPI.Amount, P.Inventory_ID from Project P
+						join Recipe_product_input RPI on P.Recipe_ID = RPI.Recipe_ID
+						where P.ID = ?
+					';
+					$args = array($project['Project_ID']);
+					$rs = $db->Execute($query, $args);
+
+					if(!$db->HasFailedTrans()) {
+						foreach($rs as $r) {
+							$query = '
+								select ID from Object
+								where Inventory_ID = ? and Product_ID = ?
+								limit ' . $r['Amount'] . '
+							';
+							$args = array($r['Inventory_ID'], $r['Product_ID']);
+							$srs = $db->Execute($query, $args);
+
+							foreach($srs as $pr) {
+								$query = '
+									delete from Object
+									where ID = ?
+								';
+								$args = array($pr['ID']);
+								$prs = $db->Execute($query, $args);
+							}
 						}
 					}
 				} else {
