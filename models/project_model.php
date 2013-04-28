@@ -852,6 +852,7 @@ class Project_model extends Model
 
 		$r = $db->Execute('
 			select
+				R.Cycle_time,
 				P.ID as Project_ID,
 				P.Inventory_ID as Project_inventory,
 				P.Cycles_left,
@@ -958,6 +959,32 @@ class Project_model extends Model
 					';
 					$args = array($project['Progress'] - $project['Cycle_time'], $project['Project_ID']);
 					$rs = $db->Execute($query, $args);
+					
+					//TODO: Remove one cycles worth of input from project
+					$query = '
+						select PI.ID, RI.Amount from Project P
+						join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID
+						join Project_input PI on PI.Resource_ID = RI.Resource_ID and PI.Project_ID = P.ID
+						where P.ID = ?
+					';
+					$args = array($project['Project_ID']);
+					$rs = $db->Execute($query, $args);
+					/*
+					echo '<pre>';
+					var_dump($rs);
+					echo '</pre>';
+					*/
+					if(!$db->HasFailedTrans()) {
+						foreach($rs as $r) {
+							$query = '
+								update Project_input set Amount = Amount - ?
+								where ID = ?
+							';
+							$args = array($r['Amount'], $r['ID']);
+							$rs = $db->Execute($query, $args);
+							
+						}
+					}
 				} else {
 					$query = '
 						Update Actor set Project_ID = NULL where Project_ID = ?
