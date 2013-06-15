@@ -76,7 +76,7 @@ class Language_model
 				t.Text
 			FROM Translation e
 			LEFT JOIN Translation t on t.Handle = e.Handle and t.Language_ID = ?
-			WHERE e.Language_ID = 2
+			WHERE e.Language_ID = 1
 			ORDER BY e.Handle
 			';
 		$rs = $db->Execute($query, array($target_language));
