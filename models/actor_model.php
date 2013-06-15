@@ -77,7 +77,7 @@ class Actor_model extends Model
 		$db = Load_database();
 
 		$this->Load_model('Event_model');
-		if(($time % 16) + 1 == 8)
+		//if(($time % 16) + 1 == 8)
 		{
 			$db->StartTrans();
 			
@@ -88,13 +88,13 @@ class Actor_model extends Model
 
 			foreach ($hungry_actors as $hungry_actor) {
 				$query = "
-					select R.ID, CF.Nutrition, R.Mass, CF.Nutrition / R.Mass as Efficiency, IR.Amount as Amount, 'Resource' as Setname from Resource R
+					select R.ID, R.Name, CF.Nutrition, R.Mass, CF.Nutrition / R.Mass as Efficiency, IR.Amount as Amount, 'Resource' as Setname from Resource R
 					join Resource_category RC on R.ID = RC.Resource_ID
 					join Category_food CF on RC.Category_ID = CF.Category_ID
 					join Inventory_resource IR on IR.Resource_ID = R.ID
 					where IR.Inventory_ID = ?
 					union DISTINCT 
-					select P.ID, CF.Nutrition, P.Mass, CF.Nutrition / P.Mass as Efficiency, count(P.ID) as Amount, 'Product' as Setname from Product P
+					select P.ID, P.Name, CF.Nutrition, P.Mass, CF.Nutrition / P.Mass as Efficiency, count(P.ID) as Amount, 'Product' as Setname from Product P
 					join Product_category PC on P.ID = PC.Product_ID
 					join Category_food CF on PC.Category_ID = CF.Category_ID
 					join Object O on O.Product_ID = P.ID
@@ -105,6 +105,7 @@ class Actor_model extends Model
 				$args = array($hungry_actor['Inventory_ID'], $hungry_actor['Inventory_ID']);
 				$rs = $db->Execute($query, $args);
 
+				$food_names = "";
 				$hunger = $hungry_actor['Hunger'];
 				foreach ($rs as $r) {
 					if($r['Setname'] = 'Resource') {
@@ -137,6 +138,10 @@ class Actor_model extends Model
 							}
 						}
 					}
+					if($food_names != "") {
+						$food_names .= ", ";
+					}
+					$food_names .= $r['Name'];
 				}
 				$query = "
 					update Actor set Hunger = ? where ID = ?
@@ -144,7 +149,7 @@ class Actor_model extends Model
 				$args = array($hunger, $hungry_actor['ID']);
 				$rs = $db->Execute($query, $args);
 				if($hunger < $hungry_actor['Hunger']) {
-					$this->Event_model->Save_event("{LNG_Actor_ate}", $hungry_actor['ID'], NULL, NULL, NULL, NULL, true);
+					$this->Event_model->Save_event("{LNG_Actor_ate} ", $hungry_actor['ID'], NULL, $food_names, NULL, NULL, true);
 				}
 			}
 			$success = !$db->HasFailedTrans();
