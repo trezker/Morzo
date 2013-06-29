@@ -2,14 +2,10 @@
 <div id="product">
 	<?php
 	$categorieshtml = '';
-	foreach($categories as $category) {
-		$categorieshtml .= expand_template(
-			'<span style="margin-right: 5px;">
-				{Name} 
-				<span class="action" onclick="remove_product_category({ID})">X</span>
-			</span>',
-			$category
-		);
+	if($categories) {
+		foreach($categories as $category) {
+			$categorieshtml .= expand_template($categorytemplate, $category);
+		}
 	}
 	$categorymenuhtml = '<select id="product_category_select">';
 	foreach($category_list as $category) {
@@ -44,7 +40,7 @@
 		</tr>
 		<tr>
 			<td class="label">Categories:</td>
-			<td>{!categorieshtml}</td>
+			<td id="categorycontainer">{!categorieshtml}</td>
 		</tr>
 		<tr>
 			<td class="label">Add category:</td>

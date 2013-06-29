@@ -319,15 +319,54 @@ class Project_admin extends Controller
 		$this->Load_model('Category_model');
 		$category_list = $this->Category_model->Get_categories();
 
+		$categorytemplate =	$this->get_category_template();
+		
 		$edit_product_view = $this->Load_view('product_edit_view',
 												array(
 													'product' => $product,
 													'categories' => $categories,
-													'category_list' => $category_list
+													'category_list' => $category_list,
+													'categorytemplate' => $categorytemplate
 												), 
 												true);
 
 		echo json_encode(array('success' => true, 'data' => $edit_product_view));
+	}
+	
+	public function get_category_template() {
+		$categorytemplate =	'<span style="margin-right: 5px;" class="category" id="category_{ID}" data-category_id="{ID}">
+								{Name} 
+								<span class="action" onclick="remove_product_category({ID})">X</span>
+							</span>';
+		return $categorytemplate;
+	}
+	
+	public function add_product_category() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$product_id = $_POST['product_id'];
+		$category_id = $_POST['category_id'];
+
+		$this->Load_model('Category_model');
+		$category = $this->Category_model->Get_category($category_id);
+		
+		$success = true;
+		if($category === false)
+			$success = false;
+
+		$categorytemplate =	$this->get_category_template();
+		$categoryhtml = expand_template($categorytemplate, $category);
+
+		echo json_encode(array('success' => $success, 'html' => $categoryhtml));
 	}
 
 	public function save_product() {
@@ -469,49 +508,7 @@ class Project_admin extends Controller
 
 		echo json_encode(array('success' => $success));
 	}
-	
-	public function add_product_category() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
-
-		$product_id = $_POST['product_id'];
-		$category_id = $_POST['category_id'];
 		
-		$this->Load_model('Product_model');
-		$success = $this->Product_model->Add_product_category($product_id, $category_id);
-
-		echo json_encode(array('success' => $success));
-	}
-
-	public function remove_product_category() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
-
-		$product_id = $_POST['product_id'];
-		$category_id = $_POST['category_id'];
-		
-		$this->Load_model('Product_model');
-		$success = $this->Product_model->Remove_product_category($product_id, $category_id);
-
-		echo json_encode(array('success' => $success));
-	}
-	
 	public function add_resource_category() {
 		header('Content-type: application/json');
 		$this->Load_controller('User');
