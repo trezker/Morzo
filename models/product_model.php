@@ -49,7 +49,11 @@ class Product_model {
 	public function Save_product($product) {
 		$db = Load_database();
 		
-		if($product['id'] == -1) {
+		$product_id = $product['id'];
+		
+		$db->StartTrans();
+
+		if($product_id == -1) {
 			$args = array(	$product['name'], 
 							$product['mass'],
 							$product['volume'],
@@ -59,12 +63,14 @@ class Product_model {
 			$rs = $db->Execute('
 				insert into Product (Name, Mass, Volume, Rot_rate) values (?, ?, ?, ?)
 				', $args);
+			
+			$product_id = $db->Insert_ID();
 		} else {
 			$args = array(	$product['name'], 
 							$product['mass'],
 							$product['volume'],
 							$product['rot_rate'],
-							$product['id']
+							$product_id
 						);
 
 			$rs = $db->Execute('
@@ -72,10 +78,17 @@ class Product_model {
 				', $args);
 		}
 
-		if(!$rs) {
-			echo $db->ErrorMsg();
-			return false;
+		foreach($product['categories'] as $category) {
+			if(isset($category['state']) && $category['state'] == 'remove')
+				$this->Remove_product_category($product_id, $category['id']);
+			else
+				$this->Add_product_category($product_id, $category['id']);
 		}
+
+		$success = !$db->HasFailedTrans();
+		$db->CompleteTrans();
+		if($success != true)
+			return false;
 
 		return true;
 	}

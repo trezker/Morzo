@@ -354,6 +354,19 @@ function save_product() {
 	var mass = $('#mass').val();
 	var volume = $('#volume').val();
 	var rot_rate = $('#rot_rate').val();
+	
+	var categories = new Array();
+	$(".category").each(
+		function(index, value){
+			var category_id = $(value).attr("data-category_id");
+			var category_state = $(value).attr("data-state");
+			var category = {
+					id: category_id,
+					state: category_state
+				};
+			categories.push(category);
+		}
+	);
 
 	$.ajax({
 		type: 'POST',
@@ -363,7 +376,8 @@ function save_product() {
 			name: name,
 			mass: mass,
 			volume: volume,
-			rot_rate: rot_rate
+			rot_rate: rot_rate,
+			categories: categories
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
@@ -425,6 +439,12 @@ function show_category_food_properties() {
 
 function add_product_category() {
 	var category_id = $('#product_category_select').val();
+
+	var existing = $("#category_"+category_id);
+	if(existing.length) {
+		existing.show().attr("data-state", "");
+		return;
+	}
 	
 	$.ajax({
 		type: 'POST',
@@ -436,27 +456,14 @@ function add_product_category() {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
-				edit_product(current_product);
+				$("#categorycontainer").append(data.html);
 			}
 		}
 	});
 }
 
 function remove_product_category(category_id) {
-	$.ajax({
-		type: 'POST',
-		url: 'project_admin/remove_product_category',
-		data: {
-			product_id: current_product,
-			category_id: category_id,
-		},
-		success: function(data) {
-			if(ajax_logged_out(data)) return;
-			if(data !== false) {
-				edit_product(current_product);
-			}
-		}
-	});
+	$("#category_"+category_id).hide().attr("data-state", "remove");
 }
 
 function add_resource_category() {
