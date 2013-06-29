@@ -253,6 +253,8 @@ class Project_admin extends Controller
 		$this->Load_model('Category_model');
 		$category_list = $this->Category_model->Get_categories();
 
+		$categorytemplate =	$this->get_category_template();
+
 		if($resource == false) {
 			$resource = array(
 					'ID' => '-1',
@@ -266,7 +268,8 @@ class Project_admin extends Controller
 		$edit_resource_view = $this->Load_view('resource_edit_view',array(	'resource' => $resource, 
 																			'measures' => $measures,
 																			'categories' => $categories,
-																			'category_list' => $category_list
+																			'category_list' => $category_list,
+																			'categorytemplate' => $categorytemplate
 																		), true);
 
 		echo json_encode(array('success' => true, 'data' => $edit_resource_view));
@@ -336,12 +339,12 @@ class Project_admin extends Controller
 	public function get_category_template() {
 		$categorytemplate =	'<span style="margin-right: 5px;" class="category" id="category_{ID}" data-category_id="{ID}">
 								{Name} 
-								<span class="action" onclick="remove_product_category({ID})">X</span>
+								<span class="action" onclick="remove_category({ID})">X</span>
 							</span>';
 		return $categorytemplate;
 	}
 	
-	public function add_product_category() {
+	public function add_category() {
 		header('Content-type: application/json');
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
@@ -353,7 +356,6 @@ class Project_admin extends Controller
 			return;
 		}
 
-		$product_id = $_POST['product_id'];
 		$category_id = $_POST['category_id'];
 
 		$this->Load_model('Category_model');
@@ -505,48 +507,6 @@ class Project_admin extends Controller
 
 		$this->Load_model('Project_model');
 		$success = $this->Project_model->Remove_recipe_product_input($_POST['recipe_id'], $_POST['id']);
-
-		echo json_encode(array('success' => $success));
-	}
-		
-	public function add_resource_category() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
-
-		$resource_id = $_POST['resource_id'];
-		$category_id = $_POST['category_id'];
-		
-		$this->Load_model('Resource_model');
-		$success = $this->Resource_model->Add_resource_category($resource_id, $category_id);
-
-		echo json_encode(array('success' => $success));
-	}
-
-	public function remove_resource_category() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
-
-		$resource_id = $_POST['resource_id'];
-		$category_id = $_POST['category_id'];
-		
-		$this->Load_model('Resource_model');
-		$success = $this->Resource_model->Remove_resource_category($resource_id, $category_id);
 
 		echo json_encode(array('success' => $success));
 	}

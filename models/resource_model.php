@@ -58,7 +58,11 @@ class Resource_model
 		else
 			$resource['is_natural'] = 0;
 
-		if($resource['id'] == -1) {
+		$resource_id = $resource['id'];
+		
+		$db->StartTrans();
+
+		if($resource_id == -1) {
 			$args = array(	$resource['name'], 
 							$resource['is_natural'],
 							$resource['measure'],
@@ -69,13 +73,15 @@ class Resource_model
 			$rs = $db->Execute('
 				insert into Resource (Name, Is_natural, Measure, Mass, Volume) values (?, ?, ?, ?, ?)
 				', $args);
+
+			$resource_id = $db->Insert_ID();
 		} else {
 			$args = array(	$resource['name'], 
 							$resource['is_natural'],
 							$resource['measure'],
 							$resource['mass'],
 							$resource['volume'],
-							$resource['id']
+							$resource_id
 						);
 
 			$rs = $db->Execute('
@@ -83,10 +89,17 @@ class Resource_model
 				', $args);
 		}
 
-		if(!$rs) {
-			echo $db->ErrorMsg();
-			return false;
+		foreach($resource['categories'] as $category) {
+			if(isset($category['state']) && $category['state'] == 'remove')
+				$this->Remove_resource_category($resource_id, $category['id']);
+			else
+				$this->Add_resource_category($resource_id, $category['id']);
 		}
+
+		$success = !$db->HasFailedTrans();
+		$db->CompleteTrans();
+		if($success != true)
+			return false;
 
 		return true;
 	}

@@ -309,6 +309,19 @@ function save_resource() {
 	var mass = $('#mass').val();
 	var volume = $('#volume').val();
 
+	var categories = new Array();
+	$(".category").each(
+		function(index, value){
+			var category_id = $(value).attr("data-category_id");
+			var category_state = $(value).attr("data-state");
+			var category = {
+					id: category_id,
+					state: category_state
+				};
+			categories.push(category);
+		}
+	);
+
 	$.ajax({
 		type: 'POST',
 		url: 'project_admin/save_resource',
@@ -318,7 +331,8 @@ function save_resource() {
 			is_natural: is_natural,
 			measure: measure,
 			mass: mass,
-			volume: volume
+			volume: volume,
+			categories: categories
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
@@ -448,7 +462,7 @@ function add_product_category() {
 	
 	$.ajax({
 		type: 'POST',
-		url: 'project_admin/add_product_category',
+		url: 'project_admin/add_category',
 		data: {
 			product_id: current_product,
 			category_id: category_id,
@@ -462,16 +476,18 @@ function add_product_category() {
 	});
 }
 
-function remove_product_category(category_id) {
-	$("#category_"+category_id).hide().attr("data-state", "remove");
-}
-
 function add_resource_category() {
 	var category_id = $('#resource_category_select').val();
 	
+	var existing = $("#category_"+category_id);
+	if(existing.length) {
+		existing.show().attr("data-state", "");
+		return;
+	}
+
 	$.ajax({
 		type: 'POST',
-		url: 'project_admin/add_resource_category',
+		url: 'project_admin/add_category',
 		data: {
 			resource_id: current_resource,
 			category_id: category_id,
@@ -479,25 +495,12 @@ function add_resource_category() {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
-				edit_resource(current_resource);
+				$("#categorycontainer").append(data.html);
 			}
 		}
 	});
 }
 
-function remove_resource_category(category_id) {
-	$.ajax({
-		type: 'POST',
-		url: 'project_admin/remove_resource_category',
-		data: {
-			resource_id: current_resource,
-			category_id: category_id,
-		},
-		success: function(data) {
-			if(ajax_logged_out(data)) return;
-			if(data !== false) {
-				edit_resource(current_resource);
-			}
-		}
-	});
+function remove_category(category_id) {
+	$("#category_"+category_id).hide().attr("data-state", "remove");
 }
