@@ -34,7 +34,8 @@ function save_translation(input_id, handle) {
 			if(data.success == true) {
 				$('#feedback_'+input_id).html("Saved");
 			} else {
-				$('#feedback_'+input_id).html("Failed");
+				alert(data.reason);
+				$('#feedback_'+input_id).html(data.reason);
 			}
 		}
 	});
@@ -56,7 +57,7 @@ function new_translation() {
 			if(data.success == true) {
 				$('#new_feedback').html("Saved");
 			} else {
-				$('#new_feedback').html("Failed");
+				$('#new_feedback').html(data.reason);
 			}
 		}
 	});

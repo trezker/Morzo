@@ -10,7 +10,7 @@
 	</head>
 	<body>
 		<h1>Language administration</h1>
-		<p><a class="action" href="user">Back</a></p>
+		<p><a href="/user">Back</a></p>
 		<div id="languages">
 			<select id="language">
 			<?php
@@ -22,7 +22,7 @@
 			}
 			?>
 			</select>
-			<span class="action" onclick="load_translations();">Get translations</span>
+			<a href="javascript:load_translations()">Get translations</a>
 		</div>
 		<div id="add_translation">
 			<table class="translations_list">
@@ -38,7 +38,7 @@
 						<input id="new_text" name="new_text" class="translation_input" style="width: 99%;" type="text" value="" />
 					</td>
 					<td class="tdsave">
-						<span class="action" onclick="new_translation();">Save</span><br />
+						<a href="javascript:new_translation()">Save</a><br />
 						<span id="new_feedback"></span>
 					</td>
 				</tr>';

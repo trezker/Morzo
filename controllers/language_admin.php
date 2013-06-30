@@ -100,21 +100,22 @@ class Language_admin extends Controller
 			return;
 		}
 
-		if(!isset($_POST['handle'])) {
+		if(!isset($_POST['handle']) || trim($_POST['handle']) == "") {
 			echo json_encode(array('success' => false, 'reason' => 'Must give a handle'));
 			return;
 		}
-		if(!isset($_POST['text'])) {
+		if(!isset($_POST['text']) || trim($_POST['text']) == "") {
 			echo json_encode(array('success' => false, 'reason' => 'Must give a text'));
 			return;
 		}
 
 		$this->Load_model('Language_model');
-		$translation_result = $this->Language_model->New_translation(	$_POST['handle'],
-																		$_POST['text']);
+		$translation_result = $this->Language_model->New_translation($_POST['handle'], $_POST['text']);
 
-		if($translation_result == false)
-			$success = false;
+		if($translation_result == false) {
+			echo json_encode(array('success' => false, 'reason' => 'Failed'));
+			return;
+		}
 		else
 			$success = true;
 		
