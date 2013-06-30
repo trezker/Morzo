@@ -30,9 +30,9 @@
 			</ul>
 		</div>
 
-		<p><span class="action" onclick='window.location="user/settings"'>Settings</span></p>
-		<p><span class="action" onclick='window.location="blog/Control_panel"'>Blog</span></p>
-		<p id="logout"><span class="action" onclick='logout()'>Log out</span></p>
+		<p><a href="/user/settings">Settings</a></p>
+		<p><a href="/blog/Control_panel">Blog</a></p>
+		<p id="logout"><a href="javascript:logout()">Log out</a></p>
 		
 		<?php if($_SESSION['admin']===true) { ?>
 			<p>You're an Admin!</p>
