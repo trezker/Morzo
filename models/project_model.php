@@ -936,11 +936,43 @@ class Project_model extends Model
 							values(?,?,1,0)
 						';
 						$args = array($output['Product_ID'], $output['Inventory_ID']);
-
 						$rs = $db->Execute($query, $args);
-						
-						if(!$rs) {
+						if(!$rs)
 							break;
+						
+						$Object_ID = $db->Insert_id();
+						
+						$query = '
+								select c.ID 
+								from Product p 
+								join Product_category pc on pc.Product_ID = p.ID
+								join Category c on pc.Category_ID = c.ID
+								where p.ID = ? and c.Name = ?
+								';
+
+						$args = array($output['Product_ID'], 'Container');
+						$rs = $db->Execute($query, $args);
+						if(!$rs)
+							break;
+						if($rs->RecordCount() > 0) {
+							$query = '
+									insert into Inventory () values()
+									';
+
+							$args = array();
+							$rs = $db->Execute($query, $args);
+							if(!$rs)
+								break;
+							$Inventory_ID = $db->Insert_id();
+							
+							$query = '
+									insert into Object_inventory (Object_ID, Inventory_ID) values(?, ?)
+									';
+
+							$args = array($Object_ID, $Inventory_ID);
+							$rs = $db->Execute($query, $args);
+							if(!$rs)
+								break;
 						}
 					}
 					if(!$rs) {
