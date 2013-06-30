@@ -340,6 +340,31 @@ class Actor_model extends Model
 		return $actors;
 	}
 	
+	public function Get_containers_on_location($actor_id) {
+		$db = Load_database();
+
+		$tail = 'join Location L on L.Inventory_ID = O.Inventory_ID
+				join Actor A on A.Location_ID = L.ID
+				where A.ID = ?';
+
+		$rs = $db->Execute('
+			select
+				O.ID,
+				P.Name
+			from Object O
+			join Object_inventory OI on OI.Object_ID = O.ID
+			join Product P on P.ID = O.Product_ID
+			'.$tail
+			, array($actor_id));
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return false;
+		}
+
+		return $rs->getArray();
+	}
+	
 	public function Get_actor_inventory($actor_id) {
 		return $this->Get_inventory($actor_id, 'Actor_inventory');
 	}

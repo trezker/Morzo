@@ -15,8 +15,8 @@
 	}
 } else { ?>
 			<div id="locations_feedback"></div>
-			<div id="locations">
-				<table class="location_list">
+			<div id="locations" class="floatleft">
+				<table class="location_list list">
 					<?php
 					$row_template = '
 						<tr class="{alternate}">
@@ -40,6 +40,34 @@
 							'y' => $location["y"],
 							'current_location' => $actor['Location_ID']);
 						echo expand_template($row_template, $vars);
+					}
+					?>
+				</table>
+			</div>
+			<div id='containers' class="floatleft">
+				<table class="container_list list">
+					<?php
+					$row_template = '
+						<tr class="{alternate}">
+							<td>
+								{name}
+							</td>
+							<td>
+								<a href="javascript:enter_object(\'{id}\', \'{actor_id}\')">Enter</a>
+							</td>
+						</tr>';
+					$alternate = '';
+					if($containers) {
+						foreach ($containers as $container) {
+							$alternate = ($alternate == 'alternate1')? 'alternate2': 'alternate1';
+							$vars = array(
+									'alternate' => $alternate,
+									'id' => $container["ID"],
+									'actor_id' => $actor_id,
+									'name' => $container["Name"]
+								);
+							echo expand_template($row_template, $vars);
+						}
 					}
 					?>
 				</table>

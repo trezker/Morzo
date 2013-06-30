@@ -10,6 +10,10 @@ blockquote {
 	color:#008400;
 }
 
+.floatleft {
+	float:left;
+}
+
 .title {
 	float: left;
 }
@@ -166,13 +170,14 @@ li.selected:hover {
 	padding: 3px;
 }
 
-.location_list {
+.list {
 	border-width: 0px;
 	border-spacing: 0px;
 	border-collapse: collapse;
+	margin: 5px;
 }
 
-.location_list td {
+.list td {
 	padding: 3px;
 }
 

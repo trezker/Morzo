@@ -54,7 +54,13 @@ class Actor extends Controller
 					$travel['DestinationName'] = 'Unnamed location';
 			}
 			$locations = $this->Get_neighbouring_locations($actor_id);
-			$tab_view = $this->Load_view('locations_tab_view', array('locations' => $locations, 'travel' => $travel, 'actor' => $actor, 'actor_id' => $actor_id), true);
+			$containers = $this->Actor_model->Get_containers_on_location($actor_id);
+			$tab_view = $this->Load_view('locations_tab_view', array(	'locations' => $locations, 
+																		'travel' => $travel, 
+																		'actor' => $actor, 
+																		'actor_id' => $actor_id,
+																		'containers' => $containers
+																		), true);
 		} elseif ($tab == 'people') {
 			$actors = $this->Actor_model->Get_visible_actors($actor_id);
 			$tab_view = $this->Load_view('people_tab_view', array('actors' => $actors, 'actor_id' => $actor_id), true);
