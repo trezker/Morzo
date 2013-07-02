@@ -623,4 +623,19 @@ class Actor extends Controller
 
 		echo json_encode($result);
 	}
+
+	public function Enter_object() {
+		header('Content-type: application/json');
+		$actor_id = $_POST['actor_id'];
+		$object_id = $_POST['object_id'];
+		
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+
+		$result = $this->Actor_model->Enter_object($actor_id, $object_id);
+
+		echo json_encode($result);
+	}
 }

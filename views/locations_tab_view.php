@@ -53,7 +53,7 @@
 								{name}
 							</td>
 							<td>
-								<a href="javascript:enter_object(\'{id}\', \'{actor_id}\')">Enter</a>
+								<a href="javascript:enter_object(\'{actor_id}\', \'{id}\')">Enter</a>
 							</td>
 						</tr>';
 					$alternate = '';

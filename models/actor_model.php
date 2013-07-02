@@ -636,4 +636,38 @@ class Actor_model extends Model
 		}
 		return $rs->fields;
 	}
+
+	public function Enter_object($actor_id, $object_id) {
+		$db = Load_database();
+		//$db->debug = true;
+		
+		//I will need information about the state to generate an event about moving locations
+		//The object is either found while I'm not in an object or the object has to be inside the object I'm in.
+		//OO checks that the object is a container, later on check for sufficient capacity.
+		$rs = $db->Execute('
+			select
+				O.ID
+			from Actor A
+			join Location L on A.Location_ID = L.ID
+			left join Object_inventory OI on A.Inside_object_ID = OI.Object_ID
+			join Object O on O.Inventory_ID = L.Inventory_ID or O.Inventory_ID = OI.Inventory_ID
+			join Object_inventory OO on O.ID = OO.Object_ID
+			where A.ID = ? and O.ID = ? and (OI.Inventory_ID is NULL or OI.Inventory_ID = O.Inventory_ID)
+			'
+			, array($actor_id, $object_id));
+		
+		if(!$rs) {
+			return array('success' => false, 'data' => 'Query error');
+		}
+		if($rs->RecordCount() !== 1) {
+			return array('success' => false, 'data' => 'Not allowed');
+		}
+
+		$rs = $db->Execute('
+			update Actor set Inside_object_ID = ? where ID = ?
+			'
+			, array($object_id, $actor_id));
+		
+		return array('success' => true);
+	}
 }
