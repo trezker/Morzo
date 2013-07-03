@@ -674,4 +674,19 @@ class Actor_model extends Model
 		
 		return array('success' => true);
 	}
+
+	public function Leave_object($actor_id) {
+		$db = Load_database();
+		//$db->debug = true;
+		
+		//TODO: When you can enter objects recursively, move to the container of the current object.
+		//Check for locked status when implemented
+		
+		$rs = $db->Execute('
+			update Actor set Inside_object_ID = NULL where ID = ?
+			'
+			, array($actor_id));
+		
+		return array('success' => true);
+	}
 }
