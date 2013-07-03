@@ -276,7 +276,9 @@ class Actor_model extends Model
 			select 
 				AN.Name as Name, 
 				LN.Name as Location, 
-				A.Location_ID as Location_ID, 
+				A.Location_ID as Location_ID,
+				A.Inside_object_ID,
+				P.Name as Inside_object_name,
 				B.Name as Biome_name,
 				T.Value as Time,
 				A.Hunger,
@@ -285,6 +287,8 @@ class Actor_model extends Model
 			left join Actor_name AN on A.ID = AN.Actor_ID and A.ID = AN.Named_actor_ID
 			left join Location_name LN on A.ID = LN.Actor_ID and A.Location_ID = LN.Location_ID
 			left join Location L on A.Location_ID = L.ID
+			left join Object O on O.ID = A.Inside_object_ID
+			left join Product P on P.ID = O.Product_ID
 			left join Biome B on L.Biome_ID = B.ID
 			join Count T on T.Name = \'Update\'
 			where A.ID = ?
