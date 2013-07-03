@@ -276,7 +276,9 @@ class Actor_model extends Model
 			select 
 				AN.Name as Name, 
 				LN.Name as Location, 
-				A.Location_ID as Location_ID, 
+				A.Location_ID as Location_ID,
+				A.Inside_object_ID,
+				P.Name as Inside_object_name,
 				B.Name as Biome_name,
 				T.Value as Time,
 				A.Hunger,
@@ -285,6 +287,8 @@ class Actor_model extends Model
 			left join Actor_name AN on A.ID = AN.Actor_ID and A.ID = AN.Named_actor_ID
 			left join Location_name LN on A.ID = LN.Actor_ID and A.Location_ID = LN.Location_ID
 			left join Location L on A.Location_ID = L.ID
+			left join Object O on O.ID = A.Inside_object_ID
+			left join Product P on P.ID = O.Product_ID
 			left join Biome B on L.Biome_ID = B.ID
 			join Count T on T.Name = \'Update\'
 			where A.ID = ?
@@ -338,6 +342,31 @@ class Actor_model extends Model
     		$actors[] = $row;
 		}
 		return $actors;
+	}
+	
+	public function Get_containers_on_location($actor_id) {
+		$db = Load_database();
+
+		$tail = 'join Location L on L.Inventory_ID = O.Inventory_ID
+				join Actor A on A.Location_ID = L.ID
+				where A.ID = ?';
+
+		$rs = $db->Execute('
+			select
+				O.ID,
+				P.Name
+			from Object O
+			join Object_inventory OI on OI.Object_ID = O.ID
+			join Product P on P.ID = O.Product_ID
+			'.$tail
+			, array($actor_id));
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return false;
+		}
+
+		return $rs->getArray();
 	}
 	
 	public function Get_actor_inventory($actor_id) {
@@ -610,5 +639,54 @@ class Actor_model extends Model
 			return false;
 		}
 		return $rs->fields;
+	}
+
+	public function Enter_object($actor_id, $object_id) {
+		$db = Load_database();
+		//$db->debug = true;
+		
+		//I will need information about the state to generate an event about moving locations
+		//The object is either found while I'm not in an object or the object has to be inside the object I'm in.
+		//OO checks that the object is a container, later on check for sufficient capacity.
+		$rs = $db->Execute('
+			select
+				O.ID
+			from Actor A
+			join Location L on A.Location_ID = L.ID
+			left join Object_inventory OI on A.Inside_object_ID = OI.Object_ID
+			join Object O on O.Inventory_ID = L.Inventory_ID or O.Inventory_ID = OI.Inventory_ID
+			join Object_inventory OO on O.ID = OO.Object_ID
+			where A.ID = ? and O.ID = ? and (OI.Inventory_ID is NULL or OI.Inventory_ID = O.Inventory_ID)
+			'
+			, array($actor_id, $object_id));
+		
+		if(!$rs) {
+			return array('success' => false, 'data' => 'Query error');
+		}
+		if($rs->RecordCount() !== 1) {
+			return array('success' => false, 'data' => 'Not allowed');
+		}
+
+		$rs = $db->Execute('
+			update Actor set Inside_object_ID = ? where ID = ?
+			'
+			, array($object_id, $actor_id));
+		
+		return array('success' => true);
+	}
+
+	public function Leave_object($actor_id) {
+		$db = Load_database();
+		//$db->debug = true;
+		
+		//TODO: When you can enter objects recursively, move to the container of the current object.
+		//Check for locked status when implemented
+		
+		$rs = $db->Execute('
+			update Actor set Inside_object_ID = NULL where ID = ?
+			'
+			, array($actor_id));
+		
+		return array('success' => true);
 	}
 }

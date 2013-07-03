@@ -37,6 +37,11 @@
 					</td>
 					<td>
 						<span id="location_name" class="action" onclick="set_location_changer(<?=$actor['Location_ID']?>);"><?= htmlspecialchars($actor['Location']); ?></span> [<?= htmlspecialchars($actor['Biome_name']); ?>]
+						<?php 
+							if($actor['Inside_object_name'] !== NULL) {
+								echo '(' . $actor['Inside_object_name'] . ')';
+							}
+						?>
 					</td>
 				</tr>
 				<tr>

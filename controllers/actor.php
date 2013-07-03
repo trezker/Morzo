@@ -54,7 +54,18 @@ class Actor extends Controller
 					$travel['DestinationName'] = 'Unnamed location';
 			}
 			$locations = $this->Get_neighbouring_locations($actor_id);
-			$tab_view = $this->Load_view('locations_tab_view', array('locations' => $locations, 'travel' => $travel, 'actor' => $actor, 'actor_id' => $actor_id), true);
+			//TODO: get containers for inside object
+			$containers = $this->Actor_model->Get_containers_on_location($actor_id);
+			if($actor['Inside_object_name'] !== NULL) {
+				$containers = NULL; //TODO: remove this line when inside object containers are listed
+				$locations = NULL; //TODO: add check for vehicle so it can travel when implemented
+			}
+			$tab_view = $this->Load_view('locations_tab_view', array(	'locations' => $locations, 
+																		'travel' => $travel, 
+																		'actor' => $actor, 
+																		'actor_id' => $actor_id,
+																		'containers' => $containers
+																		), true);
 		} elseif ($tab == 'people') {
 			$actors = $this->Actor_model->Get_visible_actors($actor_id);
 			$tab_view = $this->Load_view('people_tab_view', array('actors' => $actors, 'actor_id' => $actor_id), true);
@@ -614,6 +625,35 @@ class Actor extends Controller
 
 		$this->Load_model('species_model');
 		$result = $this->species_model->Leave_hunt($actor_id);
+
+		echo json_encode($result);
+	}
+
+	public function Enter_object() {
+		header('Content-type: application/json');
+		$actor_id = $_POST['actor_id'];
+		$object_id = $_POST['object_id'];
+		
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+
+		$result = $this->Actor_model->Enter_object($actor_id, $object_id);
+
+		echo json_encode($result);
+	}
+
+	public function Leave_object() {
+		header('Content-type: application/json');
+		$actor_id = $_POST['actor_id'];
+		
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+
+		$result = $this->Actor_model->Leave_object($actor_id);
 
 		echo json_encode($result);
 	}

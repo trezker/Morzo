@@ -594,3 +594,38 @@ function leave_hunt(actor_id, hunt_id) {
 		}
 	});
 }
+
+function enter_object(actor_id, object_id) {
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Enter_object',
+		data: {
+			actor_id: actor_id,
+			object_id: object_id
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = "/actor/show_actor/"+actor_id+"/locations";
+			}
+		}
+	});
+}
+
+function leave_object(actor_id) {
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Leave_object',
+		data: {
+			actor_id: actor_id
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = "/actor/show_actor/"+actor_id+"/locations";
+			}
+		}
+	});
+}
