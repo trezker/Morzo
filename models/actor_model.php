@@ -552,21 +552,23 @@ class Actor_model extends Model
 		
 		$db->StartTrans();
 
+		$inventories = $this->Get_actor_and_location_inventory($actor_id);
+		if(!$inventories) {
+			return false;
+		}
+
 		$rs = $db->Execute('
 			select
-				A.Location_ID,
 				LI.Amount as Location_amount,
 				LI.Inventory_ID as Location_inventory_ID,
 				R.Mass,
 				R.Volume,
 				M.Name as Measure_name
 			from Inventory_resource LI
-			join Location L on L.Inventory_ID = LI.Inventory_ID
-			join Actor A on A.Location_ID = L.ID
 			join Resource R on R.ID = LI.Resource_ID
 			join Measure M on R.Measure = M.ID
-			where A.ID = ? and LI.Resource_ID = ?
-			', array($actor_id, $resource_id));
+			where LI.Inventory_ID = ? and LI.Resource_ID = ?
+			', array($inventories['Location_inventory'], $resource_id));
 
 		if(!$rs || $rs->RecordCount() != 1) {
 			echo $db->ErrorMsg();
@@ -575,7 +577,6 @@ class Actor_model extends Model
 		} else {
 			$location_inventory_id = $rs->fields['Location_inventory_ID'];
 			$location_amount = $rs->fields['Location_amount'];
-			$location_id = $rs->fields['Location_ID'];
 			$measure_name = $rs->fields['Measure_name'];
 			if($measure_name == 'Mass') {
 				$amount_factor = $rs->fields['Mass'];
@@ -650,9 +651,10 @@ class Actor_model extends Model
 		$rs = $db->Execute('
 			select
 				A.Inventory_ID as Actor_inventory,
-				L.Inventory_ID as Location_inventory
+				ifnull(O.Inventory_ID, L.Inventory_ID) as Location_inventory
 			from Actor A
 			join Location L on A.Location_ID = L.ID
+			left join Object_inventory O on O.Object_ID = A.Inside_object_ID
 			where A.ID = ?
 			'
 			, array($actor_id));
