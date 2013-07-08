@@ -410,6 +410,7 @@ class Actor_model extends Model
 		$rs = $db->Execute('
 			select
 				I.ID,
+				I.Inventory_ID,
 				I.Resource_ID,
 				I.Amount,
 				R.Name,
@@ -442,6 +443,7 @@ class Actor_model extends Model
 		$rs = $db->Execute('
 			select
 				P.ID,
+				O.Inventory_ID,
 				count(P.ID) as Amount,
 				P.Name
 			from Object O

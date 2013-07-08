@@ -1,5 +1,8 @@
 <div style="float: left; margin-right: 20px;">
 	<h3>Actor inventory</h3>
+	<?php echo expand_template('<a href="javascript:transfer_to_inventory({inventory_id})">Transfer here</a>', 
+	array('inventory_id' => $inventory_ids['Actor_inventory']));
+	?>
 	<table class="inventory_list">
 		<?php
 		$alternate = '';
@@ -13,8 +16,7 @@
 					{Amount}{Measure_desc}
 				</td>
 				<td>
-					<input id="drop_amount_{Resource_ID}" type="number" value="0" size="4" style="text-align: right;" />
-					<span class="action" onclick="drop_resource({actor_id}, {Resource_ID})">Drop</span>
+					<input class="resource_input" id="drop_amount_{Inventory_ID}_{Resource_ID}" data-inventory_id="{Inventory_ID}" data-resource_id="{Resource_ID}" type="number" value="0" size="4" style="text-align: right;" />
 				</td>
 			</tr>';
 
@@ -35,6 +37,7 @@
 					'alternate' => $alternate,
 					'actor_id' => $actor_id,
 					'Name' => $inventory['Name'],
+					'Inventory_ID' => $inventory['Inventory_ID'],
 					'Amount' => $inventory['Amount'],
 					'Resource_ID' => $inventory['Resource_ID'],
 					'Measure_desc' => $inventory['Measure_desc']
@@ -50,8 +53,7 @@
 					{Amount}
 				</td>
 				<td>
-					<input id="drop_product_amount_{Product_ID}" type="number" value="0" size="4" style="text-align: right;" />
-					<span class="action" onclick="drop_product({actor_id}, {Product_ID})">Drop</span>
+					<input class="product_input" id="drop_amount_{Inventory_ID}_{Product_ID}" data-inventory_id="{Inventory_ID}" data-product_id="{Product_ID}" type="number" value="0" size="4" style="text-align: right;" />
 				</td>
 			</tr>';
 
@@ -62,6 +64,7 @@
 					'alternate' => $alternate,
 					'actor_id' => $actor_id,
 					'Name' => $inventory['Name'],
+					'Inventory_ID' => $inventory['Inventory_ID'],
 					'Amount' => $inventory['Amount'],
 					'Product_ID' => $inventory['ID'],
 				));
@@ -72,6 +75,9 @@
 
 <div style="float: left;">
 	<h3>Location inventory</h3>
+	<?php echo expand_template('<a href="javascript:transfer_to_inventory({inventory_id})">Transfer here</a>', 
+	array('inventory_id' => $inventory_ids['Location_inventory']));
+	?>
 	<table class="inventory_list">
 		<?php
 		$alternate = '';
@@ -85,8 +91,7 @@
 					{Amount}{Measure_desc}
 				</td>
 				<td>
-					<input id="pick_up_amount_{Resource_ID}" type="number" value="0" size="4" style="text-align: right;" />
-					<span class="action" onclick="pick_up_resource({actor_id}, {Resource_ID})">Pick up</span>
+					<input class="resource_input" id="drop_amount_{Inventory_ID}_{Resource_ID}" data-inventory_id="{Inventory_ID}" data-resource_id="{Resource_ID}" type="number" value="0" size="4" style="text-align: right;" />
 				</td>
 			</tr>';
 
@@ -107,6 +112,7 @@
 					'alternate' => $alternate,
 					'actor_id' => $actor_id,
 					'Name' => $inventory['Name'],
+					'Inventory_ID' => $inventory['Inventory_ID'],
 					'Amount' => $inventory['Amount'],
 					'Resource_ID' => $inventory['Resource_ID'],
 					'Measure_desc' => $inventory['Measure_desc']
@@ -122,8 +128,7 @@
 					{Amount}
 				</td>
 				<td>
-					<input id="pick_up_product_amount_{Product_ID}" type="number" value="0" size="4" style="text-align: right;" />
-					<span class="action" onclick="pick_up_product({actor_id}, {Product_ID})">Pick up</span>
+					<input class="product_input" id="drop_amount_{Inventory_ID}_{Product_ID}" data-inventory_id="{Inventory_ID}" data-product_id="{Product_ID}" type="number" value="0" size="4" style="text-align: right;" />
 				</td>
 			</tr>';
 
@@ -134,6 +139,7 @@
 					'alternate' => $alternate,
 					'actor_id' => $actor_id,
 					'Name' => $inventory['Name'],
+					'Inventory_ID' => $inventory['Inventory_ID'],
 					'Amount' => $inventory['Amount'],
 					'Product_ID' => $inventory['ID']
 				));
