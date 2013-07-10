@@ -629,3 +629,55 @@ function leave_object(actor_id) {
 		}
 	});
 }
+
+function transfer_to_inventory(actor_id, target_inventory_id) {
+	var products = new Array();
+	$('.product_input').each(
+		function(index, value) {
+			var inventory_id = $(value).attr('data-inventory_id');
+			var amount = $(value).val();
+			if(! (inventory_id == target_inventory_id || Number(amount) <= 0)) {
+				var product = {
+						inventory_id: inventory_id,
+						product_id: $(value).attr('data-product_id'),
+						amount: amount
+					};
+				products.push(product);
+			}
+		}
+	);
+	var resources = new Array();
+	$('.resource_input').each(
+		function(index, value) {
+			var inventory_id = $(value).attr('data-inventory_id');
+			var amount = $(value).val();
+			if(! (inventory_id == target_inventory_id || Number(amount) <= 0)) {
+				var resource = {
+						inventory_id: inventory_id,
+						resource_id: $(value).attr('data-resource_id'),
+						amount: amount
+					};
+				resources.push(resource);
+			}
+		}
+	);
+
+
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Transfer_to_inventory',
+		data: {
+			actor_id: actor_id,
+			inventory_id: target_inventory_id,
+			resources: resources,
+			products: products
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = "/actor/show_actor/"+actor_id+"/locations";
+			}
+		}
+	});
+}

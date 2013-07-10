@@ -1,7 +1,11 @@
 <div style="float: left; margin-right: 20px;">
 	<h3>Actor inventory</h3>
-	<?php echo expand_template('<a href="javascript:transfer_to_inventory({inventory_id})">Transfer here</a>', 
-	array('inventory_id' => $inventory_ids['Actor_inventory']));
+	<?php
+	echo expand_template('<a href="javascript:transfer_to_inventory({actor_id}, {inventory_id})">Transfer here</a>', 
+	array(
+		'actor_id' => $actor_id,
+		'inventory_id' => $inventory_ids['Actor_inventory']
+		));
 	?>
 	<table class="inventory_list">
 		<?php
@@ -16,7 +20,7 @@
 					{Amount}{Measure_desc}
 				</td>
 				<td>
-					<input class="resource_input" id="drop_amount_{Inventory_ID}_{Resource_ID}" data-inventory_id="{Inventory_ID}" data-resource_id="{Resource_ID}" type="number" value="0" size="4" style="text-align: right;" />
+					<input class="resource_input" id="drop_resource_{Inventory_ID}_{Resource_ID}" data-inventory_id="{Inventory_ID}" data-resource_id="{Resource_ID}" type="number" value="0" size="4" style="text-align: right;" />
 				</td>
 			</tr>';
 
@@ -53,7 +57,7 @@
 					{Amount}
 				</td>
 				<td>
-					<input class="product_input" id="drop_amount_{Inventory_ID}_{Product_ID}" data-inventory_id="{Inventory_ID}" data-product_id="{Product_ID}" type="number" value="0" size="4" style="text-align: right;" />
+					<input class="product_input" id="drop_product_{Inventory_ID}_{Product_ID}" data-inventory_id="{Inventory_ID}" data-product_id="{Product_ID}" type="number" value="0" size="4" style="text-align: right;" />
 				</td>
 			</tr>';
 
@@ -75,8 +79,12 @@
 
 <div style="float: left;">
 	<h3>Location inventory</h3>
-	<?php echo expand_template('<a href="javascript:transfer_to_inventory({inventory_id})">Transfer here</a>', 
-	array('inventory_id' => $inventory_ids['Location_inventory']));
+	<?php
+		echo expand_template('<a href="javascript:transfer_to_inventory({actor_id}, {inventory_id})">Transfer here</a>', 
+		array(
+			'actor_id' => $actor_id,
+			'inventory_id' => $inventory_ids['Location_inventory']
+			));
 	?>
 	<table class="inventory_list">
 		<?php
@@ -91,7 +99,7 @@
 					{Amount}{Measure_desc}
 				</td>
 				<td>
-					<input class="resource_input" id="drop_amount_{Inventory_ID}_{Resource_ID}" data-inventory_id="{Inventory_ID}" data-resource_id="{Resource_ID}" type="number" value="0" size="4" style="text-align: right;" />
+					<input class="resource_input" id="drop_resource_{Inventory_ID}_{Resource_ID}" data-inventory_id="{Inventory_ID}" data-resource_id="{Resource_ID}" type="number" value="0" size="4" style="text-align: right;" />
 				</td>
 			</tr>';
 
@@ -128,7 +136,7 @@
 					{Amount}
 				</td>
 				<td>
-					<input class="product_input" id="drop_amount_{Inventory_ID}_{Product_ID}" data-inventory_id="{Inventory_ID}" data-product_id="{Product_ID}" type="number" value="0" size="4" style="text-align: right;" />
+					<input class="product_input" id="drop_product_{Inventory_ID}_{Product_ID}" data-inventory_id="{Inventory_ID}" data-product_id="{Product_ID}" type="number" value="0" size="4" style="text-align: right;" />
 				</td>
 			</tr>';
 
