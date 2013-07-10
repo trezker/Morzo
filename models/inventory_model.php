@@ -156,4 +156,11 @@ class Inventory_model extends Model
 
 		return true;
 	}
+	public function Transfer_to_inventory($actor_id, $inventory_id, $resources, $products) {
+		/* We need to check for each inventory that it is accessible by the actor.
+		 * We will not allow recursive checking for containers in containers.
+		 * The actor will have to move a container out of its parent in order to access its contents.
+		 * */
+		 return array("success" => false);
+	}
 }
