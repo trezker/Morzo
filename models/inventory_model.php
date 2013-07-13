@@ -160,19 +160,53 @@ class Inventory_model extends Model
 		/* We need to check for each inventory that it is accessible by the actor.
 		 * We will not allow recursive checking for containers in containers.
 		 * The actor will have to move a container out of its parent in order to access its contents.
+		 * 
+		 * TODO: check container objects for allowed inventories.
+		 * 		make an array containing all allowed inventories before looping and just check against that!
 		 * */
 		 
 		$db = Load_database();
 		$db->StartTrans();
+		//$db->debug = true;
+
+		$sql = '
+				select A.ID
+					from Actor A
+					join Location L on L.ID = A.Location_ID
+					left join Object_inventory OI on OI.Object_ID = A.Inside_object_ID
+				where A.Inventory_ID = ? or (A.Inside_object_ID is NULL and L.Inventory_ID = ?) or OI.Inventory_ID = ?
+			';
+		$args = array($inventory_id, $inventory_id, $inventory_id);
+		$rs = $db->Execute($sql, $args);
+		if(!$rs || $rs->RecordCount() == 0) {
+			$db->FailTrans();
+			$db->CompleteTrans();
+			return array("success" => false, "error" => "Inaccessible target inventory");
+		}
 
 		if($resources) {
 			foreach($resources as $resource) {
+				$args = array($resource['inventory_id'], $resource['inventory_id'], $resource['inventory_id']);
+				$rs = $db->Execute($sql, $args);
+				if(!$rs || $rs->RecordCount() == 0) {
+					$db->FailTrans();
+					$db->CompleteTrans();
+					return array("success" => false, "error" => "Inaccessible source inventory");
+				}
+					
 				$this->Transfer_resource($resource['inventory_id'], $inventory_id, $resource['resource_id'], $resource['amount']);
 			}
 		}
 
 		if($products) {
 			foreach($products as $product) {
+				$args = array($product['inventory_id'], $product['inventory_id'], $product['inventory_id']);
+				$rs = $db->Execute($sql, $args);
+				if(!$rs || $rs->RecordCount() == 0) {
+					$db->FailTrans();
+					$db->CompleteTrans();
+					return array("success" => false, "error" => "Inaccessible source inventory");
+				}
 				$this->Transfer_product($product['inventory_id'], $inventory_id, $product['product_id'], $product['amount']);
 			}
 		}
