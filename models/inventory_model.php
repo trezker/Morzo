@@ -103,7 +103,7 @@ class Inventory_model extends Model
 				$db->FailTrans();
 			}
 			if(!$db->HasFailedTrans()) {
-				if($from_result_units < 0) {
+				if($from_result_units <= 0) {
 					$rs = $db->Execute('
 						delete from Inventory_resource
 						where Inventory_ID = ? and Resource_ID = ?
@@ -161,6 +161,27 @@ class Inventory_model extends Model
 		 * We will not allow recursive checking for containers in containers.
 		 * The actor will have to move a container out of its parent in order to access its contents.
 		 * */
-		 return array("success" => false);
+		 
+		$db = Load_database();
+		$db->StartTrans();
+
+		if($resources) {
+			foreach($resources as $resource) {
+				$this->Transfer_resource($resource['inventory_id'], $inventory_id, $resource['resource_id'], $resource['amount']);
+			}
+		}
+
+		if($products) {
+			foreach($products as $product) {
+				$this->Transfer_product($product['inventory_id'], $inventory_id, $product['product_id'], $product['amount']);
+			}
+		}
+
+		$success = !$db->HasFailedTrans();
+		$db->CompleteTrans();
+		if($success != true)
+			return array("success" => false, "error" => $error);
+
+		return array("success" => true);
 	}
 }

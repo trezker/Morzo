@@ -578,7 +578,6 @@ function transfer_to_inventory(actor_id, target_inventory_id) {
 		}
 	);
 
-
 	$.ajax({
 		type: 'POST',
 		url: '/actor/Transfer_to_inventory',
@@ -592,7 +591,7 @@ function transfer_to_inventory(actor_id, target_inventory_id) {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
-				window.location = "/actor/show_actor/"+actor_id+"/locations";
+				window.location = "/actor/show_actor/"+actor_id+"/inventory";
 			}
 		}
 	});
