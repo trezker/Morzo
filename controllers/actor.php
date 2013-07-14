@@ -102,10 +102,25 @@ class Actor extends Controller
 			$inventory_ids = $this->Actor_model->Get_actor_and_location_inventory($actor_id);
 			$actor_inventory = $this->Actor_model->Get_actor_inventory($actor_id);
 			$location_inventory = $this->Actor_model->Get_location_inventory($actor_id);
+			
+			$actor_inventory_view = $this->Load_view('inventory_view', array(
+													'inventory_title' => 'Actor inventory',
+													'inventory_id' => $inventory_ids['Actor_inventory'],
+													'inventory' => $actor_inventory, 
+													'actor_id' => $actor_id), true);
+
+			$location_inventory_view = $this->Load_view('inventory_view', array(
+													'inventory_title' => 'Location inventory',
+													'inventory_id' => $inventory_ids['Location_inventory'],
+													'inventory' => $location_inventory, 
+													'actor_id' => $actor_id), true);
+			
 			$tab_view = $this->Load_view('inventory_tab_view', array(
 													'inventory_ids' => $inventory_ids,
 													'actor_inventory' => $actor_inventory, 
 													'location_inventory' => $location_inventory, 
+													'actor_inventory_view' => $actor_inventory_view,
+													'location_inventory_view' => $location_inventory_view,
 													'actor_id' => $actor_id), true);
 		}
 		
