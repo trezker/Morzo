@@ -190,7 +190,7 @@ class Inventory_model extends Model
 
 		if($products) {
 			foreach($products as $product) {
-				if(!$this->Is_inventory_accessible($actor_id, $resource['inventory_id'])) {
+				if(!$this->Is_inventory_accessible($actor_id, $product['inventory_id'])) {
 					$db->FailTrans();
 					$db->CompleteTrans();
 					return array("success" => false, "error" => "Inaccessible source inventory");
@@ -227,6 +227,24 @@ class Inventory_model extends Model
 	}
 	
 	public function Get_inventory_product_objects($actor_id, $inventory_id, $product_id) {
-		return false;
+		if(!$this->Is_inventory_accessible($actor_id, $inventory_id)) {
+			return false;
+		}
+		
+		$db = Load_database();
+		$sql = '
+				select
+					O.ID,
+					P.Name
+				from Object O
+				join Product P on P.ID = O.Product_ID
+				where O.Inventory_ID = ? and O.Product_ID = ?
+			';
+		$args = array($inventory_id, $product_id);
+		$rs = $db->Execute($sql, $args);
+		if(!$rs) {
+			return false;
+		}
+		return $rs->getArray();
 	}
 }

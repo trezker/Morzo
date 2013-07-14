@@ -693,8 +693,10 @@ class Actor extends Controller
 		
 		$this->Load_model('Inventory_model');
 		$result = $this->Inventory_model->Get_inventory_product_objects($actor_id, $inventory_id, $product_id);
-		
-		$html = '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+		if(!$result) {
+			echo json_encode(array('success' => false, 'reason' => 'Could not load objects'));
+		}
+		$html = $this->Load_view('inventory_objects_view', array('objects' => $result), true);
 		echo json_encode(array('success' => true, 'html' => $html));
 	}
 }
