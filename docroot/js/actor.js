@@ -618,6 +618,7 @@ function expand_product(e, actor_id, inventory_id, product_id) {
 		});
 	} else {
 		$(e).html('+');
+		$("[data-object_collection='"+inventory_id+'_'+product_id+"']").remove();
 	}
 	return false;
 }

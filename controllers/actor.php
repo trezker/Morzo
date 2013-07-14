@@ -696,7 +696,11 @@ class Actor extends Controller
 		if(!$result) {
 			echo json_encode(array('success' => false, 'reason' => 'Could not load objects'));
 		}
-		$html = $this->Load_view('inventory_objects_view', array('objects' => $result), true);
+		$html = $this->Load_view('inventory_objects_view', array(
+									'objects' => $result,
+									'product_id' => $product_id,
+									'inventory_id' => $inventory_id
+									), true);
 		echo json_encode(array('success' => true, 'html' => $html));
 	}
 }
