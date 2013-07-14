@@ -597,9 +597,25 @@ function transfer_to_inventory(actor_id, target_inventory_id) {
 	});
 }
 
-function expand_product(e, inventory_id, product_id) {
+function expand_product(e, actor_id, inventory_id, product_id) {
 	if($(e).html() == '+') {
 		$(e).html('-');
+		$.ajax({
+			type: 'POST',
+			url: '/actor/Expand_inventory_product',
+			data: {
+				actor_id: actor_id,
+				inventory_id: inventory_id,
+				product_id: product_id
+			},
+			dataType: "json",
+			success: function(data) {
+				if(ajax_logged_out(data)) return;
+				if(data.success == true) {
+					$('#product_'+inventory_id+'_'+product_id).after(data.html)
+				}
+			}
+		});
 	} else {
 		$(e).html('+');
 	}

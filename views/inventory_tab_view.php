@@ -64,10 +64,11 @@
 		foreach ($actor_inventory['products'] as $inventory) {
 			$expand = '';
 			if($inventory['Amount'] > 1) {
-				$expand = '<div class="expand"><a  href="javascript:void(0)" onclick="expand_product(this, {Inventory_ID}, {Product_ID})">+</a></div>';
+				$expand = '<div class="expand"><a  href="javascript:void(0)" onclick="expand_product(this, {actor_id}, {Inventory_ID}, {Product_ID})">+</a></div>';
 				$expand = expand_template($expand, array(
-									'Inventory_ID' => $inventory['Inventory_ID'],
-									'Product_ID' => $inventory['ID']
+								'Inventory_ID' => $inventory['Inventory_ID'],
+								'actor_id' => $actor_id,
+								'Product_ID' => $inventory['ID']
 							));
 			}
 

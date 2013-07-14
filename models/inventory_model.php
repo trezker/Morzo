@@ -156,6 +156,7 @@ class Inventory_model extends Model
 
 		return true;
 	}
+	
 	public function Transfer_to_inventory($actor_id, $inventory_id, $resources, $products) {
 		/* We need to check for each inventory that it is accessible by the actor.
 		 * We will not allow recursive checking for containers in containers.
@@ -169,16 +170,7 @@ class Inventory_model extends Model
 		$db->StartTrans();
 		//$db->debug = true;
 
-		$sql = '
-				select A.ID
-					from Actor A
-					join Location L on L.ID = A.Location_ID
-					left join Object_inventory OI on OI.Object_ID = A.Inside_object_ID
-				where A.Inventory_ID = ? or (A.Inside_object_ID is NULL and L.Inventory_ID = ?) or OI.Inventory_ID = ?
-			';
-		$args = array($inventory_id, $inventory_id, $inventory_id);
-		$rs = $db->Execute($sql, $args);
-		if(!$rs || $rs->RecordCount() == 0) {
+		if(!$this->Is_inventory_accessible($actor_id, $inventory_id)) {
 			$db->FailTrans();
 			$db->CompleteTrans();
 			return array("success" => false, "error" => "Inaccessible target inventory");
@@ -186,9 +178,7 @@ class Inventory_model extends Model
 
 		if($resources) {
 			foreach($resources as $resource) {
-				$args = array($resource['inventory_id'], $resource['inventory_id'], $resource['inventory_id']);
-				$rs = $db->Execute($sql, $args);
-				if(!$rs || $rs->RecordCount() == 0) {
+				if(!$this->Is_inventory_accessible($actor_id, $resource['inventory_id'])) {
 					$db->FailTrans();
 					$db->CompleteTrans();
 					return array("success" => false, "error" => "Inaccessible source inventory");
@@ -200,9 +190,7 @@ class Inventory_model extends Model
 
 		if($products) {
 			foreach($products as $product) {
-				$args = array($product['inventory_id'], $product['inventory_id'], $product['inventory_id']);
-				$rs = $db->Execute($sql, $args);
-				if(!$rs || $rs->RecordCount() == 0) {
+				if(!$this->Is_inventory_accessible($actor_id, $resource['inventory_id'])) {
 					$db->FailTrans();
 					$db->CompleteTrans();
 					return array("success" => false, "error" => "Inaccessible source inventory");
@@ -217,5 +205,28 @@ class Inventory_model extends Model
 			return array("success" => false, "error" => $error);
 
 		return array("success" => true);
+	}
+	
+	public function Is_inventory_accessible($actor_id, $inventory_id) {
+		$db = Load_database();
+		$sql = '
+				select A.ID
+					from Actor A
+					join Location L on L.ID = A.Location_ID
+					left join Object_inventory OI on OI.Object_ID = A.Inside_object_ID
+				where A.Inventory_ID = ? or (A.Inside_object_ID is NULL and L.Inventory_ID = ?) or OI.Inventory_ID = ?
+			';
+		$args = array($inventory_id, $inventory_id, $inventory_id);
+		$rs = $db->Execute($sql, $args);
+		if(!$rs || $rs->RecordCount() == 0) {
+			$db->FailTrans();
+			$db->CompleteTrans();
+			return false;
+		}
+		return true;
+	}
+	
+	public function Get_inventory_product_objects($actor_id, $inventory_id, $product_id) {
+		return false;
 	}
 }

@@ -679,4 +679,22 @@ class Actor extends Controller
 		$result = $this->Inventory_model->Transfer_to_inventory($actor_id, $inventory_id, $resources, $products);
 		echo json_encode($result);
 	}
+	
+	public function Expand_inventory_product() {
+		$actor_id = $_POST['actor_id'];
+
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+		
+		$inventory_id = $_POST['inventory_id'];
+		$product_id = $_POST['product_id'];
+		
+		$this->Load_model('Inventory_model');
+		$result = $this->Inventory_model->Get_inventory_product_objects($actor_id, $inventory_id, $product_id);
+		
+		$html = '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+		echo json_encode(array('success' => true, 'html' => $html));
+	}
 }
