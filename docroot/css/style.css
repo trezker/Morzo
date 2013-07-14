@@ -10,6 +10,15 @@ blockquote {
 	color:#008400;
 }
 
+a {
+	text-decoration:none;
+}
+
+.expand {
+	width: 12px;
+	float:left;
+}
+
 .floatleft {
 	float:left;
 }

@@ -49,9 +49,9 @@
 		}
 
 		$row_template = '
-			<tr class="{alternate}">
+			<tr class="{alternate}" id="product_{Inventory_ID}_{Product_ID}">
 				<td>
-					{Name}
+					{!expand}{Name}
 				</td>
 				<td>
 					{Amount}
@@ -62,6 +62,15 @@
 			</tr>';
 
 		foreach ($actor_inventory['products'] as $inventory) {
+			$expand = '';
+			if($inventory['Amount'] > 1) {
+				$expand = '<div class="expand"><a  href="javascript:void(0)" onclick="expand_product(this, {Inventory_ID}, {Product_ID})">+</a></div>';
+				$expand = expand_template($expand, array(
+									'Inventory_ID' => $inventory['Inventory_ID'],
+									'Product_ID' => $inventory['ID']
+							));
+			}
+
 			$alternate = ($alternate == 'alternate1')? 'alternate2': 'alternate1';
 			
 			echo expand_template($row_template, array(
@@ -71,6 +80,7 @@
 					'Inventory_ID' => $inventory['Inventory_ID'],
 					'Amount' => $inventory['Amount'],
 					'Product_ID' => $inventory['ID'],
+					'expand' => $expand
 				));
 		}
 		?>

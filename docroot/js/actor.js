@@ -596,3 +596,12 @@ function transfer_to_inventory(actor_id, target_inventory_id) {
 		}
 	});
 }
+
+function expand_product(e, inventory_id, product_id) {
+	if($(e).html() == '+') {
+		$(e).html('-');
+	} else {
+		$(e).html('+');
+	}
+	return false;
+}
