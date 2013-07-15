@@ -648,10 +648,36 @@ class Actor extends Controller
 			echo json_encode(array('success' => false, 'reason' => 'Could not load objects'));
 		}
 		$html = $this->Load_view('inventory_objects_view', array(
+									'actor_id' => $actor_id,
 									'objects' => $result,
 									'product_id' => $product_id,
 									'inventory_id' => $inventory_id
 									), true);
 		echo json_encode(array('success' => true, 'html' => $html));
+	}
+
+	public function Open_container() {
+		$actor_id = $_POST['actor_id'];
+
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+		}
+		
+		$inventory_id = $_POST['inventory_id'];
+		/*
+		$this->Load_model('Inventory_model');
+		$result = $this->Inventory_model->Get_inventory($actor_id, $inventory_id);
+		if(!$result) {
+			echo json_encode(array('success' => false, 'reason' => 'Could not load objects'));
+		}
+		$html = $this->Load_view('inventory_objects_view', array(
+									'actor_id' => $actor_id,
+									'objects' => $result,
+									'product_id' => $product_id,
+									'inventory_id' => $inventory_id
+									), true);
+									*/
+		echo json_encode(array('success' => true, 'html' => 'Hey'));
 	}
 }

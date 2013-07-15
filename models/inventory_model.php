@@ -235,9 +235,11 @@ class Inventory_model extends Model
 		$sql = '
 				select
 					O.ID,
-					P.Name
+					P.Name,
+					OI.Inventory_ID as Object_inventory_ID
 				from Object O
 				join Product P on P.ID = O.Product_ID
+				left join Object_inventory OI on OI.Object_ID = O.ID
 				where O.Inventory_ID = ? and O.Product_ID = ?
 			';
 		$args = array($inventory_id, $product_id);

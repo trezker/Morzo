@@ -23,6 +23,10 @@ a {
 	float:left;
 }
 
+.clearboth {
+	clear: both;
+}
+
 .title {
 	float: left;
 }

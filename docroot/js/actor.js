@@ -622,3 +622,22 @@ function expand_product(e, actor_id, inventory_id, product_id) {
 	}
 	return false;
 }
+
+function open_container(actor_id, inventory_id) {
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Open_container',
+		data: {
+			actor_id: actor_id,
+			inventory_id: inventory_id
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				$('#container_inventories').append(data.html)
+			}
+		}
+	});
+	return false;
+}
