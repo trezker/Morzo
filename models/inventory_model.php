@@ -145,10 +145,15 @@ class Inventory_model extends Model
 		$db = Load_database();
 
 		$rs = $db->Execute('
-			update Object set Inventory_ID = ?
-			where Inventory_ID = ? and Product_ID = ?
+			update Object O
+			set O.Inventory_ID = ?
+			where O.Inventory_ID = ? and O.Product_ID = ?
+			and not exists(
+				select OI.ID from Object_inventory OI 
+				where O.ID = OI.Object_ID and OI.Inventory_ID = ?
+			)
 			limit '.intval($amount)
-			, array($to_id, $from_id, $product_id, $amount));
+			, array($to_id, $from_id, $product_id, $to_id, $amount));
 
 		if(!$rs) {
 			return false;
