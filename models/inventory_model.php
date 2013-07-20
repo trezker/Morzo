@@ -214,13 +214,19 @@ class Inventory_model extends Model
 					from Actor A
 					join Location L on L.ID = A.Location_ID
 					left join Object_inventory OI on OI.Object_ID = A.Inside_object_ID
-				where A.Inventory_ID = ? or (A.Inside_object_ID is NULL and L.Inventory_ID = ?) or OI.Inventory_ID = ?
+					left join Object O on O.Inventory_ID = L.Inventory_ID or O.Inventory_ID = A.Inventory_ID or O.Inventory_ID = OI.Inventory_ID
+					left join Object_inventory CI on CI.Object_ID = O.ID
+				where A.ID = ? and (
+						A.Inventory_ID = ? 
+						or (A.Inside_object_ID is NULL 
+						and L.Inventory_ID = ?) 
+						or OI.Inventory_ID = ? 
+						or CI.Inventory_ID = ?
+					)
 			';
-		$args = array($inventory_id, $inventory_id, $inventory_id);
+		$args = array($actor_id, $inventory_id, $inventory_id, $inventory_id, $inventory_id);
 		$rs = $db->Execute($sql, $args);
 		if(!$rs || $rs->RecordCount() == 0) {
-			$db->FailTrans();
-			$db->CompleteTrans();
 			return false;
 		}
 		return true;
@@ -248,5 +254,54 @@ class Inventory_model extends Model
 			return false;
 		}
 		return $rs->getArray();
+	}
+
+	public function Get_inventory($inventory_id) {
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			select
+				I.ID,
+				I.Inventory_ID,
+				I.Resource_ID,
+				I.Amount,
+				R.Name,
+				R.Mass,
+				R.Volume,
+				M.Name as Measure_name
+			from Inventory_resource I
+			left join Resource R on I.Resource_ID = R.ID
+			join Measure M on R.Measure = M.ID
+			where I.Inventory_ID = ?'
+			, array($inventory_id));
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return false;
+		}
+
+		$result = array();
+		$result['resources'] = $rs->getArray();
+
+		$rs = $db->Execute('
+			select
+				P.ID,
+				O.Inventory_ID,
+				count(P.ID) as Amount,
+				P.Name
+			from Object O
+			join Product P on P.ID = O.Product_ID
+			where O.Inventory_ID = ?
+			group by P.ID
+			', array($inventory_id));
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return false;
+		}
+
+		$result['products'] = $rs->getArray();
+
+		return $result;
 	}
 }

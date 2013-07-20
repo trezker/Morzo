@@ -665,19 +665,22 @@ class Actor extends Controller
 		}
 		
 		$inventory_id = $_POST['inventory_id'];
-		/*
+		
 		$this->Load_model('Inventory_model');
-		$result = $this->Inventory_model->Get_inventory($actor_id, $inventory_id);
-		if(!$result) {
-			echo json_encode(array('success' => false, 'reason' => 'Could not load objects'));
+		
+		if(!$this->Inventory_model->Is_inventory_accessible($actor_id, $inventory_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'You can not access this inventory'));
 		}
-		$html = $this->Load_view('inventory_objects_view', array(
-									'actor_id' => $actor_id,
-									'objects' => $result,
-									'product_id' => $product_id,
-									'inventory_id' => $inventory_id
-									), true);
-									*/
-		echo json_encode(array('success' => true, 'html' => 'Hey'));
+		
+		$inventory = $this->Inventory_model->Get_inventory($inventory_id);
+		if(!$inventory) {
+			echo json_encode(array('success' => false, 'reason' => 'Could not load inventory'));
+		}
+		$inventory_view = $this->Load_view('inventory_view', array(
+												'inventory_title' => 'Object inventory',
+												'inventory_id' => $inventory_id,
+												'inventory' => $inventory, 
+												'actor_id' => $actor_id), true);
+		echo json_encode(array('success' => true, 'html' => $inventory_view));
 	}
 }
