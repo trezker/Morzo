@@ -101,8 +101,9 @@ class Actor extends Controller
 			$tab_view = $this->Load_view('projects_tab_view', array('hunts' => $hunts, 'projects' => $projects, 'actor_id' => $actor_id, 'recipe_selection_view' => $recipe_selection_view), true);
 		} elseif ($tab == 'inventory') {
 			$inventory_ids = $this->Actor_model->Get_actor_and_location_inventory($actor_id);
-			$actor_inventory = $this->Actor_model->Get_actor_inventory($actor_id);
-			$location_inventory = $this->Actor_model->Get_location_inventory($actor_id);
+			$this->Load_model('Inventory_model');
+			$actor_inventory = $this->Inventory_model->Get_inventory($inventory_ids['Actor_inventory']);
+			$location_inventory = $this->Inventory_model->Get_inventory($inventory_ids['Location_inventory']);
 			
 			$actor_inventory_view = $this->Load_view('inventory_view', array(
 													'inventory_title' => 'Actor inventory',
