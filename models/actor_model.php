@@ -347,19 +347,22 @@ class Actor_model extends Model
 	public function Get_containers_on_location($actor_id) {
 		$db = Load_database();
 
-		$tail = 'join Location L on L.Inventory_ID = O.Inventory_ID
-				join Actor A on A.Location_ID = L.ID
-				where A.ID = ?';
+		$sql = '
+				select
+					O.ID,
+					P.Name
+				from Actor A
+				join Location L on A.Location_ID = L.ID
+				left join Object_inventory II on II.Object_ID = A.Inside_object_ID
+				
+				join Object O on (A.Inside_object_ID is null and O.Inventory_ID = L.Inventory_ID) 
+							  or (A.Inside_object_ID is not null and O.Inventory_ID = II.Inventory_ID)
+				join Object_inventory OI on OI.Object_ID = O.ID
+				join Product P on P.ID = O.Product_ID
+				where A.ID = ?
+				';
 
-		$rs = $db->Execute('
-			select
-				O.ID,
-				P.Name
-			from Object O
-			join Object_inventory OI on OI.Object_ID = O.ID
-			join Product P on P.ID = O.Product_ID
-			'.$tail
-			, array($actor_id));
+		$rs = $db->Execute($sql, array($actor_id));
 		
 		if(!$rs) {
 			echo $db->ErrorMsg();

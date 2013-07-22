@@ -58,7 +58,6 @@ class Actor extends Controller
 			//TODO: get containers for inside object
 			$containers = $this->Actor_model->Get_containers_on_location($actor_id);
 			if($actor['Inside_object_name'] !== NULL) {
-				$containers = NULL; //TODO: remove this line when inside object containers are listed
 				$locations = NULL; //TODO: add check for vehicle so it can travel when implemented
 			}
 			$tab_view = $this->Load_view('locations_tab_view', array(	'locations' => $locations, 
