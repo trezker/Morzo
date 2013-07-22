@@ -26,7 +26,8 @@ class Actor extends Controller
 		}
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			die("This is not the actor you are looking for.");
+			header("Location: /front");
+			return;
 		}
 
 		$this->Load_model("Travel_model");
@@ -170,6 +171,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 		
 		$this->Load_model('Event_model');
@@ -224,6 +226,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 
 		$this->Load_model('Project_model');
@@ -254,6 +257,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 
 		$this->Load_model('Project_model');
@@ -277,6 +281,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 
 		$this->Load_model('Project_model');
@@ -299,6 +304,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 
 		$this->Load_model('Project_model');
@@ -315,7 +321,7 @@ class Actor extends Controller
 		}
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			die("This is not the actor you are looking for.");
+			return;
 		}
 		$this->Load_model("Location_model");
 		$locations = $this->Location_model->Get_neighbouring_locations($actor_id);
@@ -415,6 +421,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 		
 		$this->Load_model('Event_model');
@@ -440,6 +447,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 		
 		$this->Load_model('Event_model');
@@ -466,6 +474,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 		
 		$this->Load_model('Event_model');
@@ -487,6 +496,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 
 		$this->Load_model('Project_model');
@@ -507,6 +517,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 
 		$this->Load_model('Project_model');
@@ -529,6 +540,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 
 		$this->Load_model('Project_model');
@@ -546,6 +558,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 
 		$this->Load_model('species_model');
@@ -562,6 +575,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 
 		$this->Load_model('species_model');
@@ -577,6 +591,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 
 		$this->Load_model('species_model');
@@ -593,6 +608,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 
 		$result = $this->Actor_model->Enter_object($actor_id, $object_id);
@@ -607,6 +623,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 
 		$result = $this->Actor_model->Leave_object($actor_id);
@@ -620,6 +637,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 		
 		$inventory_id = $_POST['inventory_id'];
@@ -637,6 +655,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 		
 		$inventory_id = $_POST['inventory_id'];
@@ -646,6 +665,7 @@ class Actor extends Controller
 		$result = $this->Inventory_model->Get_inventory_product_objects($actor_id, $inventory_id, $product_id);
 		if(!$result) {
 			echo json_encode(array('success' => false, 'reason' => 'Could not load objects'));
+			return;
 		}
 		$html = $this->Load_view('inventory_objects_view', array(
 									'actor_id' => $actor_id,
@@ -662,6 +682,7 @@ class Actor extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 		
 		$inventory_id = $_POST['inventory_id'];
@@ -670,11 +691,13 @@ class Actor extends Controller
 		
 		if(!$this->Inventory_model->Is_inventory_accessible($actor_id, $inventory_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'You can not access this inventory'));
+			return;
 		}
 		
 		$inventory = $this->Inventory_model->Get_inventory($inventory_id);
 		if(!$inventory) {
 			echo json_encode(array('success' => false, 'reason' => 'Could not load inventory'));
+			return;
 		}
 		$inventory_view = $this->Load_view('inventory_view', array(
 												'inventory_title' => 'Object inventory',

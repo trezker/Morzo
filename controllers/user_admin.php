@@ -8,11 +8,11 @@ class User_admin extends Controller
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
 			header("Location: front");
-			exit;
+			return;
 		}
 		if($_SESSION['admin'] != true) {
 			echo "You need to be admin to access this page";
-			exit;
+			return;
 		}
 
 		$this->Load_model('User_model');

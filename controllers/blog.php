@@ -25,7 +25,7 @@ class Blog extends Controller {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
 			header("Location: /front");
-			exit;
+			return;
 		}
 
 		$this->Load_model('Blog_model');
@@ -81,6 +81,7 @@ class Blog extends Controller {
 		$blog_id = $this->Blog_model->Get_blog_from_post_id($post_id);
 		if(!$this->Blog_model->User_owns_blog($blog_id, $_SESSION['userid'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your blog'));
+			return;
 		}
 		$blog = $this->Blog_model->Get_blog($blog_id);
 		$blog_control_panel_view = $this->Load_blog_control_panel($blog['Name'], $post_id);
@@ -122,6 +123,7 @@ class Blog extends Controller {
 		}
 		if(!$this->Blog_model->User_owns_blog($blog_id, $_SESSION['userid'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your blog'));
+			return;
 		}
 		
 		if($post_id == -1) {
@@ -149,6 +151,7 @@ class Blog extends Controller {
 		}
 		if(!$this->Blog_model->User_owns_blog($blog_id, $_SESSION['userid'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your blog'));
+			return;
 		}
 		
 		$r = $this->Blog_model->Delete_blogpost($post_id);
@@ -172,6 +175,7 @@ class Blog extends Controller {
 		}
 		if(!$this->Blog_model->User_owns_blog($blog_id, $_SESSION['userid'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your blog'));
+			return;
 		}
 		
 		$r = $this->Blog_model->Hide_blogpost($post_id);

@@ -30,6 +30,7 @@ class Location extends Controller
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
 			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
 		}
 		$this->Load_model('Location_model');
 		$location_id = $this->Get_location($actor_id, $location_id);
