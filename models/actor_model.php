@@ -433,11 +433,28 @@ class Actor_model extends Model
 		
 		//TODO: When you can enter objects recursively, move to the container of the current object.
 		//Check for locked status when implemented
+
+		//Will get either an Object_ID or Location_ID, the other will be null
+		$sql = 'select 
+					O.ID as Object_ID,
+					L.ID as Location_ID
+				from Actor A
+				left join Object IO on A.Inside_object_ID = IO.ID
+				left join Location L on L.Inventory_ID = IO.Inventory_ID
+				left join Object_inventory OI on IO.Inventory_ID = OI.Inventory_ID
+				left join Object O on OI.Object_ID = O.ID
+				where A.ID = ?
+				';
+
+		$rs = $db->Execute($sql, array($actor_id));
+		if(!$rs)
+			return array('success' => false, 'reason' => 'Database error');
 		
-		$rs = $db->Execute('
-			update Actor set Inside_object_ID = NULL where ID = ?
-			'
-			, array($actor_id));
+		if($rs->fields['Object_ID']) {
+			$rs = $db->Execute('update Actor set Inside_object_ID = ? where ID = ?', array($rs->fields['Object_ID'], $actor_id));
+		} else {
+			$rs = $db->Execute('update Actor set Inside_object_ID = NULL, Location_ID = ? where ID = ?', array($rs->fields['Location_ID'], $actor_id));
+		}
 		
 		return array('success' => true);
 	}
