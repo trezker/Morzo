@@ -612,7 +612,7 @@ function expand_product(e, actor_id, inventory_id, product_id) {
 			success: function(data) {
 				if(ajax_logged_out(data)) return;
 				if(data.success == true) {
-					$('#product_'+inventory_id+'_'+product_id).after(data.html)
+					$('#product_'+inventory_id+'_'+product_id).after(data.html);
 				}
 			}
 		});
@@ -635,7 +635,38 @@ function open_container(actor_id, inventory_id) {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
-				$('#container_inventories').append(data.html)
+				$('#container_inventories').append(data.html);
+			}
+		}
+	});
+	return false;
+}
+
+var current_actor_id = -1;
+var current_object_id = -1;
+function show_object_label_dialog(actor_id, object_id) {
+	current_actor_id = actor_id;
+	current_object_id = object_id;
+	var html = $('#object_label_popup').html();
+	open_dialog(html, 250, 100);
+}
+
+function label_object() {
+	var label = $('#label_input').val();
+	alert(label);
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Label_object',
+		data: {
+			actor_id: current_actor_id,
+			object_id: current_object_id,
+			label: label
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				window.location = "/actor/show_actor/"+current_actor_id+"/inventory";
 			}
 		}
 	});

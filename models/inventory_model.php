@@ -309,4 +309,33 @@ class Inventory_model extends Model
 
 		return $result;
 	}
+
+	public function Label_object($actor_id, $object_id, $label) {
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			select
+				Inventory_ID
+			from Object
+			where ID = ?'
+			, array($object_id));
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return array('success' => false, 'reason' => 'Database error');
+		}
+
+		if(!$this->Is_inventory_accessible($actor_id, $rs->fields['Inventory_ID'])) {
+			return array('success' => false, 'reason' => 'Inventory not accessible');
+		}
+
+		$rs = $db->Execute('update Object set Label = ? where ID = ?', array($label, $object_id));
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return array('success' => false, 'reason' => 'Database error');
+		}
+
+		return array('success' => true);
+	}
 }

@@ -706,4 +706,23 @@ class Actor extends Controller
 												'actor_id' => $actor_id), true);
 		echo json_encode(array('success' => true, 'html' => $inventory_view));
 	}
+
+	public function Label_object() {
+		$actor_id = $_POST['actor_id'];
+
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
+		}
+		
+		$object_id = $_POST['object_id'];
+		$label = $_POST['label'];
+		
+		$this->Load_model('Inventory_model');
+		
+		$result = $this->Inventory_model->Label_object($actor_id, $object_id, $label);
+
+		echo json_encode($result);
+	}
 }
