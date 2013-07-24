@@ -644,16 +644,16 @@ function open_container(actor_id, inventory_id) {
 
 var current_actor_id = -1;
 var current_object_id = -1;
-function show_object_label_dialog(actor_id, object_id) {
+function show_object_label_dialog(actor_id, object_id, label) {
 	current_actor_id = actor_id;
 	current_object_id = object_id;
 	var html = $('#object_label_popup').html();
 	open_dialog(html, 250, 100);
+	$('#label_input').val(label);
 }
 
 function label_object() {
 	var label = $('#label_input').val();
-	alert(label);
 	$.ajax({
 		type: 'POST',
 		url: '/actor/Label_object',
@@ -666,7 +666,8 @@ function label_object() {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
-				window.location = "/actor/show_actor/"+current_actor_id+"/inventory";
+				$('#name_object_' + current_object_id).html(label);
+				close_dialog();
 			}
 		}
 	});

@@ -9,10 +9,16 @@ foreach ($objects as $object) {
 						'Inventory_ID' => $object['Object_inventory_ID']
 					));
 	}
+	$object_name = $object['Name'];
+	if($object['Label'] !== NULL && $object['Label'] != '') {
+		$object_name = $object['Label'];
+	} else {
+		$object['Label'] = '';
+	}
 	
 	$template = '
 				<tr data-object_collection="{Inventory_ID}_{Product_ID}">
-					<td><a href="javascript:void(0)" onclick="show_object_label_dialog({actor_id}, {Object_ID})">{Name}</a></td>
+					<td><a id="name_object_{Object_ID}" href="javascript:void(0)" onclick="show_object_label_dialog({actor_id}, {Object_ID}, \'{Label}\')">{Name}</a></td>
 					<td>&nbsp;</td>
 					<td>{!actions}</td>
 				</tr>
@@ -20,8 +26,9 @@ foreach ($objects as $object) {
 	echo expand_template($template,
 		array(
 			'actor_id' => $actor_id,
-			'Name' => $object['Name'],
+			'Name' => $object_name,
 			'Object_ID' => $object['ID'],
+			'Label' => $object['Label'],
 			'Product_ID' => $product_id,
 			'Inventory_ID' => $inventory_id,
 			'actions' => $actions

@@ -246,6 +246,7 @@ class Inventory_model extends Model
 		$sql = '
 				select
 					O.ID,
+					O.Label,
 					P.Name,
 					OI.Inventory_ID as Object_inventory_ID
 				from Object O
