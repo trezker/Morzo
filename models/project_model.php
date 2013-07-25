@@ -929,6 +929,7 @@ class Project_model extends Model
 			}
 
 			if(isset($project['product_outputs'])) {
+				$key_form_id = false;
 				foreach($project['product_outputs'] as $output) {
 					for($i = 0; $i < $output['Amount']; $i++) {
 						$query = '
@@ -943,36 +944,71 @@ class Project_model extends Model
 						$Object_ID = $db->Insert_id();
 						
 						$query = '
-								select c.ID 
+								select c.ID, c.Name
 								from Product p 
 								join Product_category pc on pc.Product_ID = p.ID
 								join Category c on pc.Category_ID = c.ID
-								where p.ID = ? and c.Name = ?
+								where p.ID = ?
 								';
 
-						$args = array($output['Product_ID'], 'Container');
+						$args = array($output['Product_ID']);
 						$rs = $db->Execute($query, $args);
 						if(!$rs)
 							break;
-						if($rs->RecordCount() > 0) {
-							$query = '
-									insert into Inventory () values()
-									';
+						foreach($rs->GetArray() as $category) {
+							if($category['Name'] == 'Container') {
+								$query = 'insert into Inventory () values()';
 
-							$args = array();
-							$rs = $db->Execute($query, $args);
-							if(!$rs)
-								break;
-							$Inventory_ID = $db->Insert_id();
-							
-							$query = '
-									insert into Object_inventory (Object_ID, Inventory_ID) values(?, ?)
-									';
+								$args = array();
+								$rs = $db->Execute($query, $args);
+								if(!$rs)
+									break;
+								$Inventory_ID = $db->Insert_id();
+								
+								$query = 'insert into Object_inventory (Object_ID, Inventory_ID) values(?, ?)';
 
-							$args = array($Object_ID, $Inventory_ID);
-							$rs = $db->Execute($query, $args);
-							if(!$rs)
-								break;
+								$args = array($Object_ID, $Inventory_ID);
+								$rs = $db->Execute($query, $args);
+								if(!$rs)
+									break;
+							} elseif($category['Name'] == 'Key') {
+								if(!$key_form_id) {
+									$key_form_id = $this->Create_key_form();
+									if(!$key_form_id) {
+										$db->FailTrans();
+										$db->CompleteTrans();
+										return false;
+									}
+								}
+								$query = 'insert into Object_key (Object_ID, Key_form_ID) values(?, ?)';
+								$args = array($Object_ID, $key_form_id);
+								$rs = $db->Execute($query, $args);
+								if(!$rs) {
+									$db->FailTrans();
+									$db->CompleteTrans();
+									echo "Key fail";
+									return false;
+								}
+							} elseif($category['Name'] == 'Lock') {
+								if(!$key_form_id) {
+									$key_form_id = $this->Create_key_form();
+									if(!$key_form_id) {
+										$db->FailTrans();
+										$db->CompleteTrans();
+										return false;
+									}
+								}
+								$query = 'insert into Object_lock (Object_ID, Key_form_ID) values(?, ?)';
+								$args = array($Object_ID, $key_form_id);
+								$rs = $db->Execute($query, $args);
+								if(!$rs) {
+									$db->FailTrans();
+									$db->CompleteTrans();
+									echo "Lock fail";
+									echo $Object_ID . " " . $key_form_id;
+									return false;
+								}
+							}
 						}
 					}
 					if(!$rs) {
@@ -1075,6 +1111,18 @@ class Project_model extends Model
 			$db->CompleteTrans();
 		}
 		return $success;
+	}
+	
+	private function Create_key_form() {
+		$db = Load_database();
+		$query = 'insert into Key_form () values()';
+		$args = array();
+		$rs = $db->Execute($query, $args);
+		if(!$rs) {
+			return false;
+		}
+		$key_form_id = $db->Insert_id();
+		return $key_form_id;
 	}
 	
 	public function Supply_project($project_id, $actor_id) {
