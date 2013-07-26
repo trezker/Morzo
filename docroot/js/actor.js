@@ -673,3 +673,36 @@ function label_object() {
 	});
 	return false;
 }
+
+var lock_to_attach = false;
+var object_to_attach = false;
+function attach_lock(actor_id, object_id, lockside) {
+	if(lockside) {
+		lock_to_attach = object_id;
+	} else {
+		object_to_attach = object_id;
+	}
+	if(lock_to_attach && object_to_attach) {
+		$.ajax({
+			type: 'POST',
+			url: '/actor/Attach_lock',
+			data: {
+				actor_id: actor_id,
+				lock_id: lock_to_attach,
+				object_id: object_to_attach
+			},
+			dataType: "json",
+			success: function(data) {
+				if(ajax_logged_out(data)) return;
+				if(data.success == true) {
+					//$('#name_object_' + current_object_id).html(label);
+					//close_dialog();
+					window.location = "/actor/show_actor/"+actor_id+"/inventory";
+				}
+				lock_to_attach = false;
+				object_to_attach = false;
+			}
+		});
+	}
+	return false;
+}

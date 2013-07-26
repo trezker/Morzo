@@ -238,20 +238,27 @@ class Inventory_model extends Model
 	}
 	
 	public function Get_inventory_product_objects($actor_id, $inventory_id, $product_id) {
+		$db = Load_database();
+
 		if(!$this->Is_inventory_accessible($actor_id, $inventory_id)) {
 			return false;
 		}
 		
-		$db = Load_database();
 		$sql = '
 				select
 					O.ID,
 					O.Label,
 					P.Name,
-					OI.Inventory_ID as Object_inventory_ID
+					OI.Inventory_ID as Object_inventory_ID,
+					OL.ID as Object_lock_ID,
+					OL.Attached_object_ID as Is_attached,
+					AL.ID as Has_lock,
+					IFNULL(OL.Is_locked, AL.Is_locked) as Is_locked
 				from Object O
 				join Product P on P.ID = O.Product_ID
 				left join Object_inventory OI on OI.Object_ID = O.ID
+				left join Object_lock OL on OL.Object_ID = O.ID
+				left join Object_lock AL on AL.Attached_object_ID = O.ID
 				where O.Inventory_ID = ? and O.Product_ID = ?
 			';
 		$args = array($inventory_id, $product_id);
@@ -331,6 +338,53 @@ class Inventory_model extends Model
 		}
 
 		$rs = $db->Execute('update Object set Label = ? where ID = ?', array($label, $object_id));
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return array('success' => false, 'reason' => 'Database error');
+		}
+
+		return array('success' => true);
+	}
+
+	public function Attach_lock($actor_id, $object_id, $lock_id) {
+		$db = Load_database();
+
+		//Check access to object
+		$rs = $db->Execute('
+			select
+				Inventory_ID
+			from Object
+			where ID = ?'
+			, array($object_id));
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return array('success' => false, 'reason' => 'Database error');
+		}
+
+		if(!$this->Is_inventory_accessible($actor_id, $rs->fields['Inventory_ID'])) {
+			return array('success' => false, 'reason' => 'Inventory not accessible');
+		}
+
+		//Check access to lock object
+		$rs = $db->Execute('
+			select
+				Inventory_ID
+			from Object
+			where ID = ?'
+			, array($lock_id));
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return array('success' => false, 'reason' => 'Database error');
+		}
+
+		if(!$this->Is_inventory_accessible($actor_id, $rs->fields['Inventory_ID'])) {
+			return array('success' => false, 'reason' => 'Inventory not accessible');
+		}
+
+		$rs = $db->Execute('update Object_lock set Attached_object_ID = ? where Object_ID = ?', array($object_id, $lock_id));
 		
 		if(!$rs) {
 			echo $db->ErrorMsg();
