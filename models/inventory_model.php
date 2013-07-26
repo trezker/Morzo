@@ -393,4 +393,50 @@ class Inventory_model extends Model
 
 		return array('success' => true);
 	}
+
+	public function Detach_lock($actor_id, $object_id, $lockside) {
+		$db = Load_database();
+
+		//Check access to object
+		$rs = $db->Execute('
+			select
+				Inventory_ID
+			from Object
+			where ID = ?'
+			, array($object_id));
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return array('success' => false, 'reason' => 'Database error');
+		}
+
+		if(!$this->Is_inventory_accessible($actor_id, $rs->fields['Inventory_ID'])) {
+			return array('success' => false, 'reason' => 'Inventory not accessible');
+		}
+
+		if($lockside == 'false') {
+			$rs = $db->Execute('
+				select
+					Object_ID
+				from Object_lock
+				where Attached_object_ID = ?'
+				, array($object_id));
+			
+			if(!$rs) {
+				return array('success' => false, 'reason' => 'Database error');
+			}
+			$lock_id = $rs->fields['Object_ID'];
+		} else {
+			$lock_id = $object_id;
+		}
+
+		$rs = $db->Execute('update Object_lock set Attached_object_ID = NULL where Object_ID = ?', array($lock_id));
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return array('success' => false, 'reason' => 'Database error');
+		}
+
+		return array('success' => true);
+	}
 }

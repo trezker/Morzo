@@ -744,4 +744,23 @@ class Actor extends Controller
 
 		echo json_encode($result);
 	}
+
+	public function Detach_lock() {
+		$actor_id = $_POST['actor_id'];
+
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
+		}
+		
+		$object_id = $_POST['object_id'];
+		$lockside = $_POST['lockside'];
+		
+		$this->Load_model('Inventory_model');
+		
+		$result = $this->Inventory_model->Detach_lock($actor_id, $object_id, $lockside);
+
+		echo json_encode($result);
+	}
 }
