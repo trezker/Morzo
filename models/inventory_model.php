@@ -439,4 +439,114 @@ class Inventory_model extends Model
 
 		return array('success' => true);
 	}
+
+	public function Lock_object($actor_id, $object_id, $lockside) {
+		$db = Load_database();
+
+		//Check access to object
+		$rs = $db->Execute('
+			select
+				Inventory_ID
+			from Object
+			where ID = ?'
+			, array($object_id));
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return array('success' => false, 'reason' => 'Database error');
+		}
+
+		if(!$this->Is_inventory_accessible($actor_id, $rs->fields['Inventory_ID'])) {
+			return array('success' => false, 'reason' => 'Inventory not accessible');
+		}
+
+		//TODO: Check that you have access to the key(s) then lock
+
+		if($lockside == 'false') {
+			$sql = 'update Object_lock
+					set Is_locked = true
+					where Object_ID in (
+						select t.Object_ID from 
+						(
+							select al.Object_ID
+							from Object_lock al
+							join Object_key ok on ok.Key_form_ID = al.Key_form_ID
+							join Object ko on ko.ID = ok.Object_ID
+							join Actor a on a.Inventory_ID = ko.Inventory_ID
+							where al.Attached_object_ID = ? and a.ID = ?
+						) t
+					)
+					';
+			$rs = $db->Execute($sql, array($object_id, $actor_id));
+		} else {
+			/* TODO: unlock a specific lock object
+			$sql = 'update Object_lock ol
+					join Object_key ok on ok.Key_form_ID = ol.Key_form_ID
+					set Is_locked = true where ol.Object_ID = ?';
+			$rs = $db->Execute($sql, array($object_id));
+			*/
+		}
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return array('success' => false, 'reason' => 'Database error');
+		}
+
+		return array('success' => true);
+	}
+
+	public function Unlock_object($actor_id, $object_id, $lockside) {
+		$db = Load_database();
+
+		//Check access to object
+		$rs = $db->Execute('
+			select
+				Inventory_ID
+			from Object
+			where ID = ?'
+			, array($object_id));
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return array('success' => false, 'reason' => 'Database error');
+		}
+
+		if(!$this->Is_inventory_accessible($actor_id, $rs->fields['Inventory_ID'])) {
+			return array('success' => false, 'reason' => 'Inventory not accessible');
+		}
+
+		//TODO: Check that you have access to the key(s) then lock
+
+		if($lockside == 'false') {
+			$sql = 'update Object_lock
+					set Is_locked = false
+					where Object_ID in (
+						select t.Object_ID from 
+						(
+							select al.Object_ID
+							from Object_lock al
+							join Object_key ok on ok.Key_form_ID = al.Key_form_ID
+							join Object ko on ko.ID = ok.Object_ID
+							join Actor a on a.Inventory_ID = ko.Inventory_ID
+							where al.Attached_object_ID = ? and a.ID = ?
+						) t
+					)
+					';
+			$rs = $db->Execute($sql, array($object_id, $actor_id));
+		} else {
+			/* TODO: unlock a specific lock object
+			$sql = 'update Object_lock ol
+					join Object_key ok on ok.Key_form_ID = ol.Key_form_ID
+					set Is_locked = true where ol.Object_ID = ?';
+			$rs = $db->Execute($sql, array($object_id));
+			*/
+		}
+		
+		if(!$rs) {
+			echo $db->ErrorMsg();
+			return array('success' => false, 'reason' => 'Database error');
+		}
+
+		return array('success' => true);
+	}
 }

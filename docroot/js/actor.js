@@ -728,3 +728,47 @@ function detach_lock(actor_id, object_id, lockside) {
 	});
 	return false;
 }
+
+function lock_object(actor_id, object_id, lockside) {
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Lock_object',
+		data: {
+			actor_id: actor_id,
+			object_id: object_id,
+			lockside: lockside
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				//$('#name_object_' + current_object_id).html(label);
+				//close_dialog();
+				window.location = "/actor/show_actor/"+actor_id+"/inventory";
+			}
+		}
+	});
+	return false;
+}
+
+function unlock_object(actor_id, object_id, lockside) {
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Unlock_object',
+		data: {
+			actor_id: actor_id,
+			object_id: object_id,
+			lockside: lockside
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				//$('#name_object_' + current_object_id).html(label);
+				//close_dialog();
+				window.location = "/actor/show_actor/"+actor_id+"/inventory";
+			}
+		}
+	});
+	return false;
+}
