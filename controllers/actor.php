@@ -612,6 +612,12 @@ class Actor extends Controller
 		}
 
 		$result = $this->Actor_model->Enter_object($actor_id, $object_id);
+		if($result['success'] == true) {
+			$this->Load_model('Inventory_model');
+			$object_name = $this->Inventory_model->Get_object_name($object_id);
+			$this->Load_model('Event_model');
+			$r = $this->Event_model->Save_event('{LNG_Actor_entered_object}', $actor_id, NULL, $object_name);
+		}
 
 		echo json_encode($result);
 	}
@@ -626,7 +632,15 @@ class Actor extends Controller
 			return;
 		}
 
+		$actor = $this->Actor_model->Get_actor($actor_id);
+		$object_id = $actor['Inside_object_ID'];
 		$result = $this->Actor_model->Leave_object($actor_id);
+		if($result['success'] == true) {
+			$this->Load_model('Inventory_model');
+			$object_name = $this->Inventory_model->Get_object_name($object_id);
+			$this->Load_model('Event_model');
+			$r = $this->Event_model->Save_event('{LNG_Actor_left_object}', $actor_id, NULL, $object_name);
+		}
 
 		echo json_encode($result);
 	}

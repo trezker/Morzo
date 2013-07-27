@@ -37,7 +37,7 @@ foreach ($objects as $object) {
 	}
 	$object_name = $object['Name'];
 	if($object['Label'] !== NULL && $object['Label'] != '') {
-		$object_name = $object['Label'];
+		$object_name = $object['Name'];
 	} else {
 		$object['Label'] = '';
 	}

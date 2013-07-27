@@ -549,4 +549,26 @@ class Inventory_model extends Model
 
 		return array('success' => true);
 	}
+	
+	public function Get_object_name($object_id) {
+		$db = Load_database();
+
+		$sql = '
+				select
+					O.Label,
+					P.Name
+				from Object O
+				join Product P on P.ID = O.Product_ID
+				where O.ID = ?
+			';
+		$args = array($object_id);
+		$rs = $db->Execute($sql, $args);
+		if(!$rs) {
+			return false;
+		}
+		if($rs->fields['Label'] === NULL || $rs->fields['Label'] == '') {
+			return $rs->fields['Name'];
+		}
+		return $rs->fields['Label'] . ' (' . $rs->fields['Name'] . ')';
+	}
 }
