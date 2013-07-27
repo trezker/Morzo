@@ -227,7 +227,7 @@ class Inventory_model extends Model
 						and L.Inventory_ID = ?) 
 						or OI.Inventory_ID = ? 
 						or CI.Inventory_ID = ?
-					)
+					) and not exists(select OL.ID from Object_lock OL where OL.Attached_object_ID = O.ID and OL.Is_locked = true)
 			';
 		$args = array($actor_id, $inventory_id, $inventory_id, $inventory_id, $inventory_id);
 		$rs = $db->Execute($sql, $args);
