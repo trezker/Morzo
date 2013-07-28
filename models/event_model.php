@@ -53,7 +53,9 @@ class Event_model
 			$rs = $db->Execute('
 				insert into Actor_event(Actor_ID, Event_ID)
 				select B.ID, ? from Actor A
-				join Actor B on A.Location_ID = B.Location_ID
+				join Actor B on (A.Location_ID = B.Location_ID)
+							 and ((A.Inside_object_ID is NULL and B.Inside_object_ID is NULL)
+							 or A.Inside_object_ID = B.Inside_object_ID)
 				where A.ID = ?
 				', array($event_id, $from_actor_id));
 			if($db->Affected_rows() == 0) {
