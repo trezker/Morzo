@@ -22,13 +22,14 @@ class Language_model
 	public function Translate_handle($handle)
 	{
 		$db = Load_database();
-
+		$cleanhandle = trim($handle);
+		$cleanhandle = substr($cleanhandle, 1, strlen($cleanhandle)-2);
 		$query = '
 			SELECT
 				Text
 			FROM Translation
 			WHERE Handle = ? AND Language_ID = ?';
-		$rs = $db->Execute($query, array($handle, 1));
+		$rs = $db->Execute($query, array($cleanhandle, 1));
 		if(!$rs) 
 		{
 			return $handle;
