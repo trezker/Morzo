@@ -397,33 +397,56 @@ class Actor_model extends Model
 		$db = Load_database();
 		//$db->debug = true;
 		
+		$db->StartTrans();
+
 		//I will need information about the state to generate an event about moving locations
 		//The object is either found while I'm not in an object or the object has to be inside the object I'm in.
 		//OO checks that the object is a container, later on check for sufficient capacity.
 		$rs = $db->Execute('
 			select
-				O.ID
+				OO.Inventory_ID
 			from Actor A
 			join Location L on A.Location_ID = L.ID
 			left join Object_inventory OI on A.Inside_object_ID = OI.Object_ID
 			join Object O on O.Inventory_ID = L.Inventory_ID or O.Inventory_ID = OI.Inventory_ID
 			join Object_inventory OO on O.ID = OO.Object_ID
 			where A.ID = ? and O.ID = ? and (OI.Inventory_ID is NULL or OI.Inventory_ID = O.Inventory_ID)
-			'
-			, array($actor_id, $object_id));
+			', array($actor_id, $object_id));
 		
 		if(!$rs) {
+			$db->FailTrans();
+			$db->CompleteTrans();
 			return array('success' => false, 'data' => 'Query error');
 		}
 		if($rs->RecordCount() !== 1) {
+			$db->FailTrans();
+			$db->CompleteTrans();
 			return array('success' => false, 'data' => 'Not allowed');
 		}
+
+		$this->Load_model('Inventory_model');
+		if(!$this->Inventory_model->Is_inventory_accessible($actor_id, $rs->fields['Inventory_ID'])) {
+			$db->FailTrans();
+			$db->CompleteTrans();
+			return array('success' => false, 'data' => 'Inventory not accessible');
+		}
+
+		/*TODO:
+		 * transaction
+		 * Generate event here
+		 * add parameter to include the object you're entering as a place where people can witness the event
+		*/
 
 		$rs = $db->Execute('
 			update Actor set Inside_object_ID = ? where ID = ?
 			'
 			, array($object_id, $actor_id));
 		
+		$success = !$db->HasFailedTrans();
+		$db->CompleteTrans();
+		if(!$success) {
+			return array('success' => false, 'data' => 'Database error');
+		}
 		return array('success' => true);
 	}
 
