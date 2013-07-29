@@ -432,7 +432,6 @@ class Actor_model extends Model
 		}
 
 		/*TODO:
-		 * transaction
 		 * Generate event here
 		 * add parameter to include the object you're entering as a place where people can witness the event
 		*/
@@ -454,31 +453,58 @@ class Actor_model extends Model
 		$db = Load_database();
 		//$db->debug = true;
 		
+		$db->StartTrans();
+
 		//TODO: When you can enter objects recursively, move to the container of the current object.
 		//Check for locked status when implemented
 
 		//Will get either an Object_ID or Location_ID, the other will be null
-		$sql = 'select 
+		$sql = '
+				select 
 					O.ID as Object_ID,
-					L.ID as Location_ID
+					L.ID as Location_ID,
+					OO.Object_ID as From_object_ID
 				from Actor A
-				left join Object IO on A.Inside_object_ID = IO.ID
+				join Object IO on A.Inside_object_ID = IO.ID
 				left join Location L on L.Inventory_ID = IO.Inventory_ID
 				left join Object_inventory OI on IO.Inventory_ID = OI.Inventory_ID
 				left join Object O on OI.Object_ID = O.ID
+				join Object_inventory OO on OO.Object_ID = A.Inside_object_ID
 				where A.ID = ?
 				';
 
 		$rs = $db->Execute($sql, array($actor_id));
-		if(!$rs)
+		if(!$rs) {
+			$db->FailTrans();
+			$db->CompleteTrans();
 			return array('success' => false, 'reason' => 'Database error');
-		
+		}
+		if($rs->RecordCount() !== 1) {
+			$db->FailTrans();
+			$db->CompleteTrans();
+			return array('success' => false, 'data' => 'Not inside an object');
+		}
+
+		$this->Load_model('Inventory_model');
+
+		if($this->Inventory_model->Is_object_locked($rs->fields['From_object_ID'])) {
+			$db->FailTrans();
+			$db->CompleteTrans();
+			return array('success' => false, 'data' => 'Locked');
+		}
+
 		if($rs->fields['Object_ID']) {
 			$rs = $db->Execute('update Actor set Inside_object_ID = ? where ID = ?', array($rs->fields['Object_ID'], $actor_id));
 		} else {
 			$rs = $db->Execute('update Actor set Inside_object_ID = NULL, Location_ID = ? where ID = ?', array($rs->fields['Location_ID'], $actor_id));
 		}
 		
+		$success = !$db->HasFailedTrans();
+		$db->CompleteTrans();
+		if(!$success) {
+			return array('success' => false, 'data' => 'Database error');
+		}
+
 		return array('success' => true);
 	}
 }

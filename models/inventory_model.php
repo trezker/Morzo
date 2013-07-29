@@ -571,4 +571,21 @@ class Inventory_model extends Model
 		}
 		return $rs->fields['Label'] . ' (' . $rs->fields['Name'] . ')';
 	}
+
+	public function Is_object_locked($object_id) {
+		$db = Load_database();
+
+		$sql = '
+				select
+					L.ID
+				from Object_lock L
+				where L.Attached_object_ID = ? and L.Is_locked = true
+			';
+		$args = array($object_id);
+		$rs = $db->Execute($sql, $args);
+		if(!$rs || $rs->RecordCount() > 0) {
+			return true; //We shouldn't take any chances with letting people get access just because the code is broken.
+		}
+		return false;
+	}
 }
