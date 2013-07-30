@@ -384,7 +384,11 @@ class Inventory_model extends Model
 			return array('success' => false, 'reason' => 'Inventory not accessible');
 		}
 
-		$rs = $db->Execute('update Object_lock set Attached_object_ID = ? where Object_ID = ?', array($object_id, $lock_id));
+		$rs = $db->Execute('
+							update Object_lock OL
+							join Object O on O.ID = OL.Object_ID
+							set OL.Attached_object_ID = ?, O.Inventory_ID = NULL
+							where OL.Object_ID = ?', array($object_id, $lock_id));
 		
 		if(!$rs) {
 			echo $db->ErrorMsg();
@@ -400,10 +404,12 @@ class Inventory_model extends Model
 		//Check access to object
 		$rs = $db->Execute('
 			select
-				Inventory_ID
-			from Object
-			where ID = ?'
-			, array($object_id));
+				O.Inventory_ID,
+				A.Inventory_ID as Actor_inventory
+			from Object O
+			join Actor A
+			where O.ID = ? and A.ID = ?'
+			, array($object_id, $actor_id));
 		
 		if(!$rs) {
 			echo $db->ErrorMsg();
@@ -415,22 +421,26 @@ class Inventory_model extends Model
 		}
 
 		if($lockside == 'false') {
-			$rs = $db->Execute('
+			$rs2 = $db->Execute('
 				select
 					Object_ID
 				from Object_lock
 				where Attached_object_ID = ?'
 				, array($object_id));
 			
-			if(!$rs) {
+			if(!$rs2) {
 				return array('success' => false, 'reason' => 'Database error');
 			}
-			$lock_id = $rs->fields['Object_ID'];
+			$lock_id = $rs2->fields['Object_ID'];
 		} else {
 			$lock_id = $object_id;
 		}
 
-		$rs = $db->Execute('update Object_lock set Attached_object_ID = NULL where Object_ID = ?', array($lock_id));
+		$rs = $db->Execute('
+							update Object_lock OL
+							join Object O on O.ID = OL.Object_ID
+							set OL.Attached_object_ID = NULL, O.Inventory_ID = ?
+							where OL.Object_ID = ?', array($rs->fields['Actor_inventory'], $lock_id));
 		
 		if(!$rs) {
 			echo $db->ErrorMsg();
