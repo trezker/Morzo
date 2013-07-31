@@ -108,7 +108,8 @@ class Actor_model extends Model
 				$food_names = "";
 				$hunger = $hungry_actor['Hunger'];
 				foreach ($rs as $r) {
-					if($r['Setname'] = 'Resource') {
+					$consume_nutrition = 0;
+					if($r['Setname'] == 'Resource') {
 						$consume_nutrition = $r['Nutrition'] * $r['Amount'];
 					
 						if($hunger <= $consume_nutrition) {
@@ -138,10 +139,12 @@ class Actor_model extends Model
 							}
 						}
 					}
-					if($food_names != "") {
-						$food_names .= ", ";
+					if($consume_nutrition > 0) {
+						if($food_names != "") {
+							$food_names .= ", ";
+						}
+						$food_names .= $r['Name'];
 					}
-					$food_names .= $r['Name'];
 				}
 				$query = "
 					update Actor set Hunger = ? where ID = ?
