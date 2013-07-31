@@ -78,17 +78,19 @@ class Actor extends Controller
 			}
 			$tab_view = $this->Load_view('events_tab_view', array('events' => $events, 'actor_id' => $actor_id), true);
 		} elseif ($tab == 'resources') {
-			$this->Load_model("Location_model");
-			$resources = $this->Location_model->Get_location_resources($actor['Location_ID']);
-			$this->Load_model("Species_model");
-			$species = $this->Species_model->Get_location_species($actor['Location_ID']);
-			$tab_view = $this->Load_view('resources_tab_view', 
+			if($actor['Inside_object_ID'] === NULL) {
+				$this->Load_model("Location_model");
+				$resources = $this->Location_model->Get_location_resources($actor['Location_ID']);
+				$this->Load_model("Species_model");
+				$species = $this->Species_model->Get_location_species($actor['Location_ID']);
+				$tab_view = $this->Load_view('resources_tab_view', 
 										array(
 											'resources' => $resources, 
 											'species' => $species, 
 											'actor_id' => $actor_id
 											), 
 										true);
+			}
 		} elseif ($tab == 'projects') {
 			$this->Load_model("Project_model");
 			$this->Load_model("Species_model");
