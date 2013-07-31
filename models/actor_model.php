@@ -117,21 +117,21 @@ class Actor_model extends Model
 						} else {
 							$hunger -= $consume_nutrition;
 						}
-						
+						echo " consuming: " . $consume_nutrition / $r['Nutrition'] . ' ' . $r['Name'];
 						if($hunger > 0) {
 							$query = "
-								delete from Inventory_resource where Resource_ID = ?
+								delete from Inventory_resource where Resource_ID = ? and Inventory_ID = ?
 							";
-							$args = array($r['ID']);
+							$args = array($r['ID'], $hungry_actor['Inventory_ID']);
 							$rs = $db->Execute($query, $args);
 							if(!$rs) {
 								echo $db->ErrorMsg();
 							}
 						} else {
 							$query = "
-								update Inventory_resource set Amount = ? where ID = ?
+								update Inventory_resource set Amount = ? where Resource_ID = ? and Inventory_ID = ?
 							";
-							$args = array($r['Amount'] - ($consume_nutrition / $r['Nutrition']), $r['ID']);
+							$args = array($r['Amount'] - ($consume_nutrition / $r['Nutrition']), $r['ID'], $hungry_actor['Inventory_ID']);
 							$rs = $db->Execute($query, $args);
 							if(!$rs) {
 								echo $db->ErrorMsg();
