@@ -55,7 +55,6 @@ class Actor extends Controller
 					$travel['DestinationName'] = 'Unnamed location';
 			}
 			$locations = $this->Get_neighbouring_locations($actor_id);
-			//TODO: get containers for inside object
 			$containers = $this->Actor_model->Get_containers_on_location($actor_id);
 			if($actor['Inside_object_name'] !== NULL) {
 				$locations = NULL; //TODO: add check for vehicle so it can travel when implemented
