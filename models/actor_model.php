@@ -431,10 +431,14 @@ class Actor_model extends Model
 			return array('success' => false, 'data' => 'Inventory not accessible');
 		}
 
-		/*TODO:
-		 * Generate event here
-		 * add parameter to include the object you're entering as a place where people can witness the event
-		*/
+		$object_name = $this->Inventory_model->Get_object_name($object_id);
+		$this->Load_model('Event_model');
+		$r = $this->Event_model->Save_event('{LNG_Actor_entered_object}', $actor_id, NULL, $object_name, NULL, NULL, false, $object_id);
+		if(!$r) {
+			$db->FailTrans();
+			$db->CompleteTrans();
+			return array('success' => false, 'data' => 'Failed to generate event');
+		}
 
 		$rs = $db->Execute('
 			update Actor set Inside_object_ID = ? where ID = ?
@@ -484,10 +488,10 @@ class Actor_model extends Model
 			$db->CompleteTrans();
 			return array('success' => false, 'data' => 'Not inside an object');
 		}
-
+		$from_object_id = $rs->fields['From_object_ID'];
 		$this->Load_model('Inventory_model');
 
-		if($this->Inventory_model->Is_object_locked($rs->fields['From_object_ID'])) {
+		if($this->Inventory_model->Is_object_locked($from_object_id)) {
 			$db->FailTrans();
 			$db->CompleteTrans();
 			return array('success' => false, 'data' => 'Locked');
@@ -497,6 +501,15 @@ class Actor_model extends Model
 			$rs = $db->Execute('update Actor set Inside_object_ID = ? where ID = ?', array($rs->fields['Object_ID'], $actor_id));
 		} else {
 			$rs = $db->Execute('update Actor set Inside_object_ID = NULL, Location_ID = ? where ID = ?', array($rs->fields['Location_ID'], $actor_id));
+		}
+
+		$object_name = $this->Inventory_model->Get_object_name($from_object_id);
+		$this->Load_model('Event_model');
+		$r = $this->Event_model->Save_event('{LNG_Actor_left_object}', $actor_id, NULL, $object_name, NULL, NULL, false, $from_object_id);
+		if(!$r) {
+			$db->FailTrans();
+			$db->CompleteTrans();
+			return array('success' => false, 'data' => 'Failed to generate event');
 		}
 		
 		$success = !$db->HasFailedTrans();

@@ -38,7 +38,7 @@ class Event_model
 		return $events;
 	}
 
-	public function Save_event($translation_handle, $from_actor_id, $to_actor_id, $message = NULL, $from_location = NULL, $to_location = NULL, $private = false) {
+	public function Save_event($translation_handle, $from_actor_id, $to_actor_id, $message = NULL, $from_location = NULL, $to_location = NULL, $private = false, $inside_object_id = NULL) {
 		$db = Load_database();
 
 		//$db->StartTrans();
@@ -50,14 +50,20 @@ class Event_model
 		$event_id = $db->Insert_ID();
 
 		if($private == false) {
+			$args = array($event_id, $from_actor_id);
+			$extra_location = '';
+			if($inside_object_id !== NULL) {
+				$extra_location = 'or B.Inside_object_ID = ?';
+				$args = array($event_id, $inside_object_id, $from_actor_id);
+			}
 			$rs = $db->Execute('
 				insert into Actor_event(Actor_ID, Event_ID)
 				select B.ID, ? from Actor A
 				join Actor B on (A.Location_ID = B.Location_ID)
 							 and ((A.Inside_object_ID is NULL and B.Inside_object_ID is NULL)
-							 or A.Inside_object_ID = B.Inside_object_ID)
+							 or A.Inside_object_ID = B.Inside_object_ID ' . $extra_location . ')
 				where A.ID = ?
-				', array($event_id, $from_actor_id));
+				', $args);
 			if($db->Affected_rows() == 0) {
 				$db->FailTrans();
 			}
