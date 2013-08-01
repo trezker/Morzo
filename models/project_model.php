@@ -457,9 +457,6 @@ class Project_model extends Model
 	{
 		$db = Load_database();
 		
-
-		//TODO: Figure out if you're allowed to create the project
-		
 		$db->StartTrans();
 		
 		//Create project inventory
@@ -468,40 +465,38 @@ class Project_model extends Model
 		
 		if(!$r) {
 			$db->FailTrans();
-		} else {
-			$project_inventory_id = $db->Insert_id();
+			$db->CompleteTrans();
+			return false;
 		}
+		$project_inventory_id = $db->Insert_id();
+		
+		$this->Load_model('Actor_model');
+		$inventory_ids = $this->Actor_model->Get_actor_and_location_inventory($actor_id);
+		//Create the project
+		$args = array($inventory_ids['Location_inventory'], $recipe_id, $cycles, $project_inventory_id, $actor_id);
 
-		if(!$db->HasFailedTrans()) {
-			//Create the project
-			$args = array($recipe_id, $cycles, $project_inventory_id, $actor_id);
-
-			$r = $db->Execute('
-				insert into Project (Creator_actor_ID, Location_ID, Recipe_ID, Cycles_left, Created_time, Inventory_ID)
-				select A.ID, A.Location_ID, ?, ?, C.Value, ?
-				from Count C, Actor A where 
-				C.Name = \'Update\' and A.ID = ?
-				', $args);
+		$r = $db->Execute('
+			insert into Project (Creator_actor_ID, Location_inventory_ID, Recipe_ID, Cycles_left, Created_time, Inventory_ID)
+			select A.ID, ?, ?, ?, C.Value, ?
+			from Count C, Actor A
+			where C.Name = \'Update\' and A.ID = ?
+			', $args);
 			
-			if(!$r) {
-				$db->FailTrans();
-			} else {
-				$project_id = $db->Insert_id();
-			}
+		if(!$r) {
+			$db->FailTrans();
+			$db->CompleteTrans();
+			return false;
 		}
+		$project_id = $db->Insert_id();
 
-		if(!$db->HasFailedTrans()) {
-			if($supply == true) {
-				$supply_result = $this->Supply_project($project_id, $actor_id);
-			}
+		if($supply == true) {
+			$supply_result = $this->Supply_project($project_id, $actor_id);
 		}
 		
-		if($db->HasFailedTrans()) {
-			echo $db->ErrorMsg();
-		}
+		$success = !($db->HasFailedTrans());
 		$db->CompleteTrans();
 
-		return true;
+		return $success;
 	}
 
 	public function Join_project($actor_id, $project_id)
@@ -510,7 +505,9 @@ class Project_model extends Model
 
 		$db = Load_database();
 
-		$args = array($project_id, $actor_id);
+		$this->Load_model('Actor_model');
+		$inventory_ids = $this->Actor_model->Get_actor_and_location_inventory($actor_id);
+		$args = array($inventory_ids['Location_inventory'], $project_id, $actor_id);
 
 		//Figure out if you're allowed to join the project
 		//At same location
@@ -520,7 +517,7 @@ class Project_model extends Model
 				T.ID as Travelling,
 				P.ID as Location
 			from Actor A
-			left join Project P on P.Location_ID = A.Location_ID and P.ID = ?
+			left join Project P on P.Location_inventory_ID = ? and P.ID = ?
 			left join Travel T on T.ActorID = A.ID
 			where A.ID = ?
 			', $args);
@@ -592,8 +589,6 @@ class Project_model extends Model
 	}
 	
 	private function Update_project_active_state($project_id) {
-		//TODO: Check prerequisites
-		//Set active accordingly
 		$db = Load_database();
 
 		$args = array($project_id);
@@ -628,7 +623,6 @@ class Project_model extends Model
 					RI.Amount AS Needed_amount, 
 					count(PO.ID) AS Project_amount
 			from Project P
-			join Actor A on P.Location_ID = A.Location_ID
 			join Recipe_product_input RI on RI.Recipe_ID = P.Recipe_ID
 			left join Object PO on RI.Product_ID = PO.Product_ID and PO.Inventory_ID = P.Inventory_ID
 			where P.ID = ?
@@ -682,7 +676,9 @@ class Project_model extends Model
 	{
 		$db = Load_database();
 		
-		$args = array($actor_id, $actor_id);
+		$this->Load_model('Actor_model');
+		$inventory_ids = $this->Actor_model->Get_actor_and_location_inventory($actor_id);
+		$args = array($actor_id, $inventory_ids['Location_inventory']);
 
 		$r = $db->Execute('
 			select
@@ -698,10 +694,8 @@ class Project_model extends Model
 				IF(AP.ID, true, false) AS Joined
 			from Project P
 			join Recipe R on R.ID = P.Recipe_ID
-			join Location L on L.ID = P.Location_ID
-			join Actor A on L.ID = A.Location_ID
 			left join Actor AP on AP.Project_ID = P.ID AND AP.ID = ?
-			where A.ID = ?
+			where P.Location_inventory_ID = ?
 			', $args);
 		
 		if(!$r) {
@@ -714,7 +708,9 @@ class Project_model extends Model
 	public function Get_project($project_id, $actor_id) {
 		$db = Load_database();
 		
-		$args = array($actor_id, $actor_id, $project_id);
+		$this->Load_model('Actor_model');
+		$inventory_ids = $this->Actor_model->Get_actor_and_location_inventory($actor_id);
+		$args = array($actor_id, $inventory_ids['Location_inventory'], $project_id);
 
 		$info = $db->Execute('
 			select
@@ -730,10 +726,8 @@ class Project_model extends Model
 				IF(AP.ID, true, false) AS Joined
 			from Project P
 			join Recipe R on R.ID = P.Recipe_ID
-			join Location L on L.ID = P.Location_ID
-			join Actor A on L.ID = A.Location_ID
 			left join Actor AP on AP.Project_ID = P.ID AND AP.ID = ?
-			where A.ID = ? and P.ID = ?
+			where P.Location_inventory_ID = ? and P.ID = ?
 			', $args);
 		
 		if(!$info) {
@@ -1129,7 +1123,9 @@ class Project_model extends Model
 		$db = Load_database();
 		$db->StartTrans();
 		
-		$args = array($project_id, $actor_id);
+		$this->Load_model('Actor_model');
+		$inventory_ids = $this->Actor_model->Get_actor_and_location_inventory($actor_id);
+		$args = array($project_id, $actor_id, $inventory_ids['Location_inventory']);
 
 		$r = $db->Execute('
 			select 	RI.Resource_ID, 
@@ -1138,11 +1134,11 @@ class Project_model extends Model
 					PI.Amount AS Project_amount,
 					AI.Amount AS Actor_amount
 			from Project P
-			join Actor A on P.Location_ID = A.Location_ID
+			join Actor A
 			join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID and RI.From_nature = 0
 			join Inventory_resource AI on RI.Resource_ID = AI.Resource_ID and AI.Inventory_ID = A.Inventory_ID
 			left join Project_input PI on PI.Project_ID = P.ID and PI.Resource_ID = RI.Resource_ID
-			where P.ID = ? and A.ID = ? and (PI.Amount < RI.Amount or PI.Amount is NULL)
+			where P.ID = ? and A.ID = ? and (PI.Amount < RI.Amount or PI.Amount is NULL) and P.Location_inventory_ID = ?
 			', $args);
 		
 		$inputs = $r->getArray();
@@ -1203,16 +1199,16 @@ class Project_model extends Model
 			
 		$inventories = $r->fields;
 
-		$args = array($project_id, $actor_id);
+		$args = array($project_id, $actor_id, $inventory_ids['Location_inventory']);
 		$r = $db->Execute('
 			select 	RI.Product_ID, 
 					RI.Amount * P.Cycles_left AS Needed_amount, 
 					count(PO.ID) AS Project_amount
 			from Project P
-			join Actor A on P.Location_ID = A.Location_ID
+			join Actor A
 			join Recipe_product_input RI on RI.Recipe_ID = P.Recipe_ID
 			left join Object PO on RI.Product_ID = PO.Product_ID and PO.Inventory_ID = P.Inventory_ID
-			where P.ID = ? and A.ID = ?
+			where P.ID = ? and A.ID = ? and P.Location_inventory_ID = ?
 			group by RI.ID
 			having(count(PO.ID) < Needed_amount)
 			', $args);
@@ -1244,12 +1240,13 @@ class Project_model extends Model
 		$db = Load_database();
 		$db->StartTrans();
 		
-		$args = array($project_id, $actor_id);
+		$this->Load_model('Actor_model');
+		$inventory_ids = $this->Actor_model->Get_actor_and_location_inventory($actor_id);
+		$args = array($project_id, $inventory_ids['Location_inventory']);
 
 		$r = $db->Execute('
 			delete P from Project P
-			join Actor A on A.Location_ID = P.Location_ID
-			where P.ID = ? and A.ID = ?
+			where P.ID = ? and P.Location_inventory_ID = ?
 			', $args);
 		
 		$success = true;
