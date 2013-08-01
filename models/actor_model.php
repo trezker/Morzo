@@ -448,6 +448,9 @@ class Actor_model extends Model
 			update Actor set Inside_object_ID = ? where ID = ?
 			'
 			, array($object_id, $actor_id));
+
+		$this->Load_model('Project_model');
+		$this->Project_model->Leave_project($actor_id);
 		
 		$success = !$db->HasFailedTrans();
 		$db->CompleteTrans();
@@ -462,9 +465,6 @@ class Actor_model extends Model
 		//$db->debug = true;
 		
 		$db->StartTrans();
-
-		//TODO: When you can enter objects recursively, move to the container of the current object.
-		//Check for locked status when implemented
 
 		//Will get either an Object_ID or Location_ID, the other will be null
 		$sql = '
@@ -515,6 +515,9 @@ class Actor_model extends Model
 			$db->CompleteTrans();
 			return array('success' => false, 'data' => 'Failed to generate event');
 		}
+
+		$this->Load_model('Project_model');
+		$this->Project_model->Leave_project($actor_id);
 		
 		$success = !$db->HasFailedTrans();
 		$db->CompleteTrans();
