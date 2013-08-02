@@ -1096,6 +1096,12 @@ class Project_model extends Model
 					';
 					$args = array($project['Project_ID']);
 					$rs = $db->Execute($query, $args);
+
+					$query = '
+						delete from Inventory where ID = ?
+					';
+					$args = array($project['Project_inventory']);
+					$rs = $db->Execute($query, $args);
 				}
 			}
 
