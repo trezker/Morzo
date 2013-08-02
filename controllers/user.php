@@ -1,7 +1,7 @@
 <?php
-require_once "../controllers/controller.php";
+require_once "../controllers/base.php";
 
-class User extends Controller
+class User extends Base
 {
 	public function Logged_in()
 	{

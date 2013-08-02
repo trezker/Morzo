@@ -131,6 +131,9 @@ else
 				{
 					session_start();
 					$funcargs = array_slice($argv, 3);
+					if(method_exists($obj, 'Before_page_load')) {
+						call_user_func_array(array($obj, 'Before_page_load'), array());
+					}
 					call_user_func_array(array($obj, $argv[2]), $funcargs);
 				}
 			}

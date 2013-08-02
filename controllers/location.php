@@ -1,7 +1,7 @@
 <?php
-require_once "../controllers/controller.php";
+require_once "../controllers/base.php";
 
-class Location extends Controller
+class Location extends Base
 {
 	private function Get_location($actor_id, $location_id) {
 		if(!is_numeric($location_id)) {

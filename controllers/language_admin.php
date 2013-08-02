@@ -1,7 +1,7 @@
 <?php
-require_once "../controllers/controller.php";
+require_once "../controllers/base.php";
 
-class Language_admin extends Controller
+class Language_admin extends Base
 {
 	public function Index()
 	{

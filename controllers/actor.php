@@ -1,7 +1,7 @@
 <?php
-require_once "../controllers/controller.php";
+require_once "../controllers/base.php";
 
-class Actor extends Controller
+class Actor extends Base
 {
 	public function Request_actor()
 	{

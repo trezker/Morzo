@@ -1,7 +1,7 @@
 <?php
-require_once "../controllers/controller.php";
+require_once "../controllers/base.php";
 
-class Front extends Controller
+class Front extends Base
 {
 	public function Index()
 	{

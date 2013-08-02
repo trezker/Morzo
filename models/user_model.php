@@ -300,4 +300,9 @@ class User_model
 		
 		return array('success' => true);
 	}
+	
+	public function Update_user_activity($userid) {
+		$db = Load_database();
+		$rs = $db->Execute('update User set Last_active = NOW() where ID = ?', array($userid));
+	}
 }

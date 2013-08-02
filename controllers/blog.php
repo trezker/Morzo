@@ -1,7 +1,7 @@
 <?php
-require_once "../controllers/controller.php";
+require_once "../controllers/base.php";
 
-class Blog extends Controller {
+class Blog extends Base {
 	public function Index() {
 		//List latest blogpost titles
 		//List Blogs
