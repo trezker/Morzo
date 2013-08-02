@@ -26,6 +26,7 @@
 						<input type="number" id="actor_limit{ID}" value="{Max_actors}" />
 						<span class="action" onclick="set_user_actor_limit({ID});">Set actor limit</span>
 					</td>
+					<td>Last active {Last_active}</td>
 				</tr>';
 			$alternate = '';
 			foreach ($users as $user) {

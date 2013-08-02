@@ -77,7 +77,7 @@ class User_model
 				'reason' => $reason
 			);
 		}
-		$query = 'SELECT ID FROM User WHERE Username = ?';
+		$query = 'SELECT ID FROM UseGet_usersr WHERE Username = ?';
 		$rs = $db->Execute($query, array($username));
 		if(!$rs) {
 			$reason = $db->ErrorMsg();
@@ -163,7 +163,7 @@ class User_model
 		$db = Load_database();
 
 		$rs = $db->Execute('
-			select U.ID, U.Username, U.Banned_from, U.Banned_to, U.Max_actors
+			select U.ID, U.Username, U.Banned_from, U.Banned_to, U.Max_actors, U.Last_active
 			from User U
 			', array());
 		if(!$rs)
