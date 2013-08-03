@@ -30,7 +30,7 @@ class Inventory_model extends Model
 		return $rs->getArray();
 	}
 
-	public function Transfer_resource($from_id, $to_id, $resource_id, $amount) {
+	public function Transfer_resource($from_id, $to_id, $resource_id, $amount, $amount_in_units = false) {
 		$error = NULL;
 				
 		$db = Load_database();
@@ -79,10 +79,12 @@ class Inventory_model extends Model
 	        $measure_name = $to_row['Measure_name'];
 	        
 			$amount_units = $amount;
-			if($measure_name == "Mass")
-				$amount_units = $amount / $mass_factor;
-			elseif($measure_name == "Volume")
-				$amount_units = $amount / $volume_factor;
+			if(!$amount_in_units) {
+				if($measure_name == "Mass")
+					$amount_units = $amount / $mass_factor;
+				elseif($measure_name == "Volume")
+					$amount_units = $amount / $volume_factor;
+			}
 			
 			$result_units = $amount_units;
 	        if($to_row['Amount'] !== NULL) {

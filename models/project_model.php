@@ -610,8 +610,8 @@ class Project_model extends Model
 					PI.Amount AS Project_amount
 			from Project P
 			join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID and RI.From_nature = 0
-			left join Project_input PI on PI.Project_ID = P.ID and PI.Resource_ID = RI.Resource_ID and PI.Amount < RI.Amount
-			where P.ID = ? and PI.Amount is not NULL
+			left join Inventory_resource PI on PI.Inventory_ID = P.Inventory_ID and PI.Resource_ID = RI.Resource_ID
+			where P.ID = ? and (PI.Amount < RI.Amount or PI.Amount is NULL)
 			', $args);
 
 		if(!$missing_input) {
@@ -639,7 +639,6 @@ class Project_model extends Model
 		} else {
 			$active = 0;
 		}
-
 		
 		if($active == 1) {
 			$rs = $db->Execute("
@@ -749,7 +748,7 @@ class Project_model extends Model
 			join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID
 			join Resource R on R.ID = RI.Resource_ID
 			join Measure M on R.Measure = M.ID
-			left join Project_input PI on PI.Project_ID = P.ID and PI.Resource_ID = RI.Resource_ID
+			left join Inventory_resource PI on PI.Inventory_ID = P.Inventory_ID and PI.Resource_ID = RI.Resource_ID
 			where P.ID = ?
 			', array($project_id));
 
@@ -1026,7 +1025,7 @@ class Project_model extends Model
 					$query = '
 						select PI.ID, RI.Amount from Project P
 						join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID
-						join Project_input PI on PI.Resource_ID = RI.Resource_ID and PI.Project_ID = P.ID
+						join Inventory_resource PI on PI.Resource_ID = RI.Resource_ID and PI.Inventory_ID = P.Inventory_ID
 						where P.ID = ?
 					';
 					$args = array($project['Project_ID']);
@@ -1035,7 +1034,7 @@ class Project_model extends Model
 					if(!$db->HasFailedTrans()) {
 						foreach($rs as $r) {
 							$query = '
-								update Project_input set Amount = Amount - ?
+								update Inventory_resource set Amount = Amount - ?
 								where ID = ?
 							';
 							$args = array($r['Amount'], $r['ID']);
@@ -1080,9 +1079,9 @@ class Project_model extends Model
 					$rs = $db->Execute($query, $args);
 
 					$query = '
-						delete from Project_input where Project_ID = ?
+						delete from Inventory_resource where Inventory_ID = ?
 					';
-					$args = array($project['Project_ID']);
+					$args = array($project['Project_inventory']);
 					$rs = $db->Execute($query, $args);
 
 					$query = '
@@ -1143,67 +1142,25 @@ class Project_model extends Model
 			join Actor A
 			join Recipe_input RI on RI.Recipe_ID = P.Recipe_ID and RI.From_nature = 0
 			join Inventory_resource AI on RI.Resource_ID = AI.Resource_ID and AI.Inventory_ID = A.Inventory_ID
-			left join Project_input PI on PI.Project_ID = P.ID and PI.Resource_ID = RI.Resource_ID
+			left join Inventory_resource PI on PI.Inventory_ID = P.Inventory_ID and PI.Resource_ID = RI.Resource_ID
 			where P.ID = ? and A.ID = ? and (PI.Amount < RI.Amount or PI.Amount is NULL) and P.Location_inventory_ID = ?
 			', $args);
 		
 		$inputs = $r->getArray();
 
+		$args = array($project_id, $actor_id);
+		$r = $db->Execute('select P.Inventory_ID as Project_inventory from Project P where P.ID = ?', $args);
+		$project_inventory_id = $r->fields['Project_inventory'];
+
+		$this->Load_model('Inventory_model');
 		foreach($inputs as $input) {
 			if($input['Project_amount'] == NULL) {
 				$supply_amount = min($input['Needed_amount'], $input['Actor_amount']);
-
-				$args = array($project_id, $input['Resource_ID'], $supply_amount);
-
-				$r = $db->Execute('
-					insert into Project_input (Project_ID, Resource_ID, Amount)
-					values (?,?,?)
-					', $args);
-				if(!$r)
-					break;
 			} else {
 				$supply_amount = min($input['Needed_amount']-$input['Project_amount'], $input['Actor_amount']);
-
-				$args = array($input['Project_amount']+$supply_amount, $project_id, $input['Resource_ID']);
-
-				$r = $db->Execute('
-					update Project_input set Amount = ?
-					where Project_ID = ? and Resource_ID = ?
-					', $args);
-				if(!$r)
-					break;
 			}
-
-			$inv_left = $input['Actor_amount']-$supply_amount;
-			if($inv_left <= 0) {
-				$args = array($actor_id, $input['Resource_ID']);
-
-				$r = $db->Execute('
-					delete from Actor_inventory
-					where Actor_ID = ? and Resource_ID = ?
-					', $args);
-			} else {
-				$args = array($inv_left, $input['Inventory_ID'], $input['Resource_ID']);
-
-				$r = $db->Execute('
-					update Inventory_resource set Amount = ?
-					where Inventory_ID = ? and Resource_ID = ?
-					', $args);
-			}
-			if(!$r)
-				break;
+			$this->Inventory_model->Transfer_resource($inventory_ids['Actor_inventory'], $project_inventory_id, $input['Resource_ID'], $supply_amount, true);
 		}
-
-		$args = array($project_id, $actor_id);
-		$r = $db->Execute('
-			select  A.Inventory_ID as Actor_inventory,
-					P.Inventory_ID as Project_inventory
-			from Actor A
-			join Project P
-			where P.ID = ? and A.ID = ?
-			', $args);
-			
-		$inventories = $r->fields;
 
 		$args = array($project_id, $actor_id, $inventory_ids['Location_inventory']);
 		$r = $db->Execute('
@@ -1222,10 +1179,9 @@ class Project_model extends Model
 		$inputs = $r->getArray();
 		
 		foreach($inputs as $input) {
-			$this->Load_model('Inventory_model');
 			$this->Inventory_model->Transfer_product(
-													$inventories['Actor_inventory'], 
-													$inventories['Project_inventory'], 
+													$inventory_ids['Actor_inventory'], 
+													project_inventory_id, 
 													$input['Product_ID'],
 													$input['Needed_amount'] - $input['Project_amount']
 												);

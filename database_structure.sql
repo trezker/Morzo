@@ -80,7 +80,7 @@ CREATE TABLE `Actor_event` (
   KEY `Actor_event_fk_Event` (`Event_ID`),
   CONSTRAINT `Actor_event_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Actor_event_fk_Event` FOREIGN KEY (`Event_ID`) REFERENCES `Event` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2368 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4798 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,7 +100,7 @@ CREATE TABLE `Actor_name` (
   KEY `Actor_name_fk_Named_actor` (`Named_actor_ID`),
   CONSTRAINT `Actor_name_fk_Actor` FOREIGN KEY (`Actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Actor_name_fk_Named_actor` FOREIGN KEY (`Named_actor_ID`) REFERENCES `Actor` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -192,7 +192,7 @@ CREATE TABLE `Category_food` (
   UNIQUE KEY `Category_ID_UNIQUE` (`Category_ID`),
   KEY `Category_food_fk_Category` (`Category_ID`),
   CONSTRAINT `Category_food_fk_Category` FOREIGN KEY (`Category_ID`) REFERENCES `Category` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -237,7 +237,7 @@ CREATE TABLE `Event` (
   CONSTRAINT `Event_fk_From_location` FOREIGN KEY (`From_location_ID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Event_fk_To_actor` FOREIGN KEY (`To_actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Event_fk_To_location` FOREIGN KEY (`To_location_ID`) REFERENCES `Location` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=309 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=461 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -318,7 +318,7 @@ CREATE TABLE `Inventory` (
   `Volume_limit` double DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -340,28 +340,7 @@ CREATE TABLE `Inventory_resource` (
   KEY `Inventory_resource_fk_Resource` (`Resource_ID`),
   CONSTRAINT `Inventory_resource_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Inventory_resource_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=180 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `Key`
---
-
-DROP TABLE IF EXISTS `Key`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Key` (
-  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Object_ID` bigint(20) NOT NULL,
-  `Key_form_ID` bigint(20) NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `ID_UNIQUE` (`ID`),
-  UNIQUE KEY `Object_ID_UNIQUE` (`Object_ID`),
-  KEY `Key_fk_object` (`Object_ID`),
-  KEY `Key_fk_key_form` (`Key_form_ID`),
-  CONSTRAINT `Key_fk_object` FOREIGN KEY (`Object_ID`) REFERENCES `Object` (`ID`),
-  CONSTRAINT `Key_fk_key_form` FOREIGN KEY (`Key_form_ID`) REFERENCES `Key_form` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=267 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -373,10 +352,9 @@ DROP TABLE IF EXISTS `Key_form`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Key_form` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Code` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -498,31 +476,6 @@ CREATE TABLE `Location_species` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `Lock`
---
-
-DROP TABLE IF EXISTS `Lock`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Lock` (
-  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Object_ID` bigint(20) NOT NULL,
-  `Attached_object_ID` bigint(20) DEFAULT NULL,
-  `Key_form_ID` bigint(20) NOT NULL,
-  `Is_locked` tinyint(4) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `ID_UNIQUE` (`ID`),
-  UNIQUE KEY `Object_ID_UNIQUE` (`Object_ID`),
-  KEY `Lock_fk_object` (`Object_ID`),
-  KEY `Lock_fk_attached` (`Attached_object_ID`),
-  KEY `Lock_fk_key_form` (`Key_form_ID`),
-  CONSTRAINT `Lock_fk_object` FOREIGN KEY (`Object_ID`) REFERENCES `Object` (`ID`),
-  CONSTRAINT `Lock_fk_attached` FOREIGN KEY (`Attached_object_ID`) REFERENCES `Object` (`ID`),
-  CONSTRAINT `Lock_fk_key_form` FOREIGN KEY (`Key_form_ID`) REFERENCES `Key_form` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `Measure`
 --
 
@@ -548,7 +501,7 @@ DROP TABLE IF EXISTS `Object`;
 CREATE TABLE `Object` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `Product_ID` bigint(20) NOT NULL,
-  `Inventory_ID` bigint(20) NOT NULL,
+  `Inventory_ID` bigint(20) DEFAULT NULL,
   `Quality` double NOT NULL,
   `Rot` double NOT NULL,
   `Label` varchar(64) DEFAULT NULL,
@@ -558,7 +511,7 @@ CREATE TABLE `Object` (
   KEY `Object_fk_Inventory` (`Inventory_ID`),
   CONSTRAINT `Object_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Object_fk_Product` FOREIGN KEY (`Product_ID`) REFERENCES `Product` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=173 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -578,7 +531,53 @@ CREATE TABLE `Object_inventory` (
   KEY `Object_inventory_fk_Inventory` (`Inventory_ID`),
   CONSTRAINT `Object_inventory_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Object_inventory_fk_Object` FOREIGN KEY (`Object_ID`) REFERENCES `Object` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='This is for objects that are containers.';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='This is for objects that are containers.';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Object_key`
+--
+
+DROP TABLE IF EXISTS `Object_key`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Object_key` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Object_ID` bigint(20) NOT NULL,
+  `Key_form_ID` bigint(20) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID_UNIQUE` (`ID`),
+  UNIQUE KEY `Object_ID_UNIQUE` (`Object_ID`),
+  KEY `Key_fk_object` (`Object_ID`),
+  KEY `Key_fk_key_form` (`Key_form_ID`),
+  CONSTRAINT `Key_fk_object` FOREIGN KEY (`Object_ID`) REFERENCES `Object` (`ID`),
+  CONSTRAINT `Key_fk_key_form` FOREIGN KEY (`Key_form_ID`) REFERENCES `Key_form` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Object_lock`
+--
+
+DROP TABLE IF EXISTS `Object_lock`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Object_lock` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Object_ID` bigint(20) NOT NULL,
+  `Attached_object_ID` bigint(20) DEFAULT NULL,
+  `Key_form_ID` bigint(20) DEFAULT NULL,
+  `Is_locked` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID_UNIQUE` (`ID`),
+  UNIQUE KEY `Object_ID_UNIQUE` (`Object_ID`),
+  KEY `Lock_fk_object` (`Object_ID`),
+  KEY `Lock_fk_attached` (`Attached_object_ID`),
+  KEY `Lock_fk_key_form` (`Key_form_ID`),
+  CONSTRAINT `Lock_fk_key_form` FOREIGN KEY (`Key_form_ID`) REFERENCES `Key_form` (`ID`),
+  CONSTRAINT `Lock_fk_attached` FOREIGN KEY (`Attached_object_ID`) REFERENCES `Object` (`ID`),
+  CONSTRAINT `Lock_fk_object` FOREIGN KEY (`Object_ID`) REFERENCES `Object` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -631,7 +630,6 @@ DROP TABLE IF EXISTS `Project`;
 CREATE TABLE `Project` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `Creator_actor_ID` bigint(20) NOT NULL,
-  `Location_ID` bigint(20) NOT NULL,
   `Recipe_ID` bigint(20) NOT NULL,
   `Cycles_left` int(11) NOT NULL,
   `Created_time` bigint(20) NOT NULL,
@@ -639,38 +637,18 @@ CREATE TABLE `Project` (
   `Active` tinyint(1) NOT NULL DEFAULT '0',
   `UpdateTick` bigint(20) NOT NULL,
   `Inventory_ID` bigint(20) NOT NULL,
+  `Location_inventory_ID` bigint(20) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Inventory_ID_UNIQUE` (`Inventory_ID`),
   KEY `Project_fk_Creator` (`Creator_actor_ID`),
   KEY `Project_fk_Recipe` (`Recipe_ID`),
-  KEY `Project_fk_Location` (`Location_ID`),
   KEY `Project_fk_Inventory` (`Inventory_ID`),
+  KEY `Project_fk_Location_inventory` (`Location_inventory_ID`),
   CONSTRAINT `Project_fk_Creator` FOREIGN KEY (`Creator_actor_ID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Project_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
-  CONSTRAINT `Project_fk_Location` FOREIGN KEY (`Location_ID`) REFERENCES `Location` (`ID`),
+  CONSTRAINT `Project_fk_Location_inventory` FOREIGN KEY (`Location_inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Project_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `Project_input`
---
-
-DROP TABLE IF EXISTS `Project_input`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Project_input` (
-  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Project_ID` bigint(20) NOT NULL,
-  `Resource_ID` bigint(20) NOT NULL,
-  `Amount` double NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `Project_input_Unique` (`Project_ID`,`Resource_ID`),
-  KEY `Project_input_fk_Project` (`Project_ID`),
-  KEY `Project_input_fk_Resource` (`Resource_ID`),
-  CONSTRAINT `Project_input_fk_Project` FOREIGN KEY (`Project_ID`) REFERENCES `Project` (`ID`),
-  CONSTRAINT `Project_input_fk_Resource` FOREIGN KEY (`Resource_ID`) REFERENCES `Resource` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -688,7 +666,7 @@ CREATE TABLE `Recipe` (
   `Require_full_cycle` tinyint(1) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Name_UNIQUE` (`Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -793,7 +771,7 @@ CREATE TABLE `Recipe_product_output` (
   KEY `Recipe_product_output_fk_Recipe` (`Recipe_ID`),
   CONSTRAINT `Recipe_product_output_fk_Product` FOREIGN KEY (`Product_ID`) REFERENCES `Product` (`ID`),
   CONSTRAINT `Recipe_product_output_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -872,7 +850,7 @@ CREATE TABLE `Translation` (
   UNIQUE KEY `Translation_unique` (`Language_ID`,`Handle`),
   KEY `Translation_fk_Language` (`Language_ID`),
   CONSTRAINT `Translation_fk_Language` FOREIGN KEY (`Language_ID`) REFERENCES `Language` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -898,7 +876,7 @@ CREATE TABLE `Travel` (
   CONSTRAINT `Travel_fk_Actor` FOREIGN KEY (`ActorID`) REFERENCES `Actor` (`ID`),
   CONSTRAINT `Travel_fk_Destination` FOREIGN KEY (`DestinationID`) REFERENCES `Location` (`ID`),
   CONSTRAINT `Travel_fk_Origin` FOREIGN KEY (`OriginID`) REFERENCES `Location` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -915,6 +893,7 @@ CREATE TABLE `User` (
   `Banned_from` date DEFAULT NULL,
   `Banned_to` date DEFAULT NULL,
   `Max_actors` bigint(20) NOT NULL,
+  `Last_active` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Username` (`Username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
@@ -993,4 +972,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-07-25 14:14:02
+-- Dump completed on 2013-08-03 11:12:40
