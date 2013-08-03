@@ -1187,13 +1187,13 @@ class Project_model extends Model
 												);
 		}		
 
-		$this->Update_project_active_state($project_id);
-
 		if($db->HasFailedTrans()) {
 			echo $db->ErrorMsg();
 		}
 
 		$db->CompleteTrans();
+
+		$this->Update_project_active_state($project_id);
 
 		return true;
 	}
