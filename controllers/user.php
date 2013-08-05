@@ -28,7 +28,8 @@ class User extends Base
 		$actors = $this->Actor_model->Get_actors($_SESSION['userid']);
 		$actor_limit = $this->Actor_model->Get_users_actor_limit($_SESSION['userid']);
 
-		$this->Load_view('user_view', array('actors' => $actors, 'actor_limit' => $actor_limit));
+		$common_head_view = $this->Load_view('common_head_view', array());
+		$this->Load_view('user_view', array('actors' => $actors, 'actor_limit' => $actor_limit, 'common_head_view' => $common_head_view));
 	}
 
 	private function Start_openid_verification($finish_path) {
@@ -195,9 +196,11 @@ class User extends Base
 		$openids = $this->User_model->Get_user_openids($_SESSION['userid']);
 		$openid_icons = $this->User_model->Get_openid_icons();
 
+		$common_head_view = $this->Load_view('common_head_view', array());
 		$this->Load_view('user_settings_view', array(
 														'openids' => $openids,
 														'openid_icons' => $openid_icons, 
+														'common_head_view' => $common_head_view
 													));
 	}
 	

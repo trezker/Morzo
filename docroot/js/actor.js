@@ -446,6 +446,8 @@ function cancel_project(actor_id, project_id) {
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
 				window.location = "/actor/show_actor/"+actor_id+"/projects";
+			} else {
+				open_dialog("You can not cancel a project with resources allocated.", 300, 100);
 			}
 		}
 	});

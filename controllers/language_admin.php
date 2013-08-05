@@ -18,7 +18,8 @@ class Language_admin extends Base
 		$this->Load_model('Language_model');
 		$languages = $this->Language_model->Get_languages();
 		
-		$this->Load_view('language_admin_view', array('languages' => $languages));
+		$common_head_view = $this->Load_view('common_head_view', array());
+		$this->Load_view('language_admin_view', array('languages' => $languages, 'common_head_view' => $common_head_view));
 	}
 
 	public function Load_translations(){

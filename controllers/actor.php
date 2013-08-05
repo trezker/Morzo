@@ -126,7 +126,8 @@ class Actor extends Base
 													'actor_id' => $actor_id), true);
 		}
 		
-		$this->Load_view('actor_view', array('tab' => $tab, 'actor_id' => $actor_id, 'tab_view' => $tab_view, 'time' => $time, 'actor' => $actor), false);
+		$common_head_view = $this->Load_view('common_head_view', array());
+		$this->Load_view('actor_view', array('tab' => $tab, 'actor_id' => $actor_id, 'tab_view' => $tab_view, 'time' => $time, 'actor' => $actor, 'common_head_view' => $common_head_view), false);
 	}
 	
 	public function Change_actor_name()

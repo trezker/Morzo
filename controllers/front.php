@@ -24,9 +24,11 @@ class Front extends Base
 		$this->Load_model('User_model');
 		$openid_icons = $this->User_model->Get_openid_icons();
 
+		$common_head_view = $this->Load_view('common_head_view', array());
 		$this->Load_view('front_view', array(
 											'blogposts_view' => $blogposts_view,
-											'openid_icons' => $openid_icons
+											'openid_icons' => $openid_icons,
+											'common_head_view' => $common_head_view
 											));
 	}
 	

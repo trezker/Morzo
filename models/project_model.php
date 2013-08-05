@@ -1204,8 +1204,14 @@ class Project_model extends Model
 		
 		$this->Load_model('Actor_model');
 		$inventory_ids = $this->Actor_model->Get_actor_and_location_inventory($actor_id);
-		$args = array($project_id, $inventory_ids['Location_inventory']);
 
+		$args = array($project_id);
+		$r = $db->Execute('
+			delete from Inventory I
+			where I.ID in (select P.Inventory_ID from Project P where P.ID = ?)
+			', $args);
+
+		$args = array($project_id, $inventory_ids['Location_inventory']);
 		$r = $db->Execute('
 			delete P from Project P
 			where P.ID = ? and P.Location_inventory_ID = ?

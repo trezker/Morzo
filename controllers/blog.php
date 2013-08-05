@@ -14,10 +14,12 @@ class Blog extends Base {
 											'posts' => $posts
 											), true);
 
+		$common_head_view = $this->Load_view('common_head_view', array());
 		$this->Load_view('blog_view', array(
 											'posts' => $posts,
 											'blogs' => $blogs,
-											'blogposts_view' => $blogposts_view
+											'blogposts_view' => $blogposts_view,
+											'common_head_view' => $common_head_view
 											));
 	}
 	
@@ -36,10 +38,12 @@ class Blog extends Base {
 			$blog_control_panel_view = $this->Load_blog_control_panel($blog_name, $post_id);
 		}
 		
+		$common_head_view = $this->Load_view('common_head_view', array());
 		$this->Load_view('blog_control_panel_main_view', array(
 													'blogs' => $blogs,
-													'blog_control_panel_view' => $blog_control_panel_view)
-													);
+													'blog_control_panel_view' => $blog_control_panel_view,
+													'common_head_view' => $common_head_view
+													));
 	}
 	
 	private function Load_blog_control_panel($blog_name, $post_id = -1) {
@@ -61,10 +65,12 @@ class Blog extends Base {
 			$post = $this->Blog_model->Get_blog_post($post_id);
 		}
 		
+		$common_head_view = $this->Load_view('common_head_view', array());
 		return $this->Load_view('blog_control_panel_view', array(
 																'blog' => $blog,
 																'post' => $post,
-																'titles' => $titles
+																'titles' => $titles,
+																'common_head_view' => $common_head_view
 																), true);
 	}
 
@@ -201,10 +207,12 @@ class Blog extends Base {
 											'show_owner_controls' => $show_owner_controls
 											), true);
 
+		$common_head_view = $this->Load_view('common_head_view', array());
 		$this->Load_view('blog_view', array(
 											'posts' => $posts,
 											'blogs' => $blogs,
-											'blogposts_view' => $blogposts_view
+											'blogposts_view' => $blogposts_view,
+											'common_head_view' => $common_head_view
 											));
 	}
 }

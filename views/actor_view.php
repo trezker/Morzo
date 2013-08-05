@@ -2,14 +2,8 @@
 <html>
 	<head>
 		<title><?= htmlspecialchars($actor['Name']); ?> - <?= $tab; ?> - Morzo</title> 
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-		<meta name="HandheldFriendly" content="true" />
-		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no" />
-
-		<link rel="stylesheet" type="text/css" media="screen" href="/css/style.css">
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+		<?php echo $common_head_view; ?>
 		<script type="text/javascript" src="/js/actor.js">	</script>
-		<script type="text/javascript" src="/js/dialog.js">	</script>
 	</head>
 	<body>
 		<div style="display: inline-block;">
