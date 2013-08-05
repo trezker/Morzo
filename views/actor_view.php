@@ -84,17 +84,12 @@
 				</div>
 			</div>
 
-			<div id="actor_name_popup" style="display: none">
-				<div class="popup_background">
-					<div class="popup_title">Change actor name</div>
-					<div class="login_content">
-						<input type="text" name="actor_input" id="actor_input" />
-						<span class="action" id="change_actor_name" onclick="change_actor_name(<?=$actor_id?>);">Change</span>
-					</div>
-				</div>
-			</div>
 		</div>
+
 		<div id="uidialog">
+		</div>
+		<div id="actor_name_popup" style="display: none" data-actor_id="<?=$actor_id?>">
+			<input type="text" name="actor_input" id="actor_input" />
 		</div>
 	</body>
 </html>

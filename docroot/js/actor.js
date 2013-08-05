@@ -17,23 +17,20 @@ function set_location_changer(location_id)
 	open_dialog($('#location_name_popup').html());
 }
 
-var change_actor_id = -1;
-function set_actor_changer(actor_id)
-{
-	if(change_actor_id == actor_id || actor_id == -1)
-	{
-		$('#edit_popup').html('');
-		$('#changeactorname_'+change_actor_id).html('Change name');
-		change_actor_id = -1;
-		return;
-	}
-	else
-	{
-		$('#changeactorname_'+change_actor_id).html('Change name');
-		$('#changeactorname_'+actor_id).html('See name changer');
-	}
-	change_actor_id = actor_id;
-	open_dialog($('#actor_name_popup').html());
+function set_actor_changer(change_actor_id) {
+	$("#actor_name_popup").dialog({
+		width: 300,
+		height: 200,
+		modal: true,
+		buttons: {
+			"Change name": function() {
+				change_actor_name($("#actor_name_popup").attr("data-actor_id"), change_actor_id);
+			},
+			Cancel: function() {
+				$( this ).dialog("close");
+			}
+		}
+	});
 }
 
 function reload_location_list(actor_id)
@@ -77,13 +74,10 @@ function change_location_name(actor_id, Location_ID)
 	});
 }
 
-function change_actor_name(actor_id)
-{
-	$('#change_actor_name').html('Changing');
+function change_actor_name(actor_id, change_actor_id) {
 	callurl = '/actor/Change_actor_name';
 	
-	$.ajax(
-	{
+	$.ajax({
 		type: 'POST',
 		url: callurl,
 		data: {
@@ -94,11 +88,9 @@ function change_actor_name(actor_id)
 		dataType: "json",
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
-			$('#change_actor_name').html('Change');
 			if(data.success == true) {
 				window.location.reload();
 			}
-			set_actor_changer(-1);
 		}
 	});
 }

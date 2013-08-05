@@ -12,7 +12,8 @@ function show_dialog(data) {
 	$("#uidialog").dialog({
 		width: data.width,
 		height: data.height,
-		modal: true
+		modal: true,
+		buttons: data.buttons
 	});
 }
 
