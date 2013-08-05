@@ -1,20 +1,17 @@
-var change_location_id = -1;
-function set_location_changer(location_id)
-{
-	if(change_location_id == location_id || location_id == -1)
-	{
-		$('#edit_popup').html('');
-		$('#changelink_'+change_location_id).html('Change name');
-		change_location_id = -1;
-		return;
-	}
-	else
-	{
-		$('#changelink_'+change_location_id).html('Change name');
-		$('#changelink_'+location_id).html('See name changer');
-	}
-	change_location_id = location_id;
-	open_dialog($('#location_name_popup').html());
+function set_location_changer(change_location_id) {
+	$("#location_name_popup").dialog({
+		width: 300,
+		height: 200,
+		modal: true,
+		buttons: {
+			"Change name": function() {
+				change_location_name($("#location_name_popup").attr("data-actor_id"), $("#location_name_popup").attr("data-location_id"), change_location_id);
+			},
+			Cancel: function() {
+				$( this ).dialog("close");
+			}
+		}
+	});
 }
 
 function set_actor_changer(change_actor_id) {
@@ -49,12 +46,10 @@ function reload_location_list(actor_id)
 	});
 }
 
-function change_location_name(actor_id, Location_ID)
-{
+function change_location_name(actor_id, Location_ID, change_location_id) {
 	$('#change_location_name').html('Changing');
 	callurl = '/location/Change_location_name';
-	$.ajax(
-	{
+	$.ajax({
 		type: 'POST',
 		url: callurl,
 		data: {
@@ -69,7 +64,6 @@ function change_location_name(actor_id, Location_ID)
 			if(data.success == true) {
 				window.location.reload();
 			}
-			set_location_changer(-1);
 		}
 	});
 }

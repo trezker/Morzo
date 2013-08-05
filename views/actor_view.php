@@ -74,22 +74,17 @@
 				<?=$tab_view?>
 			</div>
 
-			<div id="location_name_popup" style="display: none">
-				<div class="popup_background">
-					<div class="popup_title">Change location name</div>
-					<div class="login_content">
-						<input type="text" name="location_input" id="location_input" />
-						<span class="action" id="change_location_name" onclick="change_location_name(<?=$actor_id?>,<?=$actor['Location_ID']?>);">Change</span>
-					</div>
-				</div>
-			</div>
 
 		</div>
 
 		<div id="uidialog">
 		</div>
-		<div id="actor_name_popup" style="display: none" data-actor_id="<?=$actor_id?>">
+		<div id="actor_name_popup" style="display: none" data-actor_id="<?=$actor_id?>" title="Change actor name">
 			<input type="text" name="actor_input" id="actor_input" />
 		</div>
+		<div id="location_name_popup" style="display: none" title="Change location name" data-actor_id="<?=$actor_id?>" data-location_id="<?=$actor['Location_ID']?>">
+			<input type="text" name="location_input" id="location_input" />
+		</div>
+	</div>
 	</body>
 </html>
