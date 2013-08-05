@@ -6,6 +6,16 @@ function ajax_logged_out(data) {
 	return false;
 }
 
+function show_dialog(data) {
+	$("#uidialog").attr("title", data.title);
+	$("#uidialog").html(data.body);
+	$("#uidialog").dialog({
+		width: data.width,
+		height: data.height,
+		modal: true
+	});
+}
+
 function show_login_dialog() {
 	callurl = '/front/Get_login_view';
 	$.ajax({

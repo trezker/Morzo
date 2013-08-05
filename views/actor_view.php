@@ -94,5 +94,7 @@
 				</div>
 			</div>
 		</div>
+		<div id="uidialog">
+		</div>
 	</body>
 </html>
