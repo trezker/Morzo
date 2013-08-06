@@ -268,10 +268,20 @@ class Project_admin extends Base
 			return;
 		}
 
-		$this->Load_model('Project_model');
-		$r = $this->Project_model->Add_recipe_product_output($_POST['recipe_id'], $_POST['product_id'], 1);
+		$this->Load_model('Product_model');
+		$r = $this->Product_model->Get_product($_POST['product_id']);
+		if(!$r) {
+			echo json_encode(array('success' => false, 'reason' => 'Product not found'));
+		}
 
-		echo json_encode($r);
+		$output = $r['product'];
+		$output['Amount'] = 0;
+		$output['Product_Name'] = $output['Name'];
+		$output['Product_ID'] = $output['ID'];
+		$output['ID'] = $_POST['new_product_output_id'];
+		$html = expand_template($this->get_product_output_template(), $output);
+		
+		echo json_encode(array('success' => true, 'html' => $html));
 	}
 
 	public function add_recipe_product_input() {
@@ -286,10 +296,20 @@ class Project_admin extends Base
 			return;
 		}
 
-		$this->Load_model('Project_model');
-		$r = $this->Project_model->Add_recipe_product_input($_POST['recipe_id'], $_POST['product_id'], 1);
+		$this->Load_model('Product_model');
+		$r = $this->Product_model->Get_product($_POST['product_id']);
+		if(!$r) {
+			echo json_encode(array('success' => false, 'reason' => 'Product not found'));
+		}
 
-		echo json_encode($r);
+		$output = $r['product'];
+		$output['Amount'] = 0;
+		$output['Product_Name'] = $output['Name'];
+		$output['Product_ID'] = $output['ID'];
+		$output['ID'] = $_POST['new_product_input_id'];
+		$html = expand_template($this->get_product_input_template(), $output);
+		
+		echo json_encode(array('success' => true, 'html' => $html));
 	}
 	
 	public function get_resource_output_template() {

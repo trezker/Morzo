@@ -41,6 +41,10 @@ class Product_model {
 			join Category C on C.ID = PC.Category_ID
 			 where Product_ID = ?
 			', array($product_id));
+
+		if(!$rs) {
+			return false;
+		}
 		
 		$r = array('product' => $rs->fields, 'categories' => $rs2->GetArray());
 		return $r;
