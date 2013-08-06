@@ -1,14 +1,6 @@
 <div id="measure_descriptions" style="display: none;">
 <?php
-$measure_descriptions = array();
 foreach($measures as $key => $measure) {
-	$measure_descriptions[$measure['ID']] = '';
-	if($measure['Name'] == 'Mass') {
-		$measure_descriptions[$measure['ID']] = 'g';
-	}
-	elseif($measure['Name'] == 'Volume') {
-		$measure_descriptions[$measure['ID']] = 'l';
-	}
 	echo '
 		<div id="measuredesc_'.$measure['ID'].'">
 			<span class="measuredesc" data-id="'.$measure['ID'].'">'.$measure_descriptions[$measure['ID']].'</span>
@@ -75,14 +67,6 @@ foreach($measures as $key => $measure) {
 	<div id="recipe_outputs" class="edit_panel">
 		<div class="panel_header">Resource outputs</div>
 		<?php
-		$output_template = '
-		<div class="output" id="{ID}">
-			<input class="amount" type="number" value="{Amount}" />
-			<span class="measuredesc" data-id="{Measure_ID}">{Measuredesc}</span>
-			<span class="resource" data-id="{Resource_ID}">{Resource_Name}</span>
-			<span class="action" style="float: right;" onclick="remove_output({ID})">Remove</span>
-		</div>';
-
 		foreach ($recipe['recipe_outputs'] as $output) {
 			$output['Measuredesc'] = $measure_descriptions[$output['Measure_ID']];
 			if($output['Measure_name'] == 'Mass') {
@@ -91,7 +75,7 @@ foreach($measures as $key => $measure) {
 			if($output['Measure_name'] == 'Volume') {
 				$output['Amount'] = $output['Volume'];
 			}
-			echo expand_template($output_template, $output);
+			echo expand_template($resource_output_template, $output);
 		}
 		?>
 		<div id="new_output_form">
@@ -103,15 +87,6 @@ foreach($measures as $key => $measure) {
 	<div id="recipe_inputs" class="edit_panel">
 		<div class="panel_header">Resource inputs</div>
 		<?php
-		$input_template = '
-		<div class="input" id="{ID}">
-			<input class="amount" type="number" value="{Amount}" />
-			<span class="measuredesc" data-id="{Measure_ID}">{Measuredesc}</span>
-			<span class="resource" data-id="{Resource_ID}">{Resource_Name}</span>
-			(from nature: <input type="checkbox" class="from_nature" {From_nature_checked} />)
-			<span class="action" style="float: right;" onclick="remove_input({ID})">Remove</span>
-		</div>';
-
 		foreach ($recipe['recipe_inputs'] as $input) {
 			if($input['From_nature'] == 1)
 				$input['From_nature_checked'] = 'checked=checked';
@@ -124,7 +99,7 @@ foreach($measures as $key => $measure) {
 				$input['Amount'] = $input['Volume'];
 			}
 			$input['Measuredesc'] = $measure_descriptions[$input['Measure_ID']];
-			echo expand_template($input_template, $input);
+			echo expand_template($resource_input_template, $input);
 		}
 		?>
 		<div id="new_input_form">
@@ -136,15 +111,8 @@ foreach($measures as $key => $measure) {
 	<div id="recipe_product_outputs" class="edit_panel">
 		<div class="panel_header">Product outputs</div>
 		<?php
-		$output_template = '
-		<div class="product_output" id="product_output_{ID}" data-id="{ID}">
-			<input class="amount" type="number" value="{Amount}" />
-			<span class="product" data-id="{Product_ID}">{Product_Name}</span>
-			<span class="action" style="float: right;" onclick="remove_product_output({ID})">Remove</span>
-		</div>';
-
 		foreach ($recipe['recipe_product_outputs'] as $output) {
-			echo expand_template($output_template, $output);
+			echo expand_template($product_output_template, $output);
 		}
 		?>
 		<div id="new_product_output_form">
@@ -156,15 +124,8 @@ foreach($measures as $key => $measure) {
 	<div id="recipe_product_inputs" class="edit_panel">
 		<div class="panel_header">Product inputs</div>
 		<?php
-		$input_template = '
-		<div class="product_input" id="product_input_{ID}" data-id="{ID}">
-			<input class="amount" type="number" value="{Amount}" />
-			<span class="product" data-id="{Product_ID}">{Product_Name}</span>
-			<span class="action" style="float: right;" onclick="remove_product_input({ID})">Remove</span>
-		</div>';
-
 		foreach ($recipe['recipe_product_inputs'] as $input) {
-			echo expand_template($input_template, $input);
+			echo expand_template($product_input_template, $input);
 		}
 		?>
 		<div id="new_product_input_form">

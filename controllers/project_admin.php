@@ -60,10 +60,23 @@ class Project_admin extends Base
 					'Require_full_cycle' => '1'
 				);
 		}
+		
+		$measure_descriptions = $this->get_measure_descriptions();
+		$resource_output_template = $this->get_resource_output_template();
+		$resource_input_template = $this->get_resource_input_template();
+		$product_output_template = $this->get_product_output_template();
+		$product_input_template = $this->get_product_input_template();
+
 		$edit_recipe_view = $this->Load_view('recipe_edit_view',array(	'resources' => $resources,
 																		'products' => $products,
 																		'measures' => $measures,
-																		'recipe' => $recipe), true);
+																		'recipe' => $recipe,
+																		'measure_descriptions' => $measure_descriptions,
+																		'resource_output_template' => $resource_output_template,
+																		'resource_input_template' => $resource_input_template,
+																		'product_output_template' => $product_output_template,
+																		'product_input_template' => $product_input_template
+																		), true);
 
 		echo json_encode(array('success' => true, 'data' => $edit_recipe_view));
 	}
@@ -159,7 +172,7 @@ class Project_admin extends Base
 		$this->Load_model('Location_model');
 		echo json_encode(array('success' => true, 'id' => $id));
 	}
-
+	/*
 	public function remove_recipe_output() {
 		header('Content-type: application/json');
 		$this->Load_controller('User');
@@ -177,7 +190,7 @@ class Project_admin extends Base
 
 		echo json_encode(array('success' => $success));
 	}
-
+	*/
 	public function add_recipe_output() {
 		header('Content-type: application/json');
 		$this->Load_controller('User');
@@ -190,12 +203,150 @@ class Project_admin extends Base
 			return;
 		}
 
+		/*
 		$this->Load_model('Project_model');
 		$r = $this->Project_model->Add_recipe_output($_POST['recipe_id'], $_POST['resource_id'], $_POST['measure_id'], 1);
 
 		echo json_encode($r);
+		*/
+		
+		$this->Load_model('Resource_model');
+		$r = $this->Resource_model->Get_resource($_POST['resource_id']);
+		if(!$r) {
+			echo json_encode(array('success' => false, 'reason' => 'Resource not found'));
+		}
+		$output = $r['resource'];
+		$measure_descriptions = $this->get_measure_descriptions();
+		$output['Measuredesc'] = $measure_descriptions[$output['Measure']];
+		$output['Amount'] = 0;
+		$output['Resource_Name'] = $output['Name'];
+		$output['Measure_ID'] = $output['Measure'];
+		$output['Resource_ID'] = $output['ID'];
+		$output['ID'] = $_POST['new_output_id'];
+		$html = expand_template($this->get_resource_output_template(), $output);
+		
+		echo json_encode(array('success' => true, 'html' => $html));
+	}
+	public function add_recipe_input() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$this->Load_model('Resource_model');
+		$r = $this->Resource_model->Get_resource($_POST['resource_id']);
+		if(!$r) {
+			echo json_encode(array('success' => false, 'reason' => 'Resource not found'));
+		}
+		$output = $r['resource'];
+		$measure_descriptions = $this->get_measure_descriptions();
+		$output['Measuredesc'] = $measure_descriptions[$output['Measure']];
+		$output['Amount'] = 0;
+		$output['Resource_Name'] = $output['Name'];
+		$output['Measure_ID'] = $output['Measure'];
+		$output['Resource_ID'] = $output['ID'];
+		$output['ID'] = $_POST['new_input_id'];
+		$html = expand_template($this->get_resource_input_template(), $output);
+		
+		echo json_encode(array('success' => true, 'html' => $html));
+	}
+	public function add_recipe_product_output() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$this->Load_model('Project_model');
+		$r = $this->Project_model->Add_recipe_product_output($_POST['recipe_id'], $_POST['product_id'], 1);
+
+		echo json_encode($r);
 	}
 
+	public function add_recipe_product_input() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$this->Load_model('Project_model');
+		$r = $this->Project_model->Add_recipe_product_input($_POST['recipe_id'], $_POST['product_id'], 1);
+
+		echo json_encode($r);
+	}
+	
+	public function get_resource_output_template() {
+		return '
+		<div class="output" id="resource_output_{ID}" data-id="{ID}">
+			<input class="amount" type="number" value="{Amount}" />
+			<span class="measuredesc" data-id="{Measure_ID}">{Measuredesc}</span>
+			<span class="resource" data-id="{Resource_ID}">{Resource_Name}</span>
+			<span class="action" style="float: right;" onclick="remove_output({ID})">Remove</span>
+		</div>';
+	}
+
+	public function get_resource_input_template() {
+		return '
+		<div class="input" id="resource_input_{ID}" data-id="{ID}">
+			<input class="amount" type="number" value="{Amount}" />
+			<span class="measuredesc" data-id="{Measure_ID}">{Measuredesc}</span>
+			<span class="resource" data-id="{Resource_ID}">{Resource_Name}</span>
+			(from nature: <input type="checkbox" class="from_nature" {From_nature_checked} />)
+			<span class="action" style="float: right;" onclick="remove_input({ID})">Remove</span>
+		</div>';
+	}
+
+	public function get_product_output_template() {
+		return '
+		<div class="product_output" id="product_output_{ID}" data-id="{ID}">
+			<input class="amount" type="number" value="{Amount}" />
+			<span class="product" data-id="{Product_ID}">{Product_Name}</span>
+			<span class="action" style="float: right;" onclick="remove_product_output({ID})">Remove</span>
+		</div>';
+	}
+
+	public function get_product_input_template() {
+		return '
+		<div class="product_input" id="product_input_{ID}" data-id="{ID}">
+			<input class="amount" type="number" value="{Amount}" />
+			<span class="product" data-id="{Product_ID}">{Product_Name}</span>
+			<span class="action" style="float: right;" onclick="remove_product_input({ID})">Remove</span>
+		</div>';
+	}
+	
+	public function get_measure_descriptions() {
+		$measures = $this->Resource_model->Get_measures();
+		$measure_descriptions = array();
+		foreach($measures as $key => $measure) {
+			$measure_descriptions[$measure['ID']] = '';
+			if($measure['Name'] == 'Mass') {
+				$measure_descriptions[$measure['ID']] = 'g';
+			}
+			elseif($measure['Name'] == 'Volume') {
+				$measure_descriptions[$measure['ID']] = 'l';
+			}
+		}
+		return $measure_descriptions;
+	}
+
+	/*
 	public function remove_recipe_input() {
 		header('Content-type: application/json');
 		$this->Load_controller('User');
@@ -213,24 +364,7 @@ class Project_admin extends Base
 
 		echo json_encode(array('success' => $success));
 	}
-
-	public function add_recipe_input() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
-
-		$this->Load_model('Project_model');
-		$r = $this->Project_model->Add_recipe_input($_POST['recipe_id'], $_POST['resource_id'], $_POST['measure_id'], 1);
-
-		echo json_encode($r);
-	}
+	*/
 
 	public function edit_resource() {
 		header('Content-type: application/json');
@@ -438,7 +572,7 @@ class Project_admin extends Base
 
 		echo json_encode(array('success' => $result));
 	}
-
+	/*
 	public function remove_recipe_product_output() {
 		header('Content-type: application/json');
 		$this->Load_controller('User');
@@ -456,43 +590,8 @@ class Project_admin extends Base
 
 		echo json_encode(array('success' => $success));
 	}
-
-	public function add_recipe_product_output() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
-
-		$this->Load_model('Project_model');
-		$r = $this->Project_model->Add_recipe_product_output($_POST['recipe_id'], $_POST['product_id'], 1);
-
-		echo json_encode($r);
-	}
-
-	public function add_recipe_product_input() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
-
-		$this->Load_model('Project_model');
-		$r = $this->Project_model->Add_recipe_product_input($_POST['recipe_id'], $_POST['product_id'], 1);
-
-		echo json_encode($r);
-	}
-
+	*/
+	/*
 	public function remove_recipe_product_input() {
 		header('Content-type: application/json');
 		$this->Load_controller('User');
@@ -510,5 +609,6 @@ class Project_admin extends Base
 
 		echo json_encode(array('success' => $success));
 	}
+	*/
 }
 ?>

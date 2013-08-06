@@ -119,7 +119,7 @@ class Project_model extends Model
 
 		return $result;
 	}
-
+	
 	public function Save_recipe($data)
 	{
 		$db = Load_database();

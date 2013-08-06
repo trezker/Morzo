@@ -108,145 +108,97 @@ function save_recipe() {
 /*
  * Recipe output
 */
-function selected_output_resource(e) {
-	var value = $('.output#'+e.data+' select').val();
-	var name = $('.output#'+e.data+' select [value="'+value+'"]').html();
-
-	$('.output#'+e.data+' .resource').html(name);
-	$('.output#'+e.data+' .resource').attr('data-id', value);
-}
-
+var new_output_id = -1;
 function add_output() {
 	var resource_id = $('#new_output_form select').val();
-	var resource_name = $('#new_output_form select option[value="'+resource_id+'"]').html();
-	var measure_id = $('#new_output_form select option[value="'+resource_id+'"]').attr('data-measure');
-	var measure_desc = $('#measuredesc_'+measure_id).html();
 	
-	$.ajax(
-	{
+	$.ajax({
 		type: 'POST',
 		url: 'project_admin/add_recipe_output',
 		data: {
-			recipe_id: current_recipe,
 			resource_id: resource_id,
-			measure_id: measure_id
+			new_output_id: new_output_id
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success !== false) {
-				edit_recipe(current_recipe);
+				new_output_id -= 1;
+				$("#recipe_outputs").append(data.html);
 			}
 		}
 	});
 }
 
 function remove_output(id) {
-	$.ajax({
-		type: 'POST',
-		url: 'project_admin/remove_recipe_output',
-		data: {
-			recipe_id: current_recipe,
-			id: id
-		},
-		success: function(data) {
-			if(ajax_logged_out(data)) return;
-			if(data !== false) {
-				edit_recipe(current_recipe);
-			}
-		}
-	});
+	if(id < 0) {
+		$("#resource_output_"+id).remove();
+	} else {
+		$("#resource_output_"+id).attr('data-remove', true).hide();
+	}
 }
 
 /*
  * Recipe input
 */
-function selected_input_resource(e) {
-	var value = $('.input#'+e.data+' select').val();
-	var name = $('.input#'+e.data+' select [value="'+value+'"]').html();
-
-	$('.input#'+e.data+' .resource').html(name);
-	$('.input#'+e.data+' .resource').attr('data-id', value);
-}
-
+var new_input_id = -1;
 function add_input() {
 	var resource_id = $('#new_input_form select').val();
-	var resource_name = $('#new_input_form select option[value="'+resource_id+'"]').html();
-	var measure_id = $('#new_input_form select option[value="'+resource_id+'"]').attr('data-measure');
-	var measure_desc = $('#measuredesc_'+measure_id).html();
 	
-	$.ajax(
-	{
+	$.ajax({
 		type: 'POST',
 		url: 'project_admin/add_recipe_input',
 		data: {
-			recipe_id: current_recipe,
 			resource_id: resource_id,
-			measure_id: measure_id
+			new_input_id: new_input_id
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success !== false) {
-				edit_recipe(current_recipe);
+				new_input_id -= 1;
+				$("#recipe_inputs").append(data.html);
 			}
 		}
 	});
 }
 
 function remove_input(id) {
-	$.ajax(
-	{
-		type: 'POST',
-		url: 'project_admin/remove_recipe_input',
-		data: {
-			recipe_id: current_recipe,
-			id: id
-		},
-		success: function(data) {
-			if(ajax_logged_out(data)) return;
-			if(data !== false) {
-				edit_recipe(current_recipe);
-			}
-		}
-	});
+	if(id < 0) {
+		$("#resource_input_"+id).remove();
+	} else {
+		$("#resource_input_"+id).attr('data-remove', true).hide();
+	}
 }
 
+var new_product_output_id = -1;
 function add_product_output() {
 	var product_id = $('#new_product_output_form select').val();
-	var product_name = $('#new_product_output_form select option[value="'+product_id+'"]').html();
 	
 	$.ajax({
 		type: 'POST',
 		url: 'project_admin/add_recipe_product_output',
 		data: {
-			recipe_id: current_recipe,
 			product_id: product_id,
+			new_product_output_id: new_product_output_id
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success !== false) {
-				edit_recipe(current_recipe);
+				new_product_output_id -= 1;
+				$("#recipe_product_outputs").append(data.html);
 			}
 		}
 	});
 }
 
 function remove_product_output(id) {
-	$.ajax({
-		type: 'POST',
-		url: 'project_admin/remove_recipe_product_output',
-		data: {
-			recipe_id: current_recipe,
-			id: id
-		},
-		success: function(data) {
-			if(ajax_logged_out(data)) return;
-			if(data !== false) {
-				edit_recipe(current_recipe);
-			}
-		}
-	});
+	if(id < 0) {
+		$("#product_output_"+id).remove();
+	} else {
+		$("#product_output_"+id).attr('data-remove', true).hide();
+	}
 }
 
+var new_product_input_id = -1;
 function add_product_input() {
 	var product_id = $('#new_product_input_form select').val();
 	var product_name = $('#new_product_input_form select option[value="'+product_id+'"]').html();
@@ -255,33 +207,25 @@ function add_product_input() {
 		type: 'POST',
 		url: 'project_admin/add_recipe_product_input',
 		data: {
-			recipe_id: current_recipe,
 			product_id: product_id,
+			new_product_input_id: new_product_input_id
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success !== false) {
-				edit_recipe(current_recipe);
+				new_product_input_id -= 1;
+				$("#recipe_product_inputs").append(data.html);
 			}
 		}
 	});
 }
 
 function remove_product_input(id) {
-	$.ajax({
-		type: 'POST',
-		url: 'project_admin/remove_recipe_product_input',
-		data: {
-			recipe_id: current_recipe,
-			id: id
-		},
-		success: function(data) {
-			if(ajax_logged_out(data)) return;
-			if(data !== false) {
-				edit_recipe(current_recipe);
-			}
-		}
-	});
+	if(id < 0) {
+		$("#product_input_"+id).remove();
+	} else {
+		$("#product_input_"+id).attr('data-remove', true).hide();
+	}
 }
 
 function edit_resource(id) {
