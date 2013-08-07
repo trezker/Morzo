@@ -99,52 +99,56 @@ class Project_admin extends Base
 				'name' => $_POST['name'],
 				'cycle_time' => $_POST['cycle_time'],
 				'allow_fraction_output' => $_POST['allow_fraction_output'],
-				'require_full_cycle' => $_POST['require_full_cycle'],
+				'require_full_cycle' => $_POST['require_full_cycle']
 			);
 		
 		$data['outputs'] = array();
-		if(is_array($_POST['outputs'])) {
+		if(isset($_POST['outputs'])) {
 			foreach($_POST['outputs'] as $o) {
 				$data['outputs'][] = array(
 						'id' => $o['id'],
 						'amount' => $o['amount'],
 						'measure' => $o['measure'],
-						'resource_id' => $o['resource']
+						'resource_id' => $o['resource'],
+						'remove' => (isset($o['remove']) && $o['remove'] == 'true') ? true: false
 					);
 			}
 		}
 
 		$data['inputs'] = array();
-		if(is_array($_POST['inputs'])) {
+		if(isset($_POST['inputs'])) {
 			foreach($_POST['inputs'] as $i) {
 				$data['inputs'][] = array(
 						'id' => $i['id'],
 						'amount' => $i['amount'],
 						'measure' => $i['measure'],
 						'resource_id' => $i['resource'],
-						'from_nature' => $i['from_nature']
+						'from_nature' => $i['from_nature'],
+						'remove' => (isset($i['remove']) && $i['remove'] == 'true') ? true: false
 					);
 			}
 		}
 
 		$data['product_outputs'] = array();
-		if(is_array($_POST['product_outputs'])) {
+		if(isset($_POST['product_outputs'])) {
 			foreach($_POST['product_outputs'] as $o) {
 				$data['product_outputs'][] = array(
 						'id' => $o['id'],
 						'amount' => $o['amount'],
-						'product_id' => $o['product']
+						'product_id' => $o['product'],
+						'remove' => (isset($o['remove']) && $o['remove'] == 'true') ? true: false
 					);
 			}
 		}
 
 		$data['product_inputs'] = array();
-		if(is_array($_POST['product_inputs'])) {
+		if(isset($_POST['product_inputs'])) {
 			foreach($_POST['product_inputs'] as $i) {
 				$data['product_inputs'][] = array(
 						'id' => $i['id'],
 						'amount' => $i['amount'],
 						'product_id' => $i['product'],
+						'remove' => (isset($i['remove']) && $i['remove'] == 'true') ? true: false
 					);
 			}
 		}
@@ -153,24 +157,11 @@ class Project_admin extends Base
 		$id = $this->Project_model->Save_recipe($data);
 		
 		if($id == false) {
-			$id = $_POST['id'];
+			echo json_encode(array('success' => false, 'reason' => 'Failed to save'));
+			return;
 		}
 
-		if($id != -1) {
-			$recipe = $this->Project_model->Get_recipe($id);
-		} else {
-			$recipe = array();
-			$recipe['recipe'] = array(
-					'ID' => -1,
-					'Name' => '',
-					'Cycle_time' => 1,
-					'Allow_fraction_output' => 1,
-					'Require_full_cycle' => 1
-				);
-		}
-
-		$this->Load_model('Location_model');
-		echo json_encode(array('success' => true, 'id' => $id));
+		echo json_encode(array('success' => true));
 	}
 	/*
 	public function remove_recipe_output() {

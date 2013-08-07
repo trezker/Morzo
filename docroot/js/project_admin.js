@@ -27,17 +27,18 @@ function edit_recipe(id)
 function save_recipe() {
 	var recipe_name = $('#recipe_name').val();
 	var cycle_time = $('#cycle_time').val();
-	var allow_fraction_output = $('#allow_fraction_output').attr('checked');
-	var require_full_cycle = $('#require_full_cycle').attr('checked');
+	var allow_fraction_output = $('#allow_fraction_output').is(':checked');
+	var require_full_cycle = $('#require_full_cycle').is(':checked');
 
 	var outputs = new Array();
 	$('#recipe_outputs .output').each(
 		function(index, value){
 			var output = {
-					id: value.id,
+					id: $(value).attr('data-id'),
 					amount: $(value).children('.amount').val(),
 					measure: $(value).children('.measuredesc').attr('data-id'),
-					resource: $(value).children('.resource').attr('data-id')
+					resource: $(value).children('.resource').attr('data-id'),
+					remove: $(value).attr('data-remove')
 				};
 			outputs.push(output);
 		}
@@ -47,11 +48,12 @@ function save_recipe() {
 	$('#recipe_inputs .input').each(
 		function(index, value){
 			var input = {
-					id: value.id,
+					id: $(value).attr('data-id'),
 					amount: $(value).children('.amount').val(),
 					measure: $(value).children('.measuredesc').attr('data-id'),
 					resource: $(value).children('.resource').attr('data-id'),
-					from_nature: $(value).children('.from_nature').attr('checked')
+					from_nature: $(value).children('.from_nature').is(':checked'),
+					remove: $(value).attr('data-remove')
 				};
 			inputs.push(input);
 		}
@@ -63,7 +65,8 @@ function save_recipe() {
 			var output = {
 					id: $(value).attr('data-id'),
 					amount: $(value).children('.amount').val(),
-					product: $(value).children('.product').attr('data-id')
+					product: $(value).children('.product').attr('data-id'),
+					remove: $(value).attr('data-remove')
 				};
 			product_outputs.push(output);
 		}
@@ -76,6 +79,7 @@ function save_recipe() {
 					id: $(value).attr('data-id'),
 					amount: $(value).children('.amount').val(),
 					product: $(value).children('.product').attr('data-id'),
+					remove: $(value).attr('data-remove')
 				};
 			product_inputs.push(input);
 		}

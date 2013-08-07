@@ -144,7 +144,7 @@ class Project_model extends Model
 					Require_full_cycle = ?
 				where ID = ?
 				', $args);
-			$result_id = $data['recipe']['id'];
+			$recipe_id = $data['recipe']['id'];
 		} else {
 			$args = array(
 						$data['recipe']['name'], 
@@ -156,10 +156,9 @@ class Project_model extends Model
 				insert into Recipe (Name, Cycle_time, Allow_fraction_output, Require_full_cycle)
 				values (?, ?, ?, ?)
 				', $args);
-			$result_id = $db->Insert_ID();
+			$recipe_id = $db->Insert_ID();
 		}
 
-		
 		$args = array();
 		$r = $db->Execute('
 			select ID, Mass, Volume, 1 as Object from Resource
@@ -180,65 +179,113 @@ class Project_model extends Model
 			$measures[$measure['ID']] = $measure['Name'];
 		}
 
-		if($result_id != -1) {
+		if($recipe_id != -1) {
 			foreach($data['outputs'] as $o) {
-				$o['amount'] /= $amount_factors[$o['resource_id']][$measures[$o['measure']]];
-				$args = array(
-							$o['amount'], 
-							$o['resource_id'],
-							$o['id']
-						);
-				$r = $db->Execute('
-					update Recipe_output set 
-						Amount = ?,
-						Resource_ID = ?
-					where ID = ?
-					', $args);
+				if($o['remove']) {
+					$this->Remove_recipe_output($recipe_id, $o['id']);
+				}
+			}
+			foreach($data['outputs'] as $o) {
+				if($o['remove']) {
+					continue;
+				}
+				if($o['id'] < 0) {
+					$this->Add_recipe_output($recipe_id, $o['resource_id'], $o['measure'], $o['amount']);
+				} else {
+					$o['amount'] /= $amount_factors[$o['resource_id']][$measures[$o['measure']]];
+					$args = array(
+								$o['amount'], 
+								$o['resource_id'],
+								$o['id']
+							);
+					$r = $db->Execute('
+						update Recipe_output set 
+							Amount = ?,
+							Resource_ID = ?
+						where ID = ?
+						', $args);
+				}
 			}
 
 			foreach($data['inputs'] as $i) {
-				$i['amount'] /= $amount_factors[$i['resource_id']][$measures[$i['measure']]];
-				$args = array(
-							$i['amount'], 
-							$i['resource_id'],
-							($i['from_nature'] == 'true')?1:0,
-							$i['id']
-						);
-				$r = $db->Execute('
-					update Recipe_input set 
-						Amount = ?,
-						Resource_ID = ?,
-						From_nature = ?
-					where ID = ?
-					', $args);
+				if($i['remove']) {
+					$this->Remove_recipe_input($recipe_id, $i['id']);
+				}
+			}
+			foreach($data['inputs'] as $i) {
+				if($i['remove']) {
+					continue;
+				}
+				if($i['id'] < 0) {
+					$this->Add_recipe_input($recipe_id, $i['resource_id'], $i['measure'], $i['amount']);
+				} else {
+					$i['amount'] /= $amount_factors[$i['resource_id']][$measures[$i['measure']]];
+					$args = array(
+								$i['amount'], 
+								$i['resource_id'],
+								($i['from_nature'] == 'true')?1:0,
+								$i['id']
+							);
+					$r = $db->Execute('
+						update Recipe_input set 
+							Amount = ?,
+							Resource_ID = ?,
+							From_nature = ?
+						where ID = ?
+						', $args);
+				}
 			}
 
 			foreach($data['product_outputs'] as $o) {
-				$args = array(
-							$o['amount'], 
-							$o['product_id'],
-							$o['id']
-						);
-				$r = $db->Execute('
-					update Recipe_product_output set 
-						Amount = ?,
-						Product_ID = ?
-					where ID = ?
-					', $args);
+				if($o['remove']) {
+					$this->Remove_recipe_product_output($recipe_id, $o['id']);
+				}
+			}
+			foreach($data['product_outputs'] as $o) {
+				if($o['remove']) {
+					continue;
+				}
+				if($o['id'] < 0) {
+					$this->Add_recipe_product_output($recipe_id, $o['product_id'], $o['amount']);
+				} else {
+					$args = array(
+								$o['amount'], 
+								$o['product_id'],
+								$o['id']
+							);
+					$r = $db->Execute('
+						update Recipe_product_output set 
+							Amount = ?,
+							Product_ID = ?
+						where ID = ?
+						', $args);
+				}
 			}
 
 			foreach($data['product_inputs'] as $i) {
-				$args = array(
-							$i['amount'], 
-							$i['product_id'],
-							$i['id']
-						);
-				$r = $db->Execute('
-					update Recipe_product_input set 
-						Amount = ?,
-						Product_ID = ?
-					where ID = ?
-					', $args);
+				if($i['remove']) {
+					$this->Remove_recipe_product_input($recipe_id, $i['id']);
+				}
+			}
+			foreach($data['product_inputs'] as $i) {
+				if($i['remove']) {
+					continue;
+				}
+				if($i['id'] < 0) {
+					$this->Add_recipe_product_input($recipe_id, $i['product_id'], $i['amount']);
+				} else {
+					$args = array(
+								$i['amount'], 
+								$i['product_id'],
+								$i['id']
+							);
+					$r = $db->Execute('
+						update Recipe_product_input set 
+							Amount = ?,
+							Product_ID = ?
+						where ID = ?
+						', $args);
+				}
 			}
 		}
 
@@ -247,7 +294,7 @@ class Project_model extends Model
 		if($success != true)
 			return false;
 
-		return $result_id;
+		return $recipe_id;
 	}
 	
 	public function Remove_recipe_output($recipe_id, $output_id)
