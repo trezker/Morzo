@@ -389,6 +389,13 @@ class Species_model extends Model {
 							break;
 						}
 
+						$this->Load_model('Event_model');
+						$this->Event_model->Save_hunt_event("{LNG_Hunt_killed_animal}", $hunt['ID']);
+						if($db->HasFailedTrans()) {
+							$errormsg = "Saving event failed";
+							break;
+						}
+
 						//Check if there are any animals left to hunt, if not we end the hunt.
 						$query = "
 								select Species_ID from Hunt_species
