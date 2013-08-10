@@ -92,7 +92,13 @@
 				<td id="project_details_container" colspan="3" style="max-width: 300px;">
 					Here comes the details, later, when it is implemented. Need to do a bit of styling on this table to make things loook alright.
 				</td>
-			</tr>';
+			</tr>
+			<tr id="hunt_details_row" style="display: none;">
+				<td id="hunt_details_container" colspan="3" style="max-width: 300px;">
+					Here comes the details, later, when it is implemented. Need to do a bit of styling on this table to make things loook alright.
+				</td>
+			</tr>
+			';
 		?>
 	</table>
 </div>

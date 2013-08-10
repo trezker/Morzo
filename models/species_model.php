@@ -185,11 +185,6 @@ class Species_model extends Model {
 	
 	public function Get_hunts($actor_id) {
 		$db = Load_database();
-		/*TODO:
-			Joined			Are you part of this hunt?
-			Active			Is this hunt ongoing? Only needs one participant
-			Description		Combine names of species being hunted.
-		*/
 		$query = "	select
 						h.ID,
 						hs.Name AS Stage_name,
@@ -218,6 +213,35 @@ class Species_model extends Model {
 		}
 		
 		return $rs->GetArray();
+	}
+
+	public function Get_hunt($actor_id, $hunt_id) {
+		$db = Load_database();
+		$query = "
+					select
+						h.ID,
+						hs.Name AS Stage_name,
+						h.Prey_ID,
+						h.Duration,
+						h.Hours_left,
+						s.Name as Prey_name
+					from Hunt h
+					join Huntstage hs on hs.ID = h.Stage_ID
+					join Actor a on a.Location_ID = h.Location_ID
+					left join Species s on s.ID = h.Prey_ID
+					where a.ID = ? and h.ID = ?
+				";
+		$args = array($actor_id, $hunt_id);
+		$rs = $db->Execute($query, $args);
+		
+		if(!$rs) {
+			return false;
+		}
+		
+		$r = array();
+		$r['info'] = $rs->fields;
+		
+		return $r;
 	}
 	
 	public function Join_hunt($actor_id, $hunt_id) {

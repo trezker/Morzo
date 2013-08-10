@@ -510,6 +510,27 @@ class Actor extends Base
 		
 		echo json_encode(array('success' => true, 'data' => $project_details_view));
 	}
+
+	public function Show_hunt_details() {
+		header('Content-type: application/json');
+		$actor_id = $_POST['actor_id'];
+		$hunt_id = $_POST['hunt_id'];
+		
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
+			return;
+		}
+
+		$this->Load_model('Species_model');
+		$hunt = $this->Species_model->Get_hunt($actor_id, $hunt_id);
+		$hunt_details_view = $this->Load_view('hunt_details_view', array(
+									'actor_id' => $actor_id, 
+									'hunt' => $hunt
+								), true);
+		
+		echo json_encode(array('success' => true, 'data' => $hunt_details_view));
+	}
 	
 	public function Supply_project() {
 		header('Content-type: application/json');

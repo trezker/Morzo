@@ -396,6 +396,32 @@ function show_project(actor_id, project_id) {
 	});
 }
 
+var hunt_details_at_id = -1;
+function show_hunt(actor_id, hunt_id) {
+	if(hunt_details_at_id == hunt_id) {
+		hunt_details_at_id = -1;
+		$('#hunt_details_row').hide();
+		return;
+	}
+	$.ajax({
+		type: 'POST',
+		url: '/actor/Show_hunt_details',
+		data: {
+			actor_id: actor_id,
+			hunt_id: hunt_id
+		},
+		dataType: "json",
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success == true) {
+				hunt_details_at_id = hunt_id;
+				$('#hunt_details_row').insertAfter($('#hunt_row_'+hunt_id)).show();
+				$('#hunt_details_container').html(data.data);
+			}
+		}
+	});
+}
+
 function supply_project(actor_id, project_id) {
 	$.ajax({
 		type: 'POST',
