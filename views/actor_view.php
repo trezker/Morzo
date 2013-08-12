@@ -46,6 +46,15 @@
 						<?php echo htmlspecialchars($time['year'].':'.$time['month'].':'.$time['day'].':'.$time['hour']); ?> (Y:M:D:H)
 					</td>
 				</tr>
+				<tr>
+					<td>
+						Next update in
+					</td>
+					<td>
+						<?php echo floor($minutes_to_next_update/60) . ":" . $minutes_to_next_update%60; ?>
+					</td>
+					
+				</tr>
 			</table>
 
 			<p id="Leave this actor"><a href='/user'>Leave this actor</a></p>

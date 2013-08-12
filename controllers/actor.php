@@ -44,6 +44,7 @@ class Actor extends Base
 		
 		$this->Load_controller('Update');
 		$time = $this->Update->Get_time_units($actor['Time']);
+		$minutes_to_next_update = $this->Get_time_to_next_update();
 		
 		$tab_view = '';
 		if($tab == 'locations') {
@@ -127,7 +128,7 @@ class Actor extends Base
 		}
 		
 		$common_head_view = $this->Load_view('common_head_view', array());
-		$this->Load_view('actor_view', array('tab' => $tab, 'actor_id' => $actor_id, 'tab_view' => $tab_view, 'time' => $time, 'actor' => $actor, 'common_head_view' => $common_head_view), false);
+		$this->Load_view('actor_view', array('tab' => $tab, 'actor_id' => $actor_id, 'tab_view' => $tab_view, 'time' => $time, 'actor' => $actor, 'common_head_view' => $common_head_view, 'minutes_to_next_update' => $minutes_to_next_update), false);
 	}
 	
 	public function Change_actor_name()

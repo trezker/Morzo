@@ -10,4 +10,16 @@ class Base extends Controller
 			$this->User_model->Update_user_activity($_SESSION['userid']);
 		}
 	}
+	
+	public function Get_time_to_next_update() {
+		$dt = new DateTime();
+		$current_time = $dt->format('Y:m:d H:i:s');
+		$midnight = $dt->format('Y:m:d 00:00:00');
+		$total_minutes = floor((strtotime($current_time) - strtotime($midnight)) / 60);
+		$game_hour = floor($total_minutes / 90) +1;
+		//Now we know when the next update should occur.
+		//Calc hour and minute and construct a datetime
+		$minutes_to_next_update = $game_hour * 90 - $total_minutes;
+		return $minutes_to_next_update;
+	}
 }
