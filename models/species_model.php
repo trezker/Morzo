@@ -460,6 +460,15 @@ class Species_model extends Model {
 					break;
 				}
 				$query = "
+						update Actor set Hunt_ID = NULL where Hunt_ID = ?
+						";
+				$args = array($hunt['ID']);
+				$rs = $db->Execute($query, $args);
+				if(!$rs) {
+					$errormsg = $db->ErrorMsg();
+					break;
+				}
+				$query = "
 						delete from Hunt where ID = ?
 						";
 				$args = array($hunt['ID']);

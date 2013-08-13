@@ -118,5 +118,18 @@ class Event_model
 		$db->CompleteTrans();
 		return $success;
 	}
+	
+	public function Delete_old_events() {
+		$sql = '
+			delete AU.* FROM Actor_event A
+			join Event E on A.Event_ID = E.ID
+			where E.Real_time < DATE_SUB(NOW(), INTERVAL 30 day)
+		';
+		$rs = $db->Execute($sql, array());
+		$sql = '
+			delete FROM Event where Real_time < DATE_SUB(NOW(), INTERVAL 30 day)
+		';
+		$rs = $db->Execute($sql, array());
+	}
 }
 
