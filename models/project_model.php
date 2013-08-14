@@ -1254,14 +1254,21 @@ class Project_model extends Model
 
 		$args = array($project_id);
 		$r = $db->Execute('
-			delete from Inventory I
-			where I.ID in (select P.Inventory_ID from Project P where P.ID = ?)
+			select Inventory_ID from Project where ID = ?
 			', $args);
+		
+			echo $db->ErrorMsg();
+		$args = array($project_id);
 
 		$args = array($project_id, $inventory_ids['Location_inventory']);
-		$r = $db->Execute('
+		$r2 = $db->Execute('
 			delete P from Project P
 			where P.ID = ? and P.Location_inventory_ID = ?
+			', $args);
+
+		$args = array($r->fields['Inventory_ID']);
+		$r = $db->Execute('
+			delete from Inventory where ID = ?
 			', $args);
 		
 		$success = true;
