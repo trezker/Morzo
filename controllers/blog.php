@@ -67,6 +67,7 @@ class Blog extends Base {
 		
 		$common_head_view = $this->Load_view('common_head_view', array());
 		return $this->Load_view('blog_control_panel_view', array(
+																'blog_name' => $blog_name,
 																'blog' => $blog,
 																'post' => $post,
 																'titles' => $titles,

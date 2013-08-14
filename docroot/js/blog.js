@@ -20,23 +20,6 @@ function load_blog_control_panel() {
 	window.location = "/blog/Control_panel/" + name;
 }
 
-function edit_blogpost(id) {
-	callurl = '/blog/Edit_blogpost';
-	$.ajax({
-		type: 'POST',
-		url: callurl,
-		data: {
-			post_id: id
-		},
-		success: function(data) {
-			if(ajax_logged_out(data)) return;
-			if(data.success !== false) {
-				$('#blog_control_panel_container').html(data.blog_control_panel_view);
-			}
-		}
-	});
-}
-
 function submit_blog_post() {
 	var blog_id = $('#blog_id').val();
 	var post_id = $('#post_id').val();
