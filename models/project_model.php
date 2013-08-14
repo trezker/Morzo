@@ -1228,7 +1228,7 @@ class Project_model extends Model
 		foreach($inputs as $input) {
 			$this->Inventory_model->Transfer_product(
 													$inventory_ids['Actor_inventory'], 
-													project_inventory_id, 
+													$project_inventory_id, 
 													$input['Product_ID'],
 													$input['Needed_amount'] - $input['Project_amount']
 												);
