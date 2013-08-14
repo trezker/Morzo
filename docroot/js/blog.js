@@ -25,7 +25,7 @@ function submit_blog_post() {
 	var post_id = $('#post_id').val();
 	var title = $('#new_post_title').val();
 	var content = $('#new_post_content').val();
-	var hidden = $('#new_post_hidden').attr('checked');
+	var hidden = $('#new_post_hidden').is(':checked');
 	callurl = '/blog/Submit_blog_post';
 	$.ajax({
 		type: 'POST',
