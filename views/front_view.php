@@ -31,6 +31,7 @@
 			<div id="openidfeedback">&nbsp;</div>
 		</div>
 		<div style="clear: both;">
+			<p><a href="/library">Documentation</a></p>
 			<?php echo $blogposts_view; ?>
 		</div>
 	</body>

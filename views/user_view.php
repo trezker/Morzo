@@ -28,6 +28,7 @@
 			</ul>
 		</div>
 
+		<p><a href="/library">Documentation</a></p>
 		<p><a href="/user/settings">Settings</a></p>
 		<p><a href="/blog/Control_panel">Blog</a></p>
 		<p id="logout"><a href="javascript:logout()">Log out</a></p>
