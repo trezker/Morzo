@@ -232,7 +232,7 @@ function show_project_start_form(actor_id, id) {
 }
 
 function start_project(actor_id, recipe_id) {
-	var supply = $('#supply_resources_option').attr('checked');
+	var supply = $('#supply_resources_option').is(':checked');
 	var cycles = $('#cycle_count').val();
 	$.ajax({
 		type: 'POST',
