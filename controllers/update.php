@@ -11,6 +11,8 @@ class Update extends Controller
 			return;
 		}
 		*/
+		$this->Load_model("Event_model");
+		$this->Event_model->Delete_old_events();
 		$this->Load_model("Travel_model");
 		$time = $this->Travel_model->Tick();
 		$this->Update_travel($time);
