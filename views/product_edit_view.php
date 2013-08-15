@@ -49,6 +49,6 @@
 	</table>',
 	$product);
 	?>
-	<span class="action" style="float: right;" onclick="save_product()">Save</span>
+	<a href="javascript:void(0)" class="action" style="float: right;" onclick="save_product()">Save</a>
 </div>
 </div>

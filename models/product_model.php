@@ -82,11 +82,13 @@ class Product_model {
 				', $args);
 		}
 
-		foreach($product['categories'] as $category) {
-			if(isset($category['state']) && $category['state'] == 'remove')
-				$this->Remove_product_category($product_id, $category['id']);
-			else
-				$this->Add_product_category($product_id, $category['id']);
+		if(isset($product['categories'])) {
+			foreach($product['categories'] as $category) {
+				if(isset($category['state']) && $category['state'] == 'remove')
+					$this->Remove_product_category($product_id, $category['id']);
+				else
+					$this->Add_product_category($product_id, $category['id']);
+			}
 		}
 
 		$success = !$db->HasFailedTrans();

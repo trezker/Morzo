@@ -134,5 +134,5 @@ foreach($measures as $key => $measure) {
 		?>
 	</div>
 
-	<span class="action" style="float: right;" onclick="save_recipe()">Save</span>
+	<a href="javascript:void(0)" style="float: right;" onclick="save_recipe()">Save</a>
 </div>

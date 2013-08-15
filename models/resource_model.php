@@ -89,11 +89,13 @@ class Resource_model
 				', $args);
 		}
 
-		foreach($resource['categories'] as $category) {
-			if(isset($category['state']) && $category['state'] == 'remove')
-				$this->Remove_resource_category($resource_id, $category['id']);
-			else
-				$this->Add_resource_category($resource_id, $category['id']);
+		if(isset($resource['categories'])) {
+			foreach($resource['categories'] as $category) {
+				if(isset($category['state']) && $category['state'] == 'remove')
+					$this->Remove_resource_category($resource_id, $category['id']);
+				else
+					$this->Add_resource_category($resource_id, $category['id']);
+			}
 		}
 
 		$success = !$db->HasFailedTrans();

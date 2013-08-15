@@ -102,11 +102,11 @@ function save_recipe() {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
-				current_recipe = data.id;
-//				window.location.reload();
+				window.location.reload();
 			}
 		}
 	});
+	return false;
 }
 
 /*
@@ -252,7 +252,7 @@ function edit_resource(id) {
 function save_resource() {
 	var id = current_resource;
 	var name = $('#resource_name').val();
-	var is_natural = $('#is_natural').attr('checked');
+	var is_natural = $('#is_natural').is(':checked');
 	var measure = $('#measure').val();
 	var mass = $('#mass').val();
 	var volume = $('#volume').val();
@@ -285,12 +285,11 @@ function save_resource() {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
-				current_resource = id;
 				window.location.reload();
 			}
-			edit_resource(id);
 		}
 	});
+	return false;
 }
 
 function edit_product(id) {
@@ -344,12 +343,11 @@ function save_product() {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
-				current_product = id;
 				window.location.reload();
 			}
-			edit_product(id);
 		}
 	});
+	return false;
 }
 
 function edit_category(id) {

@@ -77,6 +77,6 @@
 	</table>',
 	$resource);
 	?>
-	<span class="action" style="float: right;" onclick="save_resource()">Save</span>
+	<a href="javascript:void(0)" class="action" style="float: right;" onclick="save_resource()">Save</a>
 </div>
 </div>
