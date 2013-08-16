@@ -667,8 +667,8 @@ class Actor extends Base
 		}
 		
 		$inventory_id = $_POST['inventory_id'];
-		$resources = $_POST['resources'];
-		$products = $_POST['products'];
+		$resources = isset($_POST['resources'])?$_POST['resources']:array();
+		$products = isset($_POST['products'])?$_POST['products']:array();
 		
 		$this->Load_model('Inventory_model');
 		$result = $this->Inventory_model->Transfer_to_inventory($actor_id, $inventory_id, $resources, $products);
