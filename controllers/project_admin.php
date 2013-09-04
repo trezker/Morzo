@@ -549,6 +549,7 @@ class Project_admin extends Base
 		$this->Load_model('Category_model');
 		$category = $this->Category_model->Get_category($_POST['id']);
 		$food = $this->Category_model->Get_food_properties($_POST['id']);
+		$container = $this->Category_model->Get_container_properties($_POST['id']);
 
 		if($category == false) {
 			$category = array(
@@ -559,7 +560,8 @@ class Project_admin extends Base
 		$edit_category_view = $this->Load_view('category_edit_view',
 												array(
 													'category' => $category,
-													'food' => $food
+													'food' => $food,
+													'container' => $container
 												), 
 												true);
 

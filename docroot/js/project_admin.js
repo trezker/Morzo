@@ -371,6 +371,9 @@ function save_category() {
 	var id = current_category;
 	var name = $('#category_name').val();
 	var food_nutrition = $('#food_nutrition').val();
+	var mass_limit = $('#container_mass_limit').val();
+	var volume_limit = $('#container_volume_limit').val();
+	var is_container = $('#is_container').is(":checked");
 
 	$.ajax({
 		type: 'POST',
@@ -380,13 +383,18 @@ function save_category() {
 			name: name,
 			food: {
 				nutrition: food_nutrition
-				}
+			},
+			is_container: is_container,
+			container: {
+				mass_limit: mass_limit,
+				volume_limit: volume_limit
+			}
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
 				current_category = id;
-				window.location.reload();
+				//window.location.reload();
 			}
 			edit_category(id);
 		}
@@ -395,6 +403,10 @@ function save_category() {
 
 function show_category_food_properties() {
 	$("#food_properties_container").toggle();
+}
+
+function show_category_container_properties() {
+	$("#container_properties_container").toggle();
 }
 
 function add_product_category() {
