@@ -984,10 +984,16 @@ class Project_model extends Model
 						$Object_ID = $db->Insert_id();
 						
 						$query = '
-								select c.ID, c.Name
+								select 
+									c.ID, 
+									c.Name,
+									cc.ID as Category_container_ID,
+									cc.Mass_limit,
+									cc.Volume_limit
 								from Product p 
 								join Product_category pc on pc.Product_ID = p.ID
 								join Category c on pc.Category_ID = c.ID
+								left join Category_container cc on cc.Category_ID = c.ID
 								where p.ID = ?
 								';
 
@@ -996,10 +1002,10 @@ class Project_model extends Model
 						if(!$rs)
 							break;
 						foreach($rs->GetArray() as $category) {
-							if($category['Name'] == 'Container') {
-								$query = 'insert into Inventory () values()';
+							if($category['Category_container_ID'] !== NULL) {
+								$query = 'insert into Inventory (Mass_limit, Volume_limit) values(?, ?)';
 
-								$args = array();
+								$args = array($category['Mass_limit'], $category['Volume_limit']);
 								$rs = $db->Execute($query, $args);
 								if(!$rs)
 									break;
