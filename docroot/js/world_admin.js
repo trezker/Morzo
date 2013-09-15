@@ -248,7 +248,7 @@ function edit_species(id) {
 function save_species() {
 	var name = $("#species_name").val();
 	var max_population = $("#species_max_population").val();
-	var on_location = $("#species_on_location").attr('checked');
+	var on_location = $("#species_on_location").is(':checked');
 	var population = $("#species_population").val();
 	var id = current_species;
 	$.ajax({
