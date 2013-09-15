@@ -1,3 +1,10 @@
+$(function() {
+	$(".accordion").accordion({
+		collapsible: true,
+		active: false
+	});
+});
+
 function ajax_logged_out(data) {
 	if(data.success == false && data.reason == 'Not logged in') {
 		show_login_dialog();
