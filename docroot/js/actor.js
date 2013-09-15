@@ -669,31 +669,38 @@ var current_object_id = -1;
 function show_object_label_dialog(actor_id, object_id, label) {
 	current_actor_id = actor_id;
 	current_object_id = object_id;
-	var html = $('#object_label_popup').html();
-	open_dialog(html, 250, 100);
-	$('#label_input').val(label);
-}
-
-function label_object() {
-	var label = $('#label_input').val();
-	$.ajax({
-		type: 'POST',
-		url: '/actor/Label_object',
-		data: {
-			actor_id: current_actor_id,
-			object_id: current_object_id,
-			label: label
-		},
-		dataType: "json",
-		success: function(data) {
-			if(ajax_logged_out(data)) return;
-			if(data.success == true) {
-				$('#name_object_' + current_object_id).html(label);
-				close_dialog();
+	$("#object_label_popup").dialog({
+		width: 300,
+		height: 200,
+		modal: true,
+		buttons: {
+			"Change name": function() {
+				var label = $('#label_input').val();
+				var dialog_handle = this;
+				$.ajax({
+					type: 'POST',
+					url: '/actor/Label_object',
+					data: {
+						actor_id: current_actor_id,
+						object_id: current_object_id,
+						label: label
+					},
+					dataType: "json",
+					success: function(data) {
+						if(ajax_logged_out(data)) return;
+						if(data.success == true) {
+							$('#name_object_' + current_object_id).html(label);
+							$( dialog_handle ).dialog("close");
+						}
+					}
+				});
+			},
+			Cancel: function() {
+				$( this ).dialog("close");
 			}
 		}
 	});
-	return false;
+	$('#label_input').val(label);
 }
 
 var lock_to_attach = false;
