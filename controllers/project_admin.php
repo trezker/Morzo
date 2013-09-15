@@ -23,11 +23,13 @@ class Project_admin extends Base
 		$products = $this->Product_model->Get_products();
 		$this->Load_model('Category_model');
 		$categories = $this->Category_model->Get_categories();
+		$common_head_view = $this->Load_view('common_head_view', array());
 		$this->Load_view('project_admin_view', array(
 														'recipes' => $recipes, 
 														'resources' => $resources, 
 														'products' => $products,
-														'categories' => $categories
+														'categories' => $categories,
+														'common_head_view' => $common_head_view
 													));
 	}
 	
