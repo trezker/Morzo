@@ -46,41 +46,61 @@
 		Requires
 		<ul class="selectable">
 			<?php
-			$input_template = '
-				<li>
-					{Amount}{Measure_desc} {Resource_Name} {From_nature_text}
-				</li>
-			';
+			if(count($recipe['recipe_inputs']) > 0) {
+				$input_template = '
+					<li>
+						{Amount}{Measure_desc} {Resource_Name} {From_nature_text}
+					</li>
+				';
 
-			foreach ($recipe['recipe_inputs'] as $input) {
-				$from_nature_text = "";
-				if($input['From_nature'] == 1)
-					$from_nature_text = "from nature";
-				$input['Measure_desc'] = '';
-				if($input['Measure_name'] == 'Mass') {
-					$input['Amount'] = $input['Mass'];
-					$input['Measure_desc'] = ' g';
-				}
-				if($input['Measure_name'] == 'Volume') {
-					$input['Amount'] = $input['Volume'];
-					$input['Measure_desc'] = ' l';
-				}
+				echo "<li>Resources<ul>";
+				foreach ($recipe['recipe_inputs'] as $input) {
+					$from_nature_text = "";
+					if($input['From_nature'] == 1)
+						$from_nature_text = "from nature";
+					$input['Measure_desc'] = '';
+					if($input['Measure_name'] == 'Mass') {
+						$input['Amount'] = $input['Mass'];
+						$input['Measure_desc'] = ' g';
+					}
+					if($input['Measure_name'] == 'Volume') {
+						$input['Amount'] = $input['Volume'];
+						$input['Measure_desc'] = ' l';
+					}
 
-				echo expand_template($input_template, 
-												array(
-													'Amount' => $input['Amount'],
-													'Measure_desc' => $input['Measure_desc'],
-													'Resource_Name' => $input['Resource_Name'],
-													'From_nature_text' => $from_nature_text
-												));
+					echo expand_template($input_template, 
+													array(
+														'Amount' => $input['Amount'],
+														'Measure_desc' => $input['Measure_desc'],
+														'Resource_Name' => $input['Resource_Name'],
+														'From_nature_text' => $from_nature_text
+													));
+				}
+				echo "</ul></li>";
 			}
 
-			$input_template = '
-			<li>
-				{Amount} {Product_Name}
-			</li>';
-			foreach ($recipe['recipe_product_inputs'] as $input) {
-				echo expand_template($input_template, $input);
+			if(count($recipe['recipe_product_inputs']) > 0) {
+				$input_template = '
+				<li>
+					{Amount} {Product_Name}
+				</li>';
+				echo "<li>Products<ul>";
+				foreach ($recipe['recipe_product_inputs'] as $input) {
+					echo expand_template($input_template, $input);
+				}
+				echo "</ul></li>";
+			}
+
+			if(count($recipe['recipe_tools']) > 0) {
+				$tool_template = '
+				<li>
+					{Product_Name}
+				</li>';
+				echo "<li>Tools<ul>";
+				foreach ($recipe['recipe_tools'] as $tool) {
+					echo expand_template($tool_template, $tool);
+				}
+				echo "</ul></li>";
 			}
 			?>
 		</ul>
