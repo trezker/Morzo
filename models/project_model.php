@@ -108,11 +108,22 @@ class Project_model extends Model
 			limit 1
 			', array());
 
+		$recipe_tools = $db->Execute('
+			select
+				RT.ID,
+				RT.Product_ID,
+				P.Name AS Product_Name
+			from Recipe_tool RT
+			join Product P on P.ID = RT.Product_ID
+			where RT.Recipe_ID = ?
+			', array($id));
+
 		$result['recipe'] = $recipe->fields;
 		$result['recipe_inputs'] = $recipe_inputs->GetArray();
 		$result['recipe_outputs'] = $recipe_outputs->GetArray();
 		$result['recipe_product_inputs'] = $recipe_product_inputs->GetArray();
 		$result['recipe_product_outputs'] = $recipe_product_outputs->GetArray();
+		$result['recipe_tools'] = $recipe_tools->GetArray();
 		$result['new_product_component'] = $new_product_component->fields;
 		$result['new_output'] = $new_output->fields;
 		$result['new_input'] = $new_input->fields;
@@ -282,6 +293,29 @@ class Project_model extends Model
 					$r = $db->Execute('
 						update Recipe_product_input set 
 							Amount = ?,
+							Product_ID = ?
+						where ID = ?
+						', $args);
+				}
+			}
+			foreach($data['tools'] as $t) {
+				if($t['remove']) {
+					$this->Remove_recipe_tool($recipe_id, $t['id']);
+				}
+			}
+			foreach($data['tools'] as $t) {
+				if($t['remove']) {
+					continue;
+				}
+				if($t['id'] < 0) {
+					$this->Add_recipe_tool($recipe_id, $t['product_id']);
+				} else {
+					$args = array(
+								$t['product_id'],
+								$t['id']
+							);
+					$r = $db->Execute('
+						update Recipe_tool set 
 							Product_ID = ?
 						where ID = ?
 						', $args);
@@ -463,6 +497,38 @@ class Project_model extends Model
 		return false;
 	}
 	
+	public function Add_recipe_tool($recipe_id, $product_id) {
+		$db = Load_database();
+
+		$args = array(
+					$product_id,
+					$recipe_id
+				);
+		$r = $db->Execute('
+			insert into Recipe_tool (Product_ID, Recipe_ID) values (?, ?)
+			', $args);
+		
+		if(!$r)
+			return array('success' => false);
+		return array('success' => true, 'id' => $db->Insert_id());
+	}
+
+	public function Remove_recipe_tool($recipe_id, $tool_id)
+	{
+		$db = Load_database();
+		
+		$args = array($recipe_id, $tool_id);
+
+		$r = $db->Execute('
+			delete from Recipe_tool 
+			where Recipe_ID = ? and ID = ?
+			', $args);
+		
+		if($db->Affected_rows() > 0)
+			return true;
+		return false;
+	}
+
 	public function Get_recipes_with_nature_resource($actor_id, $resource_id) {
 		$db = Load_database();
 		

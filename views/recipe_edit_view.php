@@ -134,5 +134,18 @@ foreach($measures as $key => $measure) {
 		?>
 	</div>
 
+	<div id="recipe_tools" class="edit_panel">
+		<div class="panel_header">Tools</div>
+		<div id="new_tool_form">
+			<span class="action" onclick="add_tool()">Add tool</span>
+			<?php echo $product_select; ?>
+		</div>
+		<?php
+		foreach ($recipe['recipe_tools'] as $tool) {
+			echo expand_template($tool_template, $tool);
+		}
+		?>
+	</div>
+
 	<a href="javascript:void(0)" style="float: right;" onclick="save_recipe()">Save</a>
 </div>

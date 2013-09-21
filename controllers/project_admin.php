@@ -68,6 +68,7 @@ class Project_admin extends Base
 		$resource_input_template = $this->get_resource_input_template();
 		$product_output_template = $this->get_product_output_template();
 		$product_input_template = $this->get_product_input_template();
+		$tool_template = $this->get_tool_template();
 
 		$edit_recipe_view = $this->Load_view('recipe_edit_view',array(	'resources' => $resources,
 																		'products' => $products,
@@ -77,7 +78,8 @@ class Project_admin extends Base
 																		'resource_output_template' => $resource_output_template,
 																		'resource_input_template' => $resource_input_template,
 																		'product_output_template' => $product_output_template,
-																		'product_input_template' => $product_input_template
+																		'product_input_template' => $product_input_template,
+																		'tool_template' => $tool_template
 																		), true);
 
 		echo json_encode(array('success' => true, 'data' => $edit_recipe_view));
@@ -151,6 +153,17 @@ class Project_admin extends Base
 						'amount' => $i['amount'],
 						'product_id' => $i['product'],
 						'remove' => (isset($i['remove']) && $i['remove'] == 'true') ? true: false
+					);
+			}
+		}
+
+		$data['tools'] = array();
+		if(isset($_POST['tools'])) {
+			foreach($_POST['tools'] as $t) {
+				$data['tools'][] = array(
+						'id' => $t['id'],
+						'product_id' => $t['product'],
+						'remove' => (isset($t['remove']) && $t['remove'] == 'true') ? true: false
 					);
 			}
 		}
@@ -304,6 +317,33 @@ class Project_admin extends Base
 		
 		echo json_encode(array('success' => true, 'html' => $html));
 	}
+
+	public function add_recipe_tool() {
+		header('Content-type: application/json');
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
+			return;
+		}
+		if($_SESSION['admin'] != true) {
+			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
+			return;
+		}
+
+		$this->Load_model('Product_model');
+		$r = $this->Product_model->Get_product($_POST['product_id']);
+		if(!$r) {
+			echo json_encode(array('success' => false, 'reason' => 'Product not found'));
+		}
+
+		$tool = $r['product'];
+		$tool['Product_Name'] = $tool['Name'];
+		$tool['Product_ID'] = $tool['ID'];
+		$tool['ID'] = $_POST['new_tool_id'];
+		$html = expand_template($this->get_tool_template(), $tool);
+		
+		echo json_encode(array('success' => true, 'html' => $html));
+	}
 	
 	public function get_resource_output_template() {
 		return '
@@ -341,6 +381,14 @@ class Project_admin extends Base
 			<input class="amount" type="number" value="{Amount}" />
 			<span class="product" data-id="{Product_ID}">{Product_Name}</span>
 			<span class="action" style="float: right;" onclick="remove_product_input({ID})">Remove</span>
+		</div>';
+	}
+
+	public function get_tool_template() {
+		return '
+		<div class="tool" id="tool_{ID}" data-id="{ID}">
+			<span class="product" data-id="{Product_ID}">{Product_Name}</span>
+			<span class="action" style="float: right;" onclick="remove_tool({ID})">Remove</span>
 		</div>';
 	}
 	
