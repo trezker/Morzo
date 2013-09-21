@@ -701,7 +701,7 @@ class Project_model extends Model
 		return true;
 	}
 	
-	private function Update_project_active_state($project_id) {
+	public function Update_project_active_state($project_id) {
 		$db = Load_database();
 
 		$args = array($project_id);
@@ -747,7 +747,23 @@ class Project_model extends Model
 			return false;
 		}
 
-		if($workers->RecordCount()>0 && $missing_input->RecordCount() == 0 && $missing_products->RecordCount() == 0) {
+		$missing_tools = $db->Execute('
+			select 	RT.Product_ID, 
+					count(PO.ID) AS Project_amount
+			from Project P
+			join Recipe_tool RT on RT.Recipe_ID = P.Recipe_ID
+			join Actor A on A.Project_ID = P.ID
+			left join Object PO on RT.Product_ID = PO.Product_ID and A.Inventory_ID = PO.Inventory_ID
+			where P.ID = ?
+			group by RT.ID
+			having(count(PO.ID) < 1)
+			', $args);
+
+		if(!$missing_tools) {
+			return false;
+		}
+
+		if($workers->RecordCount()>0 && $missing_input->RecordCount() == 0 && $missing_products->RecordCount() == 0 && $missing_tools->RecordCount() == 0) {
 			$active = 1;
 		} else {
 			$active = 0;

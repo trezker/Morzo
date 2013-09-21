@@ -285,7 +285,8 @@ class Actor_model extends Model
 				B.Name as Biome_name,
 				T.Value as Time,
 				A.Hunger,
-				A.Health
+				A.Health,
+				A.Project_ID
 			from Actor A
 			left join Actor_name AN on A.ID = AN.Actor_ID and A.ID = AN.Named_actor_ID
 			left join Location_name LN on A.ID = LN.Actor_ID and A.Location_ID = LN.Location_ID

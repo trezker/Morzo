@@ -168,9 +168,6 @@ class Inventory_model extends Model
 		/* We need to check for each inventory that it is accessible by the actor.
 		 * We will not allow recursive checking for containers in containers.
 		 * The actor will have to move a container out of its parent in order to access its contents.
-		 * 
-		 * TODO: check container objects for allowed inventories.
-		 * 		make an array containing all allowed inventories before looping and just check against that!
 		 * */
 		 
 		$db = Load_database();
@@ -205,6 +202,12 @@ class Inventory_model extends Model
 				$this->Transfer_product($product['inventory_id'], $inventory_id, $product['product_id'], $product['amount']);
 			}
 		}
+
+		$this->Load_model("Actor_model");
+		$this->Load_model("Project_model");
+		$actor = $this->Actor_model->Get_actor($actor_id);
+		if($actor['Project_ID'] !== NULL)
+			$this->Project_model->Update_project_active_state($actor['Project_ID']);
 
 		$success = !$db->HasFailedTrans();
 		$db->CompleteTrans();
