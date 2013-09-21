@@ -58,6 +58,7 @@
 				</li>
 			';
 			
+			echo "<li>Resources<ul>";
 			$needs_resources = false;
 			$only_from_nature = true;
 			foreach ($project['recipe_inputs'] as $input) {
@@ -97,18 +98,37 @@
 					</li>
 				';
 			}
+			echo "</ul></li>";
 
 			$input_template = '
 			<li>
 				{Project_amount}/{Amount} {Name}
 			</li>';
 
+			echo "<li>Products<ul>";
 			foreach ($project['recipe_product_inputs'] as $input) {
 				if($input['Project_amount'] < $input['Amount']) {
 					$needs_resources = true;
 				}
 				echo expand_template($input_template, $input);
 			}
+			echo "</ul></li>";
+
+			
+			$tool_template = '
+			<li class="{style}">
+				{Name}
+			</li>';
+
+			echo "<li>Tools<ul>";
+			foreach ($project['recipe_tools'] as $tool) {
+				$tool['style'] = '';
+				if($tool['Project_amount'] == 0) {
+					$tool['style'] = 'inactive_project';
+				}
+				echo expand_template($tool_template, $tool);
+			}
+			echo "</ul></li>";
 			?>
 		</ul>
 		<?php 

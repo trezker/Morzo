@@ -938,12 +938,31 @@ class Project_model extends Model
 			return false;
 		}
 
+		$recipe_tools = $db->Execute('
+			select 
+				R.ID, 
+				R.Name, 
+				count(O.ID) as Project_amount
+			from Project P
+			join Recipe_tool RT on RT.Recipe_ID = P.Recipe_ID
+			join Product R on R.ID = RT.Product_ID
+			join Actor A on A.Project_ID = P.ID
+			left join Object O on O.Inventory_ID = A.Inventory_ID and O.Product_ID = R.ID
+			where P.ID = ?
+			group by R.ID
+			', array($project_id));
+
+		if(!$recipe_tools) {
+			return false;
+		}
+
 		$project = array();
 		$project['info'] = $info->fields;
 		$project['recipe_inputs'] = $recipe_inputs->getArray();
 		$project['recipe_outputs'] = $recipe_outputs->getArray();
 		$project['recipe_product_inputs'] = $recipe_product_inputs->getArray();
 		$project['recipe_product_outputs'] = $recipe_product_outputs->getArray();
+		$project['recipe_tools'] = $recipe_tools->getArray();
 
 		return $project;
 	}
