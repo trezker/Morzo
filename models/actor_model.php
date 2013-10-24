@@ -88,15 +88,13 @@ class Actor_model extends Model
 
 			foreach ($hungry_actors as $hungry_actor) {
 				$query = "
-					select R.ID, R.Name, CF.Nutrition, R.Mass, CF.Nutrition / R.Mass as Efficiency, IR.Amount as Amount, 'Resource' as Setname from Resource R
+					select R.ID, R.Name, RC.Food_nutrition as Nutrition, R.Mass, RC.Food_nutrition / R.Mass as Efficiency, IR.Amount as Amount, 'Resource' as Setname from Resource R
 					join Resource_category RC on R.ID = RC.Resource_ID
-					join Category_food CF on RC.Category_ID = CF.Category_ID
 					join Inventory_resource IR on IR.Resource_ID = R.ID
 					where IR.Inventory_ID = ?
 					union DISTINCT 
-					select P.ID, P.Name, CF.Nutrition, P.Mass, CF.Nutrition / P.Mass as Efficiency, count(P.ID) as Amount, 'Product' as Setname from Product P
+					select P.ID, P.Name, PC.Food_nutrition as Nutrition, P.Mass, PC.Food_nutrition / P.Mass as Efficiency, count(P.ID) as Amount, 'Product' as Setname from Product P
 					join Product_category PC on P.ID = PC.Product_ID
-					join Category_food CF on PC.Category_ID = CF.Category_ID
 					join Object O on O.Product_ID = P.ID
 					where O.Inventory_ID = ?
 					group by P.ID

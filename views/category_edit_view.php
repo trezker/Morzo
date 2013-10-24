@@ -1,15 +1,6 @@
 <h2>Edit category <?php echo htmlspecialchars($category['Name']); ?></h2>
 <div id="category" style="margin-left: 10px;">
 	<?php
-	$category['food_section'] = expand_template('
-	<span class="action" onclick="show_category_food_properties()">
-		Food properties
-	</span><br />
-	<div id="food_properties_container">
-		Nutrition: <input type="number" id="food_nutrition" value="{Nutrition}" />
-	</div>
-	', $food);
-
 	$category['container_section'] = expand_template('
 	<span class="action" onclick="show_category_container_properties()">
 		Container properties
@@ -23,7 +14,6 @@
 	
 	echo expand_template('
 	Name: <input type="text" id="category_name" value="{Name}" /><br />
-	{!food_section}
 	{!container_section}
 	',
 	$category);

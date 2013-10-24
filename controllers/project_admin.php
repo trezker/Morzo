@@ -607,7 +607,6 @@ class Project_admin extends Base
 
 		$this->Load_model('Category_model');
 		$category = $this->Category_model->Get_category($_POST['id']);
-		$food = $this->Category_model->Get_food_properties($_POST['id']);
 		$container = $this->Category_model->Get_container_properties($_POST['id']);
 
 		if($category == false) {
@@ -619,7 +618,6 @@ class Project_admin extends Base
 		$edit_category_view = $this->Load_view('category_edit_view',
 												array(
 													'category' => $category,
-													'food' => $food,
 													'container' => $container
 												), 
 												true);
@@ -644,43 +642,5 @@ class Project_admin extends Base
 
 		echo json_encode(array('success' => $result));
 	}
-	/*
-	public function remove_recipe_product_output() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
-
-		$this->Load_model('Project_model');
-		$success = $this->Project_model->Remove_recipe_product_output($_POST['recipe_id'], $_POST['id']);
-
-		echo json_encode(array('success' => $success));
-	}
-	*/
-	/*
-	public function remove_recipe_product_input() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
-
-		$this->Load_model('Project_model');
-		$success = $this->Project_model->Remove_recipe_product_input($_POST['recipe_id'], $_POST['id']);
-
-		echo json_encode(array('success' => $success));
-	}
-	*/
 }
 ?>
