@@ -9,6 +9,11 @@
 			{
 				$category["properties"] = '<input type="text" data-property="nutrition" value="{Food_nutrition}" />';
 			}
+			elseif($category["Name"] == "Container")
+			{
+				$category["properties"] = '	Mass limit <input type="text" data-property="mass_limit" value="{Container_mass_limit}" /><br />
+											Volume limit <input type="text" data-property="volume_limit" value="{Container_volume_limit}" />';
+			}
 			$categorieshtml .= expand_template($categorytemplate, $category);
 		}
 	}

@@ -568,6 +568,11 @@ class Project_admin extends Base
 		{
 			$category["properties"] = '<input type="text" data-property="nutrition" />';
 		}
+		elseif($category["Name"] == "Container")
+		{
+			$category["properties"] = '	Mass limit <input type="text" data-property="mass_limit" /><br />
+										Volume limit <input type="text" data-property="volume_limit" />';
+		}
 
 		$categorytemplate =	$this->get_category_template();
 		$categoryhtml = expand_template($categorytemplate, $category);
@@ -607,7 +612,6 @@ class Project_admin extends Base
 
 		$this->Load_model('Category_model');
 		$category = $this->Category_model->Get_category($_POST['id']);
-		$container = $this->Category_model->Get_container_properties($_POST['id']);
 
 		if($category == false) {
 			$category = array(
@@ -617,8 +621,7 @@ class Project_admin extends Base
 		}
 		$edit_category_view = $this->Load_view('category_edit_view',
 												array(
-													'category' => $category,
-													'container' => $container
+													'category' => $category
 												), 
 												true);
 

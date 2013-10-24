@@ -367,10 +367,14 @@ function save_product() {
 			var category_id = $(value).attr("data-category_id");
 			var category_state = $(value).attr("data-state");
 			var category_nutrition = $(value).find("[data-property='nutrition']").val();
+			var category_mass_limit = $(value).find("[data-property='mass_limit']").val();
+			var category_volume_limit = $(value).find("[data-property='volume_limit']").val();
 			var category = {
 					id: category_id,
 					state: category_state,
-					nutrition: category_nutrition
+					nutrition: category_nutrition,
+					mass_limit: category_mass_limit,
+					volume_limit: category_volume_limit
 				};
 			categories.push(category);
 		}
@@ -417,29 +421,20 @@ function edit_category(id) {
 function save_category() {
 	var id = current_category;
 	var name = $('#category_name').val();
-	var mass_limit = $('#container_mass_limit').val();
-	var volume_limit = $('#container_volume_limit').val();
-	var is_container = $('#is_container').is(":checked");
 
 	$.ajax({
 		type: 'POST',
 		url: 'project_admin/save_category',
 		data: {
 			id: id,
-			name: name,
-			is_container: is_container,
-			container: {
-				mass_limit: mass_limit,
-				volume_limit: volume_limit
-			}
+			name: name
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
 				current_category = id;
-				//window.location.reload();
+				window.location.reload();
 			}
-			edit_category(id);
 		}
 	});
 }

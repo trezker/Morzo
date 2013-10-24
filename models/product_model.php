@@ -37,7 +37,7 @@ class Product_model {
 		}
 		
 		$rs2 = $db->Execute('
-			select C.ID, C.Name, PC.Food_nutrition from Product_category PC
+			select C.ID, C.Name, PC.Food_nutrition, PC.Container_mass_limit, PC.Container_volume_limit from Product_category PC
 			join Category C on C.ID = PC.Category_ID
 			 where Product_ID = ?
 			', array($product_id));
@@ -102,10 +102,21 @@ class Product_model {
 	public function Add_product_category($product_id, $category) {
 		if(!isset($category['nutrition']) || !is_numeric($category['nutrition']))
 			$category['nutrition'] = NULL;
+		if(!isset($category['mass_limit']) || !is_numeric($category['mass_limit']))
+			$category['mass_limit'] = NULL;
+		if(!isset($category['volume_limit']) || !is_numeric($category['volume_limit']))
+			$category['volume_limit'] = NULL;
 		$db = Load_database();
-		$query = 'insert into Product_category(Product_id, Category_ID, Food_nutrition)
-		values(?, ?, ?) on duplicate key update Food_nutrition = ?';
-		$array = array($product_id, $category['id'], $category['nutrition'], $category['nutrition']);
+		$query = 'insert into Product_category(Product_id, Category_ID, Food_nutrition, Container_mass_limit, Container_volume_limit)
+		values(?, ?, ?, ?, ?) on duplicate key update Food_nutrition = ?, Container_mass_limit = ?, Container_volume_limit = ?';
+		$array = array($product_id, 
+						$category['id'], 
+						$category['nutrition'], 
+						$category['mass_limit'], 
+						$category['volume_limit'], 
+						$category['nutrition'], 
+						$category['mass_limit'], 
+						$category['volume_limit']);
 		$rs = $db->Execute($query, $array);
 		return $rs;
 	}
