@@ -305,9 +305,11 @@ function save_resource() {
 		function(index, value){
 			var category_id = $(value).attr("data-category_id");
 			var category_state = $(value).attr("data-state");
+			var category_nutrition = $(value).find("[data-property='nutrition']").val();
 			var category = {
 					id: category_id,
-					state: category_state
+					state: category_state,
+					nutrition: category_nutrition
 				};
 			categories.push(category);
 		}
@@ -364,9 +366,11 @@ function save_product() {
 		function(index, value){
 			var category_id = $(value).attr("data-category_id");
 			var category_state = $(value).attr("data-state");
+			var category_nutrition = $(value).find("[data-property='nutrition']").val();
 			var category = {
 					id: category_id,
-					state: category_state
+					state: category_state,
+					nutrition: category_nutrition
 				};
 			categories.push(category);
 		}

@@ -37,7 +37,7 @@ class Product_model {
 		}
 		
 		$rs2 = $db->Execute('
-			select C.ID, C.Name from Product_category PC
+			select C.ID, C.Name, PC.Food_nutrition from Product_category PC
 			join Category C on C.ID = PC.Category_ID
 			 where Product_ID = ?
 			', array($product_id));
@@ -87,7 +87,7 @@ class Product_model {
 				if(isset($category['state']) && $category['state'] == 'remove')
 					$this->Remove_product_category($product_id, $category['id']);
 				else
-					$this->Add_product_category($product_id, $category['id']);
+					$this->Add_product_category($product_id, $category);
 			}
 		}
 
@@ -99,11 +99,13 @@ class Product_model {
 		return true;
 	}
 	
-	public function Add_product_category($product_id, $category_id) {
+	public function Add_product_category($product_id, $category) {
+		if(!isset($category['nutrition']) || !is_numeric($category['nutrition']))
+			$category['nutrition'] = NULL;
 		$db = Load_database();
-		$query = 'insert into Product_category(Product_id, Category_ID)
-		values(?, ?)';
-		$array = array($product_id, $category_id);
+		$query = 'insert into Product_category(Product_id, Category_ID, Food_nutrition)
+		values(?, ?, ?) on duplicate key update Food_nutrition = ?';
+		$array = array($product_id, $category['id'], $category['nutrition'], $category['nutrition']);
 		$rs = $db->Execute($query, $array);
 		return $rs;
 	}

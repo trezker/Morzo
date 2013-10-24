@@ -532,10 +532,13 @@ class Project_admin extends Base
 	}
 	
 	public function get_category_template() {
-		$categorytemplate =	'<span style="margin-right: 5px;" class="category" id="category_{ID}" data-category_id="{ID}">
-								{Name} 
-								<span class="action" onclick="remove_category({ID})">X</span>
-							</span>';
+		$categorytemplate =	'<tr class="category" id="category_{ID}" data-category_id="{ID}">
+								<td>{Name}</td>
+								<td>{!properties}</td>
+								<td>
+									<a href="javascript:void(0)" class="action" onclick="remove_category({ID})">X</a>
+								</td>
+							</tr>';
 		return $categorytemplate;
 	}
 	
@@ -559,6 +562,12 @@ class Project_admin extends Base
 		$success = true;
 		if($category === false)
 			$success = false;
+
+		$category["properties"] = "&nbsp;";
+		if($category["Name"] == "Food")
+		{
+			$category["properties"] = '<input type="text" data-property="nutrition" />';
+		}
 
 		$categorytemplate =	$this->get_category_template();
 		$categoryhtml = expand_template($categorytemplate, $category);

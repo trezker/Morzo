@@ -38,5 +38,6 @@ function expand_template($template, $params, $noencode = false) {
 			$replace[] = rawurlencode($value);
 		}
 	}
-	return str_replace($search, $replace, $template);
+	//Double because if a {!token} contains other tokens I want those replaced too.
+	return str_replace($search, $replace, str_replace($search, $replace, $template));
 }

@@ -40,7 +40,7 @@ class Resource_model
 		}
 
 		$rs2 = $db->Execute('
-			select C.ID, C.Name from Resource_category RC
+			select C.ID, C.Name, RC.Food_nutrition from Resource_category RC
 			join Category C on C.ID = RC.Category_ID
 			 where Resource_ID = ?
 			', array($resource_id));
@@ -94,7 +94,8 @@ class Resource_model
 				if(isset($category['state']) && $category['state'] == 'remove')
 					$this->Remove_resource_category($resource_id, $category['id']);
 				else
-					$this->Add_resource_category($resource_id, $category['id']);
+					if(!$this->Add_resource_category($resource_id, $category))
+						$db->FailTrans();
 			}
 		}
 
@@ -120,11 +121,13 @@ class Resource_model
 		return $rs->GetArray();
 	}
 
-	public function Add_resource_category($resource_id, $category_id) {
+	public function Add_resource_category($resource_id, $category) {
+		if(!isset($category['nutrition']) || !is_numeric($category['nutrition']))
+			$category['nutrition'] = NULL;
 		$db = Load_database();
-		$query = 'insert into Resource_category(Resource_id, Category_ID)
-		values(?, ?)';
-		$array = array($resource_id, $category_id);
+		$query = 'insert into Resource_category(Resource_id, Category_ID, Food_nutrition)
+		values(?, ?, ?) on duplicate key update Food_nutrition = ?';
+		$array = array($resource_id, $category['id'], $category['nutrition'], $category['nutrition']);
 		$rs = $db->Execute($query, $array);
 		return $rs;
 	}
