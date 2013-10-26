@@ -14,6 +14,10 @@
 				$category["properties"] = '	Mass limit <input type="text" data-property="mass_limit" value="{Container_mass_limit}" /><br />
 											Volume limit <input type="text" data-property="volume_limit" value="{Container_volume_limit}" />';
 			}
+			elseif($category["Is_tool"] == 1)
+			{
+				$category["properties"] = 'Efficiency <input type="text" data-property="efficiency" value="{Tool_efficiency}" />';
+			}
 			$categorieshtml .= expand_template($categorytemplate, $category);
 		}
 	}

@@ -573,6 +573,10 @@ class Project_admin extends Base
 			$category["properties"] = '	Mass limit <input type="text" data-property="mass_limit" /><br />
 										Volume limit <input type="text" data-property="volume_limit" />';
 		}
+		elseif($category["Is_tool"] == 1)
+		{
+			$category["properties"] = 'Efficiency <input type="text" data-property="efficiency" />';
+		}
 
 		$categorytemplate =	$this->get_category_template();
 		$categoryhtml = expand_template($categorytemplate, $category);

@@ -369,12 +369,14 @@ function save_product() {
 			var category_nutrition = $(value).find("[data-property='nutrition']").val();
 			var category_mass_limit = $(value).find("[data-property='mass_limit']").val();
 			var category_volume_limit = $(value).find("[data-property='volume_limit']").val();
+			var category_efficiency = $(value).find("[data-property='efficiency']").val();
 			var category = {
 					id: category_id,
 					state: category_state,
 					nutrition: category_nutrition,
 					mass_limit: category_mass_limit,
-					volume_limit: category_volume_limit
+					volume_limit: category_volume_limit,
+					efficiency: category_efficiency
 				};
 			categories.push(category);
 		}
