@@ -421,13 +421,15 @@ function edit_category(id) {
 function save_category() {
 	var id = current_category;
 	var name = $('#category_name').val();
+	var is_tool = $('#category_is_tool').is(':checked');
 
 	$.ajax({
 		type: 'POST',
 		url: 'project_admin/save_category',
 		data: {
 			id: id,
-			name: name
+			name: name,
+			is_tool: is_tool
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;

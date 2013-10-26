@@ -28,7 +28,7 @@ class Category_model
 		}
 		$db = Load_database();
 		
-		$query = 'select ID, Name from Category where ID = ?';
+		$query = 'select ID, Name, Is_tool from Category where ID = ?';
 		$array = array($id);
 		
 		$rs = $db->Execute($query, $array);
@@ -42,16 +42,21 @@ class Category_model
 
 	public function Save_category($category) {
 		$db = Load_database();
-		
+
+		if($category['is_tool'] == 'true')
+			$category['is_tool'] = 1;
+		else
+			$category['is_tool'] = 0;
+
 		$db->StartTrans();
 		if($category['id'] == -1) {
-			$query = 'insert into Category(Name) values(?)';
-			$array = array($category['name']);
+			$query = 'insert into Category(Name, Is_tool) values(?, ?)';
+			$array = array($category['name'], $category['is_tool']);
 			$rs = $db->Execute($query, $array);
 			$category['id'] = $db->Insert_ID();
 		} else {
-			$query = 'update Category set Name = ? where ID = ? ';
-			$array = array($category['name'], $category['id']);
+			$query = 'update Category set Name = ?, Is_tool = ? where ID = ? ';
+			$array = array($category['name'], $category['is_tool'], $category['id']);
 			$rs = $db->Execute($query, $array);
 		}
 		

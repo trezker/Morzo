@@ -616,7 +616,8 @@ class Project_admin extends Base
 		if($category == false) {
 			$category = array(
 					'ID' => '-1',
-					'Name' => ''
+					'Name' => '',
+					'Is_tool' => 0
 				);
 		}
 		$edit_category_view = $this->Load_view('category_edit_view',

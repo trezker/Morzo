@@ -170,10 +170,11 @@ DROP TABLE IF EXISTS `Category`;
 CREATE TABLE `Category` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `Name` varchar(45) NOT NULL,
+  `Is_tool` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   UNIQUE KEY `Name_UNIQUE` (`Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -594,6 +595,7 @@ CREATE TABLE `Product_category` (
   `Food_nutrition` double DEFAULT NULL,
   `Container_mass_limit` double DEFAULT NULL,
   `Container_volume_limit` double DEFAULT NULL,
+  `Tool_efficiency` double DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   UNIQUE KEY `Product_category_unique` (`Product_ID`,`Category_ID`),
@@ -601,7 +603,7 @@ CREATE TABLE `Product_category` (
   KEY `Product_category_fk_Category` (`Category_ID`),
   CONSTRAINT `Product_category_fk_Category` FOREIGN KEY (`Category_ID`) REFERENCES `Category` (`ID`),
   CONSTRAINT `Product_category_fk_Product` FOREIGN KEY (`Product_ID`) REFERENCES `Product` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -632,7 +634,7 @@ CREATE TABLE `Project` (
   CONSTRAINT `Project_fk_Inventory` FOREIGN KEY (`Inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Project_fk_Location_inventory` FOREIGN KEY (`Location_inventory_ID`) REFERENCES `Inventory` (`ID`),
   CONSTRAINT `Project_fk_Recipe` FOREIGN KEY (`Recipe_ID`) REFERENCES `Recipe` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -977,4 +979,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-10-24 19:54:08
+-- Dump completed on 2013-10-26 10:53:48
