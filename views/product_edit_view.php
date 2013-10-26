@@ -4,20 +4,6 @@
 	$categorieshtml = '';
 	if($categories) {
 		foreach($categories as $category) {
-			$category["properties"] = "&nbsp;";
-			if($category["Name"] == "Food")
-			{
-				$category["properties"] = '<input type="text" data-property="nutrition" value="{Food_nutrition}" />';
-			}
-			elseif($category["Name"] == "Container")
-			{
-				$category["properties"] = '	Mass limit <input type="text" data-property="mass_limit" value="{Container_mass_limit}" /><br />
-											Volume limit <input type="text" data-property="volume_limit" value="{Container_volume_limit}" />';
-			}
-			elseif($category["Is_tool"] == 1)
-			{
-				$category["properties"] = 'Efficiency <input type="text" data-property="efficiency" value="{Tool_efficiency}" />';
-			}
 			$categorieshtml .= expand_template($categorytemplate, $category);
 		}
 	}

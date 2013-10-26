@@ -4,11 +4,6 @@
 	$categorieshtml = '';
 	if($categories) {
 		foreach($categories as $category) {
-			$category["properties"] = "&nbsp;";
-			if($category["Name"] == "Food")
-			{
-				$category["properties"] = '<input type="text" data-property="nutrition" value="{Food_nutrition}" />';
-			}
 			$categorieshtml .= expand_template($categorytemplate, $category);
 		}
 	}

@@ -447,6 +447,9 @@ class Project_admin extends Base
 
 		$this->Load_model('Category_model');
 		$category_list = $this->Category_model->Get_categories();
+		foreach($categories as $n => $category) {
+			$categories[$n]["properties"] = $this->get_category_properties_template($category);
+		}
 
 		$categorytemplate =	$this->get_category_template();
 
@@ -517,6 +520,10 @@ class Project_admin extends Base
 		$this->Load_model('Category_model');
 		$category_list = $this->Category_model->Get_categories();
 
+		foreach($categories as $n => $category) {
+			$categories[$n]["properties"] = $this->get_category_properties_template($category);
+		}
+		
 		$categorytemplate =	$this->get_category_template();
 		
 		$edit_product_view = $this->Load_view('product_edit_view',
@@ -562,26 +569,34 @@ class Project_admin extends Base
 		$success = true;
 		if($category === false)
 			$success = false;
+		$category["Food_nutrition"] = "";
+		$category["Container_mass_limit"] = "";
+		$category["Container_volume_limit"] = "";
+		$category["Tool_efficiency"] = "";
 
-		$category["properties"] = "&nbsp;";
-		if($category["Name"] == "Food")
-		{
-			$category["properties"] = '<input type="text" data-property="nutrition" />';
-		}
-		elseif($category["Name"] == "Container")
-		{
-			$category["properties"] = '	Mass limit <input type="text" data-property="mass_limit" /><br />
-										Volume limit <input type="text" data-property="volume_limit" />';
-		}
-		elseif($category["Is_tool"] == 1)
-		{
-			$category["properties"] = 'Efficiency <input type="text" data-property="efficiency" />';
-		}
-
+		$category["properties"] = $this->get_category_properties_template($category);
 		$categorytemplate =	$this->get_category_template();
 		$categoryhtml = expand_template($categorytemplate, $category);
 
 		echo json_encode(array('success' => $success, 'html' => $categoryhtml));
+	}
+
+	function get_category_properties_template($category) {
+		$properties = "&nbsp;";
+		if($category["Name"] == "Food")
+		{
+			$properties = 'Nutrition <input type="text" data-property="nutrition" value="{Food_nutrition}" />';
+		}
+		elseif($category["Name"] == "Container")
+		{
+			$properties = '	Mass limit <input type="text" data-property="mass_limit" value="{Container_mass_limit}" /><br />
+							Volume limit <input type="text" data-property="volume_limit" value="{Container_volume_limit}" />';
+		}
+		elseif($category["Is_tool"] == 1)
+		{
+			$properties = 'Efficiency <input type="text" data-property="efficiency" value="{Tool_efficiency}" />';
+		}
+		return $properties;
 	}
 
 	public function save_product() {
