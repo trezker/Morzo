@@ -52,6 +52,8 @@ class Project_admin extends Base
 		$measures = $this->Resource_model->Get_measures();
 		$this->Load_model('Product_model');
 		$products = $this->Product_model->Get_products();
+		$this->Load_model('Category_model');
+		$tools = $this->Category_model->Get_tool_categories();
 
 		if($recipe['recipe'] == false) {
 			$recipe['recipe'] = array(
@@ -72,6 +74,7 @@ class Project_admin extends Base
 
 		$edit_recipe_view = $this->Load_view('recipe_edit_view',array(	'resources' => $resources,
 																		'products' => $products,
+																		'tools' => $tools,
 																		'measures' => $measures,
 																		'recipe' => $recipe,
 																		'measure_descriptions' => $measure_descriptions,
@@ -162,7 +165,7 @@ class Project_admin extends Base
 			foreach($_POST['tools'] as $t) {
 				$data['tools'][] = array(
 						'id' => $t['id'],
-						'product_id' => $t['product'],
+						'category_id' => $t['category_id'],
 						'remove' => (isset($t['remove']) && $t['remove'] == 'true') ? true: false
 					);
 			}
@@ -330,15 +333,14 @@ class Project_admin extends Base
 			return;
 		}
 
-		$this->Load_model('Product_model');
-		$r = $this->Product_model->Get_product($_POST['product_id']);
-		if(!$r) {
-			echo json_encode(array('success' => false, 'reason' => 'Product not found'));
+		$this->Load_model('Category_model');
+		$tool = $this->Category_model->Get_category($_POST['category_id']);
+		if(!$tool) {
+			echo json_encode(array('success' => false, 'reason' => 'Category not found'));
 		}
 
-		$tool = $r['product'];
-		$tool['Product_Name'] = $tool['Name'];
-		$tool['Product_ID'] = $tool['ID'];
+		$tool['Category_Name'] = $tool['Name'];
+		$tool['Category_ID'] = $tool['ID'];
 		$tool['ID'] = $_POST['new_tool_id'];
 		$html = expand_template($this->get_tool_template(), $tool);
 		
@@ -387,7 +389,7 @@ class Project_admin extends Base
 	public function get_tool_template() {
 		return '
 		<div class="tool" id="tool_{ID}" data-id="{ID}">
-			<span class="product" data-id="{Product_ID}">{Product_Name}</span>
+			<span class="category" data-id="{Category_ID}">{Category_Name}</span>
 			<span class="action" style="float: right;" onclick="remove_tool({ID})">Remove</span>
 		</div>';
 	}

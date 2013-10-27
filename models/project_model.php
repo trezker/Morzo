@@ -111,10 +111,10 @@ class Project_model extends Model
 		$recipe_tools = $db->Execute('
 			select
 				RT.ID,
-				RT.Product_ID,
-				P.Name AS Product_Name
+				RT.Category_ID,
+				C.Name AS Category_Name
 			from Recipe_tool RT
-			join Product P on P.ID = RT.Product_ID
+			join Category C on C.ID = RT.Category_ID
 			where RT.Recipe_ID = ?
 			', array($id));
 
@@ -308,15 +308,15 @@ class Project_model extends Model
 					continue;
 				}
 				if($t['id'] < 0) {
-					$this->Add_recipe_tool($recipe_id, $t['product_id']);
+					$this->Add_recipe_tool($recipe_id, $t['category_id']);
 				} else {
 					$args = array(
-								$t['product_id'],
+								$t['category_id'],
 								$t['id']
 							);
 					$r = $db->Execute('
 						update Recipe_tool set 
-							Product_ID = ?
+							Category_ID = ?
 						where ID = ?
 						', $args);
 				}
@@ -497,15 +497,15 @@ class Project_model extends Model
 		return false;
 	}
 	
-	public function Add_recipe_tool($recipe_id, $product_id) {
+	public function Add_recipe_tool($recipe_id, $category_id) {
 		$db = Load_database();
 
 		$args = array(
-					$product_id,
+					$category_id,
 					$recipe_id
 				);
 		$r = $db->Execute('
-			insert into Recipe_tool (Product_ID, Recipe_ID) values (?, ?)
+			insert into Recipe_tool (Category_ID, Recipe_ID) values (?, ?)
 			', $args);
 		
 		if(!$r)
@@ -748,12 +748,13 @@ class Project_model extends Model
 		}
 
 		$missing_tools = $db->Execute('
-			select 	RT.Product_ID, 
+			select 	RT.Category_ID, 
 					count(PO.ID) AS Project_amount
 			from Project P
 			join Recipe_tool RT on RT.Recipe_ID = P.Recipe_ID
+			join Product_category PC on PC.Category_ID = RT.Category_ID
 			join Actor A on A.Project_ID = P.ID
-			left join Object PO on RT.Product_ID = PO.Product_ID and A.Inventory_ID = PO.Inventory_ID
+			left join Object PO on PC.Product_ID = PO.Product_ID and A.Inventory_ID = PO.Inventory_ID
 			where P.ID = ?
 			group by RT.ID
 			having(count(PO.ID) < 1)
@@ -945,11 +946,12 @@ class Project_model extends Model
 				count(O.ID) as Project_amount
 			from Project P
 			join Recipe_tool RT on RT.Recipe_ID = P.Recipe_ID
-			join Product R on R.ID = RT.Product_ID
+			join Product_category PC on PC.Category_ID = RT.Category_ID
+			join Product R on R.ID = PC.Product_ID
 			join Actor A on A.Project_ID = P.ID
 			left join Object O on O.Inventory_ID = A.Inventory_ID and O.Product_ID = R.ID
 			where P.ID = ?
-			group by R.ID
+			group by RT.ID
 			', array($project_id));
 
 		if(!$recipe_tools) {

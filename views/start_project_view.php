@@ -94,7 +94,7 @@
 			if(count($recipe['recipe_tools']) > 0) {
 				$tool_template = '
 				<li>
-					{Product_Name}
+					{Category_Name}
 				</li>';
 				echo "<li>Tools<ul>";
 				foreach ($recipe['recipe_tools'] as $tool) {

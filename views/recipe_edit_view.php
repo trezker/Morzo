@@ -62,6 +62,15 @@ foreach($measures as $key => $measure) {
 		$product_select .= expand_template($product_template, $product);
 	}
 	$product_select .= '</select>';
+
+	$tool_select = '<select>';
+	$tooloption_template = '
+		<option value="{ID}">{Name}</option>
+	';
+	foreach ($tools as $tool) {
+		$tool_select .= expand_template($tooloption_template, $tool);
+	}
+	$tool_select .= '</select>';
 	?>
 	
 	<div id="recipe_outputs" class="edit_panel">
@@ -138,7 +147,7 @@ foreach($measures as $key => $measure) {
 		<div class="panel_header">Tools</div>
 		<div id="new_tool_form">
 			<span class="action" onclick="add_tool()">Add tool</span>
-			<?php echo $product_select; ?>
+			<?php echo $tool_select; ?>
 		</div>
 		<?php
 		foreach ($recipe['recipe_tools'] as $tool) {

@@ -22,6 +22,24 @@ class Category_model
 		return $categories;
 	}
 
+	public function Get_tool_categories() {
+		$db = Load_database();
+		
+		$query = 'select ID, Name from Category where Is_tool = 1';
+		$array = array();
+		
+		$rs = $db->Execute($query, $array);
+		if(!$rs) {
+			return false;
+		}
+		
+		$categories = array();
+		foreach ($rs as $row) {
+    		$categories[] = $row;
+		}
+		return $categories;
+	}
+
 	public function Get_category($id) {
 		if($id == -1) {
 			return false;

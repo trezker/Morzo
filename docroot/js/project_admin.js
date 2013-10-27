@@ -90,7 +90,7 @@ function save_recipe() {
 		function(index, value){
 			var input = {
 					id: $(value).attr('data-id'),
-					product: $(value).children('.product').attr('data-id'),
+					category_id: $(value).children('.category').attr('data-id'),
 					remove: $(value).attr('data-remove')
 				};
 			tools.push(input);
@@ -247,14 +247,14 @@ function remove_product_input(id) {
 
 var new_tool_id = -1;
 function add_tool() {
-	var product_id = $('#new_tool_form select').val();
-	var product_name = $('#new_tool_form select option[value="'+product_id+'"]').html();
+	var category_id = $('#new_tool_form select').val();
+	var category_name = $('#new_tool_form select option[value="'+category_id+'"]').html();
 	
 	$.ajax({
 		type: 'POST',
 		url: 'project_admin/add_recipe_tool',
 		data: {
-			product_id: product_id,
+			category_id: category_id,
 			new_tool_id: new_tool_id
 		},
 		success: function(data) {
