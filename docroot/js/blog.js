@@ -46,6 +46,33 @@ function submit_blog_post() {
 	});
 }
 
+function preview_blog_post() {
+	var blog_id = $('#blog_id').val();
+	var post_id = $('#post_id').val();
+	var title = $('#new_post_title').val();
+	var content = $('#new_post_content').val();
+	var hidden = $('#new_post_hidden').is(':checked');
+	callurl = '/blog/Preview_post';
+	$.ajax({
+		type: 'POST',
+		url: callurl,
+		dataType: "json",
+		data: {
+			blog_id: blog_id,
+			post_id: post_id,
+			title: title,
+			content: content,
+			hidden: hidden
+		},
+		success: function(data) {
+			if(ajax_logged_out(data)) return;
+			if(data.success !== false) {
+				$("#preview").html(data.data);
+			}
+		}
+	});
+}
+
 function delete_blogpost() {
 	var post_id = $('#post_id').val();
 	callurl = '/blog/Delete_blogpost';

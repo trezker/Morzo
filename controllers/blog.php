@@ -216,4 +216,39 @@ class Blog extends Base {
 											'common_head_view' => $common_head_view
 											));
 	}
+	
+	public function Preview_post() {
+		$this->Load_controller('User');
+		$show_owner_controls = false;
+		$this->Load_model('Blog_model');
+		
+		$blog_id = $_POST['blog_id'];
+		$post_id = $_POST['post_id'];
+		$title = $_POST['title'];
+		$content = $_POST['content'];
+		
+		if($this->User->Logged_in()) {
+			/*
+			if($this->Blog_model->User_owns_blog_name($blog_name, $_SESSION['userid'])) {
+				$show_owner_controls = true;
+			}*/
+		}
+		
+		$posts = array(
+					array(
+						'Title' => $title,
+						'Content' => $content,
+						'Created_date' => '1111-11-11 11:11:11',
+						'Blog_name' => ""
+						)
+					);
+		
+		$blogposts_view = $this->Load_view('blogposts_view', array(
+											'posts' => $posts,
+											'blogs' => null,
+											'show_owner_controls' => false
+											), true);
+
+		echo json_encode(array('success' => true, 'data' => $blogposts_view));
+	}
 }

@@ -22,6 +22,7 @@
 	<?php
 	$template = '
 		<span class="action" onclick="submit_blog_post();">Submit blogpost</span>
+		<span class="action" onclick="preview_blog_post();">Preview blogpost</span>
 		<a class="action" href="/blog/View/{UnderscoredName}">View blog</a>
 	';
 	$blog['UnderscoredName'] = str_replace(" ", "_", $blog['Name']);
@@ -55,6 +56,8 @@
 </div>
 
 <div style="clear: both;">
+	<div id="preview">
+	</div>
 	<div class="accordion">
 		<h3>Formatting</h3>
 		<div>

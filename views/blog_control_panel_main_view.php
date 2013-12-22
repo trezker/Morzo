@@ -3,6 +3,7 @@
 	<head>
 		<title>Morzo</title>
 		<?php echo $common_head_view; ?>
+		<link rel="stylesheet" type="text/css" media="screen" href="/css/blog.css">
 		<script type="text/javascript" src="/js/blog.js"></script>
 	</head>
 	<body>

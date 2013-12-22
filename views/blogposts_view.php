@@ -21,7 +21,6 @@ $post_template .= '
 		</div>
 	';
 
-
 foreach($posts as $post) {
 	$post['Blog_name_u'] = str_replace(" ", "_", $post['Blog_name']);
 	// parse and display input
