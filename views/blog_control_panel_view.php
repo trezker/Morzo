@@ -1,3 +1,5 @@
+<?php require_once '../util/wikitexttohtml.php'; ?>
+
 <div style="float: left; width: 500px;">
 	<?php
 		if($post['ID'] == -1) {
@@ -39,17 +41,66 @@
 	<ul>
 		<?php
 		$template = '
-			<li><a href="/blog/Control_panel/{blog_name}/{ID}">{Title}{Hidden_text}</a></li>
+			<li class="action" onclick="edit_blogpost({ID})">{Title}{Hidden_text}</li>
 		  ';
 		foreach($titles as $title) {
 			$title['Hidden_text'] = '';
 			if($title['Hidden'])
 				$title['Hidden_text'] = ' {Hidden}';
-			$title['blog_name'] = $blog_name;
 			echo expand_template($template, $title);
 		}
 		?>
 	</ul>
 </div>
 
-<div style="clear: both;"></div>
+<div style="clear: both;">
+	<div class="accordion">
+		<h3>Formatting</h3>
+		<div>
+			<table class="bordered_table" style="width: 100%;">
+				<tr> <!-- titles -->
+					<td>
+						<?php
+							$sample = "= Title =\n"
+									. "== Title ==\n"
+									. "...\n"
+									. "===== Title =====\n";
+							echo "<pre>" . $sample . "</pre>";
+						?>
+					</td>
+					<td>
+						<?php
+							echo WikiTextToHTML::convertWikiTextToHTML_ex($sample);
+						?>
+					</td>
+				</tr>
+				<tr> <!-- img -->
+					<td>
+						<?php
+							$sample = "[img /data/flattr-badge-large.png]";
+							echo "<pre>" . $sample . "</pre>";
+						?>
+					</td>
+					<td>
+						<?php
+							echo WikiTextToHTML::convertWikiTextToHTML_ex($sample);
+						?>
+					</td>
+				</tr>
+				<tr> <!-- link -->
+					<td>
+						<?php
+							$sample = "[a http://www.google.com Test]";
+							echo "<pre>" . $sample . "</pre>";
+						?>
+					</td>
+					<td>
+						<?php
+							echo WikiTextToHTML::convertWikiTextToHTML_ex($sample);
+						?>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>

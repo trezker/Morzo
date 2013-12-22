@@ -49,8 +49,6 @@ class WikiTextToHTML {
 				=>	'<h5>\1</h5>',
 			'/^====== (.*) ======$/'
 				=> '<h6>\1</h6>',
-			'/\[\[(.*?)\]\]/'
-				=>	'<span class="keys">\1</span>',
 			'/\[img (.*?)\]/'
 				=>	'<img src="\1" />',
 			'/\[a (.*?) (.*?)\]/'
@@ -70,6 +68,15 @@ class WikiTextToHTML {
 			'/^----$/'
 				=>	'<hr />'
 		);
+	
+	public static function convertWikiTextToHTML_ex($input) {
+		$output = WikiTextToHTML::convertWikiTextToHTML(explode("\n", $input));
+		$content = '';
+		foreach($output as $line) {
+			$content .= "${line}\n";
+		}
+		return $content;
+	}
 	
 	/**
 	 * Converts a Wiki text input string to HTML.
