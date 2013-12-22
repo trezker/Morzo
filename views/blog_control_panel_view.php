@@ -41,12 +41,13 @@
 	<ul>
 		<?php
 		$template = '
-			<li class="action" onclick="edit_blogpost({ID})">{Title}{Hidden_text}</li>
+			<li class="action"><a href="/blog/Control_panel/{blogname}/{ID}">{Created_date}<br />{Title}{Hidden_text}</a></li>
 		  ';
 		foreach($titles as $title) {
+			$title['blogname'] = $blog['UnderscoredName'];
 			$title['Hidden_text'] = '';
 			if($title['Hidden'])
-				$title['Hidden_text'] = ' {Hidden}';
+				$title['Hidden_text'] = ' (hidden)';
 			echo expand_template($template, $title);
 		}
 		?>
