@@ -272,7 +272,7 @@ li.selected:hover {
 	color: #008400;
 }
 
-.bordered_table th, td {
+.bordered_table th, .bordered_table td {
 	border:1px solid black;
 	vertical-align: top;
 	padding: 5px;
