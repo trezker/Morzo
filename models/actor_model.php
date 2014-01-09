@@ -74,98 +74,18 @@ class Actor_model extends Model
 	}
 	
 	public function Update_actors($time) {
+		$this->Process_eating();
+		$this->Process_vitality();
+		return true;
+	}
+	
+	private function Process_vitality() {
 		$db = Load_database();
-
-		$this->Load_model('Event_model');
-		//if(($time % 16) + 1 == 8)
-		{
-			$db->StartTrans();
-			
-			//Select all Actors with more than 8 hunger. They haven't eaten manually lately.
-			$query = "select ID, Hunger, Health, Inventory_ID from Actor where Hunger > 8";
-			$args = array();
-			$hungry_actors = $db->Execute($query, $args);
-
-			foreach ($hungry_actors as $hungry_actor) {
-				$query = "
-					select R.ID, R.Name, RC.Food_nutrition as Nutrition, R.Mass, RC.Food_nutrition / R.Mass as Efficiency, IR.Amount as Amount, 'Resource' as Setname from Resource R
-					join Resource_category RC on R.ID = RC.Resource_ID
-					join Inventory_resource IR on IR.Resource_ID = R.ID
-					where IR.Inventory_ID = ?
-					union DISTINCT 
-					select P.ID, P.Name, PC.Food_nutrition as Nutrition, P.Mass, PC.Food_nutrition / P.Mass as Efficiency, count(P.ID) as Amount, 'Product' as Setname from Product P
-					join Product_category PC on P.ID = PC.Product_ID
-					join Object O on O.Product_ID = P.ID
-					where O.Inventory_ID = ?
-					group by P.ID
-					order by Efficiency asc
-				";
-				$args = array($hungry_actor['Inventory_ID'], $hungry_actor['Inventory_ID']);
-				$rs = $db->Execute($query, $args);
-
-				$food_names = "";
-				$hunger = $hungry_actor['Hunger'];
-				foreach ($rs as $r) {
-					$consume_nutrition = 0;
-					if($r['Setname'] == 'Resource') {
-						$consume_nutrition = $r['Nutrition'] * $r['Amount'];
-					
-						if($hunger <= $consume_nutrition) {
-							$consume_nutrition = $hunger;
-							$hunger = 0;
-						} else {
-							$hunger -= $consume_nutrition;
-						}
-						echo " consuming: " . $consume_nutrition / $r['Nutrition'] . ' ' . $r['Name'];
-						if($hunger > 0) {
-							$query = "
-								delete from Inventory_resource where Resource_ID = ? and Inventory_ID = ?
-							";
-							$args = array($r['ID'], $hungry_actor['Inventory_ID']);
-							$rs = $db->Execute($query, $args);
-							if(!$rs) {
-								echo $db->ErrorMsg();
-							}
-						} else {
-							$query = "
-								update Inventory_resource set Amount = ? where Resource_ID = ? and Inventory_ID = ?
-							";
-							$args = array($r['Amount'] - ($consume_nutrition / $r['Nutrition']), $r['ID'], $hungry_actor['Inventory_ID']);
-							$rs = $db->Execute($query, $args);
-							if(!$rs) {
-								echo $db->ErrorMsg();
-							}
-						}
-					}
-					if($consume_nutrition > 0) {
-						if($food_names != "") {
-							$food_names .= ", ";
-						}
-						$food_names .= $r['Name'];
-					}
-				}
-				$query = "
-					update Actor set Hunger = ? where ID = ?
-				";
-				$args = array($hunger, $hungry_actor['ID']);
-				$rs = $db->Execute($query, $args);
-				if($hunger < $hungry_actor['Hunger']) {
-					$this->Event_model->Save_event("{LNG_Actor_ate} ", $hungry_actor['ID'], NULL, $food_names, NULL, NULL, true);
-				}
-			}
-			$success = !$db->HasFailedTrans();
-			$db->CompleteTrans();
-			if($success == false) {
-				return false;
-			}
-		}
-
 		$query = 'update Actor set Health = Health - 1 where Hunger >= 128 and Health > 0';
 		$args = array();
 		$rs = $db->Execute($query, $args);
 		if(!$rs) {
 			echo $db->ErrorMsg();
-			return false;
 		}
 
 		$query = 'update Actor set Health = Health + 1 where Hunger < 128 and Health < 128';
@@ -173,7 +93,6 @@ class Actor_model extends Model
 		$rs = $db->Execute($query, $args);
 		if(!$rs) {
 			echo $db->ErrorMsg();
-			return false;
 		}
 
 		$query = 'update Actor set Hunger = Hunger + 1 where Hunger < 128';
@@ -181,9 +100,91 @@ class Actor_model extends Model
 		$rs = $db->Execute($query, $args);
 		if(!$rs) {
 			echo $db->ErrorMsg();
-			return false;
 		}
-		return true;
+	}
+	
+	private function Process_eating() {
+		$db = Load_database();
+		$this->Load_model('Event_model');
+		$db->StartTrans();
+		
+		//Select all Actors with more than 8 hunger. They haven't eaten manually lately.
+		$query = "select ID, Hunger, Health, Inventory_ID from Actor where Hunger > 8";
+		$args = array();
+		$hungry_actors = $db->Execute($query, $args);
+
+		foreach ($hungry_actors as $hungry_actor) {
+			$query = "
+				select R.ID, R.Name, RC.Food_nutrition as Nutrition, R.Mass, RC.Food_nutrition / R.Mass as Efficiency, IR.Amount as Amount, 'Resource' as Setname from Resource R
+				join Resource_category RC on R.ID = RC.Resource_ID
+				join Inventory_resource IR on IR.Resource_ID = R.ID
+				where IR.Inventory_ID = ?
+				union DISTINCT 
+				select P.ID, P.Name, PC.Food_nutrition as Nutrition, P.Mass, PC.Food_nutrition / P.Mass as Efficiency, count(P.ID) as Amount, 'Product' as Setname from Product P
+				join Product_category PC on P.ID = PC.Product_ID
+				join Object O on O.Product_ID = P.ID
+				where O.Inventory_ID = ?
+				group by P.ID
+				order by Efficiency asc
+			";
+			$args = array($hungry_actor['Inventory_ID'], $hungry_actor['Inventory_ID']);
+			$rs = $db->Execute($query, $args);
+
+			$food_names = "";
+			$hunger = $hungry_actor['Hunger'];
+			foreach ($rs as $r) {
+				$consume_nutrition = 0;
+				if($r['Setname'] == 'Resource') {
+					$consume_nutrition = $r['Nutrition'] * $r['Amount'];
+				
+					if($hunger <= $consume_nutrition) {
+						$consume_nutrition = $hunger;
+						$hunger = 0;
+					} else {
+						$hunger -= $consume_nutrition;
+					}
+					echo " consuming: " . $consume_nutrition / $r['Nutrition'] . ' ' . $r['Name'];
+					if($hunger > 0) {
+						$query = "
+							delete from Inventory_resource where Resource_ID = ? and Inventory_ID = ?
+						";
+						$args = array($r['ID'], $hungry_actor['Inventory_ID']);
+						$rs = $db->Execute($query, $args);
+						if(!$rs) {
+							echo $db->ErrorMsg();
+						}
+					} else {
+						$query = "
+							update Inventory_resource set Amount = ? where Resource_ID = ? and Inventory_ID = ?
+						";
+						$args = array($r['Amount'] - ($consume_nutrition / $r['Nutrition']), $r['ID'], $hungry_actor['Inventory_ID']);
+						$rs = $db->Execute($query, $args);
+						if(!$rs) {
+							echo $db->ErrorMsg();
+						}
+					}
+				}
+				if($consume_nutrition > 0) {
+					if($food_names != "") {
+						$food_names .= ", ";
+					}
+					$food_names .= $r['Name'];
+				}
+			}
+			$query = "
+				update Actor set Hunger = ? where ID = ?
+			";
+			$args = array($hunger, $hungry_actor['ID']);
+			$rs = $db->Execute($query, $args);
+			if($hunger < $hungry_actor['Hunger']) {
+				$this->Event_model->Save_event("{LNG_Actor_ate} ", $hungry_actor['ID'], NULL, $food_names, NULL, NULL, true);
+			}
+		}
+		$success = !$db->HasFailedTrans();
+		$db->CompleteTrans();
+		if($success == false) {
+			echo "Actor eating update has failed.";
+		}
 	}
 	
 	public function Request_actor($user_id)
