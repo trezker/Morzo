@@ -78,8 +78,49 @@ class Actor_model extends Model
 		$this->Process_vitality();
 		return true;
 	}
+
+	private function Process_dead() {
+		$db = Load_database();
+		//Put all objects on the actors location
+		$db->StartTrans();
+		$sql = "
+			update Object O set O.Inventory_ID = (
+				select ifnull(O.Inventory_ID, L.Inventory_ID) as Location_inventory
+				from Actor A
+				join Location L on A.Location_ID = L.ID
+				left join Object_inventory O on O.Object_ID = A.Inside_object_ID
+				where A.Inventory_ID = O.Inventory_ID
+			)
+			where O.Inventory_ID in (select AO.Inventory_ID from Actor AO where AO.Health <= 0)
+		";
+		$rs = $db->Execute($sql);
+
+		$this->Load_model('Inventory_model');
+		$rs = $db->Execute('select ID from Actor where Health <= 0');
+		$actors = $rs->getArray();
+		foreach($actors as $actor) {
+			$inventories = $this->Get_actor_and_location_inventory($actor['ID']);
+			$inventory = $this->Inventory_model->Get_inventory($inventories['Actor_inventory']);
+			foreach($inventory['resources'] as $resource) {
+				$this->Inventory_model->Transfer_resource($inventories['Actor_inventory'], 
+													$inventories['Location_inventory'], 
+													$resource['ID'], $resource['Amount'], true);
+			}
+		}
+			
+		$failed = $db->HasFailedTrans();
+		$db->CompleteTrans();
+		
+		if($failed)
+		{
+			return false;
+		}
+		return true;
+	}
 	
 	private function Process_vitality() {
+		$this->Process_dead();
+		
 		$db = Load_database();
 		$query = 'update Actor set Health = Health - 1 where Hunger >= 128 and Health > 0';
 		$args = array();
@@ -470,11 +511,12 @@ class Actor_model extends Model
 		$sql = '
 				select 
 					O.ID as Object_ID,
-					L.ID as Location_ID,
+					IFNULL(L.ID, AL.Location_ID) as Location_ID,
 					OO.Object_ID as From_object_ID
 				from Actor A
 				join Object IO on A.Inside_object_ID = IO.ID
 				left join Location L on L.Inventory_ID = IO.Inventory_ID
+				left join Actor AL on AL.Inventory_ID = IO.Inventory_ID
 				left join Object_inventory OI on IO.Inventory_ID = OI.Inventory_ID
 				left join Object O on OI.Object_ID = O.ID
 				join Object_inventory OO on OO.Object_ID = A.Inside_object_ID
@@ -506,6 +548,9 @@ class Actor_model extends Model
 		} else {
 			$rs = $db->Execute('update Actor set Inside_object_ID = NULL, Location_ID = ? where ID = ?', array($rs->fields['Location_ID'], $actor_id));
 		}
+		$success = !$db->HasFailedTrans();
+		if(!$success)
+			echo "s: " .$success;
 
 		$object_name = $this->Inventory_model->Get_object_name($from_object_id);
 		$this->Load_model('Event_model');
