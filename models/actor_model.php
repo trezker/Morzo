@@ -78,8 +78,49 @@ class Actor_model extends Model
 		$this->Process_vitality();
 		return true;
 	}
+
+	private function Process_dead() {
+		$db = Load_database();
+		//Put all objects on the actors location
+		$db->StartTrans();
+		$sql = "
+			update Object O set O.Inventory_ID = (
+				select ifnull(O.Inventory_ID, L.Inventory_ID) as Location_inventory
+				from Actor A
+				join Location L on A.Location_ID = L.ID
+				left join Object_inventory O on O.Object_ID = A.Inside_object_ID
+				where A.Inventory_ID = O.Inventory_ID
+			)
+			where O.Inventory_ID in (select AO.Inventory_ID from Actor AO where AO.Health <= 0)
+		";
+		$rs = $db->Execute($sql);
+
+		$this->Load_model('Inventory_model');
+		$rs = $db->Execute('select ID from Actor where Health <= 0');
+		$actors = $rs->getArray();
+		foreach($actors as $actor) {
+			$inventories = $this->Get_actor_and_location_inventory($actor['ID']);
+			$inventory = $this->Inventory_model->Get_inventory($inventories['Actor_inventory']);
+			foreach($inventory['resources'] as $resource) {
+				$this->Inventory_model->Transfer_resource($inventories['Actor_inventory'], 
+													$inventories['Location_inventory'], 
+													$resource['ID'], $resource['Amount'], true);
+			}
+		}
+			
+		$failed = $db->HasFailedTrans();
+		$db->CompleteTrans();
+		
+		if($failed)
+		{
+			return false;
+		}
+		return true;
+	}
 	
 	private function Process_vitality() {
+		$this->Process_dead();
+		
 		$db = Load_database();
 		$query = 'update Actor set Health = Health - 1 where Hunger >= 128 and Health > 0';
 		$args = array();
