@@ -511,11 +511,12 @@ class Actor_model extends Model
 		$sql = '
 				select 
 					O.ID as Object_ID,
-					L.ID as Location_ID,
+					IFNULL(L.ID, AL.Location_ID) as Location_ID,
 					OO.Object_ID as From_object_ID
 				from Actor A
 				join Object IO on A.Inside_object_ID = IO.ID
 				left join Location L on L.Inventory_ID = IO.Inventory_ID
+				left join Actor AL on AL.Inventory_ID = IO.Inventory_ID
 				left join Object_inventory OI on IO.Inventory_ID = OI.Inventory_ID
 				left join Object O on OI.Object_ID = O.ID
 				join Object_inventory OO on OO.Object_ID = A.Inside_object_ID
@@ -547,6 +548,9 @@ class Actor_model extends Model
 		} else {
 			$rs = $db->Execute('update Actor set Inside_object_ID = NULL, Location_ID = ? where ID = ?', array($rs->fields['Location_ID'], $actor_id));
 		}
+		$success = !$db->HasFailedTrans();
+		if(!$success)
+			echo "s: " .$success;
 
 		$object_name = $this->Inventory_model->Get_object_name($from_object_id);
 		$this->Load_model('Event_model');
