@@ -517,6 +517,7 @@ class Project_admin extends Base
 					'Volume' => '',
 					'Rot_rate' => ''
 				);
+			$categories = array();
 		}
 
 		$this->Load_model('Category_model');
