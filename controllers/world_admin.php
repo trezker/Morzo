@@ -101,6 +101,9 @@ class World_admin extends Base
 		$this->Load_model('Species_model');
 		$location_species = $this->Species_model->Get_location_species($_POST['id']);
 		$species = $this->Species_model->Get_species();
+		$this->Load_model('Product_model');
+		$corpse_products = $this->Product_model->Get_products('Corpse');
+		
 		$species_view = $this->Load_view('species_view', array('species' => $species, 'location_species' => $location_species), true);
 		
 		$location_admin_view = $this->Load_view('location_edit_view', 
@@ -109,7 +112,8 @@ class World_admin extends Base
 													'landscapes' => $landscapes,
 													'location' => $location,
 													'landscapes_view' => $landscapes_view,
-													'species_view' => $species_view
+													'species_view' => $species_view,
+													'corpse_products' => $corpse_products
 												), true);
 
 		echo json_encode(array('success' => true, 'data' => $location_admin_view));
@@ -306,7 +310,7 @@ class World_admin extends Base
 			echo json_encode(array('success' => false, 'reason' => 'Failed to save species'));
 			return;
 		}
-		if(!$this->Species_model->Save_location_species($id, $_POST['location_id'], $_POST['on_location'], $_POST['population'])) {
+		if(!$this->Species_model->Save_location_species($id, $_POST['location_id'], $_POST['on_location'], $_POST['population'], $_POST['actor_spawn'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Failed to save species on location'));
 			return;
 		}

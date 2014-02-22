@@ -23,7 +23,7 @@ class Species_model extends Model {
 		$db = Load_database();
 		
 		$rs = $db->Execute('
-			select S.ID, S.Name, S.Max_population, LS.Population
+			select S.ID, S.Name, S.Max_population, LS.Population, LS.Actor_spawn, S.Corpse_product_ID
 			from Species S
 			left join Location_species LS on LS.Species_ID = S.ID and LS.Location_ID = ?
 			where S.ID = ?
@@ -116,15 +116,19 @@ class Species_model extends Model {
 		return $rs->GetArray();
 	}
 
-	public function Save_location_species($species_id, $location_id, $on_location, $population) {
+	public function Save_location_species($species_id, $location_id, $on_location, $population, $actor_spawn) {
 		$db = Load_database();
 
 		if($on_location == "true"){
-			$args = array($location_id, $species_id, $population, $population);
+			if(!filter_var($population, FILTER_VALIDATE_INT))
+				$population = 0;
+			if(!filter_var($actor_spawn, FILTER_VALIDATE_INT))
+				$actor_spawn = 0;
+			$args = array($location_id, $species_id, $population, $actor_spawn, $population, $actor_spawn);
 			$rs = $db->Execute('
-				insert into Location_species(Location_ID, Species_ID, Population)
-				values(?, ?, ?)
-				on duplicate key update Population = ?
+				insert into Location_species(Location_ID, Species_ID, Population, Actor_spawn)
+				values(?, ?, ?, ?)
+				on duplicate key update Population = ?, Actor_spawn = ?
 				', $args);
 		}
 		else {

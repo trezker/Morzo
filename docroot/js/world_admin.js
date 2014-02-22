@@ -215,6 +215,7 @@ function add_species() {
 	$("#species_max_population").val(100);
 	$("#species_population").val("");
 	$("#species_on_location").removeAttr('checked');
+	$("#species_actor_spawn").val("");
 }
 
 function edit_species(id) {
@@ -232,13 +233,16 @@ function edit_species(id) {
 				$('#edit_species').show();
 				$('#edit_species .panel_header').html("Edit species");
 				$("#species_name").val(data.data.Name);
+				$("#species_corpse").val(data.data.Corpse_product_ID);
 				$("#species_max_population").val(data.data.Max_population);
 				if(data.data.Population) {
 					$("#species_population").val(data.data.Population);
 					$("#species_on_location").attr('checked', 'true');
+					$("#species_actor_spawn").val(data.data.Actor_spawn);
 				} else {
 					$("#species_population").val("");
 					$("#species_on_location").removeAttr('checked');
+					$("#species_actor_spawn").val("");
 				}
 			}
 		}
@@ -250,6 +254,7 @@ function save_species() {
 	var max_population = $("#species_max_population").val();
 	var on_location = $("#species_on_location").is(':checked');
 	var population = $("#species_population").val();
+	var actor_spawn = $("#species_actor_spawn").val();
 	var id = current_species;
 	$.ajax({
 		type: 'POST',
@@ -260,7 +265,8 @@ function save_species() {
 			max_population: max_population,
 			location_id: current_location,
 			on_location: on_location,
-			population: population
+			population: population,
+			actor_spawn: actor_spawn
 		},
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
