@@ -95,6 +95,7 @@ class Actor_model extends Model
 
 	private function Process_dead() {
 		$db = Load_database();
+		//$db->debug = true;
 		//Put all objects on the actors location
 		$db->StartTrans();
 		$sql = "
@@ -111,7 +112,11 @@ class Actor_model extends Model
 
 		//Put all resources on actors location
 		$this->Load_model('Inventory_model');
-		$rs = $db->Execute('select ID from Actor where Health <= 0');
+		$rs = $db->Execute('
+			select A.ID, S.Corpse_product_ID from Actor A
+			join Species S on S.ID = A.Species_ID
+			where Health <= 0 and A.Corpse_object_ID is null
+			');
 		$actors = $rs->getArray();
 		foreach($actors as $actor) {
 			$inventories = $this->Get_actor_and_location_inventory($actor['ID']);
@@ -121,15 +126,21 @@ class Actor_model extends Model
 													$inventories['Location_inventory'], 
 													$resource['Resource_ID'], $resource['Amount'], true);
 			}
+
+			//Create corpse
+			$query = 'insert into Object (Product_ID, Inventory_ID, Quality, Rot) values(?, ?, 1, 0)';
+			$args = array($actor['Corpse_product_ID'], $inventories['Location_inventory']);
+			$rs = $db->Execute($query, $args);
+			$corpse_object_ID = $db->Insert_id();
+
+			$query = 'update Actor set Corpse_object_ID = ? where ID = ?';
+			$args = array($corpse_object_ID, $actor['ID']);
+			$rs = $db->Execute($query, $args);
 		}
 		
 		//TODO:
-		//Delete the inventory
-		//Add column Dead to Actor
 		//Secure all functions against interaction and listing with dead actors
-		//Create corpse
 		
-			
 		$failed = $db->HasFailedTrans();
 		$db->CompleteTrans();
 		
