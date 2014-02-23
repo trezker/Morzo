@@ -29,15 +29,30 @@ class Actor_model extends Model
 	
 	public function Spawn_actor($location_id) {
 		$db = Load_database();
-
+		
 		$rs = $db->Execute('
 			select count(*)<C.Value as Allow_more_actors from Actor A join Count C on C.Name = \'Max_actors\';
 			', array());
 
-		if(!$rs || $rs->fields['Allow_more_actors'] != 1)
-		{
+		if(!$rs || $rs->fields['Allow_more_actors'] != 1) {
 			return false;
 		}
+		
+		//TODO: Find location where there's room for more actors
+		$rs = $db->Execute('
+			select LS.Location_ID, LS.Species_ID, LS.Actor_spawn, count(A.ID) as AC from Location_species LS
+			left join Actor A on A.Location_ID = LS.Location_ID and A.Species_ID = LS.Species_ID
+			group by LS.Location_ID, LS.Species_ID
+			having LS.Actor_spawn > AC
+			', array());
+
+		if(!$rs || $rs->RecordCount() <= 0) {
+			return false;
+		}
+		
+		$location_species = $rs->GetArray(1);
+		$location_id = $location_species[0]["Location_ID"];
+		$species_id = $location_species[0]["Species_ID"];
 
 		$db->StartTrans();
 		
@@ -53,9 +68,9 @@ class Actor_model extends Model
 
 		if(!$db->HasFailedTrans()) {
 			$rs = $db->Execute('
-				insert into Actor(Location_ID, Inventory_ID)
-				values (?,?)
-				', array($location_id, $inventory_ID));
+				insert into Actor(Location_ID, Species_ID, Inventory_ID)
+				values (?,?,?)
+				', array($location_id, $species_id, $inventory_ID));
 		}
 
 		$failed = $db->HasFailedTrans();
@@ -67,7 +82,6 @@ class Actor_model extends Model
 		}
 
 		$from_actor_id = $db->Insert_id();
-		$from_actor_id = $db->Insert_ID();
 		$this->Load_model('Event_model');
 		$this->Event_model->Save_event("{LNG_Actor_born}", $from_actor_id, NULL);
 		return true;
@@ -95,6 +109,7 @@ class Actor_model extends Model
 		";
 		$rs = $db->Execute($sql);
 
+		//Put all resources on actors location
 		$this->Load_model('Inventory_model');
 		$rs = $db->Execute('select ID from Actor where Health <= 0');
 		$actors = $rs->getArray();
@@ -104,15 +119,21 @@ class Actor_model extends Model
 			foreach($inventory['resources'] as $resource) {
 				$this->Inventory_model->Transfer_resource($inventories['Actor_inventory'], 
 													$inventories['Location_inventory'], 
-													$resource['ID'], $resource['Amount'], true);
+													$resource['Resource_ID'], $resource['Amount'], true);
 			}
 		}
+		
+		//TODO:
+		//Delete the inventory
+		//Add column Dead to Actor
+		//Secure all functions against interaction and listing with dead actors
+		//Create corpse
+		
 			
 		$failed = $db->HasFailedTrans();
 		$db->CompleteTrans();
 		
-		if($failed)
-		{
+		if($failed) {
 			return false;
 		}
 		return true;
