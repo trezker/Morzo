@@ -38,10 +38,11 @@ class Actor_model extends Model
 			return false;
 		}
 		
-		//TODO: Find location where there's room for more actors
+		//Find location where there's room for more actors
 		$rs = $db->Execute('
 			select LS.Location_ID, LS.Species_ID, LS.Actor_spawn, count(A.ID) as AC from Location_species LS
 			left join Actor A on A.Location_ID = LS.Location_ID and A.Species_ID = LS.Species_ID
+			where A.Corpse_object_ID is null
 			group by LS.Location_ID, LS.Species_ID
 			having LS.Actor_spawn > AC
 			', array());
@@ -138,9 +139,6 @@ class Actor_model extends Model
 			$rs = $db->Execute($query, $args);
 		}
 		
-		//TODO:
-		//Secure all functions against interaction and listing with dead actors
-		
 		$failed = $db->HasFailedTrans();
 		$db->CompleteTrans();
 		
@@ -161,7 +159,7 @@ class Actor_model extends Model
 			echo $db->ErrorMsg();
 		}
 
-		$query = 'update Actor set Health = Health + 1 where Hunger < 128 and Health < 128';
+		$query = 'update Actor set Health = Health + 1 where Hunger < 128 and Health < 128 and Corpse_object_ID is null';
 		$args = array();
 		$rs = $db->Execute($query, $args);
 		if(!$rs) {
@@ -182,7 +180,7 @@ class Actor_model extends Model
 		$db->StartTrans();
 		
 		//Select all Actors with more than 8 hunger. They haven't eaten manually lately.
-		$query = "select ID, Hunger, Health, Inventory_ID from Actor where Hunger > 8";
+		$query = "select ID, Hunger, Health, Inventory_ID from Actor where Hunger > 8 and Corpse_object_ID is null";
 		$args = array();
 		$hungry_actors = $db->Execute($query, $args);
 
@@ -260,19 +258,18 @@ class Actor_model extends Model
 		}
 	}
 	
-	public function Request_actor($user_id)
-	{
+	public function Request_actor($user_id) {
 		$db = Load_database();
+		//$db->debug = true;
 
 		$rs = $db->Execute('
 			select count(*) >= U.Max_actors as Max_actors_reached, U.Max_actors
 			from Actor A 
 			join User U on U.ID = A.User_ID
-			where U.ID = ?
+			where U.ID = ? and A.Corpse_object_ID is null
 			', array($user_id));
 			
-		if(!$rs)
-		{
+		if(!$rs) {
 			return array('success' => false, 'reason' => 'Database failure');
 		}
 		
@@ -283,55 +280,50 @@ class Actor_model extends Model
 		$rs = $db->Execute('
 			update Actor A
 			set A.User_ID = ?
-			where A.User_ID is null and A.Inhabitable = true
+			where A.User_ID is null and A.Inhabitable = true and A.Corpse_object_ID is null
 			order by A.ID asc
 			limit 1
 			', array($user_id));
 		
-		if(!$rs)
-		{
+		if(!$rs) {
 			return array('success' => false, 'reason' => 'Database failure');
 		}
-		if($db->Affected_Rows() == 1)
-		{
+		if($db->Affected_Rows() == 1) {
 			return array('success' => true);
 		}
 
 		return array('success' => false, 'reason' => 'No actors available');
 	}
 
-	public function Get_users_actor_limit($user_id)
-	{
+	public function Get_users_actor_limit($user_id) {
 		$db = Load_database();
 
 		$rs = $db->Execute('
 			select count(*) >= U.Max_actors as Max_actors_reached, U.Max_actors, count(*) as Num_actors
 			from Actor A 
 			join User U on U.ID = A.User_ID
-			where U.ID = ?
+			where U.ID = ? and A.Corpse_object_ID is null
 			', array($user_id));
 			
-		if(!$rs)
-		{
+		if(!$rs) {
 			return false;
 		}
 
 		return $rs->fields;
 	}
 	
-	public function Get_actors($user_id)
-	{
+	public function Get_actors($user_id) {
 		$db = Load_database();
+		//$db->debug = true;
 
 		$rs = $db->Execute('
 			select A.ID, AN.Name
 			from Actor A
 			left join Actor_name AN on A.ID = AN.Named_actor_ID and A.ID = AN.Actor_ID
-			where A.User_ID = ?
+			where A.User_ID = ? and A.Corpse_object_ID is null
 			', array($user_id));
 		
-		if(!$rs)
-		{
+		if(!$rs) {
 			return false;
 		}
 		$actors = array();
@@ -343,8 +335,7 @@ class Actor_model extends Model
 		return $actors;
 	}
 
-	public function Get_actor($actor_id)
-	{
+	public function Get_actor($actor_id) {
 		$db = Load_database();
 
 		$rs = $db->Execute('
@@ -370,20 +361,30 @@ class Actor_model extends Model
 			where A.ID = ?
 			', array($actor_id));
 		
-		if(!$rs)
-		{
+		if(!$rs) {
 			return false;
 		}
 		if($rs->RecordCount()!=1) {
-			echo "CAUT HERE?";
 			return false;
 		}
 
 		return $rs->fields;
 	}
 	
-	public function Change_actor_name($actor_ID, $named_actor_ID, $new_name)
-	{
+	public function Actor_is_alive($actor_ID) {		
+		$db = Load_database();
+
+		$rs = $db->Execute('
+			select ID from Actor where Corpse_object_ID is null and ID = ?
+			', array($actor_ID));
+		
+		if(!$rs || $rs->RecordCount() !== 1) {
+			return false;
+		}
+		return true;
+	}
+	
+	public function Change_actor_name($actor_ID, $named_actor_ID, $new_name) {
 		$db = Load_database();
 
 		$rs = $db->Execute('

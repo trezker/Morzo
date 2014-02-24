@@ -1001,9 +1001,12 @@ class Project_model extends Model
 				P.Cycles_left,
 				P.Progress,
 				P.Creator_actor_ID,
+				A.Inventory_ID as Actor_inventory_ID,
+				P.Location_inventory_ID,
 				O.Resource_ID,
 				O.Amount
 			from Project P
+			left join Actor A on P.Creator_actor_ID = A.ID and A.Corpse_object_ID is null
 			join Recipe R on R.ID = P.Recipe_ID
 			join Recipe_output O on R.ID = O.Recipe_ID
 			where P.Progress >= R.Cycle_time
@@ -1024,11 +1027,12 @@ class Project_model extends Model
 				P.Progress,
 				R.Cycle_time,
 				P.Creator_actor_ID,
-				A.Inventory_ID,
+				A.Inventory_ID as Actor_inventory_ID,
+				P.Location_inventory_ID,
 				O.Product_ID,
 				O.Amount
 			from Project P
-			join Actor A on P.Creator_actor_ID = A.ID
+			left join Actor A on P.Creator_actor_ID = A.ID and A.Corpse_object_ID is null
 			join Recipe R on R.ID = P.Recipe_ID
 			join Recipe_product_output O on R.ID = O.Recipe_ID
 			where P.Progress >= R.Cycle_time
@@ -1056,12 +1060,16 @@ class Project_model extends Model
 				foreach($project['outputs'] as $output) {
 					$query = '
 						insert into Inventory_resource (Inventory_ID, Resource_ID, Amount)
-						select A.Inventory_ID, ?, ?
-						from Actor A
-						where A.ID = ? limit 1
+						values(?, ?, ?)
 						on duplicate key update Amount = Amount + ?
 					';
-					$args = array($output['Resource_ID'], $output['Amount'], $output['Creator_actor_ID'], $output['Amount']);
+					
+					if($output['Actor_inventory_ID'] !== null)
+						$output_inventory_id = $output['Actor_inventory_ID'];
+					else
+						$output_inventory_id = $output['Location_inventory_ID'];
+					
+					$args = array($output_inventory_id, $output['Resource_ID'], $output['Amount'], $output['Amount']);
 					$rs = $db->Execute($query, $args);
 					
 					if(!$rs) {
@@ -1079,7 +1087,13 @@ class Project_model extends Model
 							insert into Object (Product_ID, Inventory_ID, Quality, Rot)
 							values(?,?,1,0)
 						';
-						$args = array($output['Product_ID'], $output['Inventory_ID']);
+
+						if($output['Actor_inventory_ID'] !== null)
+							$output_inventory_id = $output['Actor_inventory_ID'];
+						else
+							$output_inventory_id = $output['Location_inventory_ID'];
+
+						$args = array($output['Product_ID'], $output_inventory_id);
 						$rs = $db->Execute($query, $args);
 						if(!$rs)
 							break;

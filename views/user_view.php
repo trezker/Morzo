@@ -21,8 +21,10 @@
 		<div id="actors">
 			<ul class="actor_list">
 				<?php
-				foreach ($actors as $actor) {
-					echo expand_template("<li><a href='actor/show_actor/{ID}'>{Name}</a></li>", $actor);
+				if($actors) {
+					foreach ($actors as $actor) {
+						echo expand_template("<li><a href='actor/show_actor/{ID}'>{Name}</a></li>", $actor);
+					}
 				}
 				?>
 			</ul>
