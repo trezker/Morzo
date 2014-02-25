@@ -353,6 +353,10 @@ class Inventory_model extends Model
 	}
 
 	public function Attach_lock($actor_id, $object_id, $lock_id) {
+		$this->Load_model('Actor_model');
+		if($this->Actor_model->Actor_is_alive($actor_id) == false)
+			return false;
+
 		$db = Load_database();
 
 		//Check access to object
@@ -460,6 +464,10 @@ class Inventory_model extends Model
 	}
 
 	public function Lock_object($actor_id, $object_id, $lockside) {
+		$this->Load_model('Actor_model');
+		if($this->Actor_model->Actor_is_alive($actor_id) == false)
+			return false;
+
 		$db = Load_database();
 
 		//Check access to object
@@ -515,6 +523,10 @@ class Inventory_model extends Model
 	}
 
 	public function Unlock_object($actor_id, $object_id, $lockside) {
+		$this->Load_model('Actor_model');
+		if($this->Actor_model->Actor_is_alive($actor_id) == false)
+			return false;
+
 		$db = Load_database();
 
 		//Check access to object
