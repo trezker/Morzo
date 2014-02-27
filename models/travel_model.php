@@ -6,6 +6,10 @@ require_once "../models/model.php";
 class Travel_model extends Model
 {
 	public function Travel($actor, $destination, $origin) {
+		$this->Load_model('Actor_model');
+		if($this->Actor_model->Actor_is_alive($actor) == false)
+			return false;
+
 		$db = Load_database();
 
 		$rs = $db->Execute("
