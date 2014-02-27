@@ -137,6 +137,8 @@ class Actor_model extends Model
 			$query = 'update Actor set Corpse_object_ID = ?, Hunt_ID = NULL, Project_ID = NULL where ID = ?';
 			$args = array($corpse_object_ID, $actor['ID']);
 			$rs = $db->Execute($query, $args);
+
+			$rs = $db->Execute('delete from Travel where ActorID = ?', array($actor['ID']));
 		}
 		
 		$failed = $db->HasFailedTrans();
