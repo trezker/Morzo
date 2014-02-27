@@ -568,6 +568,10 @@ class Project_model extends Model
 	
 	public function Start_project($actor_id, $recipe_id, $supply, $cycles)
 	{
+		$this->Load_model('Actor_model');
+		if($this->Actor_model->Actor_is_alive($actor_id) == false)
+			return false;
+
 		$db = Load_database();
 		
 		$db->StartTrans();
@@ -614,6 +618,10 @@ class Project_model extends Model
 
 	public function Join_project($actor_id, $project_id)
 	{
+		$this->Load_model('Actor_model');
+		if($this->Actor_model->Actor_is_alive($actor_id) == false)
+			return false;
+
 		$this->Leave_project($actor_id);
 
 		$db = Load_database();
@@ -668,6 +676,10 @@ class Project_model extends Model
 
 	public function Leave_project($actor_id)
 	{
+		$this->Load_model('Actor_model');
+		if($this->Actor_model->Actor_is_alive($actor_id) == false)
+			return false;
+
 		$db = Load_database();
 		
 		$args = array($actor_id);
@@ -1293,6 +1305,10 @@ class Project_model extends Model
 	}
 	
 	public function Supply_project($project_id, $actor_id) {
+		$this->Load_model('Actor_model');
+		if($this->Actor_model->Actor_is_alive($actor_id) == false)
+			return false;
+
 		$db = Load_database();
 		$db->StartTrans();
 		
@@ -1367,6 +1383,10 @@ class Project_model extends Model
 	}
 
 	public function Cancel_project($project_id, $actor_id) {
+		$this->Load_model('Actor_model');
+		if($this->Actor_model->Actor_is_alive($actor_id) == false)
+			return false;
+
 		$db = Load_database();
 		$db->StartTrans();
 		
