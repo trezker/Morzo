@@ -145,6 +145,10 @@ class Species_model extends Model {
 	}
 	
 	public function Start_hunt($actor_id, $hours, $species) {
+		$this->Load_model('Actor_model');
+		if($this->Actor_model->Actor_is_alive($actor_id) == false)
+			return false;
+
 		$db = Load_database();
 
 		$db->StartTrans();
@@ -249,6 +253,10 @@ class Species_model extends Model {
 	}
 	
 	public function Join_hunt($actor_id, $hunt_id) {
+		$this->Load_model('Actor_model');
+		if($this->Actor_model->Actor_is_alive($actor_id) == false)
+			return false;
+
 		$db = Load_database();
 
 		//Check if allowed to join
@@ -283,6 +291,10 @@ class Species_model extends Model {
 	}
 
 	public function Leave_hunt($actor_id) {
+		$this->Load_model('Actor_model');
+		if($this->Actor_model->Actor_is_alive($actor_id) == false)
+			return false;
+
 		$db = Load_database();
 
 		$query = "update Actor set Hunt_ID = NULL where ID = ?";

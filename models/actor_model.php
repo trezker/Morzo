@@ -134,7 +134,7 @@ class Actor_model extends Model
 			$rs = $db->Execute($query, $args);
 			$corpse_object_ID = $db->Insert_id();
 
-			$query = 'update Actor set Corpse_object_ID = ? where ID = ?';
+			$query = 'update Actor set Corpse_object_ID = ?, Hunt_ID = NULL, Project_ID = NULL where ID = ?';
 			$args = array($corpse_object_ID, $actor['ID']);
 			$rs = $db->Execute($query, $args);
 		}
