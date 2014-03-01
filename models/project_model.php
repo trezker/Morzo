@@ -1018,7 +1018,7 @@ class Project_model extends Model
 				O.Resource_ID,
 				O.Amount
 			from Project P
-			left join Actor A on P.Creator_actor_ID = A.ID and A.Corpse_object_ID is null
+			left join Actor A on P.Creator_actor_ID = A.ID and A.Health > 0
 			join Recipe R on R.ID = P.Recipe_ID
 			join Recipe_output O on R.ID = O.Recipe_ID
 			where P.Progress >= R.Cycle_time
@@ -1044,7 +1044,7 @@ class Project_model extends Model
 				O.Product_ID,
 				O.Amount
 			from Project P
-			left join Actor A on P.Creator_actor_ID = A.ID and A.Corpse_object_ID is null
+			left join Actor A on P.Creator_actor_ID = A.ID and A.Health > 0
 			join Recipe R on R.ID = P.Recipe_ID
 			join Recipe_product_output O on R.ID = O.Recipe_ID
 			where P.Progress >= R.Cycle_time

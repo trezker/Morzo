@@ -42,7 +42,7 @@ class Actor_model extends Model
 		$rs = $db->Execute('
 			select LS.Location_ID, LS.Species_ID, LS.Actor_spawn, count(A.ID) as AC from Location_species LS
 			left join Actor A on A.Location_ID = LS.Location_ID and A.Species_ID = LS.Species_ID
-			where A.Corpse_object_ID is null
+			where A.Health <= 0
 			group by LS.Location_ID, LS.Species_ID
 			having LS.Actor_spawn > AC
 			', array());
@@ -116,7 +116,7 @@ class Actor_model extends Model
 		$rs = $db->Execute('
 			select A.ID, S.Corpse_product_ID from Actor A
 			join Species S on S.ID = A.Species_ID
-			where Health <= 0 and A.Corpse_object_ID is null
+			where Health <= 0
 			');
 		$actors = $rs->getArray();
 		foreach($actors as $actor) {
@@ -161,7 +161,7 @@ class Actor_model extends Model
 			echo $db->ErrorMsg();
 		}
 
-		$query = 'update Actor set Health = Health + 1 where Hunger < 128 and Health < 128 and Corpse_object_ID is null';
+		$query = 'update Actor set Health = Health + 1 where Hunger < 128 and Health < 128 and Health > 0';
 		$args = array();
 		$rs = $db->Execute($query, $args);
 		if(!$rs) {
@@ -182,7 +182,7 @@ class Actor_model extends Model
 		$db->StartTrans();
 		
 		//Select all Actors with more than 8 hunger. They haven't eaten manually lately.
-		$query = "select ID, Hunger, Health, Inventory_ID from Actor where Hunger > 8 and Corpse_object_ID is null";
+		$query = "select ID, Hunger, Health, Inventory_ID from Actor where Hunger > 8 and Health <= 0";
 		$args = array();
 		$hungry_actors = $db->Execute($query, $args);
 
@@ -268,7 +268,7 @@ class Actor_model extends Model
 			select count(*) >= U.Max_actors as Max_actors_reached, U.Max_actors
 			from Actor A 
 			join User U on U.ID = A.User_ID
-			where U.ID = ? and A.Corpse_object_ID is null
+			where U.ID = ? and A.Health > 0
 			', array($user_id));
 			
 		if(!$rs) {
@@ -282,7 +282,7 @@ class Actor_model extends Model
 		$rs = $db->Execute('
 			update Actor A
 			set A.User_ID = ?
-			where A.User_ID is null and A.Inhabitable = true and A.Corpse_object_ID is null
+			where A.User_ID is null and A.Inhabitable = true and A.Health > 0
 			order by A.ID asc
 			limit 1
 			', array($user_id));
@@ -304,7 +304,7 @@ class Actor_model extends Model
 			select count(*) >= U.Max_actors as Max_actors_reached, U.Max_actors, count(*) as Num_actors
 			from Actor A 
 			join User U on U.ID = A.User_ID
-			where U.ID = ? and A.Corpse_object_ID is null
+			where U.ID = ? and A.Health > 0
 			', array($user_id));
 			
 		if(!$rs) {
@@ -322,7 +322,7 @@ class Actor_model extends Model
 			select A.ID, AN.Name
 			from Actor A
 			left join Actor_name AN on A.ID = AN.Named_actor_ID and A.ID = AN.Actor_ID
-			where A.User_ID = ? and A.Corpse_object_ID is null
+			where A.User_ID = ? and A.Health > 0
 			', array($user_id));
 		
 		if(!$rs) {
@@ -377,7 +377,7 @@ class Actor_model extends Model
 		$db = Load_database();
 
 		$rs = $db->Execute('
-			select ID from Actor where Corpse_object_ID is null and ID = ?
+			select ID from Actor where Health > 0 and ID = ?
 			', array($actor_ID));
 		
 		if(!$rs || $rs->RecordCount() !== 1) {
