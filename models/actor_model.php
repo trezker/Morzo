@@ -151,8 +151,6 @@ class Actor_model extends Model
 	}
 	
 	private function Process_vitality() {
-		$this->Process_dead();
-		
 		$db = Load_database();
 		$query = 'update Actor set Health = Health - 1 where Hunger >= 128 and Health > 0';
 		$args = array();
@@ -160,6 +158,9 @@ class Actor_model extends Model
 		if(!$rs) {
 			echo $db->ErrorMsg();
 		}
+
+		//Should be done after starvation, because additional actors may die. But before regeneration to stop the dead from getting better.
+		$this->Process_dead();
 
 		$query = 'update Actor set Health = Health + 1 where Hunger < 128 and Health < 128 and Health > 0';
 		$args = array();
