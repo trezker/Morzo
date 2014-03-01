@@ -121,18 +121,7 @@ class Event_model
 	
 	public function Delete_old_events() {
 		$db = Load_database();
-		$sql = '
-			delete A.* FROM Actor_event A
-			join Event E on A.Event_ID = E.ID
-			where E.Real_time < DATE_SUB(NOW(), INTERVAL 30 day)
-		';
-		$rs = $db->Execute($sql, array());
-		if(!$rs) {
-			echo $db->ErrorMsg();
-		}
-		$sql = '
-			delete FROM Event where Real_time < DATE_SUB(NOW(), INTERVAL 30 day)
-		';
+		$sql = 'delete FROM Event where Real_time < DATE_SUB(NOW(), INTERVAL 30 day)';
 		$rs = $db->Execute($sql, array());
 		if(!$rs) {
 			echo $db->ErrorMsg();

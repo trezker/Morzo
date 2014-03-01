@@ -141,6 +141,15 @@ class Actor_model extends Model
 			$rs = $db->Execute('delete from Travel where ActorID = ?', array($actor['ID']));
 		}
 		
+		//Purge dead actors with no remaining restrictions.
+		$query = '
+			delete Actor from Actor
+			left join Event on Event.From_actor_ID = Actor.ID or Event.To_actor_ID = Actor.ID
+			where Actor.Health <= 0 and Actor.Corpse_object_ID is null and Event.ID is null
+			';
+		$args = array();
+		$rs = $db->Execute($query, $args);
+		
 		$failed = $db->HasFailedTrans();
 		$db->CompleteTrans();
 		
