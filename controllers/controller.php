@@ -2,12 +2,18 @@
 
 class Controller
 {
+	private $db = null;
+	
+	function __construct($database) {
+		$this->db = $database;
+	}
+	
 	public function Load_model($model)
 	{
 		if(isset($this->$model))
 			return;
 		require_once "../models/".strtolower($model).".php";
-		$this->$model = new $model();
+		$this->$model = new $model($this->db);
 	}
 
 	public function Load_controller($controller)
@@ -15,7 +21,7 @@ class Controller
 		if(isset($this->$controller))
 			return;
 		require_once "../controllers/".strtolower($controller).".php";
-		$this->$controller = new $controller();
+		$this->$controller = new $controller($this->db);
 	}
 
 	public function Load_view($view, $data = array(), $return = false)

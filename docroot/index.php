@@ -15,6 +15,8 @@ $GLOBALS['base_url'] = $base_url;
 
 require_once '../util/htmltemplate.php';
 require_once '../util/log.php';
+require_once '../util/database.php';
+require_once '../config.php';
 
 if (empty($_SERVER['PATH_INFO'])) {
 	$path = explode('?', $_SERVER['REQUEST_URI'], 2);
@@ -114,7 +116,8 @@ else
 			}
 			else
 			{
-				$obj = new $controller_name;
+				$db = Create_database_connection($config['database']['default']);
+				$obj = new $controller_name($db);
 
 				if(count($argv)<3)
 				{

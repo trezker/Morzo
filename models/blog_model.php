@@ -1,12 +1,10 @@
 <?php
 
-require_once '../models/database.php';
+require_once '../models/model.php';
 
-class Blog_model {
+class Blog_model extends Model {
 	public function Get_blogs() {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select ID, Name from Blog
 			', array());
 
@@ -19,9 +17,7 @@ class Blog_model {
 	}
 
 	public function Get_blog($blog_id) {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select ID, Name from Blog
 			where ID = ?
 			', array($blog_id));
@@ -36,9 +32,8 @@ class Blog_model {
 
 	public function Get_blog_by_name($blog_name) {
 		$blog_name = str_replace('_', ' ', $blog_name);
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+
+		$rs = $this->db->Execute('
 			select ID, Name from Blog
 			where Name = ?
 			', array($blog_name));
@@ -53,9 +48,8 @@ class Blog_model {
 
 	public function User_owns_blog_name($blog_name, $user_id) {
 		$blog_name = str_replace('_', ' ', $blog_name);
-		$db = Load_database();
 		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select User_ID from Blog
 			where Name = ?
 			', array($blog_name));
@@ -68,9 +62,7 @@ class Blog_model {
 	}
 
 	public function User_owns_blog($blog_id, $user_id) {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select User_ID from Blog
 			where ID = ?
 			', array($blog_id));
@@ -83,16 +75,14 @@ class Blog_model {
 	}
 
 	public function Get_blog_from_post_id($post_id) {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select B.ID from Blogpost P
 			join Blog B on B.ID = P.Blog_ID
 			where P.ID = ?
 			', array($post_id));
 
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return false;
 		}
 		
@@ -100,9 +90,7 @@ class Blog_model {
 	}
 
 	public function Get_user_blogs($user_id) {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select ID, Name from Blog
 			where User_ID = ?
 			', array($user_id));
@@ -134,9 +122,7 @@ class Blog_model {
 			$limitsql = 'limit ' . $offsetsql . $limit;
 		}
 		
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select 
 				P.ID, 
 				P.Title, 
@@ -152,7 +138,7 @@ class Blog_model {
 			', $args);
 
 		if(!$rs) {
-			echo $db->errorMsg();
+			echo $this->db->errorMsg();
 			return false;
 		}
 		
@@ -161,9 +147,7 @@ class Blog_model {
 	}
 
 	public function Get_blog_post($post_id) {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select ID, Title, Content, Hidden
 			from Blogpost
 			where ID = ?
@@ -178,9 +162,7 @@ class Blog_model {
 	}
 	
 	public function Get_blog_post_titles($blog_id) {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select P.ID, P.Title, P.Created_date, P.Hidden
 			from Blogpost P
 			where P.Blog_ID = ?
@@ -197,9 +179,7 @@ class Blog_model {
 
 	public function Create_blog($user_id, $name) {
 		$name = str_replace('_', ' ', $name);
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			insert into Blog(User_ID, Name, Created_date)
 			values(?, ?, NOW())
 			', array($user_id, $name));
@@ -208,14 +188,12 @@ class Blog_model {
 			return array('success' => false, 'reason' => 'database failure');
 		}
 		
-		$blog_id = $db->Insert_id();
+		$blog_id = $this->db->Insert_id();
 		return array('success' => true, 'blog_id' => $blog_id);
 	}
 
 	public function Create_blog_post($blog_id, $title, $content, $hidden) {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			insert into Blogpost(Blog_ID, Title, Content, Created_date, Hidden)
 			values(?, ?, ?, NOW(), ?)
 			', array($blog_id, $title, $content, $hidden));
@@ -224,20 +202,18 @@ class Blog_model {
 			return array('success' => false, 'reason' => 'database failure');
 		}
 		
-		$blog_id = $db->Insert_id();
+		$blog_id = $this->db->Insert_id();
 		return array('success' => true, 'blog_id' => $blog_id);
 	}
 
 	public function Update_blog_post($post_id, $title, $content, $hidden) {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			update Blogpost set Title = ?, Content = ?, Hidden = ?
 			where ID = ?
 			', array($title, $content, $hidden, $post_id));
 
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array('success' => false, 'reason' => 'database failure');
 		}
 		
@@ -245,15 +221,13 @@ class Blog_model {
 	}
 
 	public function Delete_blogpost($post_id) {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			delete from Blogpost
 			where ID = ?
 			', array($post_id));
 
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array('success' => false, 'reason' => 'database failure');
 		}
 		
@@ -261,15 +235,13 @@ class Blog_model {
 	}
 	
 	public function Hide_blogpost($post_id) {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			update Blogpost set Hidden = ?
 			where ID = ?
 			', array(1, $post_id));
 
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array('success' => false, 'reason' => 'database failure');
 		}
 		
