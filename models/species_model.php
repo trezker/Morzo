@@ -1,13 +1,10 @@
 <?php
 
-require_once '../models/database.php';
 require_once '../models/model.php';
 
 class Species_model extends Model {
 	public function Get_species() {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select ID, Name from Species
 			', array());
 
@@ -20,9 +17,7 @@ class Species_model extends Model {
 	}
 
 	public function Get_specie($species_id, $location_id) {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select S.ID, S.Name, S.Max_population, LS.Population, LS.Actor_spawn, S.Corpse_product_ID
 			from Species S
 			left join Location_species LS on LS.Species_ID = S.ID and LS.Location_ID = ?
@@ -38,8 +33,6 @@ class Species_model extends Model {
 	}
 
 	public function Save_species($name, $id, $max_population) {
-		$db = Load_database();
-		
 		$this->Load_model("Product_model");
 		if($id == -1) {
 			$product_spec = array(
@@ -50,7 +43,7 @@ class Species_model extends Model {
 								'id' => -1
 							);
 			if($this->Product_model->Save_product($product_spec)) {
-				$corpse_product_id = $db->Insert_id();
+				$corpse_product_id = $this->db->Insert_id();
 			} else {
 				return false;
 			}
@@ -60,7 +53,7 @@ class Species_model extends Model {
 							$corpse_product_id
 						);
 
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				insert into Species (Name, Max_population, Corpse_product_ID) values (?, ?, ?)
 				', $args);
 		} else {
@@ -68,13 +61,13 @@ class Species_model extends Model {
 							$id
 						);
 
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				update Product set Name = ?
 				where ID in (select Corpse_product_ID from Species where ID = ?)
 				', $args);
 				
 			if(!$rs) {
-				echo $db->ErrorMsg();
+				echo $this->db->ErrorMsg();
 				return false;
 			}
 
@@ -83,27 +76,25 @@ class Species_model extends Model {
 							$id
 						);
 
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				update Species set Name = ?, Max_population = ? where ID = ?
 				', $args);
 		}
 
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return false;
 		}
 		if($id == -1) {
-			return $db->Insert_id();
+			return $this->db->Insert_id();
 		}
 		return $id;
 	}
 	
 	public function Get_location_species($location_id) {
-		$db = Load_database();
-
 		$args = array($location_id);
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select S.ID, S.Name from Species S
 			join Location_species LS on LS.Species_ID = S.ID
 			where LS.Location_ID = ?
@@ -117,15 +108,13 @@ class Species_model extends Model {
 	}
 
 	public function Save_location_species($species_id, $location_id, $on_location, $population, $actor_spawn) {
-		$db = Load_database();
-
 		if($on_location == "true"){
 			if(!filter_var($population, FILTER_VALIDATE_INT))
 				$population = 0;
 			if(!filter_var($actor_spawn, FILTER_VALIDATE_INT))
 				$actor_spawn = 0;
 			$args = array($location_id, $species_id, $population, $actor_spawn, $population, $actor_spawn);
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				insert into Location_species(Location_ID, Species_ID, Population, Actor_spawn)
 				values(?, ?, ?, ?)
 				on duplicate key update Population = ?, Actor_spawn = ?
@@ -133,12 +122,12 @@ class Species_model extends Model {
 		}
 		else {
 			$args = array($location_id, $species_id);
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				delete from Location_species where Location_ID = ? and Species_ID = ?
 				', $args);
 		}
 		if($rs == false) {
-			echo "Error: " . $db->ErrorMsg();
+			echo "Error: " . $this->db->ErrorMsg();
 			return false;
 		}
 		return $rs;
@@ -149,40 +138,38 @@ class Species_model extends Model {
 		if($this->Actor_model->Actor_is_alive($actor_id) == false)
 			return false;
 
-		$db = Load_database();
-
-		$db->StartTrans();
+		$this->db->StartTrans();
 
 		$query = '
 					insert into Hunt(Duration, Hours_left, Location_ID)
 					select ?, ?, a.Location_ID from Actor a where a.ID = ?
 				';
 		$args = array($hours, $hours, $actor_id);
-		$rs = $db->Execute($query, $args);
+		$rs = $this->db->Execute($query, $args);
 		if(!$rs) {
-			$errormsg = $db->ErrorMsg();
-			$db->FailTrans();
+			$errormsg = $this->db->ErrorMsg();
+			$this->db->FailTrans();
 		} else {
-			$hunt_id = $db->Insert_id();
+			$hunt_id = $this->db->Insert_id();
 		}
 		
-		if(!$db->HasFailedTrans()) {
+		if(!$this->db->HasFailedTrans()) {
 			foreach($species as $species_id => $amount) {
 				if($amount < 1)
 					continue;
 				$query = 'insert into Hunt_species(Hunt_ID, Species_ID, Amount) values(?, ?, ?)';
 				$args = array($hunt_id, $species_id, $amount);
-				$rs = $db->Execute($query, $args);
+				$rs = $this->db->Execute($query, $args);
 				if(!$rs) {
-					$errormsg = $db->ErrorMsg();
-					$db->FailTrans();
+					$errormsg = $this->db->ErrorMsg();
+					$this->db->FailTrans();
 					break;
 				}
 			}
 		}
 
-		$failed = $db->HasFailedTrans();
-		$db->CompleteTrans();
+		$failed = $this->db->HasFailedTrans();
+		$this->db->CompleteTrans();
 		
 		if($failed) {
 			return array('success' => false, 'data' => $errormsg);
@@ -192,7 +179,6 @@ class Species_model extends Model {
 	}
 	
 	public function Get_hunts($actor_id) {
-		$db = Load_database();
 		$query = "	select
 						h.ID,
 						hs.Name AS Stage_name,
@@ -214,7 +200,7 @@ class Species_model extends Model {
 					where a.ID = ?
 				";
 		$args = array($actor_id);
-		$rs = $db->Execute($query, $args);
+		$rs = $this->db->Execute($query, $args);
 		
 		if(!$rs) {
 			return false;
@@ -224,7 +210,6 @@ class Species_model extends Model {
 	}
 
 	public function Get_hunt($actor_id, $hunt_id) {
-		$db = Load_database();
 		$query = "
 					select
 						h.ID,
@@ -240,7 +225,7 @@ class Species_model extends Model {
 					where a.ID = ? and h.ID = ?
 				";
 		$args = array($actor_id, $hunt_id);
-		$rs = $db->Execute($query, $args);
+		$rs = $this->db->Execute($query, $args);
 		
 		if(!$rs) {
 			return false;
@@ -257,17 +242,15 @@ class Species_model extends Model {
 		if($this->Actor_model->Actor_is_alive($actor_id) == false)
 			return false;
 
-		$db = Load_database();
-
 		//Check if allowed to join
 		$query = " select H.ID from Hunt H
 					join Actor A on A.Location_ID = H.Location_ID
 					where H.ID = ? and A.ID = ?
 				";
 		$args = array($hunt_id, $actor_id);
-		$rs = $db->Execute($query, $args);
+		$rs = $this->db->Execute($query, $args);
 		if(!$rs || $rs->RecordCount() < 1) {
-			$errormsg = $db->ErrorMsg();
+			$errormsg = $this->db->ErrorMsg();
 			return array('success' => false, 'data' => $errormsg);
 		}
 
@@ -281,9 +264,9 @@ class Species_model extends Model {
 		//Join
 		$query = "update Actor set Hunt_ID = ? where ID = ?";
 		$args = array($hunt_id, $actor_id);
-		$rs = $db->Execute($query, $args);
+		$rs = $this->db->Execute($query, $args);
 		if(!$rs) {
-			$errormsg = $db->ErrorMsg();
+			$errormsg = $this->db->ErrorMsg();
 			return array('success' => false, 'data' => $errormsg);
 		}
 		
@@ -295,13 +278,11 @@ class Species_model extends Model {
 		if($this->Actor_model->Actor_is_alive($actor_id) == false)
 			return false;
 
-		$db = Load_database();
-
 		$query = "update Actor set Hunt_ID = NULL where ID = ?";
 		$args = array($actor_id);
-		$rs = $db->Execute($query, $args);
+		$rs = $this->db->Execute($query, $args);
 		if(!$rs) {
-			$errormsg = $db->ErrorMsg();
+			$errormsg = $this->db->ErrorMsg();
 			return array('success' => false, 'data' => $errormsg);
 		}
 		
@@ -309,7 +290,6 @@ class Species_model extends Model {
 	}
 	
 	public function Update_hunts($time) {
-		$db = Load_database();
 		$errormsg = "";
 
 		$query = "
@@ -325,12 +305,12 @@ class Species_model extends Model {
 				where H.UpdateTick < ?
 				";
 		$args = array($time);
-		$rs = $db->Execute($query, $args);
+		$rs = $this->db->Execute($query, $args);
 		if(!$rs) {
-			$errormsg = $db->ErrorMsg();
+			$errormsg = $this->db->ErrorMsg();
 			return array('success' => false, 'data' => $errormsg);
 		}
-		$db->StartTrans();
+		$this->db->StartTrans();
 
 		foreach($rs->GetArray() as $hunt) {
 			/*
@@ -353,9 +333,9 @@ class Species_model extends Model {
 								where Hunt_ID = ? and Amount > 0
 								";
 						$args = array($hunt['ID']);
-						$rs = $db->Execute($query, $args);
+						$rs = $this->db->Execute($query, $args);
 						if(!$rs) {
-							$errormsg = $db->ErrorMsg();
+							$errormsg = $this->db->ErrorMsg();
 							break;
 						}
 						$species = $rs->GetArray();
@@ -385,10 +365,10 @@ class Species_model extends Model {
 						';
 						$args = array($hunt['ID']);
 
-						$rs = $db->Execute($query, $args);
+						$rs = $this->db->Execute($query, $args);
 						
 						if(!$rs) {
-							$errormsg = $db->ErrorMsg();
+							$errormsg = $this->db->ErrorMsg();
 							break;
 						}
 
@@ -398,16 +378,16 @@ class Species_model extends Model {
 						';
 						$args = array($hunt['ID'], $hunt['Prey_ID']);
 
-						$rs = $db->Execute($query, $args);
+						$rs = $this->db->Execute($query, $args);
 						
 						if(!$rs) {
-							$errormsg = $db->ErrorMsg();
+							$errormsg = $this->db->ErrorMsg();
 							break;
 						}
 
 						$this->Load_model('Event_model');
 						$this->Event_model->Save_hunt_event("{LNG_Hunt_killed_animal}", $hunt['ID']);
-						if($db->HasFailedTrans()) {
+						if($this->db->HasFailedTrans()) {
 							$errormsg = "Saving event failed";
 							break;
 						}
@@ -418,9 +398,9 @@ class Species_model extends Model {
 								where Hunt_ID = ? and Amount > 0
 								";
 						$args = array($hunt['ID']);
-						$rs = $db->Execute($query, $args);
+						$rs = $this->db->Execute($query, $args);
 						if(!$rs) {
-							$errormsg = $db->ErrorMsg();
+							$errormsg = $this->db->ErrorMsg();
 							break;
 						}
 						$species = $rs->GetArray();
@@ -454,24 +434,24 @@ class Species_model extends Model {
 							$hunt['Stage_ID'],
 							$hunt['Prey_ID'],
 							$hunt['ID']);
-				$rs = $db->Execute($query, $args);
-				if($db->Affected_rows() == 0) {
+				$rs = $this->db->Execute($query, $args);
+				if($this->db->Affected_rows() == 0) {
 					$errormsg = "No affected rows from update";
-					$db->FailTrans();
+					$this->db->FailTrans();
 					break;
 				}
 				if(!$rs) {
-					$errormsg = $db->ErrorMsg();
+					$errormsg = $this->db->ErrorMsg();
 					break;
 				}
-				if($db->HasFailedTrans()) {
-					$errormsg = $db->ErrorMsg();
+				if($this->db->HasFailedTrans()) {
+					$errormsg = $this->db->ErrorMsg();
 					break;
 				}
 			} else {
 				$this->Load_model('Event_model');
 				$this->Event_model->Save_hunt_event("{LNG_Hunt_ended}", $hunt['ID']);
-				if($db->HasFailedTrans()) {
+				if($this->db->HasFailedTrans()) {
 					$errormsg = "Saving event failed";
 					break;
 				}
@@ -479,25 +459,25 @@ class Species_model extends Model {
 						update Actor set Hunt_ID = NULL where Hunt_ID = ?
 						";
 				$args = array($hunt['ID']);
-				$rs = $db->Execute($query, $args);
+				$rs = $this->db->Execute($query, $args);
 				if(!$rs) {
-					$errormsg = $db->ErrorMsg();
+					$errormsg = $this->db->ErrorMsg();
 					break;
 				}
 				$query = "
 						delete from Hunt where ID = ?
 						";
 				$args = array($hunt['ID']);
-				$rs = $db->Execute($query, $args);
+				$rs = $this->db->Execute($query, $args);
 				if(!$rs) {
-					$errormsg = $db->ErrorMsg();
+					$errormsg = $this->db->ErrorMsg();
 					break;
 				}
 			}
 		}
 
-		$success = !$db->HasFailedTrans();
-		$db->CompleteTrans();
+		$success = !$this->db->HasFailedTrans();
+		$this->db->CompleteTrans();
 		return array('success' => $success, 'data' => $errormsg);
 	}
 }

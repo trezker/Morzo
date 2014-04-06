@@ -1,13 +1,11 @@
 <?php
 
-require_once '../models/database.php';
+require_once '../models/model.php';
 
-class User_model
+class User_model extends Model
 {
 	public function Login_openid($openid)
 	{
-		$db = Load_database();
-
 		$query = '
 			SELECT
 				u.ID,
@@ -17,7 +15,7 @@ class User_model
 			FROM User u
 			JOIN User_openID uo ON uo.UserID = u.ID
 			WHERE uo.OpenID = ?';
-		$rs = $db->Execute($query, array($openid));
+		$rs = $this->db->Execute($query, array($openid));
 		if(!$rs)
 		{
 			return 'Query failed';
@@ -49,12 +47,11 @@ class User_model
 
 	public function Login($id)
 	{
-		$db = Load_database();
 		$query = '
 			UPDATE User SET Session_ID = ?
 			WHERE ID = ?';
 		$session_id = session_id();
-		$rs2 = $db->Execute($query, array($session_id, $id));
+		$rs2 = $this->db->Execute($query, array($session_id, $id));
 		if(!$rs2) {
 			return 'Query failed';
 		}
@@ -63,34 +60,33 @@ class User_model
 
 	public function Create_user_openid($username, $openid)
 	{
-		$db = Load_database();
-		$db->StartTrans();
+		$this->db->StartTrans();
 		$query = '	INSERT INTO User (Username, Max_actors)
 					select ?, Value from Count where Name = \'Max_actors_account\'';
-		$rs = $db->Execute($query, array($username));
+		$rs = $this->db->Execute($query, array($username));
 		if(!$rs) {
-			$reason = $db->ErrorMsg();
-			$db->FailTrans();
-			$db->CompleteTrans();
+			$reason = $this->db->ErrorMsg();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
 			return array(
 				'success' => false,
 				'reason' => $reason
 			);
 		}
 		$query = 'SELECT ID FROM UseGet_usersr WHERE Username = ?';
-		$rs = $db->Execute($query, array($username));
+		$rs = $this->db->Execute($query, array($username));
 		if(!$rs) {
-			$reason = $db->ErrorMsg();
-			$db->FailTrans();
-			$db->CompleteTrans();
+			$reason = $this->db->ErrorMsg();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
 			return array(
 				'success' => false,
 				'reason' => $reason
 			);
 		}
 		if($rs->RecordCount()!=1) {
-			$db->FailTrans();
-			$db->CompleteTrans();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
 			return array(
 				'success' => false,
 				'reason' => 'Could not find user row, weird.',
@@ -99,18 +95,18 @@ class User_model
 		$userid = $rs->fields['ID'];
 
 		$query = 'INSERT INTO User_openID (OpenID, UserID) VALUES(?, ?)';
-		$rs = $db->Execute($query, array($openid, $userid));
+		$rs = $this->db->Execute($query, array($openid, $userid));
 		if(!$rs) {
-			$reason = $db->ErrorMsg();
-			$db->FailTrans();
-			$db->CompleteTrans();
+			$reason = $this->db->ErrorMsg();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
 			return array(
 				'success' => false,
 				'reason' => $reason
 			);
 		}
 		
-		$db->CompleteTrans();
+		$this->db->CompleteTrans();
 		return array(
 			'success' => true,
 			'ID' => $userid
@@ -118,12 +114,10 @@ class User_model
 	}
 	
 	public function Add_user_openid($userid, $openid) {
-		$db = Load_database();
-
 		$query = 'INSERT INTO User_openID (OpenID, UserID) VALUES(?, ?)';
-		$rs = $db->Execute($query, array($openid, $userid));
+		$rs = $this->db->Execute($query, array($openid, $userid));
 		if(!$rs) {
-			$reason = $db->ErrorMsg();
+			$reason = $this->db->ErrorMsg();
 			return array(
 				'success' => false,
 				'reason' => $reason
@@ -138,9 +132,7 @@ class User_model
 
 	public function User_has_access($user_id, $accessname)
 	{
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select U.ID
 			from User_access UA
 			join User U on U.ID = UA.User_ID
@@ -160,9 +152,7 @@ class User_model
 	
 	public function Get_users()
 	{
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select U.ID, U.Username, U.Banned_from, U.Banned_to, U.Max_actors, U.Last_active
 			from User U
 			', array());
@@ -183,9 +173,7 @@ class User_model
 	
 	public function Get_session_id($user_id)
 	{
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select U.Session_ID
 			from User U
 			where U.ID = ?
@@ -204,22 +192,21 @@ class User_model
 
 	public function Set_ban($user_id, $to_date)
 	{
-		$db = Load_database();
 		if($to_date == "") {
 			$to_date = NULL;
 		}
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			update User set Banned_from = NOW(), Banned_to = ?
 			where ID = ?
 			', array($to_date, $user_id));
 		if(!$rs)
 		{
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return false;
 		}
 
-		if($db->Affected_rows() == 0)
+		if($this->db->Affected_rows() == 0)
 		{
 			return false;
 		}
@@ -227,21 +214,20 @@ class User_model
 	}
 
 	public function Set_user_actor_limit($user_id, $actor_limit) {
-		$db = Load_database();
 		$actor_limit = intval($actor_limit);
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			update User set Max_actors = ?
 			where ID = ?
 			', array($actor_limit, $user_id));
 
 		if(!$rs)
 		{
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return false;
 		}
 
-		if($db->Affected_rows() == 0)
+		if($this->db->Affected_rows() == 0)
 		{
 			return false;
 		}
@@ -249,14 +235,12 @@ class User_model
 	}
 	
 	public function Get_user_openids($userid) {
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select ID, OpenID from User_openID where UserID = ?
 			', array($userid));
 
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return false;
 		}
 		
@@ -276,33 +260,30 @@ class User_model
 	}
 
 	public function Delete_user_openid($userid, $openid) {
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select count(1) as Num_ids from User_openID where UserID = ?
 			', array($userid));
 
 		if(!$rs) {
-			return array('success' => false, 'reason' => $db->ErrorMsg());
+			return array('success' => false, 'reason' => $this->db->ErrorMsg());
 		}
 		
 		if($rs->fields['Num_ids'] < 2) {
 			return array('success' => false, 'reason' => 'You may not delete your last openid');
 		}
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			delete from User_openID where UserID = ? and ID = ?
 			', array($userid, $openid));
 
 		if(!$rs) {
-			return array('success' => false, 'reason' => $db->ErrorMsg());
+			return array('success' => false, 'reason' => $this->db->ErrorMsg());
 		}
 		
 		return array('success' => true);
 	}
 	
 	public function Update_user_activity($userid) {
-		$db = Load_database();
-		$rs = $db->Execute('update User set Last_active = NOW() where ID = ?', array($userid));
+		$rs = $this->db->Execute('update User set Last_active = NOW() where ID = ?', array($userid));
 	}
 }

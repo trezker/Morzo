@@ -1,13 +1,11 @@
 <?php
 
-require_once '../models/database.php';
+require_once '../models/model.php';
 
-class Event_model
+class Event_model extends Model
 {
 	public function Get_events($actor_id) {
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			SELECT
 				E.Translation_handle,
 				E.From_actor_ID,
@@ -39,15 +37,13 @@ class Event_model
 	}
 
 	public function Save_event($translation_handle, $from_actor_id, $to_actor_id, $message = NULL, $from_location = NULL, $to_location = NULL, $private = false, $inside_object_id = NULL) {
-		$db = Load_database();
-
-		//$db->StartTrans();
-		$rs = $db->Execute('
+		//$this->db->StartTrans();
+		$rs = $this->db->Execute('
 			insert into Event(From_actor_ID, To_actor_ID, Message, Ingame_time, Real_time, From_location_ID, To_location_ID, Translation_handle)
 			select ?, ?, ?, C.Value, NOW(), ?, ?, ? from Count C where Name = \'Update\' limit 1
 			', array($from_actor_id, $to_actor_id, $message, $from_location, $to_location, $translation_handle));
 		
-		$event_id = $db->Insert_ID();
+		$event_id = $this->db->Insert_ID();
 
 		if($private == false) {
 			$args = array($event_id, $from_actor_id);
@@ -56,7 +52,7 @@ class Event_model
 				$extra_location = 'or B.Inside_object_ID = ?';
 				$args = array($event_id, $inside_object_id, $from_actor_id);
 			}
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				insert into Actor_event(Actor_ID, Event_ID)
 				select B.ID, ? from Actor A
 				join Actor B on (A.Location_ID = B.Location_ID)
@@ -64,67 +60,64 @@ class Event_model
 							 or A.Inside_object_ID = B.Inside_object_ID ' . $extra_location . ')
 				where A.ID = ?
 				', $args);
-			if($db->Affected_rows() == 0) {
-				$db->FailTrans();
+			if($this->db->Affected_rows() == 0) {
+				$this->db->FailTrans();
 			}
 		} else {
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				insert into Actor_event(Actor_ID, Event_ID)
 				values(?, ?)
 				', array($from_actor_id, $event_id));
 
-			if($db->Affected_rows() != 1) {
-				$db->FailTrans();
+			if($this->db->Affected_rows() != 1) {
+				$this->db->FailTrans();
 			}
 			
 			if($to_actor_id != NULL) {
-				$rs = $db->Execute('
+				$rs = $this->db->Execute('
 					insert into Actor_event(Actor_ID, Event_ID)
 					values(?, ?)
 					', array($to_actor_id, $event_id));
 
-				if($db->Affected_rows() != 1) {
-					$db->FailTrans();
+				if($this->db->Affected_rows() != 1) {
+					$this->db->FailTrans();
 				}
 			}
 		}
 		
-		$success = !$db->HasFailedTrans();
-		//$db->CompleteTrans();
+		$success = !$this->db->HasFailedTrans();
+		//$this->db->CompleteTrans();
 		return $success;
 	}
 
 	public function Save_hunt_event($translation_handle, $hunt_id) {
-		$db = Load_database();
-
-		$db->StartTrans();
-		$rs = $db->Execute('
+		$this->db->StartTrans();
+		$rs = $this->db->Execute('
 			insert into Event(Ingame_time, Real_time, Translation_handle)
 			select C.Value, NOW(), ? from Count C where Name = \'Update\' limit 1
 			', array($translation_handle));
 		
-		$event_id = $db->Insert_ID();
+		$event_id = $this->db->Insert_ID();
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			insert into Actor_event(Actor_ID, Event_ID)
 			select A.ID, ? from Actor A
 			where A.Hunt_ID = ?
 			', array($event_id, $hunt_id));
-		if($db->Affected_rows() == 0) {
-			$db->FailTrans();
+		if($this->db->Affected_rows() == 0) {
+			$this->db->FailTrans();
 		}
 		
-		$success = !$db->HasFailedTrans();
-		$db->CompleteTrans();
+		$success = !$this->db->HasFailedTrans();
+		$this->db->CompleteTrans();
 		return $success;
 	}
 	
 	public function Delete_old_events() {
-		$db = Load_database();
 		$sql = 'delete FROM Event where Real_time < DATE_SUB(NOW(), INTERVAL 30 day)';
-		$rs = $db->Execute($sql, array());
+		$rs = $this->db->Execute($sql, array());
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 		}
 	}
 }

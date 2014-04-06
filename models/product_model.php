@@ -1,12 +1,10 @@
 <?php
 
-require_once '../models/database.php';
+require_once '../models/model.php';
 
-class Product_model {
+class Product_model extends Model {
 	public function Get_products() {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select ID, Name from Product
 			', array());
 
@@ -26,9 +24,7 @@ class Product_model {
 			return false;
 		}
 		
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select ID, Name, Mass, Volume, Rot_rate from Product where ID = ?
 			', array($product_id));
 
@@ -36,7 +32,7 @@ class Product_model {
 			return false;
 		}
 		
-		$rs2 = $db->Execute('
+		$rs2 = $this->db->Execute('
 			select 
 				C.ID, 
 				C.Name, 
@@ -59,11 +55,9 @@ class Product_model {
 	}
 
 	public function Save_product($product) {
-		$db = Load_database();
-		
 		$product_id = $product['id'];
 		
-		$db->StartTrans();
+		$this->db->StartTrans();
 
 		if($product_id == -1) {
 			$args = array(	$product['name'], 
@@ -72,11 +66,11 @@ class Product_model {
 							$product['rot_rate']
 						);
 
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				insert into Product (Name, Mass, Volume, Rot_rate) values (?, ?, ?, ?)
 				', $args);
 			
-			$product_id = $db->Insert_ID();
+			$product_id = $this->db->Insert_ID();
 		} else {
 			$args = array(	$product['name'], 
 							$product['mass'],
@@ -85,7 +79,7 @@ class Product_model {
 							$product_id
 						);
 
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				update Product set Name = ?, Mass = ?, Volume = ?, Rot_rate = ? where ID = ?
 				', $args);
 		}
@@ -99,8 +93,8 @@ class Product_model {
 			}
 		}
 
-		$success = !$db->HasFailedTrans();
-		$db->CompleteTrans();
+		$success = !$this->db->HasFailedTrans();
+		$this->db->CompleteTrans();
 		if($success != true)
 			return false;
 
@@ -116,7 +110,6 @@ class Product_model {
 			$category['volume_limit'] = NULL;
 		if(!isset($category['efficiency']) || !is_numeric($category['efficiency']))
 			$category['efficiency'] = NULL;
-		$db = Load_database();
 		$query = 'insert into Product_category(Product_id, Category_ID, Food_nutrition, Container_mass_limit, Container_volume_limit, Tool_efficiency)
 		values(?, ?, ?, ?, ?, ?) on duplicate key update Food_nutrition = ?, Container_mass_limit = ?, Container_volume_limit = ?, Tool_efficiency = ?';
 		$array = array($product_id, 
@@ -130,15 +123,14 @@ class Product_model {
 						$category['volume_limit'],
 						$category['efficiency']
 						);
-		$rs = $db->Execute($query, $array);
+		$rs = $this->db->Execute($query, $array);
 		return $rs;
 	}
 
 	public function Remove_product_category($product_id, $category_id) {
-		$db = Load_database();
 		$query = 'delete from Product_category where Product_ID = ? and Category_ID = ?';
 		$array = array($product_id, $category_id);
-		$rs = $db->Execute($query, $array);
+		$rs = $this->db->Execute($query, $array);
 		return $rs;
 	}
 }

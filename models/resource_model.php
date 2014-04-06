@@ -1,14 +1,12 @@
 <?php
 
-require_once '../models/database.php';
+require_once '../models/model.php';
 
-class Resource_model
+class Resource_model extends Model
 {
 	public function Get_resources()
 	{
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select ID, Name, Measure, Mass, Volume from Resource
 			', array());
 
@@ -29,9 +27,7 @@ class Resource_model
 			return false;
 		}
 		
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select ID, Name, Is_natural, Measure, Mass, Volume from Resource where ID = ?
 			', array($resource_id));
 
@@ -39,7 +35,7 @@ class Resource_model
 			return false;
 		}
 
-		$rs2 = $db->Execute('
+		$rs2 = $this->db->Execute('
 			select C.ID, C.Name, RC.Food_nutrition from Resource_category RC
 			join Category C on C.ID = RC.Category_ID
 			 where Resource_ID = ?
@@ -51,8 +47,6 @@ class Resource_model
 	}
 
 	public function Save_resource($resource) {
-		$db = Load_database();
-		
 		if($resource['is_natural'] == 'true')
 			$resource['is_natural'] = 1;
 		else
@@ -60,7 +54,7 @@ class Resource_model
 
 		$resource_id = $resource['id'];
 		
-		$db->StartTrans();
+		$this->db->StartTrans();
 
 		if($resource_id == -1) {
 			$args = array(	$resource['name'], 
@@ -70,11 +64,11 @@ class Resource_model
 							$resource['volume']
 						);
 
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				insert into Resource (Name, Is_natural, Measure, Mass, Volume) values (?, ?, ?, ?, ?)
 				', $args);
 
-			$resource_id = $db->Insert_ID();
+			$resource_id = $this->db->Insert_ID();
 		} else {
 			$args = array(	$resource['name'], 
 							$resource['is_natural'],
@@ -84,7 +78,7 @@ class Resource_model
 							$resource_id
 						);
 
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				update Resource set Name = ?, Is_natural = ?, Measure = ?, Mass = ?, Volume = ? where ID = ?
 				', $args);
 		}
@@ -95,12 +89,12 @@ class Resource_model
 					$this->Remove_resource_category($resource_id, $category['id']);
 				else
 					if(!$this->Add_resource_category($resource_id, $category))
-						$db->FailTrans();
+						$this->db->FailTrans();
 			}
 		}
 
-		$success = !$db->HasFailedTrans();
-		$db->CompleteTrans();
+		$success = !$this->db->HasFailedTrans();
+		$this->db->CompleteTrans();
 		if($success != true)
 			return false;
 
@@ -108,9 +102,7 @@ class Resource_model
 	}
 	
 	public function Get_measures() {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select ID, Name from Measure
 			', array());
 
@@ -124,19 +116,17 @@ class Resource_model
 	public function Add_resource_category($resource_id, $category) {
 		if(!isset($category['nutrition']) || !is_numeric($category['nutrition']))
 			$category['nutrition'] = NULL;
-		$db = Load_database();
 		$query = 'insert into Resource_category(Resource_id, Category_ID, Food_nutrition)
 		values(?, ?, ?) on duplicate key update Food_nutrition = ?';
 		$array = array($resource_id, $category['id'], $category['nutrition'], $category['nutrition']);
-		$rs = $db->Execute($query, $array);
+		$rs = $this->db->Execute($query, $array);
 		return $rs;
 	}
 
 	public function Remove_resource_category($resource_id, $category_id) {
-		$db = Load_database();
 		$query = 'delete from Resource_category where Resource_ID = ? and Category_ID = ?';
 		$array = array($resource_id, $category_id);
-		$rs = $db->Execute($query, $array);
+		$rs = $this->db->Execute($query, $array);
 		return $rs;
 	}
 }

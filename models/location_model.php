@@ -1,14 +1,12 @@
 <?php
 
-require_once '../models/database.php';
+require_once '../models/model.php';
 
-class Location_model
+class Location_model extends Model
 {
 	public function Change_location_name($actor_ID, $location_ID, $new_name)
 	{
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			insert into Location_name (Name, Actor_ID, Location_ID) values(?, ?, ?)
 			on duplicate key update Name = ?
 			', array($new_name, $actor_ID, $location_ID, $new_name));
@@ -22,9 +20,7 @@ class Location_model
 
 	public function Get_neighbouring_locations($actor_ID)
 	{
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select L.x, L.y from Location L
 			join Actor A on A.Location_ID = L.ID
 			where A.ID = ?
@@ -38,7 +34,7 @@ class Location_model
 		$x = $rs->fields['x'];
 		$y = $rs->fields['y'];
 		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select L.ID, L.x, L.y, LN.Name as Name from Location L
 			left join (
 				select Name, ILN.Location_ID from Location_name ILN
@@ -70,9 +66,7 @@ class Location_model
 	
 	public function Create_location($actor_id, $direction)
 	{
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select L.x, L.y from Location L
 			join Actor A on A.Location_ID = L.ID
 			where A.ID = ?
@@ -96,33 +90,33 @@ class Location_model
 		else
 			return false;
 
-		$db->StartTrans();
+		$this->db->StartTrans();
 		
 		//Create actor inventory
-		$r = $db->Execute('
+		$r = $this->db->Execute('
 			insert into Inventory values()', array());
 		
 		if(!$r) {
-			$db->FailTrans();
+			$this->db->FailTrans();
 		} else {
-			$inventory_ID = $db->Insert_id();
+			$inventory_ID = $this->db->Insert_id();
 		}
 
-		if(!$db->HasFailedTrans()) {
-			$rs = $db->Execute('
+		if(!$this->db->HasFailedTrans()) {
+			$rs = $this->db->Execute('
 				insert into Location (x, y, Inventory_ID) values(?, ?, ?)
 				', array($x, $y, $inventory_ID));
 		}
 
-		$failed = $db->HasFailedTrans();
-		$db->CompleteTrans();
+		$failed = $this->db->HasFailedTrans();
+		$this->db->CompleteTrans();
 		
 		if($failed)
 		{
 			return false;
 		}
 		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select ID from Location where x = ? and y = ?
 			', array($x, $y));
 
@@ -136,8 +130,7 @@ class Location_model
 	
 	public function Get_locations($center_x, $center_y)
 	{
-		$db = Load_database();
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				L.ID,
 				L.X,
@@ -167,9 +160,7 @@ class Location_model
 	
 	public function Get_biomes()
 	{
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select B.ID, B.Name from Biome B
 			', array());
 
@@ -187,9 +178,7 @@ class Location_model
 	
 	public function Get_landscapes()
 	{
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select L.ID, L.Name from Landscape L
 			', array());
 
@@ -207,9 +196,7 @@ class Location_model
 
 	public function Add_biome($name)
 	{
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			insert into Biome(name) values(?)
 			', array($name));
 
@@ -222,9 +209,7 @@ class Location_model
 
 	public function Add_landscape($name)
 	{
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			insert into Landscape(name) values(?)
 			', array($name));
 
@@ -237,9 +222,7 @@ class Location_model
 	
 	public function Get_location($id)
 	{
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select L.ID, L.X, L.Y, L.Biome_ID, B.Name as Biome_name from Location L
 			left join Biome B on L.Biome_ID = B.ID
 			where L.ID = ?
@@ -265,8 +248,6 @@ class Location_model
 
 	public function Get_location_resources($location_id, $landscape = NULL)
 	{
-		$db = Load_database();
-		
 		$query = '
 			select 
 				R.ID, 
@@ -289,7 +270,7 @@ class Location_model
 			$query .= ' order by L.Name ASC';
 		}
 
-		$rs = $db->Execute($query, $args);
+		$rs = $this->db->Execute($query, $args);
 
 		if(!$rs)
 		{
@@ -304,9 +285,7 @@ class Location_model
 
 	public function Set_location_biome($location_id, $biome_id)
 	{
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			update Location set Biome_ID = ? where ID = ?
 			', array($biome_id, $location_id));
 
@@ -318,9 +297,7 @@ class Location_model
 	}
 	public function Add_location_resource($location_id, $resource_id, $landscape_id)
 	{
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			insert into Location_resource(Location_ID, Resource_ID, Landscape_ID) values(?, ?, ?)
 			', array($location_id, $resource_id, $landscape_id));
 
@@ -332,9 +309,7 @@ class Location_model
 	}
 	public function Remove_location_resource($location_id, $resource_id, $landscape_id)
 	{
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			delete from Location_resource where Location_ID=? and Resource_ID = ? and Landscape_ID = ?
 			', array($location_id, $resource_id, $landscape_id));
 
@@ -347,9 +322,7 @@ class Location_model
 
 	public function Landscape_resource_count($location_id, $landscape_id)
 	{
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select count(*) as C from Location_resource where Location_ID=? and Landscape_ID = ?
 			', array($location_id, $landscape_id));
 
@@ -361,9 +334,7 @@ class Location_model
 	}
 	
 	public function Get_max_actors() {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select Value from Count where Name = \'Max_actors\';
 			', array());
 
@@ -375,9 +346,7 @@ class Location_model
 	}
 
 	public function Set_max_actors($value) {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			update Count set Value = ? where Name = \'Max_actors\';
 			', array($value));
 
@@ -389,9 +358,7 @@ class Location_model
 	}
 
 	public function Get_max_actors_account() {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select Value from Count where Name = \'Max_actors_account\';
 			', array());
 
@@ -403,9 +370,7 @@ class Location_model
 	}
 
 	public function Set_max_actors_account($value) {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			update Count set Value = ? where Name = \'Max_actors_account\';
 			', array($value));
 

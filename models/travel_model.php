@@ -1,7 +1,6 @@
 <?php
 
-require_once '../models/database.php';
-require_once "../models/model.php";
+require_once '../models/model.php';
 
 class Travel_model extends Model
 {
@@ -10,15 +9,13 @@ class Travel_model extends Model
 		if($this->Actor_model->Actor_is_alive($actor) == false)
 			return false;
 
-		$db = Load_database();
-
-		$rs = $db->Execute("
+		$rs = $this->db->Execute("
 			select Value from Count where Name = 'Update'
 			");
 		$update = $rs->fields['Value'];
 
-		$db->StartTrans();
-		$rs = $db->Execute('
+		$this->db->StartTrans();
+		$rs = $this->db->Execute('
 			insert into Travel (ActorID, DestinationID, OriginID, X, Y, UpdateTick)
 			select ?, ?, ?, X, Y, ? from Location l where ID = ?
 			', array($actor, $destination, $origin, $update, $origin));
@@ -29,15 +26,13 @@ class Travel_model extends Model
 		$this->Load_model('Project_model');
 		$this->Project_model->Leave_project($actor);
 
-		$success = !$db->HasFailedTrans();
-		$db->CompleteTrans();
+		$success = !$this->db->HasFailedTrans();
+		$this->db->CompleteTrans();
 		return $success;
 	}
 	
 	public function Get_travel_info($actor) {
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				DestinationID,
 				OriginID,
@@ -61,14 +56,12 @@ class Travel_model extends Model
 	}
 
 	public function Get_travels() {
-		$db = Load_database();
-
-		$rs = $db->Execute("
+		$rs = $this->db->Execute("
 			select Value from Count where Name = 'Update'
 			");
 		$update = $rs->fields['Value'];
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				t.ActorID,
 				t.X as CurrentX,
@@ -102,27 +95,21 @@ class Travel_model extends Model
 	}
 
 	public function Tick() {
-		$db = Load_database();
-
-		$rs = $db->Execute("
+		$rs = $this->db->Execute("
 			update Count SET Value=Value+1 Where Name='Update'
 			");
 		return $this->Get_update_count();
 	}
 
 	public function Get_update_count() {
-		$db = Load_database();
-
-		$rs = $db->Execute("
+		$rs = $this->db->Execute("
 			select Value from Count where Name = 'Update'
 			");
 		return $rs->fields['Value'];
 	}
 
 	public function Get_outdated_travel($update) {
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				t.ActorID,
 				t.X as CurrentX,
@@ -138,92 +125,84 @@ class Travel_model extends Model
 		
 		if(!$rs)
 		{
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array();
 		}
 		return $rs->GetArray();
 	}
 	
 	public function Move($moves, $update) {
-		$db = Load_database();
-
-		$db->StartTrans();
+		$this->db->StartTrans();
 		foreach($moves as $move) {
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				update Travel set X = ?, Y = ?, UpdateTick = ?, Has_moved = 1 where ActorID = ?
 				', array($move['x'], $move['y'], $update, $move['actor']));
 			
 			if(!$rs) {
-				$db->FailTrans();
+				$this->db->FailTrans();
 				break;
 			}
 		}
-		if($db->HasFailedTrans()) {
-			echo $db->ErrorMsg();
+		if($this->db->HasFailedTrans()) {
+			echo $this->db->ErrorMsg();
 			$success = false;
 		} else {
 			$success = true;
 		}
-		$db->CompleteTrans();
+		$this->db->CompleteTrans();
 		return $success;
 	}
 
 	public function Arrive($arrives) {
-		$db = Load_database();
-
 		$this->Load_model('Event_model');
-		$db->StartTrans();
+		$this->db->StartTrans();
 		foreach($arrives as $arrive) {
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				update Actor set Location_ID = ? where ID = ?
 				', array($arrive['Destination'], $arrive['Actor']));
 			
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				select DestinationID, OriginID from Travel where ActorID = ?
 				', array($arrive['Actor']));
 
 			$this->Event_model->Save_event('{LNG_Actor_arrived}', $arrive['Actor'], NULL, NULL, $rs->fields['OriginID'], $rs->fields['DestinationID']);
 
-			$rs = $db->Execute('
+			$rs = $this->db->Execute('
 				delete from Travel where ActorID = ?
 				', array($arrive['Actor']));
 
 		}
-		if($db->HasFailedTrans()) {
+		if($this->db->HasFailedTrans()) {
 			$success = false;
 		} else {
 			$success = true;
 		}
-		$db->CompleteTrans();
+		$this->db->CompleteTrans();
 		return $success;
 	}
 	
 	function Cancel_travel($actor_id) {
-		$db = Load_database();
-
 		$this->Load_model('Event_model');
-		$db->StartTrans();
+		$this->db->StartTrans();
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			delete from Travel where ActorID = ? and Has_moved = 0
 			', array($actor_id));
 
-		if($db->HasFailedTrans()) {
+		if($this->db->HasFailedTrans()) {
 			$success = false;
 		} else {
 			$success = true;
 		}
-		$db->CompleteTrans();
+		$this->db->CompleteTrans();
 		return $success;
 	}
 
 	function Turn_around($actor_id) {
-		$db = Load_database();
-
 		$this->Load_model('Event_model');
-		$db->StartTrans();
+		$this->db->StartTrans();
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			update Travel set 
 				DestinationID=(@temp:=DestinationID), 
 				DestinationID = OriginID, 
@@ -231,12 +210,12 @@ class Travel_model extends Model
 			where ActorID = ?
 			', array($actor_id));
 
-		if($db->HasFailedTrans()) {
+		if($this->db->HasFailedTrans()) {
 			$success = false;
 		} else {
 			$success = true;
 		}
-		$db->CompleteTrans();
+		$this->db->CompleteTrans();
 		return $success;
 	}
 }

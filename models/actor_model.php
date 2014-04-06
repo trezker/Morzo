@@ -1,15 +1,12 @@
 <?php
 
 require_once '../models/model.php';
-require_once '../models/database.php';
 
 class Actor_model extends Model
 {
 	public function User_owns_actor($user_id, $actor_id)
 	{
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select ID
 			from Actor A
 			where A.User_ID = ? and A.ID = ?
@@ -28,9 +25,7 @@ class Actor_model extends Model
 	}
 	
 	public function Spawn_actor($location_id) {
-		$db = Load_database();
-		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select count(*)<C.Value as Allow_more_actors from Actor A join Count C on C.Name = \'Max_actors\';
 			', array());
 
@@ -39,7 +34,7 @@ class Actor_model extends Model
 		}
 		
 		//Find location where there's room for more actors
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select LS.Location_ID, LS.Species_ID, LS.Actor_spawn, count(A.ID) as AC from Location_species LS
 			left join Actor A on A.Location_ID = LS.Location_ID and A.Species_ID = LS.Species_ID
 			where A.Health <= 0
@@ -55,34 +50,34 @@ class Actor_model extends Model
 		$location_id = $location_species[0]["Location_ID"];
 		$species_id = $location_species[0]["Species_ID"];
 
-		$db->StartTrans();
+		$this->db->StartTrans();
 		
 		//Create actor inventory
-		$r = $db->Execute('
+		$r = $this->db->Execute('
 			insert into Inventory values()', array());
 		
 		if(!$r) {
-			$db->FailTrans();
+			$this->db->FailTrans();
 		} else {
-			$inventory_ID = $db->Insert_id();
+			$inventory_ID = $this->db->Insert_id();
 		}
 
-		if(!$db->HasFailedTrans()) {
-			$rs = $db->Execute('
+		if(!$this->db->HasFailedTrans()) {
+			$rs = $this->db->Execute('
 				insert into Actor(Location_ID, Species_ID, Inventory_ID)
 				values (?,?,?)
 				', array($location_id, $species_id, $inventory_ID));
 		}
 
-		$failed = $db->HasFailedTrans();
-		$db->CompleteTrans();
+		$failed = $this->db->HasFailedTrans();
+		$this->db->CompleteTrans();
 		
 		if($failed)
 		{
 			return false;
 		}
 
-		$from_actor_id = $db->Insert_id();
+		$from_actor_id = $this->db->Insert_id();
 		$this->Load_model('Event_model');
 		$this->Event_model->Save_event("{LNG_Actor_born}", $from_actor_id, NULL);
 		return true;
@@ -95,10 +90,9 @@ class Actor_model extends Model
 	}
 
 	private function Process_dead() {
-		$db = Load_database();
-		//$db->debug = true;
+		//$this->db->debug = true;
 		//Put all objects on the actors location
-		$db->StartTrans();
+		$this->db->StartTrans();
 		$sql = "
 			update Object O set O.Inventory_ID = (
 				select ifnull(O.Inventory_ID, L.Inventory_ID) as Location_inventory
@@ -109,11 +103,11 @@ class Actor_model extends Model
 			)
 			where O.Inventory_ID in (select AO.Inventory_ID from Actor AO where AO.Health <= 0)
 		";
-		$rs = $db->Execute($sql);
+		$rs = $this->db->Execute($sql);
 
 		//Put all resources on actors location
 		$this->Load_model('Inventory_model');
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select A.ID, S.Corpse_product_ID from Actor A
 			join Species S on S.ID = A.Species_ID
 			where Health <= 0
@@ -131,14 +125,14 @@ class Actor_model extends Model
 			//Create corpse
 			$query = 'insert into Object (Product_ID, Inventory_ID, Quality, Rot) values(?, ?, 1, 0)';
 			$args = array($actor['Corpse_product_ID'], $inventories['Location_inventory']);
-			$rs = $db->Execute($query, $args);
-			$corpse_object_ID = $db->Insert_id();
+			$rs = $this->db->Execute($query, $args);
+			$corpse_object_ID = $this->db->Insert_id();
 
 			$query = 'update Actor set Corpse_object_ID = ?, Hunt_ID = NULL, Project_ID = NULL where ID = ?';
 			$args = array($corpse_object_ID, $actor['ID']);
-			$rs = $db->Execute($query, $args);
+			$rs = $this->db->Execute($query, $args);
 
-			$rs = $db->Execute('delete from Travel where ActorID = ?', array($actor['ID']));
+			$rs = $this->db->Execute('delete from Travel where ActorID = ?', array($actor['ID']));
 		}
 		
 		//Purge dead actors with no remaining restrictions.
@@ -148,10 +142,10 @@ class Actor_model extends Model
 			where Actor.Health <= 0 and Actor.Corpse_object_ID is null and Event.ID is null
 			';
 		$args = array();
-		$rs = $db->Execute($query, $args);
+		$rs = $this->db->Execute($query, $args);
 		
-		$failed = $db->HasFailedTrans();
-		$db->CompleteTrans();
+		$failed = $this->db->HasFailedTrans();
+		$this->db->CompleteTrans();
 		
 		if($failed) {
 			return false;
@@ -160,12 +154,11 @@ class Actor_model extends Model
 	}
 	
 	private function Process_vitality() {
-		$db = Load_database();
 		$query = 'update Actor set Health = Health - 1 where Hunger >= 128 and Health > 0';
 		$args = array();
-		$rs = $db->Execute($query, $args);
+		$rs = $this->db->Execute($query, $args);
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 		}
 
 		//Should be done after starvation, because additional actors may die. But before regeneration to stop the dead from getting better.
@@ -173,28 +166,27 @@ class Actor_model extends Model
 
 		$query = 'update Actor set Health = Health + 1 where Hunger < 128 and Health < 128 and Health > 0';
 		$args = array();
-		$rs = $db->Execute($query, $args);
+		$rs = $this->db->Execute($query, $args);
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 		}
 
 		$query = 'update Actor set Hunger = Hunger + 1 where Hunger < 128';
 		$args = array();
-		$rs = $db->Execute($query, $args);
+		$rs = $this->db->Execute($query, $args);
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 		}
 	}
 	
 	private function Process_eating() {
-		$db = Load_database();
 		$this->Load_model('Event_model');
-		$db->StartTrans();
+		$this->db->StartTrans();
 		
 		//Select all Actors with more than 8 hunger. They haven't eaten manually lately.
 		$query = "select ID, Hunger, Health, Inventory_ID from Actor where Hunger > 8 and Health <= 0";
 		$args = array();
-		$hungry_actors = $db->Execute($query, $args);
+		$hungry_actors = $this->db->Execute($query, $args);
 
 		foreach ($hungry_actors as $hungry_actor) {
 			$query = "
@@ -211,7 +203,7 @@ class Actor_model extends Model
 				order by Efficiency asc
 			";
 			$args = array($hungry_actor['Inventory_ID'], $hungry_actor['Inventory_ID']);
-			$rs = $db->Execute($query, $args);
+			$rs = $this->db->Execute($query, $args);
 
 			$food_names = "";
 			$hunger = $hungry_actor['Hunger'];
@@ -232,18 +224,18 @@ class Actor_model extends Model
 							delete from Inventory_resource where Resource_ID = ? and Inventory_ID = ?
 						";
 						$args = array($r['ID'], $hungry_actor['Inventory_ID']);
-						$rs = $db->Execute($query, $args);
+						$rs = $this->db->Execute($query, $args);
 						if(!$rs) {
-							echo $db->ErrorMsg();
+							echo $this->db->ErrorMsg();
 						}
 					} else {
 						$query = "
 							update Inventory_resource set Amount = ? where Resource_ID = ? and Inventory_ID = ?
 						";
 						$args = array($r['Amount'] - ($consume_nutrition / $r['Nutrition']), $r['ID'], $hungry_actor['Inventory_ID']);
-						$rs = $db->Execute($query, $args);
+						$rs = $this->db->Execute($query, $args);
 						if(!$rs) {
-							echo $db->ErrorMsg();
+							echo $this->db->ErrorMsg();
 						}
 					}
 				}
@@ -258,23 +250,22 @@ class Actor_model extends Model
 				update Actor set Hunger = ? where ID = ?
 			";
 			$args = array($hunger, $hungry_actor['ID']);
-			$rs = $db->Execute($query, $args);
+			$rs = $this->db->Execute($query, $args);
 			if($hunger < $hungry_actor['Hunger']) {
 				$this->Event_model->Save_event("{LNG_Actor_ate} ", $hungry_actor['ID'], NULL, $food_names, NULL, NULL, true);
 			}
 		}
-		$success = !$db->HasFailedTrans();
-		$db->CompleteTrans();
+		$success = !$this->db->HasFailedTrans();
+		$this->db->CompleteTrans();
 		if($success == false) {
 			echo "Actor eating update has failed.";
 		}
 	}
 	
 	public function Request_actor($user_id) {
-		$db = Load_database();
-		//$db->debug = true;
+		//$this->db->debug = true;
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select count(*) >= U.Max_actors as Max_actors_reached, U.Max_actors
 			from Actor A 
 			join User U on U.ID = A.User_ID
@@ -289,7 +280,7 @@ class Actor_model extends Model
 			return array('success' => false, 'reason' => 'Reached max number of actors');
 		}
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			update Actor A
 			set A.User_ID = ?
 			where A.User_ID is null and A.Inhabitable = true and A.Health > 0
@@ -300,7 +291,7 @@ class Actor_model extends Model
 		if(!$rs) {
 			return array('success' => false, 'reason' => 'Database failure');
 		}
-		if($db->Affected_Rows() == 1) {
+		if($this->db->Affected_Rows() == 1) {
 			return array('success' => true);
 		}
 
@@ -308,9 +299,7 @@ class Actor_model extends Model
 	}
 
 	public function Get_users_actor_limit($user_id) {
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select count(*) >= U.Max_actors as Max_actors_reached, U.Max_actors, count(*) as Num_actors
 			from Actor A 
 			join User U on U.ID = A.User_ID
@@ -325,10 +314,9 @@ class Actor_model extends Model
 	}
 	
 	public function Get_actors($user_id) {
-		$db = Load_database();
-		//$db->debug = true;
+		//$this->db->debug = true;
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select A.ID, AN.Name
 			from Actor A
 			left join Actor_name AN on A.ID = AN.Named_actor_ID and A.ID = AN.Actor_ID
@@ -348,9 +336,7 @@ class Actor_model extends Model
 	}
 
 	public function Get_actor($actor_id) {
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select 
 				AN.Name as Name, 
 				LN.Name as Location, 
@@ -384,9 +370,7 @@ class Actor_model extends Model
 	}
 	
 	public function Actor_is_alive($actor_ID) {		
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select ID from Actor where Health > 0 and ID = ?
 			', array($actor_ID));
 		
@@ -397,9 +381,7 @@ class Actor_model extends Model
 	}
 	
 	public function Change_actor_name($actor_ID, $named_actor_ID, $new_name) {
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			insert into Actor_name(Named_actor_ID, Actor_ID, Name) values(?, ?, ?)
 			on duplicate key update Name = ?
 			', array($named_actor_ID, $actor_ID, $new_name, $new_name));
@@ -411,9 +393,7 @@ class Actor_model extends Model
 	}
 	
 	public function Get_visible_actors($actor_ID) {
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select A.ID, AN.Name
 			from Actor Me
 			join Actor A on not Me.ID = A.ID and (Me.Inside_object_ID is NULL and A.Inside_object_ID is NULL and Me.Location_ID = A.Location_ID)
@@ -435,8 +415,6 @@ class Actor_model extends Model
 	}
 	
 	public function Get_containers_on_location($actor_id) {
-		$db = Load_database();
-
 		$sql = '
 				select
 					O.ID,
@@ -452,10 +430,10 @@ class Actor_model extends Model
 				where A.ID = ?
 				';
 
-		$rs = $db->Execute($sql, array($actor_id));
+		$rs = $this->db->Execute($sql, array($actor_id));
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return false;
 		}
 
@@ -463,10 +441,9 @@ class Actor_model extends Model
 	}
 	
 	public function Get_actor_and_location_inventory($actor_id) {
-		$db = Load_database();
-		//$db->debug = true;
+		//$this->db->debug = true;
 		
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				A.Inventory_ID as Actor_inventory,
 				ifnull(O.Inventory_ID, L.Inventory_ID) as Location_inventory
@@ -484,15 +461,14 @@ class Actor_model extends Model
 	}
 
 	public function Enter_object($actor_id, $object_id) {
-		$db = Load_database();
-		//$db->debug = true;
+		//$this->db->debug = true;
 		
-		$db->StartTrans();
+		$this->db->StartTrans();
 
 		//I will need information about the state to generate an event about moving locations
 		//The object is either found while I'm not in an object or the object has to be inside the object I'm in.
 		//OO checks that the object is a container, later on check for sufficient capacity.
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				OO.Inventory_ID
 			from Actor A
@@ -504,20 +480,20 @@ class Actor_model extends Model
 			', array($actor_id, $object_id));
 		
 		if(!$rs) {
-			$db->FailTrans();
-			$db->CompleteTrans();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
 			return array('success' => false, 'data' => 'Query error');
 		}
 		if($rs->RecordCount() !== 1) {
-			$db->FailTrans();
-			$db->CompleteTrans();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
 			return array('success' => false, 'data' => 'Not allowed');
 		}
 
 		$this->Load_model('Inventory_model');
 		if(!$this->Inventory_model->Is_inventory_accessible($actor_id, $rs->fields['Inventory_ID'])) {
-			$db->FailTrans();
-			$db->CompleteTrans();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
 			return array('success' => false, 'data' => 'Inventory not accessible');
 		}
 
@@ -525,12 +501,12 @@ class Actor_model extends Model
 		$this->Load_model('Event_model');
 		$r = $this->Event_model->Save_event('{LNG_Actor_entered_object}', $actor_id, NULL, $object_name, NULL, NULL, false, $object_id);
 		if(!$r) {
-			$db->FailTrans();
-			$db->CompleteTrans();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
 			return array('success' => false, 'data' => 'Failed to generate event');
 		}
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			update Actor set Inside_object_ID = ? where ID = ?
 			'
 			, array($object_id, $actor_id));
@@ -538,8 +514,8 @@ class Actor_model extends Model
 		$this->Load_model('Project_model');
 		$this->Project_model->Leave_project($actor_id);
 		
-		$success = !$db->HasFailedTrans();
-		$db->CompleteTrans();
+		$success = !$this->db->HasFailedTrans();
+		$this->db->CompleteTrans();
 		if(!$success) {
 			return array('success' => false, 'data' => 'Database error');
 		}
@@ -547,10 +523,9 @@ class Actor_model extends Model
 	}
 
 	public function Leave_object($actor_id) {
-		$db = Load_database();
-		//$db->debug = true;
+		//$this->db->debug = true;
 		
-		$db->StartTrans();
+		$this->db->StartTrans();
 
 		//Will get either an Object_ID or Location_ID, the other will be null
 		$sql = '
@@ -568,32 +543,32 @@ class Actor_model extends Model
 				where A.ID = ?
 				';
 
-		$rs = $db->Execute($sql, array($actor_id));
+		$rs = $this->db->Execute($sql, array($actor_id));
 		if(!$rs) {
-			$db->FailTrans();
-			$db->CompleteTrans();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
 			return array('success' => false, 'reason' => 'Database error');
 		}
 		if($rs->RecordCount() !== 1) {
-			$db->FailTrans();
-			$db->CompleteTrans();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
 			return array('success' => false, 'data' => 'Not inside an object');
 		}
 		$from_object_id = $rs->fields['From_object_ID'];
 		$this->Load_model('Inventory_model');
 
 		if($this->Inventory_model->Is_object_locked($from_object_id)) {
-			$db->FailTrans();
-			$db->CompleteTrans();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
 			return array('success' => false, 'data' => 'Locked');
 		}
 
 		if($rs->fields['Object_ID']) {
-			$rs = $db->Execute('update Actor set Inside_object_ID = ? where ID = ?', array($rs->fields['Object_ID'], $actor_id));
+			$rs = $this->db->Execute('update Actor set Inside_object_ID = ? where ID = ?', array($rs->fields['Object_ID'], $actor_id));
 		} else {
-			$rs = $db->Execute('update Actor set Inside_object_ID = NULL, Location_ID = ? where ID = ?', array($rs->fields['Location_ID'], $actor_id));
+			$rs = $this->db->Execute('update Actor set Inside_object_ID = NULL, Location_ID = ? where ID = ?', array($rs->fields['Location_ID'], $actor_id));
 		}
-		$success = !$db->HasFailedTrans();
+		$success = !$this->db->HasFailedTrans();
 		if(!$success)
 			echo "s: " .$success;
 
@@ -601,16 +576,16 @@ class Actor_model extends Model
 		$this->Load_model('Event_model');
 		$r = $this->Event_model->Save_event('{LNG_Actor_left_object}', $actor_id, NULL, $object_name, NULL, NULL, false, $from_object_id);
 		if(!$r) {
-			$db->FailTrans();
-			$db->CompleteTrans();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
 			return array('success' => false, 'data' => 'Failed to generate event');
 		}
 
 		$this->Load_model('Project_model');
 		$this->Project_model->Leave_project($actor_id);
 		
-		$success = !$db->HasFailedTrans();
-		$db->CompleteTrans();
+		$success = !$this->db->HasFailedTrans();
+		$this->db->CompleteTrans();
 		if(!$success) {
 			return array('success' => false, 'data' => 'Database error');
 		}

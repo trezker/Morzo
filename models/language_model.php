@@ -1,8 +1,8 @@
 <?php
 
-require_once '../models/database.php';
+require_once '../models/model.php';
 
-class Language_model
+class Language_model extends Model
 {
 	public function Translate_event($event, $actor_id)
 	{
@@ -21,7 +21,6 @@ class Language_model
 
 	public function Translate_handle($handle)
 	{
-		$db = Load_database();
 		$cleanhandle = trim($handle);
 		$cleanhandle = substr($cleanhandle, 1, strlen($cleanhandle)-2);
 		$query = '
@@ -29,7 +28,7 @@ class Language_model
 				Text
 			FROM Translation
 			WHERE Handle = ? AND Language_ID = ?';
-		$rs = $db->Execute($query, array($cleanhandle, 1));
+		$rs = $this->db->Execute($query, array($cleanhandle, 1));
 		if(!$rs) 
 		{
 			return $handle;
@@ -52,14 +51,12 @@ class Language_model
 	}
 	
 	public function Get_languages(){
-		$db = Load_database();
-
 		$query = '
 			SELECT
 				ID,
 				Name
 			FROM Language';
-		$rs = $db->Execute($query, array());
+		$rs = $this->db->Execute($query, array());
 		if(!$rs){
 			return false;
 		}
@@ -68,8 +65,6 @@ class Language_model
 	}
 	
 	public function Get_translations_for_translator($target_language){
-		$db = Load_database();
-
 		$query = '
 			SELECT
 				e.Handle,
@@ -80,7 +75,7 @@ class Language_model
 			WHERE e.Language_ID = 1
 			ORDER BY e.Handle
 			';
-		$rs = $db->Execute($query, array($target_language));
+		$rs = $this->db->Execute($query, array($target_language));
 		if(!$rs){
 			return false;
 		}
@@ -89,15 +84,13 @@ class Language_model
 	}
 	
 	public function Save_translation($language_id, $handle, $text){
-		$db = Load_database();
-
 		$query = '
 			INSERT INTO Translation (Language_ID, Handle, Text)
 			VALUES (?, ?, ?)
 			ON DUPLICATE KEY
 			UPDATE Text = ?
 			';
-		$rs = $db->Execute($query, array($language_id, $handle, $text, $text));
+		$rs = $this->db->Execute($query, array($language_id, $handle, $text, $text));
 		if(!$rs){
 			return false;
 		}
@@ -106,13 +99,11 @@ class Language_model
 	}
 
 	public function New_translation($handle, $text){
-		$db = Load_database();
-
 		$query = '
 			INSERT INTO Translation (Language_ID, Handle, Text)
 			VALUES (1, ?, ?)
 			';
-		$rs = $db->Execute($query, array($handle, $text));
+		$rs = $this->db->Execute($query, array($handle, $text));
 		if(!$rs){
 			return false;
 		}

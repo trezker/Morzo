@@ -1,14 +1,11 @@
 <?php
 
 require_once '../models/model.php';
-require_once '../models/database.php';
 
 class Inventory_model extends Model
 {
 	private function Get_inventory_resources($id) {
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				I.ID,
 				I.Resource_ID,
@@ -24,7 +21,7 @@ class Inventory_model extends Model
 			', array($id));
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return false;
 		}
 		return $rs->getArray();
@@ -33,12 +30,11 @@ class Inventory_model extends Model
 	public function Transfer_resource($from_id, $to_id, $resource_id, $amount, $amount_in_units = false) {
 		$error = NULL;
 				
-		$db = Load_database();
-		//$db->debug = true;
+		//$this->db->debug = true;
 		
-		$db->StartTrans();
+		$this->db->StartTrans();
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				IR.Amount,
 				R.Mass,
@@ -55,9 +51,9 @@ class Inventory_model extends Model
 			', array($resource_id, $from_id, $to_id));
 
 		if(!$rs || $rs->RecordCount() != 2) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			$error = "Query broken or inventory missing";
-			$db->FailTrans();
+			$this->db->FailTrans();
 		} else {
 			$from_row = NULL;
 			$to_row = NULL;
@@ -94,49 +90,49 @@ class Inventory_model extends Model
 			$from_result_units = $from_row['Amount'] - $amount_units;
 	        if($from_result_units < 0) {
 				$error = "Not enough in source to transfer";
-				$db->FailTrans();
+				$this->db->FailTrans();
 			}
 			elseif($to_row['Mass_limit'] != NULL and $result_units > $to_row['Mass_limit'] / $mass_factor) {
 				$error = "Transfer would exceed mass limit of destination";
-				$db->FailTrans();
+				$this->db->FailTrans();
 			}
 			elseif($to_row['Volume_limit'] != NULL and $result_units > $to_row['Volume_limit'] / $volume_factor) {
 				$error = "Transfer would exceed volume limit of destination";
-				$db->FailTrans();
+				$this->db->FailTrans();
 			}
-			if(!$db->HasFailedTrans()) {
+			if(!$this->db->HasFailedTrans()) {
 				if($from_result_units <= 0) {
-					$rs = $db->Execute('
+					$rs = $this->db->Execute('
 						delete from Inventory_resource
 						where Inventory_ID = ? and Resource_ID = ?
 						', array($from_id, $resource_id));
 				} else {
-					$rs = $db->Execute('
+					$rs = $this->db->Execute('
 						update Inventory_resource set Amount = ?
 						where Inventory_ID = ? and Resource_ID = ?
 						', array($from_result_units, $from_id, $resource_id));
 				}
 
 				if(!$rs) {
-					$error = $db->ErrorMsg();
-					$db->FailTrans();
+					$error = $this->db->ErrorMsg();
+					$this->db->FailTrans();
 				} else {
-					$rs = $db->Execute('
+					$rs = $this->db->Execute('
 						insert into Inventory_resource (Inventory_ID, Resource_ID, Amount)
 						values (?, ?, ?)
 						on duplicate key update Amount = ?
 						', array($to_id, $resource_id, $result_units, $result_units));
 
 					if(!$rs) {
-						$error = $db->ErrorMsg();
-						$db->FailTrans();
+						$error = $this->db->ErrorMsg();
+						$this->db->FailTrans();
 					}
 				}
 			}
 		}
 
-		$success = !$db->HasFailedTrans();
-		$db->CompleteTrans();
+		$success = !$this->db->HasFailedTrans();
+		$this->db->CompleteTrans();
 		if($success != true)
 			return array("success" => false, "error" => $error);
 
@@ -144,9 +140,7 @@ class Inventory_model extends Model
 	}
 	
 	public function Transfer_product($from_id, $to_id, $product_id, $amount) {
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			update Object O
 			set O.Inventory_ID = ?
 			where O.Inventory_ID = ? and O.Product_ID = ?
@@ -170,21 +164,20 @@ class Inventory_model extends Model
 		 * The actor will have to move a container out of its parent in order to access its contents.
 		 * */
 		 
-		$db = Load_database();
-		$db->StartTrans();
-		//$db->debug = true;
+		$this->db->StartTrans();
+		//$this->db->debug = true;
 
 		if(!$this->Is_inventory_accessible($actor_id, $inventory_id)) {
-			$db->FailTrans();
-			$db->CompleteTrans();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
 			return array("success" => false, "error" => "Inaccessible target inventory");
 		}
 
 		if($resources) {
 			foreach($resources as $resource) {
 				if(!$this->Is_inventory_accessible($actor_id, $resource['inventory_id'])) {
-					$db->FailTrans();
-					$db->CompleteTrans();
+					$this->db->FailTrans();
+					$this->db->CompleteTrans();
 					return array("success" => false, "error" => "Inaccessible source inventory");
 				}
 					
@@ -195,8 +188,8 @@ class Inventory_model extends Model
 		if($products) {
 			foreach($products as $product) {
 				if(!$this->Is_inventory_accessible($actor_id, $product['inventory_id'])) {
-					$db->FailTrans();
-					$db->CompleteTrans();
+					$this->db->FailTrans();
+					$this->db->CompleteTrans();
 					return array("success" => false, "error" => "Inaccessible source inventory");
 				}
 				$this->Transfer_product($product['inventory_id'], $inventory_id, $product['product_id'], $product['amount']);
@@ -209,8 +202,8 @@ class Inventory_model extends Model
 		if($actor['Project_ID'] !== NULL)
 			$this->Project_model->Update_project_active_state($actor['Project_ID']);
 
-		$success = !$db->HasFailedTrans();
-		$db->CompleteTrans();
+		$success = !$this->db->HasFailedTrans();
+		$this->db->CompleteTrans();
 		if($success != true)
 			return array("success" => false, "error" => $error);
 
@@ -218,7 +211,6 @@ class Inventory_model extends Model
 	}
 	
 	public function Is_inventory_accessible($actor_id, $inventory_id) {
-		$db = Load_database();
 		$sql = '
 				select A.ID
 					from Actor A
@@ -235,7 +227,7 @@ class Inventory_model extends Model
 					) and not exists(select OL.ID from Object_lock OL where OL.Attached_object_ID = O.ID and OL.Is_locked = true)
 			';
 		$args = array($actor_id, $inventory_id, $inventory_id, $inventory_id, $inventory_id);
-		$rs = $db->Execute($sql, $args);
+		$rs = $this->db->Execute($sql, $args);
 		if(!$rs || $rs->RecordCount() == 0) {
 			return false;
 		}
@@ -243,8 +235,6 @@ class Inventory_model extends Model
 	}
 	
 	public function Get_inventory_product_objects($actor_id, $inventory_id, $product_id) {
-		$db = Load_database();
-
 		if(!$this->Is_inventory_accessible($actor_id, $inventory_id)) {
 			return false;
 		}
@@ -267,7 +257,7 @@ class Inventory_model extends Model
 				where O.Inventory_ID = ? and O.Product_ID = ?
 			';
 		$args = array($inventory_id, $product_id);
-		$rs = $db->Execute($sql, $args);
+		$rs = $this->db->Execute($sql, $args);
 		if(!$rs) {
 			return false;
 		}
@@ -275,9 +265,7 @@ class Inventory_model extends Model
 	}
 
 	public function Get_inventory($inventory_id) {
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				I.ID,
 				I.Inventory_ID,
@@ -294,14 +282,14 @@ class Inventory_model extends Model
 			, array($inventory_id));
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return false;
 		}
 
 		$result = array();
 		$result['resources'] = $rs->getArray();
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				P.ID,
 				O.Inventory_ID,
@@ -314,7 +302,7 @@ class Inventory_model extends Model
 			', array($inventory_id));
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return false;
 		}
 
@@ -324,9 +312,7 @@ class Inventory_model extends Model
 	}
 
 	public function Label_object($actor_id, $object_id, $label) {
-		$db = Load_database();
-
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				Inventory_ID
 			from Object
@@ -334,7 +320,7 @@ class Inventory_model extends Model
 			, array($object_id));
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array('success' => false, 'reason' => 'Database error');
 		}
 
@@ -342,10 +328,10 @@ class Inventory_model extends Model
 			return array('success' => false, 'reason' => 'Inventory not accessible');
 		}
 
-		$rs = $db->Execute('update Object set Label = ? where ID = ?', array($label, $object_id));
+		$rs = $this->db->Execute('update Object set Label = ? where ID = ?', array($label, $object_id));
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array('success' => false, 'reason' => 'Database error');
 		}
 
@@ -357,10 +343,8 @@ class Inventory_model extends Model
 		if($this->Actor_model->Actor_is_alive($actor_id) == false)
 			return false;
 
-		$db = Load_database();
-
 		//Check access to object
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				Inventory_ID
 			from Object
@@ -368,7 +352,7 @@ class Inventory_model extends Model
 			, array($object_id));
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array('success' => false, 'reason' => 'Database error');
 		}
 
@@ -377,7 +361,7 @@ class Inventory_model extends Model
 		}
 
 		//Check access to lock object
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				Inventory_ID
 			from Object
@@ -385,7 +369,7 @@ class Inventory_model extends Model
 			, array($lock_id));
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array('success' => false, 'reason' => 'Database error');
 		}
 
@@ -393,14 +377,14 @@ class Inventory_model extends Model
 			return array('success' => false, 'reason' => 'Inventory not accessible');
 		}
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 							update Object_lock OL
 							join Object O on O.ID = OL.Object_ID
 							set OL.Attached_object_ID = ?, O.Inventory_ID = NULL
 							where OL.Object_ID = ?', array($object_id, $lock_id));
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array('success' => false, 'reason' => 'Database error');
 		}
 
@@ -412,10 +396,8 @@ class Inventory_model extends Model
 		if($this->Actor_model->Actor_is_alive($actor_id) == false)
 			return false;
 
-		$db = Load_database();
-
 		//Check access to object
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				O.Inventory_ID,
 				A.Inventory_ID as Actor_inventory
@@ -425,7 +407,7 @@ class Inventory_model extends Model
 			, array($object_id, $actor_id));
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array('success' => false, 'reason' => 'Database error');
 		}
 
@@ -434,7 +416,7 @@ class Inventory_model extends Model
 		}
 
 		if($lockside == 'false') {
-			$rs2 = $db->Execute('
+			$rs2 = $this->db->Execute('
 				select
 					Object_ID
 				from Object_lock
@@ -449,14 +431,14 @@ class Inventory_model extends Model
 			$lock_id = $object_id;
 		}
 
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 							update Object_lock OL
 							join Object O on O.ID = OL.Object_ID
 							set OL.Attached_object_ID = NULL, O.Inventory_ID = ?
 							where OL.Object_ID = ?', array($rs->fields['Actor_inventory'], $lock_id));
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array('success' => false, 'reason' => 'Database error');
 		}
 
@@ -468,10 +450,8 @@ class Inventory_model extends Model
 		if($this->Actor_model->Actor_is_alive($actor_id) == false)
 			return false;
 
-		$db = Load_database();
-
 		//Check access to object
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				Inventory_ID
 			from Object
@@ -479,7 +459,7 @@ class Inventory_model extends Model
 			, array($object_id));
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array('success' => false, 'reason' => 'Database error');
 		}
 
@@ -504,18 +484,18 @@ class Inventory_model extends Model
 						) t
 					)
 					';
-			$rs = $db->Execute($sql, array($object_id, $actor_id));
+			$rs = $this->db->Execute($sql, array($object_id, $actor_id));
 		} else {
 			/* TODO: unlock a specific lock object
 			$sql = 'update Object_lock ol
 					join Object_key ok on ok.Key_form_ID = ol.Key_form_ID
 					set Is_locked = true where ol.Object_ID = ?';
-			$rs = $db->Execute($sql, array($object_id));
+			$rs = $this->db->Execute($sql, array($object_id));
 			*/
 		}
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array('success' => false, 'reason' => 'Database error');
 		}
 
@@ -527,10 +507,8 @@ class Inventory_model extends Model
 		if($this->Actor_model->Actor_is_alive($actor_id) == false)
 			return false;
 
-		$db = Load_database();
-
 		//Check access to object
-		$rs = $db->Execute('
+		$rs = $this->db->Execute('
 			select
 				Inventory_ID
 			from Object
@@ -538,7 +516,7 @@ class Inventory_model extends Model
 			, array($object_id));
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array('success' => false, 'reason' => 'Database error');
 		}
 
@@ -563,18 +541,18 @@ class Inventory_model extends Model
 						) t
 					)
 					';
-			$rs = $db->Execute($sql, array($object_id, $actor_id));
+			$rs = $this->db->Execute($sql, array($object_id, $actor_id));
 		} else {
 			/* TODO: unlock a specific lock object
 			$sql = 'update Object_lock ol
 					join Object_key ok on ok.Key_form_ID = ol.Key_form_ID
 					set Is_locked = true where ol.Object_ID = ?';
-			$rs = $db->Execute($sql, array($object_id));
+			$rs = $this->db->Execute($sql, array($object_id));
 			*/
 		}
 		
 		if(!$rs) {
-			echo $db->ErrorMsg();
+			echo $this->db->ErrorMsg();
 			return array('success' => false, 'reason' => 'Database error');
 		}
 
@@ -582,8 +560,6 @@ class Inventory_model extends Model
 	}
 	
 	public function Get_object_name($object_id) {
-		$db = Load_database();
-
 		$sql = '
 				select
 					O.Label,
@@ -593,7 +569,7 @@ class Inventory_model extends Model
 				where O.ID = ?
 			';
 		$args = array($object_id);
-		$rs = $db->Execute($sql, $args);
+		$rs = $this->db->Execute($sql, $args);
 		if(!$rs) {
 			return false;
 		}
@@ -604,8 +580,6 @@ class Inventory_model extends Model
 	}
 
 	public function Is_object_locked($object_id) {
-		$db = Load_database();
-
 		$sql = '
 				select
 					L.ID
@@ -613,7 +587,7 @@ class Inventory_model extends Model
 				where L.Attached_object_ID = ? and L.Is_locked = true
 			';
 		$args = array($object_id);
-		$rs = $db->Execute($sql, $args);
+		$rs = $this->db->Execute($sql, $args);
 		if(!$rs || $rs->RecordCount() > 0) {
 			return true; //We shouldn't take any chances with letting people get access just because the code is broken.
 		}
