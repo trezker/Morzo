@@ -7,6 +7,10 @@ class Controller {
 		$this->mvcfactory = $mvcfactory;
 	}
 	
+	function MVCFactory() {
+		return $this->mvcfactory;
+	}
+	
 	public function Load_model($model) {
 		$this->$model = $this->mvcfactory->Load_model($model);
 	}

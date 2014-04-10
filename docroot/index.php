@@ -121,10 +121,11 @@ else
 				$mvcfactory = new MVCFactory($db);
 				$obj = new $controller_name($mvcfactory);
 
+				$response = null;
 				if(count($argv)<3)
 				{
 					session_start();
-					$obj->Index();
+					$response = $obj->Index();
 				}
 				else if(!method_exists($obj, $argv[2]))
 				{
@@ -139,7 +140,16 @@ else
 					if(method_exists($obj, 'Before_page_load')) {
 						call_user_func_array(array($obj, 'Before_page_load'), array());
 					}
-					call_user_func_array(array($obj, $argv[2]), $funcargs);
+					$response = call_user_func_array(array($obj, $argv[2]), $funcargs);
+				}
+				if(is_array($response) === true) {
+					if($response["type"] === "view") {
+						echo $mvcfactory->Load_view($response["view"], $response["data"]);
+					}
+					elseif($response["type"] === "json") {
+						header('Content-type: application/json');
+						echo json_encode($response["data"]);
+					}
 				}
 			}
 		}

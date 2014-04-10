@@ -180,11 +180,14 @@ class User extends Base
 		session_destroy();
 	}
 	
-	public function Logout()
-	{
-		header('Content-type: application/json');
+	public function Logout() {
 		$this->Kick_user();
-		echo json_encode(array('success' => true));
+		return array(
+			"type" => "json", 
+			"data" => array(
+				"success" => true
+			)
+		);
 	}
 	
 	public function Settings() {
