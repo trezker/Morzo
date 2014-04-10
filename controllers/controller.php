@@ -1,44 +1,25 @@
 <?php
 
-class Controller
-{
-	private $db = null;
+class Controller {
+	private $mvcfactory = null;
 	
-	function __construct($database) {
-		$this->db = $database;
+	function __construct($mvcfactory) {
+		$this->mvcfactory = $mvcfactory;
 	}
 	
-	public function Load_model($model)
-	{
-		if(isset($this->$model))
-			return;
-		require_once "../models/".strtolower($model).".php";
-		$this->$model = new $model($this->db);
+	public function Load_model($model) {
+		$this->$model = $this->mvcfactory->Load_model($model);
 	}
 
-	public function Load_controller($controller)
-	{
-		if(isset($this->$controller))
-			return;
-		require_once "../controllers/".strtolower($controller).".php";
-		$this->$controller = new $controller($this->db);
+	public function Load_controller($controller) {
+		$this->$controller = $this->mvcfactory->Load_controller($controller);
 	}
 
-	public function Load_view($view, $data = array(), $return = false)
-	{
-		foreach($data as $key => $value) {
-			$$key = $value;
-		}
-		ob_start();
-		include "../views/".strtolower($view).".php";
-		$result = ob_get_clean();
-		$this->Load_model("Language_model");
-		$result = $this->Language_model->Translate_tokens($result);
+	public function Load_view($view, $data = array(), $return = false) {
+		$result = $this->mvcfactory->Load_view($view, $data);
 		if($return == true)
 			return $result;
 		else
 			echo $result;
 	}
 }
-
-

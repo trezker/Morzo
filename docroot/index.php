@@ -16,6 +16,7 @@ $GLOBALS['base_url'] = $base_url;
 require_once '../util/htmltemplate.php';
 require_once '../util/log.php';
 require_once '../util/database.php';
+require_once '../framework/mvcfactory.php';
 require_once '../config.php';
 
 if (empty($_SERVER['PATH_INFO'])) {
@@ -117,7 +118,8 @@ else
 			else
 			{
 				$db = Create_database_connection($config['database']['default']);
-				$obj = new $controller_name($db);
+				$mvcfactory = new MVCFactory($db);
+				$obj = new $controller_name($mvcfactory);
 
 				if(count($argv)<3)
 				{
