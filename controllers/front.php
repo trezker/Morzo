@@ -5,8 +5,7 @@ class Front extends Base
 {
 	public function Index()
 	{
-		if(isset($_SESSION['userid']))
-		{
+		if(isset($_SESSION['userid'])) {
 			header("Location: user");
 			return;
 		}
@@ -15,24 +14,17 @@ class Front extends Base
 		$posts = $this->Blog_model->Get_posts(1, 5, 0);
 		$blogs = $this->Blog_model->Get_blogs();
 
-		$blogposts_view = $this->Load_view('blogposts_view', array(
-											'posts' => $posts,
-											'blogs' => $blogs,
-											'show_owner_controls' => false
-											), true);
-
 		$this->Load_model('User_model');
 		$openid_icons = $this->User_model->Get_openid_icons();
-
-		$common_head_view = $this->Load_view('common_head_view', array());
 
 		return array(
 			"type" => "view", 
 			"view" => 'front_view', 
 			"data" => array(
-				'blogposts_view' => $blogposts_view,
 				'openid_icons' => $openid_icons,
-				'common_head_view' => $common_head_view
+				'posts' => $posts,
+				'blogs' => $blogs,
+				'show_owner_controls' => false
 			)
 		);
 	}
