@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Morzo</title> 
-		<?php echo $common_head_view; ?>
+		<?php echo $data["common_head_view"]; ?>
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/blog.css">
 		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
 	</head>
@@ -17,8 +17,8 @@
 				<div>
 					<span class="openid_icons">
 						<?php
-						if(isset($openid_icons)) {
-							foreach($openid_icons as $icon) {
+						if(isset($data["openid_icons"])) {
+							foreach($data["openid_icons"] as $icon) {
 								echo '<span class="action openid_icon" data-tooltip="'.$icon['name'].'"><img src="'.$icon['icon'].'" height="16" width="16" onclick="login(\''.$icon['URI'].'\');" /></span>';
 							}
 						}
@@ -32,7 +32,7 @@
 		</div>
 		<div style="clear: both;">
 			<p><a href="/library">Documentation</a></p>
-			<?php echo $blogposts_view; ?>
+			<?php echo $data["blogposts_view"]; ?>
 		</div>
 	</body>
 </html>

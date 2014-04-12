@@ -45,6 +45,13 @@ function Delete_cache($key) {
 	return ($memcache) ? $memcache->delete($key) : NULL;
 }
 
+function Load_view($view, $data = array()) {
+	ob_start();
+	include "../views/".strtolower($view).".php";
+	$result = ob_get_clean();
+	return $result;
+}
+
 if($argv[1] == "info")
 {
 	phpinfo();
@@ -144,7 +151,9 @@ else
 				}
 				if(is_array($response) === true) {
 					if($response["type"] === "view") {
-						echo $mvcfactory->Load_view($response["view"], $response["data"]);
+						$view = Load_view($response["view"], $response["data"]);
+						$language_model = $mvcfactory->Load_model("Language_model");
+						echo $language_model->Translate_tokens($view);
 					}
 					elseif($response["type"] === "json") {
 						header('Content-type: application/json');
