@@ -16,7 +16,8 @@ $GLOBALS['base_url'] = $base_url;
 require_once '../util/htmltemplate.php';
 require_once '../util/log.php';
 require_once '../util/database.php';
-require_once '../framework/mvcfactory.php';
+require_once '../framework/model_factory.php';
+require_once '../framework/controller_factory.php';
 require_once '../config.php';
 
 if (empty($_SERVER['PATH_INFO'])) {
@@ -46,6 +47,9 @@ function Delete_cache($key) {
 }
 
 function Load_view($view, $data = array()) {
+	foreach($data as $key => $value) {
+		$$key = $value;
+	}
 	ob_start();
 	include "../views/".strtolower($view).".php";
 	$result = ob_get_clean();
@@ -125,8 +129,9 @@ else
 			else
 			{
 				$db = Create_database_connection($config['database']['default']);
-				$mvcfactory = new MVCFactory($db);
-				$obj = new $controller_name($mvcfactory);
+				$model_factory = new Model_factory($db);
+				$controller_factory = new Controller_factory($model_factory);
+				$obj = new $controller_name($model_factory, $controller_factory);
 
 				$response = null;
 				if(count($argv)<3)
@@ -152,7 +157,7 @@ else
 				if(is_array($response) === true) {
 					if($response["type"] === "view") {
 						$view = Load_view($response["view"], $response["data"]);
-						$language_model = $mvcfactory->Load_model("Language_model");
+						$language_model = $model_factory->Load_model("Language_model");
 						echo $language_model->Translate_tokens($view);
 					}
 					elseif($response["type"] === "json") {
