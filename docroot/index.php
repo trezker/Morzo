@@ -96,6 +96,16 @@ else if($argv[1] == "debug")
 	</html>
 <?php
 }
+elseif($argv[1] == "test") {
+	require_once "../framework/testcentral.php";
+	$testcentral = new Testcentral();
+	if(count($argv)<3) {
+		$testcentral->Show_testpage();
+   	}
+	else {
+		$testcentral->Run_test();
+	}
+}
 else
 {
 	//Load requested controller
