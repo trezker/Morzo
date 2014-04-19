@@ -1,5 +1,7 @@
 function clear_all() {
 	$('.result').remove();
+	$('.test-method').removeClass('result-pass');
+	$('.test-method').removeClass('result-fail');
 }
 
 function test_method() {
@@ -15,12 +17,20 @@ function test_method() {
 		},
 		success: function(data) {
 			var t = moment().format('HH:mm:ss');
+			$(el_method).removeClass('result-pass');
+			$(el_method).removeClass('result-fail');
 			var el_method = $('.test-suite[data-suite="' + suite + '"] .test-method[data-method="' + method + '"]');
 			if(data.success === true) {
-				$(el_method).after('<div class="result pass">' + t + ' Pass</div>')
+				$(el_method).addClass('result-pass');
 			}
 			else {
-				$(el_method).after('<div class="result fail">' + t + ' Fail: ' + data.info + '</div>')
+				$(el_method).addClass('result-fail');
+				if(typeof obj !== "undefined") {
+					$(el_method).after('<div class="result fail">' + t + ' Fail: ' + data.info + '</div>')
+				}
+				else {
+					$(el_method).after('<div class="result fail">' + t + ' Fail: ' + data + '</div>')
+				}
 			}
 		}
 	});
@@ -36,5 +46,5 @@ function test_all() {
 
 $(function() {
 	$(".test-suite-link").click(test_suite);
-	$(".test-method").click(test_method);
+	$(".test-method-link").click(test_method);
 });

@@ -37,6 +37,14 @@ class Testcentral {
 		echo '
 			<html>
 				<head>
+					<style>
+						.result-pass {
+							background-color: green;
+						}
+						.result-fail {
+							background-color: red;
+						}
+					</style>
 					<script type="text/javascript" src="/js/moment-with-langs.min.js">	</script>
 					<script type="text/javascript" src="/js/jquery-1.10.2.min.js">	</script>					
 					<script type="text/javascript" src="/js/testcentral.js"></script>
@@ -72,11 +80,23 @@ class Testcentral {
 	public function Run_test() {
 		$suite = $_POST["suite"];
 		$method = $_POST["method"];
+		
+		require_once("../tests/" . $suite . ".php");
+		$test = new $suite();
+		
+		try {
+			ob_start();
+			$test->$method();
+			$info = ob_get_clean();
+		}
+		catch(Exception $e) {
+			$info = "Exception: " . $e->getMessage();
+		}
 
 		header('Content-type: application/json');
 		$result = array(
-			'success' => false,
-			'info' => 'Woopie'
+			'success' => true,
+			'info' => $info
 		);
 		echo json_encode($result);
 	}
