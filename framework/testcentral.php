@@ -93,11 +93,15 @@ class Testcentral {
 			$info = "Exception: " . $e->getMessage();
 		}
 
-		header('Content-type: application/json');
-		$result = array(
-			'success' => true,
-			'info' => $info
-		);
-		echo json_encode($result);
+		if($info === "") {
+			$result = array(
+				'success' => true
+			);
+			header('Content-type: application/json');
+			echo json_encode($result);
+		}
+		else {
+			echo $info;
+		}
 	}
 }
