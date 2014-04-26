@@ -97,14 +97,7 @@ else if($argv[1] == "debug")
 <?php
 }
 elseif($argv[1] == "test") {
-	require_once "../framework/testcentral.php";
-	$testcentral = new Testcentral();
-	if(count($argv)<3) {
-		$testcentral->Show_testpage();
-   	}
-	else {
-		$testcentral->Run_test();
-	}
+	require_once "../framework/simpletest.php";
 }
 else
 {
