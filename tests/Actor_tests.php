@@ -9,8 +9,11 @@
  */
 require_once '../controllers/actor.php';
 require_once '../controllers/user.php';
+require_once '../models/actor_model.php';
 
+Mock::generate('Session');
 Mock::generate('User');
+Mock::generate('Actor_model');
 
 class TestOfActor extends UnitTestCase {
     function test_Show_actor_redirect_not_logged_in() {
@@ -19,7 +22,26 @@ class TestOfActor extends UnitTestCase {
 		$controller_factory = new Mock_Controller_factory();
 		$controller_factory->controllers["User"] = new MockUser();
 
-		$actor = new Actor($model_factory, $controller_factory);
+		$session = new MockSession();
+
+		$actor = new Actor($model_factory, $controller_factory, $session);
+		$response = $actor->Show_actor(0, '');
+		
+		$this->assertTrue($response["type"] === "redirect");
+		$this->assertTrue($response["data"] === "/");
+    }
+
+    function test_Show_actor_redirect_not_your_actor() {
+		$model_factory = new Mock_Model_factory();
+		$model_factory->models["Actor_model"] = new MockActor_model();
+
+		$controller_factory = new Mock_Controller_factory();
+		$controller_factory->controllers["User"] = new MockUser();
+		$controller_factory->controllers["User"]->returns('Logged_in', true);
+
+		$session = new MockSession();
+
+		$actor = new Actor($model_factory, $controller_factory, $session);
 		$response = $actor->Show_actor(0, '');
 		
 		$this->assertTrue($response["type"] === "redirect");

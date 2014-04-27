@@ -3,12 +3,22 @@
 class Controller {
 	private $model_factory = null;
 	private $controller_factory = null;
+	private $session = null;
 	
-	function __construct($model_factory, $controller_factory) {
+	function __construct($model_factory, $controller_factory, $session) {
 		$this->model_factory = $model_factory;
 		$this->controller_factory = $controller_factory;
+		$this->session = $session;
 	}
 	
+	function Session_get($key) {
+		return $this->session->Get($key);
+	}
+
+	function Session_set($key, $value) {
+		return $this->session->Set($key, $value);
+	}
+
 	function Model_factory() {
 		return $this->model_factory;
 	}

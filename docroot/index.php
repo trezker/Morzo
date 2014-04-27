@@ -16,6 +16,7 @@ $GLOBALS['base_url'] = $base_url;
 require_once '../util/htmltemplate.php';
 require_once '../util/log.php';
 require_once '../util/database.php';
+require_once '../framework/session.php';
 require_once '../framework/model_factory.php';
 require_once '../framework/controller_factory.php';
 require_once '../config.php';
@@ -132,14 +133,14 @@ else
 			else
 			{
 				$db = Create_database_connection($config['database']['default']);
+				$session = new Session();
 				$model_factory = new Model_factory($db);
-				$controller_factory = new Controller_factory($model_factory);
-				$obj = new $controller_name($model_factory, $controller_factory);
+				$controller_factory = new Controller_factory($model_factory, $session);
+				$obj = new $controller_name($model_factory, $controller_factory, $session);
 
 				$response = null;
 				if(count($argv)<3)
 				{
-					session_start();
 					$response = $obj->Index();
 				}
 				else if(!method_exists($obj, $argv[2]))
@@ -150,7 +151,6 @@ else
 				}
 				else
 				{
-					session_start();
 					$funcargs = array_slice($argv, 3);
 					if(method_exists($obj, 'Before_page_load')) {
 						call_user_func_array(array($obj, 'Before_page_load'), array());
