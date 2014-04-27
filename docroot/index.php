@@ -167,6 +167,9 @@ else
 						header('Content-type: application/json');
 						echo json_encode($response["data"]);
 					}
+					elseif($response["type"] === "redirect") {
+						header("Location: " . $response["data"]);
+					}
 				}
 			}
 		}

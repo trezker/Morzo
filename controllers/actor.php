@@ -21,13 +21,11 @@ class Actor extends Base
 	{
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			header("Location: /front");
-			return;
+			return array("type" => "redirect", "data" => "/");
 		}
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			header("Location: /front");
-			return;
+			return array("type" => "redirect", "data" => "/");
 		}
 
 		$this->Load_model("Travel_model");
