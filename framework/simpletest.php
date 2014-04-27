@@ -13,7 +13,7 @@ class Mock_Controller_factory {
 	public $controllers = array();
 	
 	public function Load_controller($controller) {
-		return $controllers[$controller];
+		return $this->controllers[$controller];
 	}	
 }
 

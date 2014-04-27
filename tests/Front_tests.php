@@ -34,7 +34,8 @@ class TestOfFront extends UnitTestCase {
 
 		$front = new Front($model_factory, $controller_factory);
 		$response = $front->Index();
-		$this->assertTrue($response["view"] == "front_view");
-		$this->assertTrue($response["data"]["posts"][0]["ID"] == 1);
+		$this->assertTrue($response["type"] === "view");
+		$this->assertTrue($response["view"] === "front_view");
+		$this->assertTrue($response["data"]["posts"][0]["ID"] === 1);
     }
 }
