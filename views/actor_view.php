@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title><?= htmlspecialchars($actor['Name']); ?> - <?= $tab; ?> - Morzo</title> 
-		<?php echo $common_head_view; ?>
+		<?php echo Load_view('common_head_view'); ?>
 		<script type="text/javascript" src="/js/actor.js">	</script>
 	</head>
 	<body>
@@ -80,7 +80,7 @@
 				</li>
 			</ul>
 			<div id="tab_content" style="clear: both;">
-				<?=$tab_view?>
+				<?php echo Load_view($data['tab_view']['view'], $data['tab_view']['data']); ?>
 			</div>
 
 

@@ -58,15 +58,25 @@ class Actor extends Base
 			if($actor['Inside_object_name'] !== NULL) {
 				$locations = NULL; //TODO: add check for vehicle so it can travel when implemented
 			}
-			$tab_view = $this->Load_view('locations_tab_view', array(	'locations' => $locations, 
-																		'travel' => $travel, 
-																		'actor' => $actor, 
-																		'actor_id' => $actor_id,
-																		'containers' => $containers
-																		), true);
+			$tab_view = array(
+				'view' => 'locations_tab_view', 
+				'data' => array(
+					'locations' => $locations, 
+					'travel' => $travel, 
+					'actor' => $actor, 
+					'actor_id' => $actor_id,
+					'containers' => $containers
+				)
+			);
 		} elseif ($tab == 'people') {
 			$actors = $this->Actor_model->Get_visible_actors($actor_id);
-			$tab_view = $this->Load_view('people_tab_view', array('actors' => $actors, 'actor_id' => $actor_id), true);
+			$tab_view = array(
+				'view' => 'people_tab_view', 
+				'data' => array(
+					'actors' => $actors, 
+					'actor_id' => $actor_id
+				)
+			);
 		} elseif ($tab == 'events') {
 			$this->Load_model("Event_model");
 			$events = $this->Event_model->Get_events($actor_id);
@@ -75,20 +85,27 @@ class Actor extends Base
 				$events[$key]['Time_values'] = $this->Update->Get_time_units($event['Ingame_time']);
 				$events[$key]['Text'] = $this->Language_model->Translate_event($events[$key], $actor_id);
 			}
-			$tab_view = $this->Load_view('events_tab_view', array('events' => $events, 'actor_id' => $actor_id), true);
+			$tab_view = array(
+				'view' => 'events_tab_view', 
+				'data' => array(
+					'events' => $events, 
+					'actor_id' => $actor_id
+				)
+			);
 		} elseif ($tab == 'resources') {
 			if($actor['Inside_object_ID'] === NULL) {
 				$this->Load_model("Location_model");
 				$resources = $this->Location_model->Get_location_resources($actor['Location_ID']);
 				$this->Load_model("Species_model");
 				$species = $this->Species_model->Get_location_species($actor['Location_ID']);
-				$tab_view = $this->Load_view('resources_tab_view', 
-										array(
-											'resources' => $resources, 
-											'species' => $species, 
-											'actor_id' => $actor_id
-											), 
-										true);
+				$tab_view = array(
+					'view' => 'resources_tab_view', 
+					'data' => array(
+						'resources' => $resources, 
+						'species' => $species, 
+						'actor_id' => $actor_id
+					)
+				);
 			}
 		} elseif ($tab == 'projects') {
 			$this->Load_model("Project_model");
@@ -97,7 +114,15 @@ class Actor extends Base
 			$hunts = $this->Species_model->Get_hunts($actor_id);
 			$recipe_list = $this->Project_model->Get_recipes_without_nature_resource();
 			$recipe_selection_view = $this->Load_view('recipe_selection_view', array('recipe_list' => $recipe_list, 'actor_id' => $actor_id), true);
-			$tab_view = $this->Load_view('projects_tab_view', array('hunts' => $hunts, 'projects' => $projects, 'actor_id' => $actor_id, 'recipe_selection_view' => $recipe_selection_view), true);
+			$tab_view = array(
+				'view' => 'projects_tab_view', 
+				'data' => array(
+					'hunts' => $hunts, 
+					'projects' => $projects, 
+					'actor_id' => $actor_id, 
+					'recipe_selection_view' => $recipe_selection_view
+				)
+			);
 		} elseif ($tab == 'inventory') {
 			$inventory_ids = $this->Actor_model->Get_actor_and_location_inventory($actor_id);
 			$this->Load_model('Inventory_model');
@@ -116,17 +141,31 @@ class Actor extends Base
 													'inventory' => $location_inventory, 
 													'actor_id' => $actor_id), true);
 			
-			$tab_view = $this->Load_view('inventory_tab_view', array(
-													'inventory_ids' => $inventory_ids,
-													'actor_inventory' => $actor_inventory, 
-													'location_inventory' => $location_inventory, 
-													'actor_inventory_view' => $actor_inventory_view,
-													'location_inventory_view' => $location_inventory_view,
-													'actor_id' => $actor_id), true);
+			$tab_view = array(
+				'view' => 'inventory_tab_view', 
+				'data' => array(
+					'inventory_ids' => $inventory_ids,
+					'actor_inventory' => $actor_inventory, 
+					'location_inventory' => $location_inventory, 
+					'actor_inventory_view' => $actor_inventory_view,
+					'location_inventory_view' => $location_inventory_view,
+					'actor_id' => $actor_id
+				)
+			);
 		}
 		
-		$common_head_view = $this->Load_view('common_head_view', array());
-		$this->Load_view('actor_view', array('tab' => $tab, 'actor_id' => $actor_id, 'tab_view' => $tab_view, 'time' => $time, 'actor' => $actor, 'common_head_view' => $common_head_view, 'minutes_to_next_update' => $minutes_to_next_update), false);
+		return array(
+			'type' => 'view', 
+			'view' => 'actor_view', 
+			'data' => array(
+				'tab' => $tab,
+				'actor_id' => $actor_id,
+				'tab_view' => $tab_view,
+				'time' => $time,
+				'actor' => $actor,
+				'minutes_to_next_update' => $minutes_to_next_update
+			)
+		);
 	}
 	
 	public function Change_actor_name()
