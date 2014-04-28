@@ -184,10 +184,10 @@ class Actor_model extends Model
 		$this->db->StartTrans();
 		
 		//Select all Actors with more than 8 hunger. They haven't eaten manually lately.
-		$query = "select ID, Hunger, Health, Inventory_ID from Actor where Hunger > 8 and Health <= 0";
+		$query = "select ID, Hunger, Health, Inventory_ID from Actor where Hunger > 8 and Health > 0";
 		$args = array();
 		$hungry_actors = $this->db->Execute($query, $args);
-
+		
 		foreach ($hungry_actors as $hungry_actor) {
 			$query = "
 				select R.ID, R.Name, RC.Food_nutrition as Nutrition, R.Mass, RC.Food_nutrition / R.Mass as Efficiency, IR.Amount as Amount, 'Resource' as Setname from Resource R
