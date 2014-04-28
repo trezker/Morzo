@@ -129,17 +129,25 @@ class Actor extends Base
 			$actor_inventory = $this->Inventory_model->Get_inventory($inventory_ids['Actor_inventory']);
 			$location_inventory = $this->Inventory_model->Get_inventory($inventory_ids['Location_inventory']);
 			
-			$actor_inventory_view = $this->Load_view('inventory_view', array(
-													'inventory_title' => 'Actor inventory',
-													'inventory_id' => $inventory_ids['Actor_inventory'],
-													'inventory' => $actor_inventory, 
-													'actor_id' => $actor_id), true);
+			$actor_inventory_view = array(
+				'view' => 'inventory_view', 
+				'data' => array(
+					'inventory_title' => 'Actor inventory',
+					'inventory_id' => $inventory_ids['Actor_inventory'],
+					'inventory' => $actor_inventory, 
+					'actor_id' => $actor_id
+				)
+			);
 
-			$location_inventory_view = $this->Load_view('inventory_view', array(
-													'inventory_title' => 'Location inventory',
-													'inventory_id' => $inventory_ids['Location_inventory'],
-													'inventory' => $location_inventory, 
-													'actor_id' => $actor_id), true);
+			$location_inventory_view = array(
+				'view' => 'inventory_view', 
+				'data' => array(
+					'inventory_title' => 'Location inventory',
+					'inventory_id' => $inventory_ids['Location_inventory'],
+					'inventory' => $location_inventory, 
+					'actor_id' => $actor_id
+				)
+			);
 			
 			$tab_view = array(
 				'view' => 'inventory_tab_view', 
