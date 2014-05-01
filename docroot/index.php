@@ -47,16 +47,6 @@ function Delete_cache($key) {
 	return ($memcache) ? $memcache->delete($key) : NULL;
 }
 
-function Load_view($view, $data = array()) {
-	foreach($data as $key => $value) {
-		$$key = $value;
-	}
-	ob_start();
-	include "../views/".strtolower($view).".php";
-	$result = ob_get_clean();
-	return $result;
-}
-
 if($argv[1] == "info")
 {
 	phpinfo();
@@ -159,13 +149,20 @@ else
 				}
 				if(is_array($response) === true) {
 					if($response["type"] === "view") {
-						$view = Load_view($response["view"], $response["data"]);
-						$language_model = $model_factory->Load_model("Language_model");
-						echo $language_model->Translate_tokens($view);
+						require_once "../framework/view_factory.php";
+						$view_factory = new View_factory($model_factory);
+						echo $view_factory->Load_view($response["view"], $response["data"], true);
 					}
 					elseif($response["type"] === "json") {
 						header('Content-type: application/json');
-						echo json_encode($response["data"]);
+						if(isset($response["view"]) === false) {
+							echo json_encode($response["data"]);
+						}
+						else {
+							require_once "../framework/view_factory.php";
+							$view_factory = new View_factory($model_factory);
+							echo $view_factory->Load_view($response["view"], $response["data"]);
+						}
 					}
 					elseif($response["type"] === "redirect") {
 						header("Location: " . $response["data"]);

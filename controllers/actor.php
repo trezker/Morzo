@@ -770,12 +770,23 @@ class Actor extends Base
 			echo json_encode(array('success' => false, 'reason' => 'Could not load inventory'));
 			return;
 		}
-		$inventory_view = $this->Load_view('inventory_view', array(
-												'inventory_title' => 'Object inventory',
-												'inventory_id' => $inventory_id,
-												'inventory' => $inventory, 
-												'actor_id' => $actor_id), true);
-		echo json_encode(array('success' => true, 'html' => $inventory_view));
+
+		return array(
+			'type' => 'json',
+			'view' => 'inventory_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'inventory_view',
+					'data' => array(
+						'inventory_title' => 'Object inventory',
+						'inventory_id' => $inventory_id,
+						'inventory' => $inventory, 
+						'actor_id' => $actor_id
+					)
+				)
+			)
+		);
 	}
 
 	public function Label_object() {

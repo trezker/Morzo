@@ -36,7 +36,16 @@ class Controller {
 	}
 
 	public function Load_view($view, $data = array(), $return = false) {
-		$result = Load_view($view, $data);
+		//TODO: Eliminate all use of this function.
+		foreach($data as $key => $value) {
+			$$key = $value;
+		}
+		ob_start();
+		include "../views/".strtolower($view).".php";
+		$result = ob_get_clean();
+		//Make a view factory instead that uses the model factory.
+		$language_model = $this->model_factory->Load_model("Language_model");
+		$result = $language_model->Translate_tokens($result);
 		if($return == true)
 			return $result;
 		else

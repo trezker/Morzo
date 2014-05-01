@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Morzo</title> 
-		<?php echo Load_view('common_head_view'); ?>
+		<?php echo $view_factory->Load_view('common_head_view'); ?>
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/blog.css">
 		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
 	</head>
@@ -33,7 +33,7 @@
 		<div style="clear: both;">
 			<p><a href="/library">Documentation</a></p>
 			<?php
-				echo Load_view('blogposts_view', array(
+				echo $view_factory->Load_view('blogposts_view', array(
 					'posts' => $data["posts"],
 					'blogs' => $data["blogs"],
 					'show_owner_controls' => false
