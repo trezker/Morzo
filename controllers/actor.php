@@ -748,27 +748,42 @@ class Actor extends Base
 	}
 
 	public function Open_container() {
-		$actor_id = $_POST['actor_id'];
+		$actor_id = $this->Input_post('actor_id');
 
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false,
+					'reason' => 'Not your actor'
+				)
+			);
 		}
 		
-		$inventory_id = $_POST['inventory_id'];
+		$inventory_id = $this->Input_post('inventory_id');
 		
 		$this->Load_model('Inventory_model');
 		
 		if(!$this->Inventory_model->Is_inventory_accessible($actor_id, $inventory_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'You can not access this inventory'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false,
+					'reason' => 'You can not access this inventory'
+				)
+			);
 		}
 		
 		$inventory = $this->Inventory_model->Get_inventory($inventory_id);
 		if(!$inventory) {
-			echo json_encode(array('success' => false, 'reason' => 'Could not load inventory'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false,
+					'reason' => 'Could not load inventory'
+				)
+			);
 		}
 
 		return array(

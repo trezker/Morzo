@@ -4,11 +4,13 @@ class Controller {
 	private $model_factory = null;
 	private $controller_factory = null;
 	private $session = null;
+	private $input = null;
 	
-	function __construct($model_factory, $controller_factory, $session) {
+	function __construct($model_factory, $controller_factory, $session, $input) {
 		$this->model_factory = $model_factory;
 		$this->controller_factory = $controller_factory;
 		$this->session = $session;
+		$this->input = $input;
 	}
 	
 	function Session_get($key) {
@@ -17,6 +19,18 @@ class Controller {
 
 	function Session_set($key, $value) {
 		return $this->session->Set($key, $value);
+	}
+	
+	function Input_get($key) {
+		return $this->input->Get($key);
+	}
+
+	function Input_post($key) {
+		return $this->input->Get_post($key);
+	}
+
+	function Input_cookie($key) {
+		return $this->input->Get_cookie($key);
 	}
 
 	function Model_factory() {

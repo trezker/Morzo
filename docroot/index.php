@@ -17,6 +17,7 @@ require_once '../util/htmltemplate.php';
 require_once '../util/log.php';
 require_once '../util/database.php';
 require_once '../framework/session.php';
+require_once '../framework/input.php';
 require_once '../framework/model_factory.php';
 require_once '../framework/controller_factory.php';
 require_once '../config.php';
@@ -124,9 +125,10 @@ else
 			{
 				$db = Create_database_connection($config['database']['default']);
 				$session = new Session();
+				$input = new Input();
 				$model_factory = new Model_factory($db);
-				$controller_factory = new Controller_factory($model_factory, $session);
-				$obj = new $controller_name($model_factory, $controller_factory, $session);
+				$controller_factory = new Controller_factory($model_factory, $session, $input);
+				$obj = $controller_factory->Load_controller($controller_name);
 
 				$response = null;
 				if(count($argv)<3)
