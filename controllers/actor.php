@@ -325,30 +325,49 @@ class Actor extends Base {
 		);
 	}
 	
-	function Start_project_form()
-	{
-		header('Content-type: application/json');
+	function Start_project_form() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Not logged in'
+				)
+			);
 		}
 		
-		$recipe_id = $_POST['recipe_id'];
-		$actor_id = $_POST['actor_id'];
+		$recipe_id = $this->Input_post('recipe_id');
+		$actor_id = $this->Input_post('actor_id');
 
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Not your actor'
+				)
+			);
 		}
 
 		$this->Load_model('Project_model');
 		$recipe = $this->Project_model->Get_recipe($recipe_id);
 		
-		$start_project_view = $this->Load_view('start_project_view', array('recipe' => $recipe, 'actor_id' => $actor_id), true);
-
-		echo json_encode(array('success' => true, 'data' => $start_project_view));
+		return array(
+			'type' => 'json',
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'start_project_view',
+					'data' => array(
+						'recipe' => $recipe, 
+						'actor_id' => $actor_id
+					)
+				)
+			)
+		);
 	}
 
 	function Start_project()

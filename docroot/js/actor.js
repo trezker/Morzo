@@ -223,7 +223,7 @@ function show_project_start_form(actor_id, id) {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
-				$('#view_recipe').html(data.data);
+				$('#view_recipe').html(data.html);
 				$('#recipes .selected').removeClass('selected');
 				$('#recipe_'+id).addClass('selected');
 			}
