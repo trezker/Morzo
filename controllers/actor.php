@@ -1,8 +1,7 @@
 <?php
 require_once "../controllers/base.php";
 
-class Actor extends Base
-{
+class Actor extends Base {
 	public function Request_actor() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
@@ -23,8 +22,7 @@ class Actor extends Base
 		);
 	}
 	
-	public function Show_actor($actor_id, $tab = 'events')
-	{
+	public function Show_actor($actor_id, $tab = 'events') {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
 			return array("type" => "redirect", "data" => "/");
@@ -37,12 +35,10 @@ class Actor extends Base
 		$this->Load_model("Travel_model");
 
 		$actor = $this->Actor_model->Get_actor($actor_id);
-		if($actor['Name'] == NULL)
-		{
+		if($actor['Name'] == NULL) {
 			$actor['Name'] = 'Unnamed actor';
 		}
-		if($actor['Location'] == NULL)
-		{
+		if($actor['Location'] == NULL) {
 			$actor['Location'] = 'Unnamed location';
 		}
 		
