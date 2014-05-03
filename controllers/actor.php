@@ -178,33 +178,58 @@ class Actor extends Base {
 		);
 	}
 	
-	public function Change_actor_name()
-	{
-		header('Content-type: application/json');
+	public function Change_actor_name() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Not logged in'
+				)
+			);
 		}
 		$actor_id = $_POST['actor'];
 		$named_actor_id = $_POST['named_actor'];
 		$new_name = $_POST['name'];
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Not your actor'
+				)
+			);
 		}
 		$r = $this->Actor_model->Change_actor_name($actor_id, $named_actor_id, $new_name);
 		if($r == false) {
-			echo json_encode(array('success' => false, 'reason' => 'Could not change actor name'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Could not change actor name'
+				)
+			);
 		}
 		else {
 			if(strlen($new_name) == 0) {
-				echo json_encode(array('success' => true, 'data' => 'Unnamed actor'));
+				return array(
+					'type' => 'json',
+					'data' => array(
+						'success' => true, 
+						'data' => 'Unnamed actor'
+					)
+				);
 			}
 			else {
-				echo json_encode(array('success' => true, 'data' => $new_name));
+				return array(
+					'type' => 'json',
+					'data' => array(
+						'success' => true, 
+						'data' => $new_name
+					)
+				);
 			}
 		}
 	}
