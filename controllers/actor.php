@@ -412,28 +412,41 @@ class Actor extends Base {
 		);
 	}
 
-	function Join_project()
-	{
-		header('Content-type: application/json');
+	function Join_project() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Not logged in'
+				)
+			);
 		}
 		
-		$project_id = $_POST['project_id'];
-		$actor_id = $_POST['actor_id'];
+		$project_id = $this->Input_post('project_id');
+		$actor_id = $this->Input_post('actor_id');
 
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Not your actor'
+				)
+			);
 		}
 
 		$this->Load_model('Project_model');
 		$success = $this->Project_model->Join_project($actor_id, $project_id);
 
-		echo json_encode(array('success' => $success));
+		return array(
+			'type' => 'json',
+			'data' => array(
+				'success' => $success
+			)
+		);
 	}
 
 	function Leave_project()
