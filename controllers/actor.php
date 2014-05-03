@@ -235,28 +235,47 @@ class Actor extends Base {
 	}
 
 	public function Speak() {
-		header('Content-type: application/json');
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Not logged in'
+				)
+			);
 		}
 		$actor_id = $_POST['actor'];
 		$message = $_POST['message'];
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Not your actor'
+				)
+			);
 		}
 		
 		$this->Load_model('Event_model');
 		$r = $this->Event_model->Save_event('{LNG_Actor_said}', $actor_id, NULL, $message);
 		if($r == false) {
-			echo json_encode(array('success' => false, 'reason' => 'Could not save your message'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Could not save your message'
+				)
+			);
 		}
 		else {
-			echo json_encode(array('success' => true));
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => true 
+				)
+			);
 		}
 	}
 	
