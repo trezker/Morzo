@@ -3,18 +3,24 @@ require_once "../controllers/base.php";
 
 class Actor extends Base
 {
-	public function Request_actor()
-	{
-		header('Content-type: application/json');
+	public function Request_actor() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Not logged in'
+				)
+			);
 		}
 		$this->Load_model('Actor_model');
 		$r = $this->Actor_model->Request_actor($_SESSION['userid']);
 		
-		echo json_encode($r);
+		return array(
+			'type' => 'json',
+			'data' => $r
+		);
 	}
 	
 	public function Show_actor($actor_id, $tab = 'events')
