@@ -370,33 +370,46 @@ class Actor extends Base {
 		);
 	}
 
-	function Start_project()
-	{
-		header('Content-type: application/json');
+	function Start_project() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Not logged in'
+				)
+			);
 		}
 		
-		$recipe_id = $_POST['recipe_id'];
-		$actor_id = $_POST['actor_id'];
-		$supply = $_POST['supply'] == "true";
-		$cycles = intval($_POST['cycles']);
+		$recipe_id = $this->Input_post('recipe_id');
+		$actor_id = $this->Input_post('actor_id');
+		$supply = $this->Input_post('supply') == "true";
+		$cycles = intval($this->Input_post('cycles'));
 		if($cycles < 1) {
 			$cycles = 1;
 		}
 
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Not your actor'
+				)
+			);
 		}
 
 		$this->Load_model('Project_model');
 		$success = $this->Project_model->Start_project($actor_id, $recipe_id, $supply, $cycles);
 
-		echo json_encode(array('success' => $success));
+		return array(
+			'type' => 'json',
+			'data' => array(
+				'success' => $success
+			)
+		);
 	}
 
 	function Join_project()
