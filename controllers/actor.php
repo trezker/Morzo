@@ -280,29 +280,49 @@ class Actor extends Base {
 	}
 	
 	function Natural_resource_dialog() {
-		header('Content-type: application/json');
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Not logged in'
+				)
+			);
 		}
 
 		$this->Load_model('Project_model');
 		
-		$actor_id = $_POST['actor_id'];
-		$resource_id = $_POST['resource'];
+		$actor_id = $this->Input_post('actor_id');
+		$resource_id = $this->Input_post('resource');
 
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Not your actor'
+				)
+			);
 		}
 
 		$recipe_list = $this->Project_model->Get_recipes_with_nature_resource($actor_id, $resource_id);
 
-		$recipe_selection_view = $this->Load_view('recipe_selection_view', array('recipe_list' => $recipe_list, 'actor_id' => $actor_id), true);
-		
-		echo json_encode(array('success' => true, 'data' => $recipe_selection_view));
+		return array(
+			'type' => 'json',
+			'view' => 'recipe_selection_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'recipe_selection_view',
+					'data' => array(
+						'recipe_list' => $recipe_list, 
+						'actor_id' => $actor_id
+					)
+				)
+			)
+		);
 	}
 	
 	function Start_project_form()
