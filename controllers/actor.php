@@ -311,7 +311,7 @@ class Actor extends Base {
 
 		return array(
 			'type' => 'json',
-			'view' => 'recipe_selection_json',
+			'view' => 'single_view_json',
 			'data' => array(
 				'success' => true,
 				'html' => array(
@@ -854,7 +854,7 @@ class Actor extends Base {
 
 		return array(
 			'type' => 'json',
-			'view' => 'inventory_json',
+			'view' => 'single_view_json',
 			'data' => array(
 				'success' => true,
 				'html' => array(

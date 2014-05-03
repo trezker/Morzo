@@ -205,7 +205,7 @@ function get_natural_resource_dialog(actor_id, resource_id) {
 		{
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
-				$('#natural_resource_dialog').html(data.data);
+				$('#natural_resource_dialog').html(data.html);
 			}
 		}
 	});
