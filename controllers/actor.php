@@ -5,7 +5,7 @@ class Actor extends Base {
 	public function Request_actor() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			return $this->Not_logged_in_response_json();
+			return $this->Json_response_not_logged_in();
 		}
 		$this->Load_model('Actor_model');
 		$r = $this->Actor_model->Request_actor($this->Session_get('userid'));
@@ -175,20 +175,14 @@ class Actor extends Base {
 	public function Change_actor_name() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			return $this->Not_logged_in_response_json();
+			return $this->Json_response_not_logged_in();
 		}
 		$actor_id = $this->Input_post('actor');
 		$named_actor_id = $this->Input_post('named_actor');
 		$new_name = $this->Input_post('name');
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false, 
-					'reason' => 'Not your actor'
-				)
-			);
+			return $this->Json_response_not_your_actor();
 		}
 		$r = $this->Actor_model->Change_actor_name($actor_id, $named_actor_id, $new_name);
 		if($r == false) {
@@ -225,25 +219,13 @@ class Actor extends Base {
 	public function Speak() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false, 
-					'reason' => 'Not logged in'
-				)
-			);
+			return $this->Json_response_not_logged_in();
 		}
 		$actor_id = $this->Input_post('actor');
 		$message = $this->Input_post('message');
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false, 
-					'reason' => 'Not your actor'
-				)
-			);
+			return $this->Json_response_not_your_actor();
 		}
 		
 		$this->Load_model('Event_model');
@@ -286,13 +268,7 @@ class Actor extends Base {
 
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false, 
-					'reason' => 'Not your actor'
-				)
-			);
+			return $this->Json_response_not_your_actor();
 		}
 
 		$recipe_list = $this->Project_model->Get_recipes_with_nature_resource($actor_id, $resource_id);
@@ -330,13 +306,7 @@ class Actor extends Base {
 
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false, 
-					'reason' => 'Not your actor'
-				)
-			);
+			return $this->Json_response_not_your_actor();
 		}
 
 		$this->Load_model('Project_model');
@@ -361,7 +331,7 @@ class Actor extends Base {
 	function Start_project() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			return $this->Not_logged_in_response_json();
+			return $this->Json_response_not_logged_in();
 		}
 		
 		$recipe_id = $this->Input_post('recipe_id');
@@ -374,13 +344,7 @@ class Actor extends Base {
 
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false, 
-					'reason' => 'Not your actor'
-				)
-			);
+			return $this->Json_response_not_your_actor();
 		}
 
 		$this->Load_model('Project_model');
@@ -397,7 +361,7 @@ class Actor extends Base {
 	function Join_project() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			return $this->Not_logged_in_response_json();
+			return $this->Json_response_not_logged_in();
 		}
 		
 		$project_id = $this->Input_post('project_id');
@@ -405,13 +369,7 @@ class Actor extends Base {
 
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false, 
-					'reason' => 'Not your actor'
-				)
-			);
+			return $this->Json_response_not_your_actor();
 		}
 
 		$this->Load_model('Project_model');
@@ -428,20 +386,14 @@ class Actor extends Base {
 	function Leave_project() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			return $this->Not_logged_in_response_json();
+			return $this->Json_response_not_logged_in();
 		}
 		
 		$actor_id = $this->Input_post('actor_id');
 
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false, 
-					'reason' => 'Not your actor'
-				)
-			);
+			return $this->Json_response_not_your_actor();
 		}
 
 		$this->Load_model('Project_model');

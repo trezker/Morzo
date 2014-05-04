@@ -22,12 +22,22 @@ class Base extends Controller {
 		return $minutes_to_next_update;
 	}
 
-	public function Not_logged_in_response_json() {
+	public function Json_response_not_logged_in() {
 		return array(
 			'type' => 'json',
 			'data' => array(
 				'success' => false, 
 				'reason' => 'Not logged in'
+			)
+		);
+	}
+	
+	public function Json_response_not_your_actor() {
+		return array(
+			'type' => 'json',
+			'data' => array(
+				'success' => false, 
+				'reason' => 'Not your actor'
 			)
 		);
 	}
