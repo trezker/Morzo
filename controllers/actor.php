@@ -8,7 +8,7 @@ class Actor extends Base {
 			return $this->Not_logged_in_response_json();
 		}
 		$this->Load_model('Actor_model');
-		$r = $this->Actor_model->Request_actor($_SESSION['userid']);
+		$r = $this->Actor_model->Request_actor($this->Session_get('userid'));
 		
 		return array(
 			'type' => 'json',
@@ -233,10 +233,10 @@ class Actor extends Base {
 				)
 			);
 		}
-		$actor_id = $_POST['actor'];
-		$message = $_POST['message'];
+		$actor_id = $this->Input_post('actor');
+		$message = $this->Input_post('message');
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
 			return array(
 				'type' => 'json',
 				'data' => array(
@@ -361,13 +361,7 @@ class Actor extends Base {
 	function Start_project() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false, 
-					'reason' => 'Not logged in'
-				)
-			);
+			return $this->Not_logged_in_response_json();
 		}
 		
 		$recipe_id = $this->Input_post('recipe_id');
@@ -403,13 +397,7 @@ class Actor extends Base {
 	function Join_project() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false, 
-					'reason' => 'Not logged in'
-				)
-			);
+			return $this->Not_logged_in_response_json();
 		}
 		
 		$project_id = $this->Input_post('project_id');
