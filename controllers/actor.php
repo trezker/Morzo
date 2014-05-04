@@ -792,21 +792,28 @@ class Actor extends Base {
 	}
 	
 	public function Transfer_to_inventory() {
-		$actor_id = $_POST['actor_id'];
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			$this->Json_response_not_logged_in();
+		}
+
+		$actor_id = $this->Input_post('actor_id');
 
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
+			return $this->Json_response_not_your_actor();
 		}
 		
-		$inventory_id = $_POST['inventory_id'];
-		$resources = isset($_POST['resources'])?$_POST['resources']:array();
-		$products = isset($_POST['products'])?$_POST['products']:array();
-		
+		$inventory_id = $this->Input_post('inventory_id');
+		$resources = $this->Input_post('resources');
+		$products = $this->Input_post('products');
+
 		$this->Load_model('Inventory_model');
 		$result = $this->Inventory_model->Transfer_to_inventory($actor_id, $inventory_id, $resources, $products);
-		echo json_encode($result);
+		return array(
+			'type' => 'json',
+			'data' => $result
+		);
 	}
 	
 	public function Expand_inventory_product() {

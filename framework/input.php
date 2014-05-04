@@ -12,14 +12,20 @@ class Input {
 	}
 
 	public function Get($key) {
-		return $this->get[$key];
+		if(isset($this->get[$key]))
+			return $this->get[$key];
+		return null;
 	}
 	
 	public function Get_post($key) {
-		return $this->post[$key];
+		if(isset($this->post[$key]))
+			return $this->post[$key];
+		return null;
 	}
 
 	public function Get_cookie($key) {
-		return $this->cookie[$key];
+		if(isset($this->cookie[$key]))
+			return $this->cookie[$key];
+		return null;
 	}
 }

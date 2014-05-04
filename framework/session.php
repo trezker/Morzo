@@ -10,6 +10,8 @@ class Session {
 	}
 	
 	public function Get($key) {
-		return $_SESSION[$key];
+		if(isset($_SESSION[$key]))
+			return $_SESSION[$key];
+		return NULL;
 	}
 }
