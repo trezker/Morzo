@@ -747,19 +747,25 @@ class Actor extends Base {
 	}
 
 	public function Enter_object() {
-		header('Content-type: application/json');
-		$actor_id = $_POST['actor_id'];
-		$object_id = $_POST['object_id'];
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			$this->Json_response_not_logged_in();
+		}
+
+		$actor_id = $this->Input_post('actor_id');
+		$object_id = $this->Input_post('object_id');
 		
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
+			return $this->Json_response_not_your_actor();
 		}
 
 		$result = $this->Actor_model->Enter_object($actor_id, $object_id);
 
-		echo json_encode($result);
+		return array(
+			'type' => 'json',
+			'data' => $result
+		);
 	}
 
 	public function Leave_object() {
