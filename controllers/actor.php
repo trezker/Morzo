@@ -240,25 +240,14 @@ class Actor extends Base {
 			);
 		}
 		else {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => true 
-				)
-			);
+			return $this->Json_response_success();
 		}
 	}
 	
 	function Natural_resource_dialog() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false, 
-					'reason' => 'Not logged in'
-				)
-			);
+			$this->Json_response_not_logged_in();
 		}
 
 		$this->Load_model('Project_model');
@@ -292,13 +281,7 @@ class Actor extends Base {
 	function Start_project_form() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false, 
-					'reason' => 'Not logged in'
-				)
-			);
+			return $this->Json_response_not_logged_in();
 		}
 		
 		$recipe_id = $this->Input_post('recipe_id');
@@ -517,12 +500,7 @@ class Actor extends Base {
 			);
 		}
 		else {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => true
-				)
-			);
+			return $this->Json_response_success();
 		}
 	}
 

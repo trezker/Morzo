@@ -41,4 +41,13 @@ class Base extends Controller {
 			)
 		);
 	}
+	
+	public function Json_response_success() {
+		return array(
+			'type' => 'json',
+			'data' => array(
+				'success' => true
+			)
+		);
+	}
 }
