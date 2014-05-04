@@ -175,19 +175,13 @@ class Actor extends Base {
 	public function Change_actor_name() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false, 
-					'reason' => 'Not logged in'
-				)
-			);
+			return $this->Not_logged_in_response_json();
 		}
-		$actor_id = $_POST['actor'];
-		$named_actor_id = $_POST['named_actor'];
-		$new_name = $_POST['name'];
+		$actor_id = $this->Input_post('actor');
+		$named_actor_id = $this->Input_post('named_actor');
+		$new_name = $this->Input_post('name');
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
 			return array(
 				'type' => 'json',
 				'data' => array(
