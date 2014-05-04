@@ -5,13 +5,7 @@ class Actor extends Base {
 	public function Request_actor() {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false, 
-					'reason' => 'Not logged in'
-				)
-			);
+			return $this->Not_logged_in_response_json();
 		}
 		$this->Load_model('Actor_model');
 		$r = $this->Actor_model->Request_actor($_SESSION['userid']);

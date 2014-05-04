@@ -21,4 +21,14 @@ class Base extends Controller {
 		$minutes_to_next_update = $game_hour * 90 - $total_minutes;
 		return $minutes_to_next_update;
 	}
+
+	public function Not_logged_in_response_json() {
+		return array(
+			'type' => 'json',
+			'data' => array(
+				'success' => false, 
+				'reason' => 'Not logged in'
+			)
+		);
+	}
 }
