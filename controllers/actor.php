@@ -769,20 +769,26 @@ class Actor extends Base {
 	}
 
 	public function Leave_object() {
-		header('Content-type: application/json');
-		$actor_id = $_POST['actor_id'];
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			$this->Json_response_not_logged_in();
+		}
+
+		$actor_id = $this->Input_post('actor_id');
 		
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
+			return $this->Json_response_not_your_actor();
 		}
 
 		$actor = $this->Actor_model->Get_actor($actor_id);
 		$object_id = $actor['Inside_object_ID'];
 		$result = $this->Actor_model->Leave_object($actor_id);
 
-		echo json_encode($result);
+		return array(
+			'type' => 'json',
+			'data' => $result
+		);
 	}
 	
 	public function Transfer_to_inventory() {
