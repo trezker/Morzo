@@ -407,16 +407,7 @@ class Actor extends Base {
 		);
 	}
 
-	private function Get_neighbouring_locations($actor_id)
-	{
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			return;
-		}
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			return;
-		}
+	private function Get_neighbouring_locations($actor_id) {
 		$this->Load_model("Location_model");
 		$locations = $this->Location_model->Get_neighbouring_locations($actor_id);
 		$east = false;
@@ -434,8 +425,7 @@ class Actor extends Base {
 				$north = true;
 		}
 
-		if(!$east)
-		{
+		if(!$east) {
     		$locations[] = array(
     			'ID' => 'east',
     			'x' => 1,
@@ -443,8 +433,7 @@ class Actor extends Base {
     			'Name' => 'Unnamed location'
     		);
 		}
-		if(!$west)
-		{
+		if(!$west) {
     		$locations[] = array(
     			'ID' => 'west',
     			'x' => -1,
@@ -452,8 +441,7 @@ class Actor extends Base {
     			'Name' => 'Unnamed location'
     		);
 		}
-		if(!$south)
-		{
+		if(!$south) {
     		$locations[] = array(
     			'ID' => 'south',
     			'x' => 0,
@@ -461,8 +449,7 @@ class Actor extends Base {
     			'Name' => 'Unnamed location'
     		);
 		}
-		if(!$north)
-		{
+		if(!$north) {
     		$locations[] = array(
     			'ID' => 'north',
     			'x' => 0,
@@ -475,8 +462,12 @@ class Actor extends Base {
 			if(!$location['Name'])
 				$location['Name'] = 'Unnamed location';
 			$location['Direction'] = 90+rad2deg(atan2($location['y'], $location['x']));
-			if($location['Direction'] < 0)   $location['Direction'] += 360;
-			if($location['Direction'] > 360) $location['Direction'] -= 360;
+			if($location['Direction'] < 0) {
+				$location['Direction'] += 360;
+			}
+			if($location['Direction'] > 360) {
+				$location['Direction'] -= 360;
+			}
 			if($location['Direction'] < 22.5 || $location['Direction'] >= 337.5)
 				$location['Compass'] = 'N';
 			else if($location['Direction'] < 22.5+45)
@@ -494,8 +485,7 @@ class Actor extends Base {
 			else if($location['Direction'] < 22.5+315)
 				$location['Compass'] = 'NW';
 		}
-		function compare_direction($a, $b)
-		{
+		function compare_direction($a, $b) {
 			return $a['Direction'] > $b['Direction'];
 		}
 		unset($location);
