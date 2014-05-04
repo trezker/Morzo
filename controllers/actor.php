@@ -628,26 +628,23 @@ class Actor extends Base {
 	}
 	
 	public function Supply_project() {
-		header('Content-type: application/json');
-		$actor_id = $_POST['actor_id'];
-		$project_id = $_POST['project_id'];
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			$this->Json_response_not_logged_in();
+		}
+
+		$actor_id = $this->Input_post('actor_id');
+		$project_id = $this->Input_post('project_id');
 		
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
+			return $this->Json_response_not_your_actor();
 		}
 
 		$this->Load_model('Project_model');
 		$supply_result = $this->Project_model->Supply_project($project_id, $actor_id);
 		
-		$project = $this->Project_model->Get_project($project_id, $actor_id);
-		$project_details_view = $this->Load_view('project_details_view', array(
-									'actor_id' => $actor_id, 
-									'project' => $project
-								), true);
-		
-		echo json_encode(array('success' => true, 'data' => $project_details_view));
+		return $this->Json_response_success();
 	}
 
 	public function Cancel_project() {

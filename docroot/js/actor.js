@@ -434,11 +434,6 @@ function supply_project(actor_id, project_id) {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
-				/*
-				project_details_at_id = project_id;
-				$('#project_details_row').insertAfter($('#project_row_'+project_id)).show();
-				$('#project_details_container').html(data.data);
-				*/
 				window.location = "/actor/show_actor/"+actor_id+"/projects";
 			}
 		}
