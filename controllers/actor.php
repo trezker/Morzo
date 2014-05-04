@@ -678,21 +678,27 @@ class Actor extends Base {
 	}
 
 	public function Start_hunt() {
-		header('Content-type: application/json');
-		$actor_id = $_POST['actor_id'];
-		$hours = $_POST['hours'];
-		$species = $_POST['species'];
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			$this->Json_response_not_logged_in();
+		}
+
+		$actor_id = $this->Input_post('actor_id');
+		$hours = $this->Input_post('hours');
+		$species = $this->Input_post('species');
 		
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
+			return $this->Json_response_not_your_actor();
 		}
 
 		$this->Load_model('species_model');
 		$result = $this->species_model->Start_hunt($actor_id, $hours, $species);
 
-		echo json_encode($result);
+		return array(
+			'type' => 'json',
+			'data' => $result
+		);
 	}
 
 	public function Join_hunt() {
