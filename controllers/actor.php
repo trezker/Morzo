@@ -494,28 +494,35 @@ class Actor extends Base {
 	}
 	
 	public function Point_at_actor() {
-		header('Content-type: application/json');
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
+			return $this->Json_response_not_logged_in();
 		}
-		$actor_id = $_POST['actor_id'];
-		$pointee_id = $_POST['pointee_id'];
+		$actor_id = $this->Input_post('actor_id');
+		$pointee_id = $this->Input_post('pointee_id');
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
+			return $this->Json_response_not_your_actor();
 		}
 		
 		$this->Load_model('Event_model');
 		$r = $this->Event_model->Save_event('{LNG_Actor_pointed}',$actor_id, $pointee_id);
 		if($r == false) {
-			echo json_encode(array('success' => false, 'reason' => 'Could not save your message'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Could not save your message'
+				)
+			);
 		}
 		else {
-			echo json_encode(array('success' => true));
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => true
+				)
+			);
 		}
 	}
 
