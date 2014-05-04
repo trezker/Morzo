@@ -416,7 +416,7 @@ function show_hunt(actor_id, hunt_id) {
 			if(data.success == true) {
 				hunt_details_at_id = hunt_id;
 				$('#hunt_details_row').insertAfter($('#hunt_row_'+hunt_id)).show();
-				$('#hunt_details_container').html(data.data);
+				$('#hunt_details_container').html(data.html);
 			}
 		}
 	});
