@@ -505,28 +505,30 @@ class Actor extends Base {
 	}
 
 	public function Attack_actor() {
-		header('Content-type: application/json');
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
+			return $this->Json_response_not_logged_in();
 		}
-		$actor_id = $_POST['actor_id'];
-		$attacked_actor_id = $_POST['attacked_actor_id'];
+		$actor_id = $this->Input_post('actor_id');
+		$attacked_actor_id = $this->Input_post('attacked_actor_id');
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
+			return $this->Json_response_not_your_actor();
 		}
 		
 		$this->Load_model('Event_model');
 		$r = $this->Event_model->Save_event('{LNG_Actor_attacked}',$actor_id, $attacked_actor_id);
 		if($r == false) {
-			echo json_encode(array('success' => false, 'reason' => 'Could not save'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Could not save'
+				)
+			);
 		}
 		else {
-			echo json_encode(array('success' => true));
+			return $this->Json_response_success();
 		}
 	}
 
