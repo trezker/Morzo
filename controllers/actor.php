@@ -533,29 +533,31 @@ class Actor extends Base {
 	}
 
 	public function Whisper() {
-		header('Content-type: application/json');
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
+			$this->Json_response_not_logged_in();
 		}
-		$actor_id = $_POST['actor_id'];
-		$whispree_id = $_POST['whispree_id'];
-		$message = $_POST['message'];
+		$actor_id = $this->Input_post('actor_id');
+		$whispree_id = $this->Input_post('whispree_id');
+		$message = $this->Input_post('message');
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $actor_id)) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
+			return $this->Json_response_not_your_actor();
 		}
 		
 		$this->Load_model('Event_model');
 		$r = $this->Event_model->Save_event('{LNG_Actor_whispered}', $actor_id, $whispree_id, $message, NULL, NULL, true);
 		if($r == false) {
-			echo json_encode(array('success' => false, 'reason' => 'Could not save your message'));
-			return;
+			return array(
+				'type' => 'json',
+				'data' => array(
+					'success' => false, 
+					'reason' => 'Could not save your message'
+				)
+			);
 		}
 		else {
-			echo json_encode(array('success' => true));
+			return $this->Json_response_success();
 		}
 	}
 	
