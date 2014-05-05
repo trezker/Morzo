@@ -867,13 +867,7 @@ class Actor extends Base {
 
 		$this->Load_model('Actor_model');
 		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return array(
-				'type' => 'json',
-				'data' => array(
-					'success' => false,
-					'reason' => 'Not your actor'
-				)
-			);
+			return $this->Json_response_not_your_actor();
 		}
 		
 		$inventory_id = $this->Input_post('inventory_id');
