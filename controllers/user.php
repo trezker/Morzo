@@ -32,6 +32,20 @@ class User extends Base
 		$this->Load_view('user_view', array('actors' => $actors, 'actor_limit' => $actor_limit, 'common_head_view' => $common_head_view));
 	}
 
+	public function Request_actor() {
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			return $this->Json_response_not_logged_in();
+		}
+		$this->Load_model('Actor_model');
+		$r = $this->Actor_model->Request_actor($this->Session_get('userid'));
+		
+		return array(
+			'type' => 'json',
+			'data' => $r
+		);
+	}
+
 	private function Start_openid_verification($finish_path) {
 		header('Content-type: application/json');
 		if(!isset($_POST['openid'])) {

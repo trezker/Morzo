@@ -43,7 +43,7 @@ function new_actor() {
 	$('#new_actor').html('Requesting...');
 	$.ajax({
 		type: 'GET',
-		url: '/actor/Request_actor',
+		url: '/user/Request_actor',
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
