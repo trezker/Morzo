@@ -60,9 +60,12 @@ class User_model extends Model
 
 	public function Create_user_openid($username, $openid)
 	{
+		//$this->db->debug = true;
 		$this->db->StartTrans();
-		$query = '	INSERT INTO User (Username, Max_actors)
-					select ?, Value from Count where Name = \'Max_actors_account\'';
+		$query = "
+			INSERT INTO User (Username, Max_actors)
+			select ?, Value from Count where Name = 'Max_actors_account'
+		";
 		$rs = $this->db->Execute($query, array($username));
 		if(!$rs) {
 			$reason = $this->db->ErrorMsg();
@@ -73,8 +76,17 @@ class User_model extends Model
 				'reason' => $reason
 			);
 		}
-		$query = 'SELECT ID FROM UseGet_usersr WHERE Username = ?';
+		$query = 'SELECT ID FROM User WHERE Username = ?';
 		$rs = $this->db->Execute($query, array($username));
+		if(!$rs) {
+			$reason = $this->db->ErrorMsg();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
+			return array(
+				'success' => false,
+				'reason' => $reason
+			);
+		}
 		if(!$rs) {
 			$reason = $this->db->ErrorMsg();
 			$this->db->FailTrans();
