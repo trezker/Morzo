@@ -147,7 +147,16 @@ else
 					if(method_exists($obj, 'Before_page_load')) {
 						call_user_func_array(array($obj, 'Before_page_load'), array());
 					}
-					$response = call_user_func_array(array($obj, $argv[2]), $funcargs);
+
+					if(method_exists($obj, 'Precondition')) {
+						$response = call_user_func_array(array($obj, 'Precondition'), array($funcargs));
+					} else {
+						$response = true;
+					}
+					//Only call the function if preconditions have passed.
+					if($response === true) {
+						$response = call_user_func_array(array($obj, $argv[2]), $funcargs);
+					}
 				}
 				if(is_array($response) === true) {
 					if($response["type"] === "view") {

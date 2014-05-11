@@ -32,6 +32,14 @@ class Controller {
 	function Input_cookie($key) {
 		return $this->input->Get_cookie($key);
 	}
+	
+	function Show_headers() {
+		$this->input->Show_headers();
+	}
+	
+	function Input_header($key) {
+		return $this->input->Get_header($key);
+	}
 
 	function Model_factory() {
 		return $this->model_factory;

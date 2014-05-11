@@ -1,7 +1,35 @@
 <?php
 require_once "../controllers/base.php";
 
-class Actor extends Base {	
+class Actor extends Base {
+	function Precondition($args) {
+		$header_accept = $this->Input_header("Accept");
+		$json_request = false;
+		if (strpos($header_accept,'application/json') !== false) {
+			$json_request = true;
+			$actor_id = $this->Input_post('actor_id');
+		} else {
+			$actor_id = $args[0]; //actor id must always be the first arg.
+		}
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			if($json_request === true) {
+				return $this->Json_response_not_logged_in();
+			} else {
+				return array("type" => "redirect", "data" => "/");
+			}
+		}
+		$this->Load_model('Actor_model');
+		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
+			if($json_request === true) {
+				return $this->Json_response_not_your_actor();
+			} else {
+				return array("type" => "redirect", "data" => "/");
+			}
+		}
+		return true;
+	}
+		
 	public function Show_actor($actor_id, $tab = 'events') {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
