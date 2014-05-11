@@ -2,7 +2,7 @@
 <div id="actors">
 	<div id="whisper_dialog" style="display:none;">
 		<input type="text" name="whisper_message" id="whisper_message" />
-		<span class="action" onclick="whisper(<?=$actor_id?>);">Whisper</span>		
+		<span class="action" onclick="whisper(<?=$data['actor_id']?>);">Whisper</span>		
 	</div>
 	<div id="event_feedback"></div>
 	<table class="actor_list">
@@ -22,8 +22,8 @@
 					<span class='action' onclick='attack_actor({My_actor_ID}, {ID});'>Attack</span>
 				</td>
 			</tr>";
-		foreach ($actors as $person) {
-			$person['My_actor_ID'] = $actor_id;
+		foreach ($data['actors'] as $person) {
+			$person['My_actor_ID'] = $data['actor_id'];
 			echo expand_template($actor_name_template, $person);
 		}
 		?>

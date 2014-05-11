@@ -1,8 +1,8 @@
 <div id="recipe_menu_container">
-	<span class="action" id="open_recipe_menu" onclick="toggle_recipe_menu(<?php echo $actor_id;?>);">Start a new project</span>
+	<span class="action" id="open_recipe_menu" onclick="toggle_recipe_menu(<?php echo $data['actor_id'];?>);">Start a new project</span>
 	<div id="recipe_menu_content" style="display: none;">
 		<span class="action" onclick="toggle_recipe_menu();">Close recipe menu</span>
-		<?php echo $recipe_selection_view;?>
+		<?php echo $data['recipe_selection_view'];?>
 	</div>
 </div>
 
@@ -23,7 +23,7 @@
 					{!Join/Leave}
 				</td>
 			</tr>';
-		foreach ($projects as $project) {
+		foreach ($data['projects'] as $project) {
 			$alternate = ($alternate == 'alternate1')? 'alternate2': 'alternate1';
 			if($project["Joined"] == 0) {
 				$joinleave = '<span class="action" onclick="join_project({actor_id}, {id})">Join</span>';
@@ -40,7 +40,7 @@
 				'id' => $project["ID"],
 				'name' => $project["Recipe_Name"],
 				'progress_percent' => 100 * $project["Progress"] / $project["Cycle_time"],
-				'actor_id' => $actor_id,
+				'actor_id' => $data['actor_id'],
 				'active_class' => $active_class,
 				'alternate' => $alternate
 			);
@@ -64,7 +64,7 @@
 					<h2>Hunts</h2>
 				</td>
 			</tr>';
-		foreach ($hunts as $hunt) {
+		foreach ($data['hunts'] as $hunt) {
 			$alternate = ($alternate == 'alternate1')? 'alternate2': 'alternate1';
 			if($hunt["Joined"] == 0) {
 				$joinleave = '<span class="action" onclick="join_hunt({actor_id}, {id})">Join</span>';
@@ -81,7 +81,7 @@
 				'id' => $hunt["ID"],
 				'name' => $hunt["Description"],
 				'progress_percent' => 100 * ($hunt["Duration"] - $hunt["Hours_left"]) / $hunt["Duration"],
-				'actor_id' => $actor_id,
+				'actor_id' => $data['actor_id'],
 				'active_class' => $active_class,
 				'alternate' => $alternate
 			);

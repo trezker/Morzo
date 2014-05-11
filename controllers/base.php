@@ -24,7 +24,7 @@ class Base extends Controller {
 
 	public function Json_response_not_logged_in() {
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => array(
 				'success' => false, 
 				'reason' => 'Not logged in'
@@ -34,7 +34,7 @@ class Base extends Controller {
 	
 	public function Json_response_not_your_actor() {
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => array(
 				'success' => false, 
 				'reason' => 'Not your actor'
@@ -44,7 +44,7 @@ class Base extends Controller {
 	
 	public function Json_response_success() {
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => array(
 				'success' => true
 			)

@@ -7,7 +7,7 @@
 				</td>
 			';
 	$resourcecellmap = array();
-	foreach ($resources as $resource) {
+	foreach ($data['resources'] as $resource) {
 		$resource['actor_id'] = $actor_id;
 		$landscape = $resource['Landscape_name'];
 		if(!isset($resourcecellmap[$landscape]))
@@ -49,11 +49,11 @@
 							<td><input type="number" class="huntspecies" data-species_id="{ID}" style="width: 30px;" /></td>
 						</tr>
 						';
-	foreach($species as $specie) {
+	foreach($data['species'] as $specie) {
 		echo expand_template($speciestemplate, $specie);
 	}
 ?>
 	</table>
 	Hunt for <input type="number" style="width: 30px;" id="hunthours" /> hours.<br />
-	<span class="action" onclick="start_hunt(<?php echo $actor_id; ?>);">Start hunt</span>
+	<span class="action" onclick="start_hunt(<?php echo $data['actor_id']; ?>);">Start hunt</span>
 </div>

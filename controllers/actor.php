@@ -16,7 +16,7 @@ class Actor extends Base {
 			if($json_request === true) {
 				return $this->Json_response_not_logged_in();
 			} else {
-				return array("type" => "redirect", "data" => "/");
+				return array("view" => "redirect", "data" => "/");
 			}
 		}
 		$this->Load_model('Actor_model');
@@ -24,7 +24,7 @@ class Actor extends Base {
 			if($json_request === true) {
 				return $this->Json_response_not_your_actor();
 			} else {
-				return array("type" => "redirect", "data" => "/");
+				return array("view" => "redirect", "data" => "/");
 			}
 		}
 		return true;
@@ -165,7 +165,6 @@ class Actor extends Base {
 		}
 		
 		return array(
-			'type' => 'view', 
 			'view' => 'actor_view', 
 			'data' => array(
 				'tab' => $tab,
@@ -186,7 +185,7 @@ class Actor extends Base {
 		$r = $this->Actor_model->Change_actor_name($actor_id, $named_actor_id, $new_name);
 		if($r == false) {
 			return array(
-				'type' => 'json',
+				'view' => 'data_json',
 				'data' => array(
 					'success' => false, 
 					'reason' => 'Could not change actor name'
@@ -196,7 +195,7 @@ class Actor extends Base {
 		else {
 			if(strlen($new_name) == 0) {
 				return array(
-					'type' => 'json',
+					'view' => 'data_json',
 					'data' => array(
 						'success' => true, 
 						'data' => 'Unnamed actor'
@@ -205,7 +204,7 @@ class Actor extends Base {
 			}
 			else {
 				return array(
-					'type' => 'json',
+					'view' => 'data_json',
 					'data' => array(
 						'success' => true, 
 						'data' => $new_name
@@ -223,7 +222,7 @@ class Actor extends Base {
 		$r = $this->Event_model->Save_event('{LNG_Actor_said}', $actor_id, NULL, $message);
 		if($r == false) {
 			return array(
-				'type' => 'json',
+				'view' => 'data_json',
 				'data' => array(
 					'success' => false, 
 					'reason' => 'Could not save your message'
@@ -242,7 +241,6 @@ class Actor extends Base {
 		$recipe_list = $this->Project_model->Get_recipes_with_nature_resource($actor_id, $resource_id);
 
 		return array(
-			'type' => 'json',
 			'view' => 'single_view_json',
 			'data' => array(
 				'success' => true,
@@ -265,7 +263,6 @@ class Actor extends Base {
 		$recipe = $this->Project_model->Get_recipe($recipe_id);
 		
 		return array(
-			'type' => 'json',
 			'view' => 'single_view_json',
 			'data' => array(
 				'success' => true,
@@ -293,7 +290,7 @@ class Actor extends Base {
 		$success = $this->Project_model->Start_project($actor_id, $recipe_id, $supply, $cycles);
 
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => array(
 				'success' => $success
 			)
@@ -308,7 +305,7 @@ class Actor extends Base {
 		$success = $this->Project_model->Join_project($actor_id, $project_id);
 
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => array(
 				'success' => $success
 			)
@@ -322,7 +319,7 @@ class Actor extends Base {
 		$success = $this->Project_model->Leave_project($actor_id);
 
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => array(
 				'success' => $success
 			)
@@ -423,7 +420,7 @@ class Actor extends Base {
 		$r = $this->Event_model->Save_event('{LNG_Actor_pointed}',$actor_id, $pointee_id);
 		if($r == false) {
 			return array(
-				'type' => 'json',
+				'view' => 'data_json',
 				'data' => array(
 					'success' => false, 
 					'reason' => 'Could not save your message'
@@ -443,7 +440,7 @@ class Actor extends Base {
 		$r = $this->Event_model->Save_event('{LNG_Actor_attacked}',$actor_id, $attacked_actor_id);
 		if($r == false) {
 			return array(
-				'type' => 'json',
+				'view' => 'data_json',
 				'data' => array(
 					'success' => false, 
 					'reason' => 'Could not save'
@@ -464,7 +461,7 @@ class Actor extends Base {
 		$r = $this->Event_model->Save_event('{LNG_Actor_whispered}', $actor_id, $whispree_id, $message, NULL, NULL, true);
 		if($r == false) {
 			return array(
-				'type' => 'json',
+				'view' => 'data_json',
 				'data' => array(
 					'success' => false, 
 					'reason' => 'Could not save your message'
@@ -484,7 +481,6 @@ class Actor extends Base {
 		$project = $this->Project_model->Get_project($project_id, $actor_id);
 
 		return array(
-			'type' => 'json',
 			'view' => 'single_view_json',
 			'data' => array(
 				'success' => true,
@@ -507,7 +503,6 @@ class Actor extends Base {
 		$hunt = $this->Species_model->Get_hunt($actor_id, $hunt_id);
 
 		return array(
-			'type' => 'json',
 			'view' => 'single_view_json',
 			'data' => array(
 				'success' => true,
@@ -530,7 +525,7 @@ class Actor extends Base {
 		$success = $this->Project_model->Supply_project($project_id, $actor_id);
 		
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => array(
 				'success' => $success
 			)
@@ -545,7 +540,7 @@ class Actor extends Base {
 		$success = $this->Project_model->Cancel_project($project_id, $actor_id);
 		
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => array(
 				'success' => $success
 			)
@@ -561,7 +556,7 @@ class Actor extends Base {
 		$result = $this->species_model->Start_hunt($actor_id, $hours, $species);
 
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => $result
 		);
 	}
@@ -574,7 +569,7 @@ class Actor extends Base {
 		$result = $this->species_model->Join_hunt($actor_id, $hunt_id);
 
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => $result
 		);
 	}
@@ -586,7 +581,7 @@ class Actor extends Base {
 		$result = $this->species_model->Leave_hunt($actor_id);
 
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => $result
 		);
 	}
@@ -599,7 +594,7 @@ class Actor extends Base {
 		$result = $this->Actor_model->Enter_object($actor_id, $object_id);
 
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => $result
 		);
 	}
@@ -613,7 +608,7 @@ class Actor extends Base {
 		$result = $this->Actor_model->Leave_object($actor_id);
 
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => $result
 		);
 	}
@@ -627,7 +622,7 @@ class Actor extends Base {
 		$this->Load_model('Inventory_model');
 		$result = $this->Inventory_model->Transfer_to_inventory($actor_id, $inventory_id, $resources, $products);
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => $result
 		);
 	}
@@ -641,7 +636,7 @@ class Actor extends Base {
 		$result = $this->Inventory_model->Get_inventory_product_objects($actor_id, $inventory_id, $product_id);
 		if(!$result) {
 			return array(
-				'type' => 'json',
+				'view' => 'data_json',
 				'data' => array(
 					'success' => false, 
 					'reason' => 'Could not load objects'
@@ -650,7 +645,6 @@ class Actor extends Base {
 		}
 
 		return array(
-			'type' => 'json',
 			'view' => 'single_view_json',
 			'data' => array(
 				'success' => true,
@@ -674,7 +668,7 @@ class Actor extends Base {
 		$this->Load_model('Inventory_model');
 		if(!$this->Inventory_model->Is_inventory_accessible($actor_id, $inventory_id)) {
 			return array(
-				'type' => 'json',
+				'view' => 'data_json',
 				'data' => array(
 					'success' => false,
 					'reason' => 'You can not access this inventory'
@@ -685,7 +679,7 @@ class Actor extends Base {
 		$inventory = $this->Inventory_model->Get_inventory($inventory_id);
 		if(!$inventory) {
 			return array(
-				'type' => 'json',
+				'view' => 'data_json',
 				'data' => array(
 					'success' => false,
 					'reason' => 'Could not load inventory'
@@ -694,7 +688,6 @@ class Actor extends Base {
 		}
 
 		return array(
-			'type' => 'json',
 			'view' => 'single_view_json',
 			'data' => array(
 				'success' => true,
@@ -720,7 +713,7 @@ class Actor extends Base {
 		$result = $this->Inventory_model->Label_object($actor_id, $object_id, $label);
 
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => $result
 		);
 	}
@@ -735,7 +728,7 @@ class Actor extends Base {
 		$result = $this->Inventory_model->Attach_lock($actor_id, $object_id, $lock_id);
 
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => $result
 		);
 	}
@@ -749,7 +742,7 @@ class Actor extends Base {
 		$result = $this->Inventory_model->Detach_lock($actor_id, $object_id, $lockside);
 
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => $result
 		);
 	}
@@ -763,7 +756,7 @@ class Actor extends Base {
 		$result = $this->Inventory_model->Lock_object($actor_id, $object_id, $lockside);
 
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => $result
 		);
 	}
@@ -777,7 +770,7 @@ class Actor extends Base {
 		$result = $this->Inventory_model->Unlock_object($actor_id, $object_id, $lockside);
 
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => $result
 		);
 	}

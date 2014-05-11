@@ -1,5 +1,5 @@
 <input type="text" name="actor_message" id="actor_message" />
-<span class="action" onclick="speak(<?=$actor_id?>);">Speak</span>
+<span class="action" onclick="speak(<?=$data['actor_id']?>);">Speak</span>
 <div id="event_feedback"></div>
 <table class="event_list">
 	<?php
@@ -14,7 +14,7 @@
 		</tr>';
 	
 	$alternate = '';
-	foreach ($events as $event) {
+	foreach ($data['events'] as $event) {
 		$alternate = ($alternate == 'alternate1')? 'alternate2': 'alternate1';
 		$text = $event["Text"];
 
@@ -30,7 +30,7 @@
 
 		if($event['To_actor_name'] == NULL)
 			$event['To_actor_name'] = 'Unnamed actor';
-		if($event['To_actor_ID'] == $actor_id)
+		if($event['To_actor_ID'] == $data['actor_id'])
 			$event['To_actor_name'] = 'You';
 		$to_actor_name = expand_template($actor_name_template, array(
 			'id' => $event['To_actor_ID'],

@@ -159,25 +159,9 @@ else
 					}
 				}
 				if(is_array($response) === true) {
-					if($response["type"] === "view") {
-						require_once "../framework/view_factory.php";
-						$view_factory = new View_factory($model_factory);
-						echo $view_factory->Load_view($response["view"], $response["data"], true);
-					}
-					elseif($response["type"] === "json") {
-						header('Content-type: application/json');
-						if(isset($response["view"]) === false) {
-							echo json_encode($response["data"]);
-						}
-						else {
-							require_once "../framework/view_factory.php";
-							$view_factory = new View_factory($model_factory);
-							echo $view_factory->Load_view($response["view"], $response["data"]);
-						}
-					}
-					elseif($response["type"] === "redirect") {
-						header("Location: " . $response["data"]);
-					}
+					require_once "../framework/view_factory.php";
+					$view_factory = new View_factory($model_factory);
+					echo $view_factory->Load_view($response["view"], $response["data"], true);
 				}
 			}
 		}
