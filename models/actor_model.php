@@ -25,6 +25,7 @@ class Actor_model extends Model
 	}
 	
 	public function Spawn_actor($location_id) {
+		//$this->db->debug = true;
 		$rs = $this->db->Execute('
 			select count(*)<C.Value as Allow_more_actors from Actor A join Count C on C.Name = \'Max_actors\';
 			', array());
@@ -36,8 +37,7 @@ class Actor_model extends Model
 		//Find location where there's room for more actors
 		$rs = $this->db->Execute('
 			select LS.Location_ID, LS.Species_ID, LS.Actor_spawn, count(A.ID) as AC from Location_species LS
-			left join Actor A on A.Location_ID = LS.Location_ID and A.Species_ID = LS.Species_ID
-			where A.Health <= 0
+			left join Actor A on A.Location_ID = LS.Location_ID and A.Species_ID = LS.Species_ID and A.Health > 0
 			group by LS.Location_ID, LS.Species_ID
 			having LS.Actor_spawn > AC
 			', array());
