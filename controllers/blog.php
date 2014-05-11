@@ -10,17 +10,19 @@ class Blog extends Base {
 		//$posts = $this->Blog_model->Get_latest_posts();
 		$blogs = $this->Blog_model->Get_blogs();
 
-		$blogposts_view = $this->Load_view('blogposts_view', array(
-											'posts' => $posts
-											), true);
-
-		$common_head_view = $this->Load_view('common_head_view', array());
-		$this->Load_view('blog_view', array(
-											'posts' => $posts,
-											'blogs' => $blogs,
-											'blogposts_view' => $blogposts_view,
-											'common_head_view' => $common_head_view
-											));
+		return array(
+			'view' => 'blog_view',
+			'data' => array(
+				'posts' => $posts,
+				'blogs' => $blogs,
+				'blogposts_view' => array(
+					'view' => 'blogposts_view',
+					'data' => array(
+						'posts' => $posts
+					)
+				)
+			)
+		);
 	}
 	
 	public function Control_panel($blog_name = null, $post_id = -1) {
