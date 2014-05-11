@@ -31,15 +31,7 @@ class Actor extends Base {
 	}
 		
 	public function Show_actor($actor_id, $tab = 'events') {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			return array("type" => "redirect", "data" => "/");
-		}
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return array("type" => "redirect", "data" => "/");
-		}
-
 		$this->Load_model("Travel_model");
 
 		$actor = $this->Actor_model->Get_actor($actor_id);
@@ -187,17 +179,10 @@ class Actor extends Base {
 	}
 	
 	public function Change_actor_name() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			return $this->Json_response_not_logged_in();
-		}
-		$actor_id = $this->Input_post('actor');
+		$actor_id = $this->Input_post('actor_id');
 		$named_actor_id = $this->Input_post('named_actor');
 		$new_name = $this->Input_post('name');
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
 		$r = $this->Actor_model->Change_actor_name($actor_id, $named_actor_id, $new_name);
 		if($r == false) {
 			return array(
@@ -231,16 +216,8 @@ class Actor extends Base {
 	}
 
 	public function Speak() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			return $this->Json_response_not_logged_in();
-		}
-		$actor_id = $this->Input_post('actor');
+		$actor_id = $this->Input_post('actor_id');
 		$message = $this->Input_post('message');
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
 		
 		$this->Load_model('Event_model');
 		$r = $this->Event_model->Save_event('{LNG_Actor_said}', $actor_id, NULL, $message);
@@ -259,21 +236,9 @@ class Actor extends Base {
 	}
 	
 	function Natural_resource_dialog() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$this->Load_model('Project_model');
-		
 		$actor_id = $this->Input_post('actor_id');
 		$resource_id = $this->Input_post('resource');
-
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-
 		$recipe_list = $this->Project_model->Get_recipes_with_nature_resource($actor_id, $resource_id);
 
 		return array(
@@ -293,18 +258,8 @@ class Actor extends Base {
 	}
 	
 	function Start_project_form() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			return $this->Json_response_not_logged_in();
-		}
-		
 		$recipe_id = $this->Input_post('recipe_id');
 		$actor_id = $this->Input_post('actor_id');
-
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
 
 		$this->Load_model('Project_model');
 		$recipe = $this->Project_model->Get_recipe($recipe_id);
@@ -326,22 +281,12 @@ class Actor extends Base {
 	}
 
 	function Start_project() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			return $this->Json_response_not_logged_in();
-		}
-		
 		$recipe_id = $this->Input_post('recipe_id');
 		$actor_id = $this->Input_post('actor_id');
 		$supply = $this->Input_post('supply') == "true";
 		$cycles = intval($this->Input_post('cycles'));
 		if($cycles < 1) {
 			$cycles = 1;
-		}
-
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
 		}
 
 		$this->Load_model('Project_model');
@@ -356,18 +301,8 @@ class Actor extends Base {
 	}
 
 	function Join_project() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			return $this->Json_response_not_logged_in();
-		}
-		
 		$project_id = $this->Input_post('project_id');
 		$actor_id = $this->Input_post('actor_id');
-
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
 
 		$this->Load_model('Project_model');
 		$success = $this->Project_model->Join_project($actor_id, $project_id);
@@ -381,17 +316,7 @@ class Actor extends Base {
 	}
 
 	function Leave_project() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			return $this->Json_response_not_logged_in();
-		}
-		
 		$actor_id = $this->Input_post('actor_id');
-
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
 
 		$this->Load_model('Project_model');
 		$success = $this->Project_model->Leave_project($actor_id);
@@ -491,16 +416,8 @@ class Actor extends Base {
 	}
 	
 	public function Point_at_actor() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			return $this->Json_response_not_logged_in();
-		}
 		$actor_id = $this->Input_post('actor_id');
 		$pointee_id = $this->Input_post('pointee_id');
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
 		
 		$this->Load_model('Event_model');
 		$r = $this->Event_model->Save_event('{LNG_Actor_pointed}',$actor_id, $pointee_id);
@@ -519,16 +436,8 @@ class Actor extends Base {
 	}
 
 	public function Attack_actor() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			return $this->Json_response_not_logged_in();
-		}
 		$actor_id = $this->Input_post('actor_id');
 		$attacked_actor_id = $this->Input_post('attacked_actor_id');
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
 		
 		$this->Load_model('Event_model');
 		$r = $this->Event_model->Save_event('{LNG_Actor_attacked}',$actor_id, $attacked_actor_id);
@@ -547,17 +456,9 @@ class Actor extends Base {
 	}
 
 	public function Whisper() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
 		$actor_id = $this->Input_post('actor_id');
 		$whispree_id = $this->Input_post('whispree_id');
 		$message = $this->Input_post('message');
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
 		
 		$this->Load_model('Event_model');
 		$r = $this->Event_model->Save_event('{LNG_Actor_whispered}', $actor_id, $whispree_id, $message, NULL, NULL, true);
@@ -576,19 +477,9 @@ class Actor extends Base {
 	}
 	
 	public function Show_project_details() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
 		$project_id = $this->Input_post('project_id');
 		
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-
 		$this->Load_model('Project_model');
 		$project = $this->Project_model->Get_project($project_id, $actor_id);
 
@@ -609,19 +500,9 @@ class Actor extends Base {
 	}
 
 	public function Show_hunt_details() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
 		$hunt_id = $this->Input_post('hunt_id');
 		
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-
 		$this->Load_model('Species_model');
 		$hunt = $this->Species_model->Get_hunt($actor_id, $hunt_id);
 
@@ -642,19 +523,9 @@ class Actor extends Base {
 	}
 	
 	public function Supply_project() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
 		$project_id = $this->Input_post('project_id');
 		
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-
 		$this->Load_model('Project_model');
 		$success = $this->Project_model->Supply_project($project_id, $actor_id);
 		
@@ -667,19 +538,9 @@ class Actor extends Base {
 	}
 
 	public function Cancel_project() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
 		$project_id = $this->Input_post('project_id');
 		
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-
 		$this->Load_model('Project_model');
 		$success = $this->Project_model->Cancel_project($project_id, $actor_id);
 		
@@ -692,20 +553,10 @@ class Actor extends Base {
 	}
 
 	public function Start_hunt() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
 		$hours = $this->Input_post('hours');
 		$species = $this->Input_post('species');
 		
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-
 		$this->Load_model('species_model');
 		$result = $this->species_model->Start_hunt($actor_id, $hours, $species);
 
@@ -716,19 +567,9 @@ class Actor extends Base {
 	}
 
 	public function Join_hunt() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
 		$hunt_id = $this->Input_post('hunt_id');
 		
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-
 		$this->Load_model('species_model');
 		$result = $this->species_model->Join_hunt($actor_id, $hunt_id);
 
@@ -739,17 +580,7 @@ class Actor extends Base {
 	}
 
 	public function Leave_hunt() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
-		
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
 
 		$this->Load_model('species_model');
 		$result = $this->species_model->Leave_hunt($actor_id);
@@ -761,19 +592,10 @@ class Actor extends Base {
 	}
 
 	public function Enter_object() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
 		$object_id = $this->Input_post('object_id');
 		
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-
 		$result = $this->Actor_model->Enter_object($actor_id, $object_id);
 
 		return array(
@@ -783,18 +605,9 @@ class Actor extends Base {
 	}
 
 	public function Leave_object() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
 		
 		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-
 		$actor = $this->Actor_model->Get_actor($actor_id);
 		$object_id = $actor['Inside_object_ID'];
 		$result = $this->Actor_model->Leave_object($actor_id);
@@ -806,18 +619,7 @@ class Actor extends Base {
 	}
 	
 	public function Transfer_to_inventory() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
-
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-		
 		$inventory_id = $this->Input_post('inventory_id');
 		$resources = $this->Input_post('resources');
 		$products = $this->Input_post('products');
@@ -831,18 +633,7 @@ class Actor extends Base {
 	}
 	
 	public function Expand_inventory_product() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
-
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-		
 		$inventory_id = $this->Input_post('inventory_id');
 		$product_id = $this->Input_post('product_id');
 		
@@ -877,22 +668,10 @@ class Actor extends Base {
 	}
 
 	public function Open_container() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
-
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-		
 		$inventory_id = $this->Input_post('inventory_id');
 		
 		$this->Load_model('Inventory_model');
-		
 		if(!$this->Inventory_model->Is_inventory_accessible($actor_id, $inventory_id)) {
 			return array(
 				'type' => 'json',
@@ -933,18 +712,7 @@ class Actor extends Base {
 	}
 
 	public function Label_object() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
-
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-		
 		$object_id = $this->Input_post('object_id');
 		$label = $this->Input_post('label');
 		
@@ -958,18 +726,7 @@ class Actor extends Base {
 	}
 
 	public function Attach_lock() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
-
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-		
 		$object_id = $this->Input_post('object_id');
 		$lock_id = $this->Input_post('lock_id');
 		
@@ -984,18 +741,7 @@ class Actor extends Base {
 	}
 
 	public function Detach_lock() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
-
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-		
 		$object_id = $this->Input_post('object_id');
 		$lockside = $this->Input_post('lockside');
 		
@@ -1009,18 +755,7 @@ class Actor extends Base {
 	}
 
 	public function Lock_object() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
-
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-		
 		$object_id = $this->Input_post('object_id');
 		$lockside = $this->Input_post('lockside');
 		
@@ -1034,23 +769,11 @@ class Actor extends Base {
 	}
 
 	public function Unlock_object() {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			$this->Json_response_not_logged_in();
-		}
-
 		$actor_id = $this->Input_post('actor_id');
-
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($this->Session_get('userid'), $actor_id)) {
-			return $this->Json_response_not_your_actor();
-		}
-		
 		$object_id = $this->Input_post('object_id');
 		$lockside = $this->Input_post('lockside');
 		
 		$this->Load_model('Inventory_model');
-		
 		$result = $this->Inventory_model->Unlock_object($actor_id, $object_id, $lockside);
 
 		return array(

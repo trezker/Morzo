@@ -75,7 +75,7 @@ function change_actor_name(actor_id, change_actor_id) {
 		type: 'POST',
 		url: callurl,
 		data: {
-			actor: actor_id,
+			actor_id: actor_id,
 			named_actor: change_actor_id,
 			name: $('#actor_input').val()
 		},
@@ -175,7 +175,7 @@ function speak(actor_id) {
 		type: 'POST',
 		url: callurl,
 		data: {
-			actor: actor_id,
+			actor_id: actor_id,
 			message: message
 		},
 		dataType: "json",
