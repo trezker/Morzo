@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Morzo</title>
-		<?php echo $common_head_view; ?>
+		<?php echo $view_factory->Load_view('common_head_view'); ?>
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/blog.css">
 		<script type="text/javascript" src="/js/blog.js"></script>
 	</head>
@@ -15,7 +15,7 @@
 			  <option value="{Name}">{Name}</option>
 			  ';
 		echo expand_template($option_template, array('Name' => '-Select blog-'));
-		foreach($blogs as $blog) {
+		foreach($data['blogs'] as $blog) {
 			echo expand_template($option_template, $blog);
 		}
 		echo '</select>';
@@ -24,9 +24,7 @@
 		<span class="action" onclick="create_blog();">Create blog</span>
 		
 		<div id="blog_control_panel_container">
-			<?php
-			echo $blog_control_panel_view;
-			?>
+			<?php echo $view_factory->Load_view($data['blog_control_panel_view']['view'], $data['blog_control_panel_view']['data']); ?>
 		</div>
 	</body>
 </html>

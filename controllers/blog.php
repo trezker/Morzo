@@ -28,31 +28,36 @@ class Blog extends Base {
 	public function Control_panel($blog_name = null, $post_id = -1) {
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			header("Location: /front");
-			return;
+			return array(
+				'view' => 'redirect',
+				'data' => '/'
+			);
 		}
 
 		$this->Load_model('Blog_model');
-		$blogs = $this->Blog_model->Get_user_blogs($_SESSION['userid']);
+		$blogs = $this->Blog_model->Get_user_blogs($this->Session_get('userid'));
 		
 		$blog_control_panel_view = "";
 		if($blog_name) {
+			if(!$this->Blog_model->User_owns_blog_name($blog_name, $this->Session_get('userid'))) {
+				return array(
+					'view' => 'redirect',
+					'data' => '/'
+				);
+			}
 			$blog_control_panel_view = $this->Load_blog_control_panel($blog_name, $post_id);
 		}
 		
-		$common_head_view = $this->Load_view('common_head_view', array());
-		$this->Load_view('blog_control_panel_main_view', array(
-													'blogs' => $blogs,
-													'blog_control_panel_view' => $blog_control_panel_view,
-													'common_head_view' => $common_head_view
-													));
+		return array(
+			'view' => 'blog_control_panel_main_view',
+			'data' => array(
+				'blogs' => $blogs,
+				'blog_control_panel_view' => $blog_control_panel_view
+			)
+		);
 	}
 	
 	private function Load_blog_control_panel($blog_name, $post_id = -1) {
-		if(!$this->Blog_model->User_owns_blog_name($blog_name, $_SESSION['userid'])) {
-			return 'Not your blog';
-		}
-		
 		$blog = $this->Blog_model->Get_blog_by_name($blog_name);
 		$titles = $this->Blog_model->Get_blog_post_titles($blog['ID']);
 		if($post_id == -1) {
@@ -67,37 +72,17 @@ class Blog extends Base {
 			$post = $this->Blog_model->Get_blog_post($post_id);
 		}
 		
-		$common_head_view = $this->Load_view('common_head_view', array());
-		return $this->Load_view('blog_control_panel_view', array(
-																'blog_name' => $blog_name,
-																'blog' => $blog,
-																'post' => $post,
-																'titles' => $titles,
-																'common_head_view' => $common_head_view
-																), true);
+		return array(
+			'view' => 'blog_control_panel_view',
+			'data' => array(
+				'blog_name' => $blog_name,
+				'blog' => $blog,
+				'post' => $post,
+				'titles' => $titles
+			)
+		);
 	}
 
-	public function Edit_blogpost() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-
-		$post_id = $_POST['post_id'];
-		$this->Load_model('Blog_model');
-		$blog_id = $this->Blog_model->Get_blog_from_post_id($post_id);
-		if(!$this->Blog_model->User_owns_blog($blog_id, $_SESSION['userid'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your blog'));
-			return;
-		}
-		$blog = $this->Blog_model->Get_blog($blog_id);
-		$blog_control_panel_view = $this->Load_blog_control_panel($blog['Name'], $post_id);
-		
-		echo json_encode(array('success' => true, 'blog_control_panel_view' => $blog_control_panel_view));
-	}
-	
 	public function Create_blog() {
 		header('Content-type: application/json');
 		$this->Load_controller('User');
