@@ -103,26 +103,25 @@ class Blog extends Base {
 	}
 	
 	public function Submit_blog_post() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		
-		$blog_id = $_POST['blog_id'];
-		$post_id = $_POST['post_id'];
-		$title = $_POST['title'];
-		$content = $_POST['content'];
-		$hidden = $_POST['hidden']=="true"?1:0;
+		$blog_id = $this->Input_post('blog_id');
+		$post_id = $this->Input_post('post_id');
+		$title = $this->Input_post('title');
+		$content = $this->Input_post('content');
+		$hidden = $this->Input_post('hidden')=="true"?1:0;
 		
 		$this->Load_model('Blog_model');
 		if($post_id != -1) {
 			$blog_id = $this->Blog_model->Get_blog_from_post_id($post_id);
 		}
-		if(!$this->Blog_model->User_owns_blog($blog_id, $_SESSION['userid'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your blog'));
-			return;
+
+		if(!$this->Blog_model->User_owns_blog($blog_id, $this->Session_get('userid'))) {
+			return array(
+				'view' => 'data_json',
+				'data' => array(
+					'success' => false,
+					'reason' => 'Not your blog'
+				)
+			);
 		}
 		
 		if($post_id == -1) {
@@ -131,7 +130,10 @@ class Blog extends Base {
 			$r = $this->Blog_model->Update_blog_post($post_id, $title, $content, $hidden);
 		}
 		
-		echo json_encode($r);
+		echo array(
+			'view' => 'data_json',
+			'data' => $r
+		);
 	}
 
 	public function Delete_blogpost() {
