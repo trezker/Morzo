@@ -188,7 +188,7 @@ class Blog extends Base {
 	public function View($blog_name) {
 		$show_owner_controls = false;
 		$this->Load_model('Blog_model');
-		if($this->Blog_model->User_owns_blog_name($blog_name, $_SESSION['userid'])) {
+		if($this->Blog_model->User_owns_blog_name($blog_name, $this->Session_get('userid'))) {
 			$show_owner_controls = true;
 		}
 		$posts = $this->Blog_model->Get_posts();
