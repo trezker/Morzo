@@ -67,7 +67,7 @@ function preview_blog_post() {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success !== false) {
-				$("#preview").html(data.data);
+				$("#preview").html(data.html);
 			}
 		}
 	});

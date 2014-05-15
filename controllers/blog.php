@@ -212,37 +212,34 @@ class Blog extends Base {
 	}
 	
 	public function Preview_post() {
-		$this->Load_controller('User');
 		$show_owner_controls = false;
-		$this->Load_model('Blog_model');
-		
-		$blog_id = $_POST['blog_id'];
-		$post_id = $_POST['post_id'];
-		$title = $_POST['title'];
-		$content = $_POST['content'];
-		
-		if($this->User->Logged_in()) {
-			/*
-			if($this->Blog_model->User_owns_blog_name($blog_name, $_SESSION['userid'])) {
-				$show_owner_controls = true;
-			}*/
-		}
+		$blog_id = $this->Input_post('blog_id');
+		$post_id = $this->Input_post('post_id');
+		$title = $this->Input_post('title');
+		$content = $this->Input_post('content');
 		
 		$posts = array(
-					array(
-						'Title' => $title,
-						'Content' => $content,
-						'Created_date' => '1111-11-11 11:11:11',
-						'Blog_name' => ""
-						)
-					);
+			array(
+				'Title' => $title,
+				'Content' => $content,
+				'Created_date' => '1111-11-11 11:11:11',
+				'Blog_name' => ""
+			)
+		);
 		
-		$blogposts_view = $this->Load_view('blogposts_view', array(
-											'posts' => $posts,
-											'blogs' => null,
-											'show_owner_controls' => false
-											), true);
-
-		echo json_encode(array('success' => true, 'data' => $blogposts_view));
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'blogposts_view',
+					'data' => array(
+						'posts' => $posts,
+						'blogs' => null,
+						'show_owner_controls' => false
+					)
+				)
+			)
+		);
 	}
 }
