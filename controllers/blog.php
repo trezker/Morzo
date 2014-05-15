@@ -2,6 +2,24 @@
 require_once "../controllers/base.php";
 
 class Blog extends Base {
+	function Precondition($args) {
+		$header_accept = $this->Input_header("Accept");
+		$json_request = false;
+		if (strpos($header_accept,'application/json') !== false) {
+			$json_request = true;
+		}
+		
+		$this->Load_controller('User');
+		if(!$this->User->Logged_in()) {
+			if($json_request === true) {
+				return $this->Json_response_not_logged_in();
+			} else {
+				return array("view" => "redirect", "data" => "/");
+			}
+		}
+		return true;
+	}
+
 	public function Index() {
 		//List latest blogpost titles
 		//List Blogs
@@ -26,17 +44,8 @@ class Blog extends Base {
 	}
 	
 	public function Control_panel($blog_name = null, $post_id = -1) {
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			return array(
-				'view' => 'redirect',
-				'data' => '/'
-			);
-		}
-
 		$this->Load_model('Blog_model');
 		$blogs = $this->Blog_model->Get_user_blogs($this->Session_get('userid'));
-		
 		$blog_control_panel_view = "";
 		if($blog_name) {
 			if(!$this->Blog_model->User_owns_blog_name($blog_name, $this->Session_get('userid'))) {
@@ -84,17 +93,13 @@ class Blog extends Base {
 	}
 
 	public function Create_blog() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		
 		$this->Load_model('Blog_model');
-		$r = $this->Blog_model->Create_blog($_SESSION['userid'], $_POST['name']);
+		$r = $this->Blog_model->Create_blog($this->Session_get('userid'), $this->Input_post('name'));
 		
-		echo json_encode($r);
+		echo array(
+			'view' => 'data_json',
+			'data' => $r
+		);
 	}
 	
 	public function Submit_blog_post() {
