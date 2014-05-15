@@ -1,13 +1,14 @@
 <?php
 require_once "../controllers/base.php";
 
-class Front extends Base
-{
-	public function Index()
-	{
-		if(isset($_SESSION['userid'])) {
-			header("Location: user");
-			return;
+class Front extends Base {
+	public function Index() {
+		$this->Load_controller('User');
+		if($this->User->Logged_in()) {
+			return array(
+				'view' => 'redirect',
+				'data' => '/user'
+			);
 		}
 
 		$this->Load_model('Blog_model');
@@ -18,20 +19,14 @@ class Front extends Base
 		$openid_icons = $this->User_model->Get_openid_icons();
 
 		return array(
-			"type" => "view", 
-			"view" => 'front_view', 
-			"data" => array(
+			'type' => 'view',
+			'view' => 'front_view',
+			'data' => array(
 				'openid_icons' => $openid_icons,
 				'posts' => $posts,
 				'blogs' => $blogs,
 				'show_owner_controls' => false
 			)
 		);
-	}
-	
-	public function Get_login_view() {
-		$this->Load_model('User_model');
-		$openid_icons = $this->User_model->Get_openid_icons();
-		$this->Load_view('login_view', array('openid_icons' => $openid_icons));
 	}
 }

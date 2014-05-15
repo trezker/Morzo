@@ -20,7 +20,7 @@ class User extends Base
 	{
 		if(!$this->Logged_in())
 		{
-			header("Location: front");
+			header("Location: /front");
 			return;
 		}
 
