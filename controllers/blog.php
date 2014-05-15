@@ -137,27 +137,28 @@ class Blog extends Base {
 	}
 
 	public function Delete_blogpost() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		
-		$post_id = $_POST['post_id'];
+		$post_id = $this->Input_post('post_id');
 		
 		$this->Load_model('Blog_model');
 		if($post_id != -1) {
 			$blog_id = $this->Blog_model->Get_blog_from_post_id($post_id);
 		}
-		if(!$this->Blog_model->User_owns_blog($blog_id, $_SESSION['userid'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your blog'));
-			return;
+		if(!$this->Blog_model->User_owns_blog($blog_id, $this->Session_get('userid'))) {
+			return array(
+				'view' => 'data_json',
+				'data' => array(
+					'success' => false,
+					'reason' => 'Not your blog'
+				)
+			);
 		}
 		
 		$r = $this->Blog_model->Delete_blogpost($post_id);
 		
-		echo json_encode($r);
+		echo array(
+			'view' => 'data_json',
+			'data' => $r
+		);
 	}
 
 	public function Hide_blogpost() {
