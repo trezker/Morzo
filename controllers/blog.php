@@ -186,30 +186,29 @@ class Blog extends Base {
 	}
 	
 	public function View($blog_name) {
-		$this->Load_controller('User');
 		$show_owner_controls = false;
 		$this->Load_model('Blog_model');
-		if($this->User->Logged_in()) {
-			if($this->Blog_model->User_owns_blog_name($blog_name, $_SESSION['userid'])) {
-				$show_owner_controls = true;
-			}
+		if($this->Blog_model->User_owns_blog_name($blog_name, $_SESSION['userid'])) {
+			$show_owner_controls = true;
 		}
 		$posts = $this->Blog_model->Get_posts();
 		$blogs = $this->Blog_model->Get_blogs();
 
-		$blogposts_view = $this->Load_view('blogposts_view', array(
-											'posts' => $posts,
-											'blogs' => $blogs,
-											'show_owner_controls' => $show_owner_controls
-											), true);
-
-		$common_head_view = $this->Load_view('common_head_view', array());
-		$this->Load_view('blog_view', array(
-											'posts' => $posts,
-											'blogs' => $blogs,
-											'blogposts_view' => $blogposts_view,
-											'common_head_view' => $common_head_view
-											));
+		return array(
+			'view' => 'blog_view',
+			'data' => array(
+				'posts' => $posts,
+				'blogs' => $blogs,
+				'blogposts_view' => array(
+					'view' => 'blogposts_view',
+					'data' => array(
+						'posts' => $posts,
+						'blogs' => $blogs,
+						'show_owner_controls' => $show_owner_controls
+					)
+				)
+			)
+		);
 	}
 	
 	public function Preview_post() {
