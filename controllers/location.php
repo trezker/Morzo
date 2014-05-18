@@ -74,36 +74,32 @@ class Location extends Base {
 		}
 	}
 	
-	public function Travel()
-	{
-		header('Content-type: application/json');
-		if(!isset($_POST['actor_id'])) {
-			echo json_encode(array('success' => false, 'reason' => 'No actor requested'));
-			return;
-		}
-		if(!isset($_POST['destination'])) {
-			echo json_encode(array('success' => false, 'reason' => 'No destination requested'));
-			return;
-		}
-		if(!isset($_POST['origin'])) {
-			echo json_encode(array('success' => false, 'reason' => 'No origin provided'));
-			return;
-		}
+	public function Travel() {
+		$actor_id = $this->Input_post('actor_id');
+		$destination = $this->Input_post('destination');
+		$origin = $this->Input_post('origin');
 		
 		$this->Load_model('Location_model');
-		$destination = $this->Get_location($_POST['actor_id'], $_POST['destination']);
+		$destination = $this->Get_location($actor_id, $destination);
 		if(!$destination) {
-			echo json_encode(array('success' => false, 'reason' => 'Could not get destination'));
-			return;
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Could not get destination')
+			);
 		}
 		
 		$this->Load_model('Travel_model');
-		$r = $this->Travel_model->Travel($_POST['actor_id'], $destination, $_POST['origin']);
+		$r = $this->Travel_model->Travel($actor_id, $destination, $origin);
 		if(!$r) {
-			echo json_encode(array('success' => false, 'reason' => 'Could not initiate travel'));
-			return;
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Could not initiate travel')
+			);
 		}
-		echo json_encode(array('success' => true));
+		return array(
+			'view' => 'data_json',
+			'data' => array('success' => true)
+		);
 	}
 	
 	public function Cancel_travel() {
