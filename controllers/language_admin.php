@@ -73,34 +73,24 @@ class Language_admin extends Base {
 	}
 	
 	public function Save_translation(){
-		header('Content-type: application/json');
-
-		if(!is_numeric($_POST['language_id'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Must give a language id'));
-			return;
-		}
-
-		if(!isset($_POST['handle'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Must give a handle'));
-			return;
-		}
-
-		if(!isset($_POST['text'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Must give a text'));
-			return;
-		}
+		$language_id = $this->Input_post('language_id');
+		$handle = $this->Input_post('handle');
+		$text = $this->Input_post('text');
 
 		$this->Load_model('Language_model');
-		$translation_result = $this->Language_model->Save_translation(	$_POST['language_id'],
-																		$_POST['handle'],
-																		$_POST['text']);
+		$translation_result = $this->Language_model->Save_translation($language_id, $handle, $text);
 																		
-		if($translation_result == false)
-			$success = false;
-		else
+		$success = false;
+		if($translation_result !== false)
 			$success = true;
 		
-		echo json_encode(array('success' => $success, 'data' => $translation_result));
+		return array(
+			'view' => 'data_json',
+			'data' => array(
+				'success' => $success,
+				'data' => $translation_result
+			)
+		);
 	}
 
 	public function New_translation(){
