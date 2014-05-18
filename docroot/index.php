@@ -131,18 +131,16 @@ else
 				$obj = $controller_factory->Load_controller($controller_name);
 
 				$response = null;
-				if(count($argv)<3)
-				{
-					$response = $obj->Index();
+				if(count($argv) < 3) {
+					$argv[] = 'Index';
 				}
-				else if(!method_exists($obj, $argv[2]))
-				{
+				
+				if(!method_exists($obj, $argv[2])) {
 					header("HTTP/1.0 404 Not Found");
 					include '../blocked.php';
 					exit;
 				}
-				else
-				{
+				else {
 					$funcargs = array_slice($argv, 3);
 					if(method_exists($obj, 'Before_page_load')) {
 						call_user_func_array(array($obj, 'Before_page_load'), array());
