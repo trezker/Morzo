@@ -44,7 +44,6 @@ class Location extends Base {
 	}
 	
 	public function Change_location_name() {
-		header('Content-type: application/json');
 		$actor_id = $this->Input_post('actor_id');
 		$location_id = $this->Input_post('location');
 		$new_name = $this->Input_post('name');
@@ -52,23 +51,26 @@ class Location extends Base {
 		$this->Load_model('Location_model');
 		$location_id = $this->Get_location($actor_id, $location_id);
 		if(!$location_id) {
-			echo json_encode(array('success' => false, 'reason' => 'Location error'));
-			return;
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Location error')
+			);
 		}
 		$r = $this->Location_model->Change_location_name($actor_id, $location_id, $new_name);
-		if($r == false)
-		{
-			echo json_encode(array('success' => false, 'reason' => 'Could not rename location'));
-			return;
+		if($r == false) {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Could not rename location')
+			);
 		}
-		else
-		{
+		else {
 			if(strlen($new_name) == 0) {
-				echo json_encode(array('success' => true, 'data' => 'Unnamed location'));
+				$new_name = 'Unnamed location';
 			}
-			else {
-				echo json_encode(array('success' => true, 'data' => $new_name));
-			}
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => true, 'reason' => $new_name)
+			);
 		}
 	}
 	
