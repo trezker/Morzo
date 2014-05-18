@@ -1,20 +1,40 @@
 <?php
 require_once "../controllers/base.php";
 
-class Language_admin extends Base
-{
-	public function Index()
-	{
+class Language_admin extends Base {
+	function Precondition($args) {
+		$header_accept = $this->Input_header("Accept");
+		$json_request = false;
+		if (strpos($header_accept,'application/json') !== false) {
+			$json_request = true;
+		} else {
+			$actor_id = $args[0]; //actor id must always be the first arg.
+		}
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			header("Location: front");
-			return;
+			if($json_request === true) {
+				return $this->Json_response_not_logged_in();
+			} else {
+				return array("view" => "redirect", "data" => "/");
+			}
 		}
-		if($_SESSION['admin'] != true) {
-			echo "You need to be admin to access this page";
-			return;
+		if($this->Session_get('admin') != true) {
+			if($json_request === true) {
+				return array(
+					'view' => 'data_json',
+					'data' => array(
+						'success' => false,
+						'reason' => 'Requires admin privilege'
+					)
+				);
+			} else {
+				return array("view" => "redirect", "data" => "/");
+			}
 		}
-
+		return true;
+	}
+		
+	public function Index() {
 		$this->Load_model('Language_model');
 		$languages = $this->Language_model->Get_languages();
 		
@@ -25,15 +45,6 @@ class Language_admin extends Base
 	public function Load_translations(){
 		header('Content-type: application/json');
 
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
 		if(!is_numeric($_POST['language_id'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Must give a language id'));
 			return;
@@ -51,15 +62,6 @@ class Language_admin extends Base
 	public function Save_translation(){
 		header('Content-type: application/json');
 
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
 		if(!is_numeric($_POST['language_id'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Must give a language id'));
 			return;
@@ -90,16 +92,6 @@ class Language_admin extends Base
 
 	public function New_translation(){
 		header('Content-type: application/json');
-
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
 
 		if(!isset($_POST['handle']) || trim($_POST['handle']) == "") {
 			echo json_encode(array('success' => false, 'reason' => 'Must give a handle'));
