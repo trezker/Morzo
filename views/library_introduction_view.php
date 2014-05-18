@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Morzo - introduction</title> 
-		<?php echo $common_head_view; ?>
+		<?php echo $view_factory->Load_view('common_head_view'); ?>
 	</head>
 	<body>
 		<a href="/">Front page</a>
