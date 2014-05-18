@@ -94,28 +94,23 @@ class Language_admin extends Base {
 	}
 
 	public function New_translation(){
-		header('Content-type: application/json');
-
-		if(!isset($_POST['handle']) || trim($_POST['handle']) == "") {
-			echo json_encode(array('success' => false, 'reason' => 'Must give a handle'));
-			return;
-		}
-		if(!isset($_POST['text']) || trim($_POST['text']) == "") {
-			echo json_encode(array('success' => false, 'reason' => 'Must give a text'));
-			return;
-		}
+		$handle = $this->Input_post('handle');
+		$text = $this->Input_post('text');
 
 		$this->Load_model('Language_model');
-		$translation_result = $this->Language_model->New_translation($_POST['handle'], $_POST['text']);
+		$translation_result = $this->Language_model->New_translation($handle, $text);
 
 		if($translation_result == false) {
-			echo json_encode(array('success' => false, 'reason' => 'Failed'));
-			return;
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Failed')
+			);
 		}
-		else
-			$success = true;
 		
-		echo json_encode(array('success' => $success, 'data' => $translation_result));
+		return array(
+			'view' => 'data_json',
+			'data' => array('success' => true, 'data' => $translation_result)
+		);
 	}
 }
 
