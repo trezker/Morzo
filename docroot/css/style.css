@@ -1,3 +1,11 @@
+input {
+	box-sizing: border-box;
+}
+
+.width_100 {
+	width: 100%;
+}
+
 body {
 	margin: 1em 2em;
 	background:#fff;
@@ -235,10 +243,6 @@ li.selected:hover {
 
 .translations_list .tdsave{
 	width: 100px;
-}
-
-.translation_input {
-	width: 99%;
 }
 
 .active_project {

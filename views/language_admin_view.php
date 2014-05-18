@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Language admin - Morzo</title>
-		<?php echo $common_head_view; ?>
+		<?php echo $view_factory->Load_view('common_head_view'); ?>
 		<script type="text/javascript" src="/js/language_admin.js"></script>
 	</head>
 	<body>
@@ -14,7 +14,7 @@
 			$template = '
 				<option value="{ID}">{Name}</option>
 				';
-			foreach ($languages as $language) {
+			foreach ($data['languages'] as $language) {
 				echo expand_template($template, $language);
 			}
 			?>
@@ -28,11 +28,11 @@
 				<tr class="{alternate}">
 					<td class="tdhandle">
 						New handle<br />
-						<input id="new_handle" name="new_handle" class="translation_input" style="width: 99%;" type="text" value="" />
+						<input id="new_handle" name="new_handle" class="width_100" type="text" value="" />
 					</td>
 					<td>
 						Enter the english text<br />
-						<input id="new_text" name="new_text" class="translation_input" style="width: 99%;" type="text" value="" />
+						<input id="new_text" name="new_text" class="width_100" type="text" value="" />
 					</td>
 					<td class="tdsave">
 						<a href="javascript:new_translation()">Save</a><br />
