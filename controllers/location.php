@@ -120,18 +120,19 @@ class Location extends Base {
 	}
 
 	public function Turn_around() {
-		header('Content-type: application/json');
-		if(!isset($_POST['actor_id'])) {
-			echo json_encode(array('success' => false, 'reason' => 'No actor requested'));
-			return;
-		}
+		$actor_id = $this->Input_post('actor_id');
 		
 		$this->Load_model('Travel_model');
-		$r = $this->Travel_model->Turn_around($_POST['actor_id']);
+		$r = $this->Travel_model->Turn_around($actor_id);
 		if(!$r) {
-			echo json_encode(array('success' => false, 'reason' => 'Could not turn around'));
-			return;
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Could not turn around')
+			);
 		}
-		echo json_encode(array('success' => true));
+		return array(
+			'view' => 'data_json',
+			'data' => array('success' => true)
+		);
 	}
 }
