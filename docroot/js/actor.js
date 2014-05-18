@@ -30,22 +30,6 @@ function set_actor_changer(change_actor_id) {
 	});
 }
 
-function reload_location_list(actor_id)
-{
-	callurl = '/location/Location_list';
-	$.ajax({
-		type: 'POST',
-		url: callurl,
-		data: {actor: actor_id},
-		success: function(data) {
-			if(ajax_logged_out(data)) return;
-			if(data.success !== false) {
-				$('#locations').html(data.data);
-			}
-		}
-	});
-}
-
 function change_location_name(actor_id, Location_ID, change_location_id) {
 	$('#change_location_name').html('Changing');
 	callurl = '/location/Change_location_name';
@@ -53,7 +37,7 @@ function change_location_name(actor_id, Location_ID, change_location_id) {
 		type: 'POST',
 		url: callurl,
 		data: {
-			actor: actor_id,
+			actor_id: actor_id,
 			location: change_location_id,
 			name: $('#location_input').val()
 		},
@@ -97,7 +81,7 @@ function travel(destination_id, actor_id, Location_ID)
 		type: 'POST',
 		url: callurl,
 		data: {
-			actor: actor_id,
+			actor_id: actor_id,
 			destination: destination_id,
 			origin: Location_ID
 		},
@@ -121,7 +105,7 @@ function cancel_travel(actor_id) {
 		type: 'POST',
 		url: '/location/Cancel_travel',
 		data: {
-			actor: actor_id,
+			actor_id: actor_id,
 		},
 		dataType: "json",
 		success: function(data)
@@ -143,7 +127,7 @@ function turn_around(actor_id) {
 		type: 'POST',
 		url: '/location/Turn_around',
 		data: {
-			actor: actor_id,
+			actor_id: actor_id,
 		},
 		dataType: "json",
 		success: function(data)
