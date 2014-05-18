@@ -103,29 +103,20 @@ class Location extends Base {
 	}
 	
 	public function Cancel_travel() {
-		header('Content-type: application/json');
-		if(!isset($_POST['actor_id'])) {
-			echo json_encode(array('success' => false, 'reason' => 'No actor requested'));
-			return;
-		}
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		$this->Load_model('Actor_model');
-		if(!$this->Actor_model->User_owns_actor($_SESSION['userid'], $_POST['actor_id'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Not your actor'));
-			return;
-		}
+		$actor_id = $this->Input_post('actor_id');
 		
 		$this->Load_model('Travel_model');
-		$r = $this->Travel_model->Cancel_travel($_POST['actor_id']);
+		$r = $this->Travel_model->Cancel_travel($actor_id);
 		if(!$r) {
-			echo json_encode(array('success' => false, 'reason' => 'Could not cancel travel'));
-			return;
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Could not cancel travel')
+			);
 		}
-		echo json_encode(array('success' => true));
+		return array(
+			'view' => 'data_json',
+			'data' => array('success' => true)
+		);
 	}
 
 	public function Turn_around() {
