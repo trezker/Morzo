@@ -11,7 +11,7 @@ function load_translations()
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success == true) {
-				$('#translations').html(data.data);
+				$('#translations').html(data.html);
 			}
 		}
 	});

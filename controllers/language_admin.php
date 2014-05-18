@@ -7,8 +7,6 @@ class Language_admin extends Base {
 		$json_request = false;
 		if (strpos($header_accept,'application/json') !== false) {
 			$json_request = true;
-		} else {
-			$actor_id = $args[0]; //actor id must always be the first arg.
 		}
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
@@ -47,20 +45,31 @@ class Language_admin extends Base {
 	}
 
 	public function Load_translations(){
-		header('Content-type: application/json');
-
-		if(!is_numeric($_POST['language_id'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Must give a language id'));
-			return;
+		if(!is_numeric($this->Input_post('language_id'))) {
+			return array(
+				'view' => 'data_json',
+				'data' => array(
+					'success' => false,
+					'reason' => 'Must give a language id'
+				)
+			);
 		}
 		
 		$this->Load_model('Language_model');
-		$translations = $this->Language_model->Get_translations_for_translator($_POST['language_id']);
+		$translations = $this->Language_model->Get_translations_for_translator($this->Input_post('language_id'));
 		
-		$language_translations_view = $this->Load_view('language_translations_view', 
-														array('translations' => $translations), true);
-		
-		echo json_encode(array('success' => true, 'data' => $language_translations_view));
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'language_translations_view',
+					'data' => array(
+						'translations' => $translations
+					)
+				)
+			)
+		);
 	}
 	
 	public function Save_translation(){

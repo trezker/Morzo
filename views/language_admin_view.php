@@ -19,7 +19,7 @@
 			}
 			?>
 			</select>
-			<a href="javascript:load_translations()">Get translations</a>
+			<a href="javascript:void(0)" onclick="javascript:load_translations()">Get translations</a>
 		</div>
 		<div id="add_translation">
 			<table class="translations_list">
