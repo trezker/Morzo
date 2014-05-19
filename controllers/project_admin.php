@@ -1,20 +1,36 @@
 <?php
 require_once "../controllers/base.php";
 
-class Project_admin extends Base
-{
-	public function Index()
-	{
+class Project_admin extends Base {
+	function Precondition($args) {
+		$header_accept = $this->Input_header("Accept");
+		$json_request = false;
+		if (strpos($header_accept,'application/json') !== false) {
+			$json_request = true;
+		}
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			header("Location: front");
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo "You need to be admin to access this page";
-			return;
+			if($json_request === true) {
+				return $this->Json_response_not_logged_in();
+			} else {
+				return array("view" => "redirect", "data" => "/");
+			}
 		}
 
+		if($this->Session_get('admin') != true) {
+			if($json_request === true) {
+				return array(
+					"view" => "data_json", 
+					"data" => array('success' => false, 'reason' => "You need to be admin to access this page")
+				);
+			} else {
+				return array("view" => "redirect", "data" => "/");
+			}
+		}
+		return true;
+	}
+
+	public function Index() {
 		$this->Load_model('Project_model');
 		$recipes = $this->Project_model->Get_recipes();
 		$this->Load_model('Resource_model');
@@ -35,15 +51,6 @@ class Project_admin extends Base
 	
 	public function edit_recipe() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
 		$this->Load_model('Project_model');
 		$recipe = $this->Project_model->Get_recipe($_POST['id']);
@@ -91,14 +98,6 @@ class Project_admin extends Base
 	public function save_recipe() {
 		header('Content-type: application/json');
 		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
 		$data = array();
 		$data['recipe'] = array(
@@ -202,15 +201,6 @@ class Project_admin extends Base
 	*/
 	public function add_recipe_output() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
 		/*
 		$this->Load_model('Project_model');
@@ -238,15 +228,6 @@ class Project_admin extends Base
 	}
 	public function add_recipe_input() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
 		$this->Load_model('Resource_model');
 		$r = $this->Resource_model->Get_resource($_POST['resource_id']);
@@ -267,15 +248,6 @@ class Project_admin extends Base
 	}
 	public function add_recipe_product_output() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
 		$this->Load_model('Product_model');
 		$r = $this->Product_model->Get_product($_POST['product_id']);
@@ -295,15 +267,6 @@ class Project_admin extends Base
 
 	public function add_recipe_product_input() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
 		$this->Load_model('Product_model');
 		$r = $this->Product_model->Get_product($_POST['product_id']);
@@ -323,15 +286,6 @@ class Project_admin extends Base
 
 	public function add_recipe_tool() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
 		$this->Load_model('Category_model');
 		$tool = $this->Category_model->Get_category($_POST['category_id']);
@@ -431,15 +385,6 @@ class Project_admin extends Base
 
 	public function edit_resource() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
 		$this->Load_model('Resource_model');
 		$r = $this->Resource_model->Get_resource($_POST['id']);
@@ -477,15 +422,6 @@ class Project_admin extends Base
 
 	public function save_resource() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
 		$this->Load_model('Resource_model');
 		$result = $this->Resource_model->Save_resource($_POST);
@@ -495,15 +431,6 @@ class Project_admin extends Base
 
 	public function edit_product() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
 		$this->Load_model('Product_model');
 		$r = $this->Product_model->Get_product($_POST['id']);
@@ -554,15 +481,6 @@ class Project_admin extends Base
 	
 	public function add_category() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
 		$category_id = $_POST['category_id'];
 
@@ -604,15 +522,6 @@ class Project_admin extends Base
 
 	public function save_product() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
 		$this->Load_model('Product_model');
 		$result = $this->Product_model->Save_product($_POST);
@@ -622,15 +531,6 @@ class Project_admin extends Base
 
 	public function edit_category() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
 		$this->Load_model('Category_model');
 		$category = $this->Category_model->Get_category($_POST['id']);
@@ -653,15 +553,6 @@ class Project_admin extends Base
 
 	public function save_category() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
 		$this->Load_model('Category_model');
 		$result = $this->Category_model->Save_category($_POST);
