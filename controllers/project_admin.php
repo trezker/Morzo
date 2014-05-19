@@ -180,34 +180,9 @@ class Project_admin extends Base {
 
 		echo json_encode(array('success' => true));
 	}
-	/*
-	public function remove_recipe_output() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
 
-		$this->Load_model('Project_model');
-		$success = $this->Project_model->Remove_recipe_output($_POST['recipe_id'], $_POST['id']);
-
-		echo json_encode(array('success' => $success));
-	}
-	*/
 	public function add_recipe_output() {
 		header('Content-type: application/json');
-
-		/*
-		$this->Load_model('Project_model');
-		$r = $this->Project_model->Add_recipe_output($_POST['recipe_id'], $_POST['resource_id'], $_POST['measure_id'], 1);
-
-		echo json_encode($r);
-		*/
 		
 		$this->Load_model('Resource_model');
 		$r = $this->Resource_model->Get_resource($_POST['resource_id']);
@@ -362,26 +337,6 @@ class Project_admin extends Base {
 		}
 		return $measure_descriptions;
 	}
-
-	/*
-	public function remove_recipe_input() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Not admin'));
-			return;
-		}
-
-		$this->Load_model('Project_model');
-		$success = $this->Project_model->Remove_recipe_input($_POST['recipe_id'], $_POST['id']);
-
-		echo json_encode(array('success' => $success));
-	}
-	*/
 
 	public function edit_resource() {
 		header('Content-type: application/json');
