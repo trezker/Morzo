@@ -3,7 +3,7 @@
 	<head>
 		<title>Project admin - Morzo</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-		<?php echo $common_head_view; ?>
+		<?php echo $view_factory->Load_view('common_head_view'); ?>
 		<script type="text/javascript" src="/js/project_admin.js"></script>
 	</head>
 	<body>
@@ -54,7 +54,7 @@
 				<ul>
 					<li><span class="action" onclick="edit_recipe(-1);">Create a new recipe</span></li>
 					<?php
-					foreach ($recipes as $recipe) {
+					foreach ($data['recipes'] as $recipe) {
 						echo expand_template(
 							'<li><span class="action" onclick="edit_recipe({ID});">{Name}</span></li>',
 							$recipe);
@@ -72,7 +72,7 @@
 				<ul>
 					<li><span class="action" onclick="edit_resource(-1);">Create a new resource</span></li>
 					<?php
-					foreach ($resources as $resource) {
+					foreach ($data['resources'] as $resource) {
 						echo expand_template(
 							'<li><span class="action" onclick="edit_resource({ID});">{Name}</span></li>',
 							$resource);
@@ -91,7 +91,7 @@
 				<ul>
 					<li><span class="action" onclick="edit_product(-1);">Create a new product</span></li>
 					<?php
-					foreach ($products as $product) {
+					foreach ($data['products'] as $product) {
 						echo expand_template(
 							'<li><span class="action" onclick="edit_product({ID});">{Name}</span></li>',
 							$product);
@@ -110,7 +110,7 @@
 				<ul>
 					<li><span class="action" onclick="edit_category(-1);">Create a new category</span></li>
 					<?php
-					foreach ($categories as $category) {
+					foreach ($data['categories'] as $category) {
 						echo expand_template(
 							'<li><span class="action" onclick="edit_category({ID});">{Name}</span></li>',
 							$category);
