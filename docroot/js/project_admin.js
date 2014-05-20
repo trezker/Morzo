@@ -18,7 +18,7 @@ function edit_recipe(id)
 			if(data !== false)
 			{
 				current_recipe = id;
-				$('#edit_recipe').html(data.data);
+				$('#edit_recipe').html(data.html);
 			}
 		}
 	});

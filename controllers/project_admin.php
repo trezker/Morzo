@@ -51,10 +51,8 @@ class Project_admin extends Base {
 	}
 	
 	public function edit_recipe() {
-		header('Content-type: application/json');
-
 		$this->Load_model('Project_model');
-		$recipe = $this->Project_model->Get_recipe($_POST['id']);
+		$recipe = $this->Project_model->Get_recipe($this->Input_post('id'));
 		$this->Load_model('Resource_model');
 		$resources = $this->Resource_model->Get_resources();
 		$measures = $this->Resource_model->Get_measures();
@@ -65,35 +63,33 @@ class Project_admin extends Base {
 
 		if($recipe['recipe'] == false) {
 			$recipe['recipe'] = array(
-					'ID' => '-1',
-					'Name' => '',
-					'Cycle_time' => '1',
-					'Allow_fraction_output' => '1',
-					'Require_full_cycle' => '1'
-				);
+				'ID' => '-1',
+				'Name' => '',
+				'Cycle_time' => '1',
+				'Allow_fraction_output' => '1',
+				'Require_full_cycle' => '1'
+			);
 		}
 		
 		$measure_descriptions = $this->get_measure_descriptions();
-		$resource_output_template = $this->get_resource_output_template();
-		$resource_input_template = $this->get_resource_input_template();
-		$product_output_template = $this->get_product_output_template();
-		$product_input_template = $this->get_product_input_template();
-		$tool_template = $this->get_tool_template();
 
-		$edit_recipe_view = $this->Load_view('recipe_edit_view',array(	'resources' => $resources,
-																		'products' => $products,
-																		'tools' => $tools,
-																		'measures' => $measures,
-																		'recipe' => $recipe,
-																		'measure_descriptions' => $measure_descriptions,
-																		'resource_output_template' => $resource_output_template,
-																		'resource_input_template' => $resource_input_template,
-																		'product_output_template' => $product_output_template,
-																		'product_input_template' => $product_input_template,
-																		'tool_template' => $tool_template
-																		), true);
-
-		echo json_encode(array('success' => true, 'data' => $edit_recipe_view));
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'recipe_edit_view',
+					'data' => array(
+						'resources' => $resources,
+						'products' => $products,
+						'tools' => $tools,
+						'measures' => $measures,
+						'recipe' => $recipe,
+						'measure_descriptions' => $measure_descriptions
+					)
+				)
+			)
+		);
 	}
 
 	public function save_recipe() {
