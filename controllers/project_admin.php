@@ -93,21 +93,18 @@ class Project_admin extends Base {
 	}
 
 	public function save_recipe() {
-		header('Content-type: application/json');
-		$this->Load_controller('User');
-
 		$data = array();
 		$data['recipe'] = array(
-				'id' => $_POST['id'],
-				'name' => $_POST['name'],
-				'cycle_time' => $_POST['cycle_time'],
-				'allow_fraction_output' => $_POST['allow_fraction_output'],
-				'require_full_cycle' => $_POST['require_full_cycle']
+				'id' => $this->Input_post('id'),
+				'name' => $this->Input_post('name'),
+				'cycle_time' => $this->Input_post('cycle_time'),
+				'allow_fraction_output' => $this->Input_post('allow_fraction_output'),
+				'require_full_cycle' => $this->Input_post('require_full_cycle')
 			);
 		
 		$data['outputs'] = array();
-		if(isset($_POST['outputs'])) {
-			foreach($_POST['outputs'] as $o) {
+		if(null !== $this->Input_post('outputs')) {
+			foreach($this->Input_post('outputs') as $o) {
 				$data['outputs'][] = array(
 						'id' => $o['id'],
 						'amount' => $o['amount'],
@@ -119,8 +116,8 @@ class Project_admin extends Base {
 		}
 
 		$data['inputs'] = array();
-		if(isset($_POST['inputs'])) {
-			foreach($_POST['inputs'] as $i) {
+		if(null !== $this->Input_post('inputs')) {
+			foreach($this->Input_post('inputs') as $i) {
 				$data['inputs'][] = array(
 						'id' => $i['id'],
 						'amount' => $i['amount'],
@@ -133,8 +130,8 @@ class Project_admin extends Base {
 		}
 
 		$data['product_outputs'] = array();
-		if(isset($_POST['product_outputs'])) {
-			foreach($_POST['product_outputs'] as $o) {
+		if(null !== $this->Input_post('product_outputs')) {
+			foreach($this->Input_post('product_outputs') as $o) {
 				$data['product_outputs'][] = array(
 						'id' => $o['id'],
 						'amount' => $o['amount'],
@@ -145,8 +142,8 @@ class Project_admin extends Base {
 		}
 
 		$data['product_inputs'] = array();
-		if(isset($_POST['product_inputs'])) {
-			foreach($_POST['product_inputs'] as $i) {
+		if(null !== $this->Input_post('product_inputs')) {
+			foreach($this->Input_post('product_inputs') as $i) {
 				$data['product_inputs'][] = array(
 						'id' => $i['id'],
 						'amount' => $i['amount'],
@@ -157,8 +154,8 @@ class Project_admin extends Base {
 		}
 
 		$data['tools'] = array();
-		if(isset($_POST['tools'])) {
-			foreach($_POST['tools'] as $t) {
+		if(null !== $this->Input_post('tools')) {
+			foreach($this->Input_post('tools') as $t) {
 				$data['tools'][] = array(
 						'id' => $t['id'],
 						'category_id' => $t['category_id'],
@@ -171,11 +168,16 @@ class Project_admin extends Base {
 		$id = $this->Project_model->Save_recipe($data);
 		
 		if($id == false) {
-			echo json_encode(array('success' => false, 'reason' => 'Failed to save'));
-			return;
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Failed to save')
+			);
 		}
 
-		echo json_encode(array('success' => true));
+		return array(
+			'view' => 'data_json',
+			'data' => array('success' => true)
+		);
 	}
 
 	public function add_recipe_output() {
