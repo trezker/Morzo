@@ -181,12 +181,13 @@ class Project_admin extends Base {
 	}
 
 	public function add_recipe_output() {
-		header('Content-type: application/json');
-		
 		$this->Load_model('Resource_model');
-		$r = $this->Resource_model->Get_resource($_POST['resource_id']);
+		$r = $this->Resource_model->Get_resource($this->Input_post('resource_id'));
 		if(!$r) {
-			echo json_encode(array('success' => false, 'reason' => 'Resource not found'));
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Resource not found')
+			);
 		}
 		$output = $r['resource'];
 		$measure_descriptions = $this->get_measure_descriptions();
@@ -195,18 +196,28 @@ class Project_admin extends Base {
 		$output['Resource_Name'] = $output['Name'];
 		$output['Measure_ID'] = $output['Measure'];
 		$output['Resource_ID'] = $output['ID'];
-		$output['ID'] = $_POST['new_output_id'];
-		$html = expand_template($this->get_resource_output_template(), $output);
+		$output['ID'] = $this->Input_post('new_output_id');
 		
-		echo json_encode(array('success' => true, 'html' => $html));
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'recipe_resource_output_view',
+					'data' => $output
+				)
+			)
+		);
 	}
+	
 	public function add_recipe_input() {
-		header('Content-type: application/json');
-
 		$this->Load_model('Resource_model');
-		$r = $this->Resource_model->Get_resource($_POST['resource_id']);
+		$r = $this->Resource_model->Get_resource($this->Input_post('resource_id'));
 		if(!$r) {
-			echo json_encode(array('success' => false, 'reason' => 'Resource not found'));
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Resource not found')
+			);
 		}
 		$output = $r['resource'];
 		$measure_descriptions = $this->get_measure_descriptions();
@@ -215,113 +226,102 @@ class Project_admin extends Base {
 		$output['Resource_Name'] = $output['Name'];
 		$output['Measure_ID'] = $output['Measure'];
 		$output['Resource_ID'] = $output['ID'];
-		$output['ID'] = $_POST['new_input_id'];
-		$html = expand_template($this->get_resource_input_template(), $output);
+		$output['ID'] = $this->Input_post('new_input_id');
 		
-		echo json_encode(array('success' => true, 'html' => $html));
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'recipe_resource_input_view',
+					'data' => $output
+				)
+			)
+		);
 	}
-	public function add_recipe_product_output() {
-		header('Content-type: application/json');
 
+	public function add_recipe_product_output() {
 		$this->Load_model('Product_model');
-		$r = $this->Product_model->Get_product($_POST['product_id']);
+		$r = $this->Product_model->Get_product($this->Input_post('product_id'));
 		if(!$r) {
-			echo json_encode(array('success' => false, 'reason' => 'Product not found'));
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Product not found')
+			);
 		}
 
 		$output = $r['product'];
 		$output['Amount'] = 0;
 		$output['Product_Name'] = $output['Name'];
 		$output['Product_ID'] = $output['ID'];
-		$output['ID'] = $_POST['new_product_output_id'];
-		$html = expand_template($this->get_product_output_template(), $output);
+		$output['ID'] = $this->Input_post('new_product_output_id');
 		
-		echo json_encode(array('success' => true, 'html' => $html));
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'recipe_product_output_view',
+					'data' => $output
+				)
+			)
+		);
 	}
 
 	public function add_recipe_product_input() {
-		header('Content-type: application/json');
-
 		$this->Load_model('Product_model');
-		$r = $this->Product_model->Get_product($_POST['product_id']);
+		$r = $this->Product_model->Get_product($this->Input_post('product_id'));
 		if(!$r) {
-			echo json_encode(array('success' => false, 'reason' => 'Product not found'));
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Product not found')
+			);
 		}
 
 		$output = $r['product'];
 		$output['Amount'] = 0;
 		$output['Product_Name'] = $output['Name'];
 		$output['Product_ID'] = $output['ID'];
-		$output['ID'] = $_POST['new_product_input_id'];
-		$html = expand_template($this->get_product_input_template(), $output);
+		$output['ID'] = $this->Input_post('new_product_input_id');
 		
-		echo json_encode(array('success' => true, 'html' => $html));
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'recipe_product_input_view',
+					'data' => $output
+				)
+			)
+		);
 	}
 
 	public function add_recipe_tool() {
-		header('Content-type: application/json');
-
 		$this->Load_model('Category_model');
-		$tool = $this->Category_model->Get_category($_POST['category_id']);
+		$tool = $this->Category_model->Get_category($this->Input_post('category_id'));
 		if(!$tool) {
-			echo json_encode(array('success' => false, 'reason' => 'Category not found'));
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Category not found')
+			);
 		}
 
 		$tool['Category_Name'] = $tool['Name'];
 		$tool['Category_ID'] = $tool['ID'];
-		$tool['ID'] = $_POST['new_tool_id'];
-		$html = expand_template($this->get_tool_template(), $tool);
+		$tool['ID'] = $this->Input_post('new_tool_id');
 		
-		echo json_encode(array('success' => true, 'html' => $html));
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'recipe_tool_view',
+					'data' => $tool
+				)
+			)
+		);
 	}
-	
-	public function get_resource_output_template() {
-		return '
-		<div class="output" id="resource_output_{ID}" data-id="{ID}">
-			<input class="amount" type="number" value="{Amount}" />
-			<span class="measuredesc" data-id="{Measure_ID}">{Measuredesc}</span>
-			<span class="resource" data-id="{Resource_ID}">{Resource_Name}</span>
-			<span class="action" style="float: right;" onclick="remove_output({ID})">Remove</span>
-		</div>';
-	}
-
-	public function get_resource_input_template() {
-		return '
-		<div class="input" id="resource_input_{ID}" data-id="{ID}">
-			<input class="amount" type="number" value="{Amount}" />
-			<span class="measuredesc" data-id="{Measure_ID}">{Measuredesc}</span>
-			<span class="resource" data-id="{Resource_ID}">{Resource_Name}</span>
-			(from nature: <input type="checkbox" class="from_nature" {From_nature_checked} />)
-			<span class="action" style="float: right;" onclick="remove_input({ID})">Remove</span>
-		</div>';
-	}
-
-	public function get_product_output_template() {
-		return '
-		<div class="product_output" id="product_output_{ID}" data-id="{ID}">
-			<input class="amount" type="number" value="{Amount}" />
-			<span class="product" data-id="{Product_ID}">{Product_Name}</span>
-			<span class="action" style="float: right;" onclick="remove_product_output({ID})">Remove</span>
-		</div>';
-	}
-
-	public function get_product_input_template() {
-		return '
-		<div class="product_input" id="product_input_{ID}" data-id="{ID}">
-			<input class="amount" type="number" value="{Amount}" />
-			<span class="product" data-id="{Product_ID}">{Product_Name}</span>
-			<span class="action" style="float: right;" onclick="remove_product_input({ID})">Remove</span>
-		</div>';
-	}
-
-	public function get_tool_template() {
-		return '
-		<div class="tool" id="tool_{ID}" data-id="{ID}">
-			<span class="category" data-id="{Category_ID}">{Category_Name}</span>
-			<span class="action" style="float: right;" onclick="remove_tool({ID})">Remove</span>
-		</div>';
-	}
-	
+		
 	public function get_measure_descriptions() {
 		$measures = $this->Resource_model->Get_measures();
 		$measure_descriptions = array();
