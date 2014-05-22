@@ -322,7 +322,7 @@ class Project_admin extends Base {
 		);
 	}
 		
-	public function get_measure_descriptions() {
+	private function get_measure_descriptions() {
 		$measures = $this->Resource_model->Get_measures();
 		$measure_descriptions = array();
 		foreach($measures as $key => $measure) {
