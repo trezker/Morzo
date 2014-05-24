@@ -21,6 +21,10 @@ class Controller {
 		return $this->session->Set($key, $value);
 	}
 	
+	function Session_clear() {
+		$this->session->Clear();
+	}
+	
 	function Input_get($key) {
 		return $this->input->Get($key);
 	}

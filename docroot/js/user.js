@@ -28,7 +28,7 @@ function logout()
 		url: 'user/Logout',
 		success: function(data)
 		{
-			window.location = 'front';
+			window.location = '/';
 		}
 	});
 }

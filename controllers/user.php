@@ -1,35 +1,40 @@
 <?php
 require_once "../controllers/base.php";
 
-class User extends Base
-{
-	public function Logged_in()
-	{
-		if(!isset($_SESSION['userid'])) {
+class User extends Base {
+	public function Logged_in() {
+		if(NULL == $this->Session_get('userid')) {
 			return false;
 		}
-		if(Get_cache('kick_user_'.$_SESSION['userid'])) {
-			Delete_cache('kick_user_'.$_SESSION['userid']);
+		if(Get_cache('kick_user_' . $this->Session_get('userid'))) {
+			Delete_cache('kick_user_' . $this->Session_get('userid'));
 			$this->Kick_user();
 			return false;
 		}
 		return true;
 	}
 
-	public function Index()
-	{
-		if(!$this->Logged_in())
-		{
-			header("Location: /front");
-			return;
+	public function Index() {
+		if(!$this->Logged_in()) {
+			return array(
+				'view' => 'redirect',
+				'data' => '/'
+			);
 		}
 
 		$this->Load_model('Actor_model');
-		$actors = $this->Actor_model->Get_actors($_SESSION['userid']);
-		$actor_limit = $this->Actor_model->Get_users_actor_limit($_SESSION['userid']);
+		$actors = $this->Actor_model->Get_actors($this->Session_get('userid'));
+		$actor_limit = $this->Actor_model->Get_users_actor_limit($this->Session_get('userid'));
 
-		$common_head_view = $this->Load_view('common_head_view', array());
-		$this->Load_view('user_view', array('actors' => $actors, 'actor_limit' => $actor_limit, 'common_head_view' => $common_head_view));
+		return array(
+			'view' => 'user_view',
+			'data' => array(
+				'actors' => $actors,
+				'actor_limit' => $actor_limit,
+				'username' => $this->Session_get('username'),
+				'admin' => $this->Session_get('admin')
+			)
+		);
 	}
 
 	public function Request_actor() {
@@ -178,27 +183,14 @@ class User extends Base
 	}
 
 	private function Kick_user() {
-		// Unset all of the session variables.
-		$_SESSION = array();
-
-		// If it's desired to kill the session, also delete the session cookie.
-		// Note: This will destroy the session, and not just the session data!
-		if (ini_get("session.use_cookies")) {
-			$params = session_get_cookie_params();
-			setcookie(session_name(), '', time() - 42000,
-				$params["path"], $params["domain"],
-				$params["secure"], $params["httponly"]
-			);
-		}
-
-		session_destroy();
+		$this->Session_clear();
 	}
 	
 	public function Logout() {
 		$this->Kick_user();
 		return array(
-			"type" => "json", 
-			"data" => array(
+			'view' => 'data_json', 
+			'data' => array(
 				"success" => true
 			)
 		);
