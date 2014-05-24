@@ -386,10 +386,8 @@ class Project_admin extends Base {
 	}
 
 	public function edit_product() {
-		header('Content-type: application/json');
-
 		$this->Load_model('Product_model');
-		$r = $this->Product_model->Get_product($_POST['id']);
+		$r = $this->Product_model->Get_product($this->Input_post('id'));
 		$product = $r['product'];
 		$categories = $r['categories'];
 		if($product == false) {
@@ -406,22 +404,20 @@ class Project_admin extends Base {
 		$this->Load_model('Category_model');
 		$category_list = $this->Category_model->Get_categories();
 
-		foreach($categories as $n => $category) {
-			$categories[$n]["properties"] = $this->get_category_properties_template($category);
-		}
-		
-		$categorytemplate =	$this->get_category_template();
-		
-		$edit_product_view = $this->Load_view('product_edit_view',
-												array(
-													'product' => $product,
-													'categories' => $categories,
-													'category_list' => $category_list,
-													'categorytemplate' => $categorytemplate
-												), 
-												true);
-
-		echo json_encode(array('success' => true, 'data' => $edit_product_view));
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'product_edit_view',
+					'data' => array(
+						'product' => $product,
+						'categories' => $categories,
+						'category_list' => $category_list
+					)
+				)
+			)
+		);
 	}
 	
 	public function get_category_template() {

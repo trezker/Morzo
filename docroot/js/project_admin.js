@@ -348,7 +348,7 @@ function edit_product(id) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
 				current_product = id;
-				$('#edit_product').html(data.data);
+				$('#edit_product').html(data.html);
 			}
 		}
 	});

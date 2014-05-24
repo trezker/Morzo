@@ -1,14 +1,26 @@
-<h2>Edit product <?php echo htmlspecialchars($product['Name']); ?></h2>
+<h2>Edit product <?php echo htmlspecialchars($data['product']['Name']); ?></h2>
 <div id="product">
 	<?php
+	foreach($data['categories'] as $n => $category) {
+		$data['categories'][$n]["properties"] = $view_factory->Load_view('category_properties_view', $category);
+	}
+	$categorytemplate =	'
+		<tr class="category" id="category_{ID}" data-category_id="{ID}">
+			<td>{Name}</td>
+			<td>{!properties}</td>
+			<td>
+				<a href="javascript:void(0)" class="action" onclick="remove_category({ID})">X</a>
+			</td>
+		</tr>
+	';
 	$categorieshtml = '';
-	if($categories) {
-		foreach($categories as $category) {
+	if($data['categories']) {
+		foreach($data['categories'] as $category) {
 			$categorieshtml .= expand_template($categorytemplate, $category);
 		}
 	}
 	$categorymenuhtml = '<select id="product_category_select">';
-	foreach($category_list as $category) {
+	foreach($data['category_list'] as $category) {
 		$categorymenuhtml .= expand_template(
 			'<option value="{ID}">{Name}</option>',
 			$category
@@ -18,8 +30,8 @@
 	<span class="action" onclick="add_product_category()">Add</span>
 	';
 		
-	$product['categorieshtml'] = $categorieshtml;
-	$product['categorymenuhtml'] = $categorymenuhtml;
+	$data['product']['categorieshtml'] = $categorieshtml;
+	$data['product']['categorymenuhtml'] = $categorymenuhtml;
 	echo expand_template(
 	'<table>
 		<tr>
@@ -50,7 +62,7 @@
 			</td>
 		</tr>
 	</table>',
-	$product);
+	$data['product']);
 	?>
 	<a href="javascript:void(0)" class="action" style="float: right;" onclick="save_product()">Save</a>
 </div>
