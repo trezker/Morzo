@@ -89,7 +89,7 @@ class User extends Base {
 		return $this->Start_openid_verification('user/Finish_add_openid');
 	}
 
-	public function Finish_openid_verification($finish_path) {
+	private function Finish_openid_verification($finish_path) {
 		require_once "Auth/OpenID/Consumer.php";
 		require_once "Auth/OpenID/FileStore.php";
 
@@ -98,9 +98,10 @@ class User extends Base {
 		$response = $consumer->complete($GLOBALS['base_url'].$finish_path);
 
   		if ($response->status == Auth_OpenID_SUCCESS) {
-			$_SESSION['OPENID'] = $response->identity_url;
+			$this->Session_set('OPENID', $response->identity_url);
 			return true;
 		} else {
+			/*
 			if ($response->status == Auth_OpenID_CANCEL) {
 				// This means the authentication was cancelled.
 				echo 'Verification cancelled.';
@@ -109,51 +110,41 @@ class User extends Base {
 				echo "OpenID authentication failed: " . $response->message;
 			}
 			echo ' = Denied!';
+			*/
 		}
 		return false;
 	}
 
 	public function Finish_openid_login() {
-		if($this->Finish_openid_verification('user/Finish_openid_login') == true)
-			$this->Login_openid($_SESSION['OPENID']);
+		if($this->Finish_openid_verification('user/Finish_openid_login') == true) {
+			$openid = $this->Session_get('OPENID');
+			$this->Load_model('User_model');
+			$r = $this->User_model->Login_openid($openid);
+			if(is_array($r)) {
+				if(NULL !== $this->Session_get('userid')) {
+					return 0;
+				}
+				$this->Session_set('username', $r['Username']);
+				$this->Session_set('userid', $r['ID']);
+				$this->Session_set('admin', $this->User_model->User_has_access($r['ID'], 'Admin'));
+				return array('view' => 'redirect', 'data' => '/user');
+			} elseif($r == 'Not found') {
+				$this->Session_set('OPENID_AUTH', true);
+				return array('view' => 'redirect', 'data' => '/user/create_account');
+			} else {
+				return array('view' => 'redirect', 'data' => '/');
+			}
+		}
 	}
 
 	public function Finish_add_openid() {
 		if($this->Finish_openid_verification('user/Finish_add_openid')) {
 			$this->Load_model('User_model');
-			$r = $this->User_model->Add_user_openid($_SESSION['userid'], $_SESSION['OPENID']);
-			if($r == false) {
-				header( 'Location: /user/Settings' );
-//				echo "Failed to add id";
-			} else {
-				header( 'Location: /user/Settings' );
-//				echo "Adding id was successful";
-			}
-		}
-	}
-
-	/* Login openid is a private function
-	 * Must only be called from Finish_openid_login which verifies the openid.
-	 * */
-	private function Login_openid($openid) {
-		$this->Load_model('User_model');
-		$r = $this->User_model->Login_openid($openid);
-		if(is_array($r))
-		{
-			if(isset($_SESSION['userid']))
-			{
-				return 0;
-			}
-			$_SESSION['username'] = $r['Username'];
-			$_SESSION['userid'] = $r['ID'];
-			$_SESSION['admin'] = $this->User_model->User_has_access($_SESSION['userid'], 'Admin');
-			header('Location: /user');
-		} elseif($r == 'Not found') {
-			$_SESSION['OPENID_AUTH'] = true;
-			header('Location: /user/create_account');
-		} else {
-			echo 'TODO: openid login failure. '.$r;
-			//header('Location: /front')
+			$r = $this->User_model->Add_user_openid($this->Session_get('userid'), $this->Session_get('OPENID'));
+			return array(
+				'view' => 'redirect',
+				'data' => '/user/Settings'
+			);
 		}
 	}
 
