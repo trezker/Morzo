@@ -19,7 +19,9 @@ class Input {
 		return null;
 	}
 	
-	public function Get_post($key) {
+	public function Get_post($key = NULL) {
+		if($key === NULL)
+			return $this->post;
 		if(isset($this->post[$key]))
 			return $this->post[$key];
 		return null;

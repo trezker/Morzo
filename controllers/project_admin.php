@@ -376,12 +376,13 @@ class Project_admin extends Base {
 	}
 
 	public function save_resource() {
-		header('Content-type: application/json');
-
 		$this->Load_model('Resource_model');
-		$result = $this->Resource_model->Save_resource($_POST);
+		$result = $this->Resource_model->Save_resource($this->Input_post());
 
-		echo json_encode(array('success' => $result));
+		return array(
+			'view' => 'data_json',
+			'data' => $result
+		);
 	}
 
 	public function edit_product() {

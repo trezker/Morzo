@@ -25,7 +25,7 @@ class Controller {
 		return $this->input->Get($key);
 	}
 
-	function Input_post($key) {
+	function Input_post($key = NULL) {
 		return $this->input->Get_post($key);
 	}
 
