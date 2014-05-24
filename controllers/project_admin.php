@@ -481,12 +481,13 @@ class Project_admin extends Base {
 	}
 
 	public function save_category() {
-		header('Content-type: application/json');
-
 		$this->Load_model('Category_model');
-		$result = $this->Category_model->Save_category($_POST);
+		$result = $this->Category_model->Save_category($this->Input_post());
 
-		echo json_encode(array('success' => $result));
+		return array(
+			'view' => 'data_json',
+			'data' => $result
+		);
 	}
 }
 ?>
