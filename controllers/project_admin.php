@@ -447,12 +447,13 @@ class Project_admin extends Base {
 	}
 
 	public function save_product() {
-		header('Content-type: application/json');
-
 		$this->Load_model('Product_model');
-		$result = $this->Product_model->Save_product($_POST);
+		$result = $this->Product_model->Save_product($this->Input_post());
 
-		echo json_encode(array('success' => $result));
+		return array(
+			'view' => 'data_json',
+			'data' => $result
+		);
 	}
 
 	public function edit_category() {
