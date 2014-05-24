@@ -85,13 +85,11 @@ class User extends Base {
 		return $this->Start_openid_verification('user/Finish_openid_login');
 	}
 
-	public function Start_add_openid()
-	{
+	public function Start_add_openid() {
 		return $this->Start_openid_verification('user/Finish_add_openid');
 	}
 
-	public function Finish_openid_verification($finish_path)
-	{
+	public function Finish_openid_verification($finish_path) {
 		require_once "Auth/OpenID/Consumer.php";
 		require_once "Auth/OpenID/FileStore.php";
 
@@ -137,8 +135,7 @@ class User extends Base {
 	/* Login openid is a private function
 	 * Must only be called from Finish_openid_login which verifies the openid.
 	 * */
-	private function Login_openid($openid)
-	{
+	private function Login_openid($openid) {
 		$this->Load_model('User_model');
 		$r = $this->User_model->Login_openid($openid);
 		if(is_array($r))
