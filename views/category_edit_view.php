@@ -14,4 +14,3 @@
 	?>
 	<a href="javascript:void(0)" class="action" style="float: right;" onclick="save_category()">Save</a>
 </div>
-</div>
