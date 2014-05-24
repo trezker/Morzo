@@ -1,22 +1,10 @@
 <h2>Edit resource <?php echo htmlspecialchars($data['resource']['Name']); ?></h2>
 <div id="resource">
 	<?php
-	foreach($data['categories'] as $n => $category) {
-		$data['categories'][$n]["properties"] = $view_factory->Load_view('category_properties_view', $category);
-	}
-	$categorytemplate =	'
-		<tr class="category" id="category_{ID}" data-category_id="{ID}">
-			<td>{Name}</td>
-			<td>{!properties}</td>
-			<td>
-				<a href="javascript:void(0)" class="action" onclick="remove_category({ID})">X</a>
-			</td>
-		</tr>
-	';
 	$categorieshtml = '';
 	if($data['categories']) {
 		foreach($data['categories'] as $category) {
-			$categorieshtml .= expand_template($categorytemplate, $category);
+			$categorieshtml .= $view_factory->Load_view('category_view', $category);
 		}
 	}
 	$categorymenuhtml = '<select id="resource_category_select">';

@@ -420,21 +420,8 @@ class Project_admin extends Base {
 		);
 	}
 	
-	public function get_category_template() {
-		$categorytemplate =	'<tr class="category" id="category_{ID}" data-category_id="{ID}">
-								<td>{Name}</td>
-								<td>{!properties}</td>
-								<td>
-									<a href="javascript:void(0)" class="action" onclick="remove_category({ID})">X</a>
-								</td>
-							</tr>';
-		return $categorytemplate;
-	}
-	
 	public function add_category() {
-		header('Content-type: application/json');
-
-		$category_id = $_POST['category_id'];
+		$category_id = $this->Input_post('category_id');
 
 		$this->Load_model('Category_model');
 		$category = $this->Category_model->Get_category($category_id);
@@ -447,29 +434,16 @@ class Project_admin extends Base {
 		$category["Container_volume_limit"] = "";
 		$category["Tool_efficiency"] = "";
 
-		$category["properties"] = $this->get_category_properties_template($category);
-		$categorytemplate =	$this->get_category_template();
-		$categoryhtml = expand_template($categorytemplate, $category);
-
-		echo json_encode(array('success' => $success, 'html' => $categoryhtml));
-	}
-
-	function get_category_properties_template($category) {
-		$properties = "&nbsp;";
-		if($category["Name"] == "Food")
-		{
-			$properties = 'Nutrition <input type="text" data-property="nutrition" value="{Food_nutrition}" />';
-		}
-		elseif($category["Name"] == "Container")
-		{
-			$properties = '	Mass limit <input type="text" data-property="mass_limit" value="{Container_mass_limit}" /><br />
-							Volume limit <input type="text" data-property="volume_limit" value="{Container_volume_limit}" />';
-		}
-		elseif($category["Is_tool"] == 1)
-		{
-			$properties = 'Efficiency <input type="text" data-property="efficiency" value="{Tool_efficiency}" />';
-		}
-		return $properties;
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'category_view',
+					'data' => $category
+				)
+			)
+		);
 	}
 
 	public function save_product() {
