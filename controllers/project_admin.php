@@ -457,10 +457,8 @@ class Project_admin extends Base {
 	}
 
 	public function edit_category() {
-		header('Content-type: application/json');
-
 		$this->Load_model('Category_model');
-		$category = $this->Category_model->Get_category($_POST['id']);
+		$category = $this->Category_model->Get_category($this->Input_post('id'));
 
 		if($category == false) {
 			$category = array(
@@ -469,13 +467,17 @@ class Project_admin extends Base {
 					'Is_tool' => 0
 				);
 		}
-		$edit_category_view = $this->Load_view('category_edit_view',
-												array(
-													'category' => $category
-												), 
-												true);
 
-		echo json_encode(array('success' => true, 'data' => $edit_category_view));
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'category_edit_view',
+					'data' => array('category' => $category)
+				)
+			)
+		);
 	}
 
 	public function save_category() {

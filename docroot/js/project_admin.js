@@ -414,7 +414,7 @@ function edit_category(id) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
 				current_category = id;
-				$('#edit_category').html(data.data);
+				$('#edit_category').html(data.html);
 			}
 		}
 	});
