@@ -1,14 +1,26 @@
-<h2>Edit resource <?php echo htmlspecialchars($resource['Name']); ?></h2>
+<h2>Edit resource <?php echo htmlspecialchars($data['resource']['Name']); ?></h2>
 <div id="resource">
 	<?php
+	foreach($data['categories'] as $n => $category) {
+		$data['categories'][$n]["properties"] = $view_factory->Load_view('category_properties_view', $category);
+	}
+	$categorytemplate =	'
+		<tr class="category" id="category_{ID}" data-category_id="{ID}">
+			<td>{Name}</td>
+			<td>{!properties}</td>
+			<td>
+				<a href="javascript:void(0)" class="action" onclick="remove_category({ID})">X</a>
+			</td>
+		</tr>
+	';
 	$categorieshtml = '';
-	if($categories) {
-		foreach($categories as $category) {
+	if($data['categories']) {
+		foreach($data['categories'] as $category) {
 			$categorieshtml .= expand_template($categorytemplate, $category);
 		}
 	}
 	$categorymenuhtml = '<select id="resource_category_select">';
-	foreach($category_list as $category) {
+	foreach($data['category_list'] as $category) {
 		$categorymenuhtml .= expand_template(
 			'<option value="{ID}">{Name}</option>',
 			$category
@@ -18,26 +30,25 @@
 	<span class="action" onclick="add_resource_category()">Add</span>
 	';
 		
-	$resource['categorieshtml'] = $categorieshtml;
-	$resource['categorymenuhtml'] = $categorymenuhtml;
+	$data['resource']['categorieshtml'] = $categorieshtml;
+	$data['resource']['categorymenuhtml'] = $categorymenuhtml;
 	
-	
-	if($resource['Is_natural'] == 1)
-		$resource['Is_natural'] = 'checked=checked';
+	if($data['resource']['Is_natural'] == 1)
+		$data['resource']['Is_natural'] = 'checked=checked';
 	else
-		$resource['Is_natural'] = '';
+		$data['resource']['Is_natural'] = '';
 
 	$measure_template = '
 		<option value="{ID}"{selected}>{Name}</option>
 	';
-	$resource['measure_options'] = '';
-	foreach ($measures as $measure) {
+	$data['resource']['measure_options'] = '';
+	foreach ($data['measures'] as $measure) {
 		if($resource['Measure'] == $measure['ID']) {
 			$measure['selected'] = ' selected="true"';
 		} else {
 			$measure['selected'] = '';
 		}
-		$resource['measure_options'] .= expand_template($measure_template, $measure);
+		$data['resource']['measure_options'] .= expand_template($measure_template, $measure);
 	}
 
 	echo expand_template(
@@ -78,7 +89,7 @@
 			</td>
 		</tr>
 	</table>',
-	$resource);
+	$data['resource']);
 	?>
 	<a href="javascript:void(0)" class="action" style="float: right;" onclick="save_resource()">Save</a>
 </div>

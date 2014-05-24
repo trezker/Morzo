@@ -286,7 +286,7 @@ function edit_resource(id) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
 				current_resource = id;
-				$('#edit_resource').html(data.data);
+				$('#edit_resource').html(data.html);
 			}
 		}
 	});
