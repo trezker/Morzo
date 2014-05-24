@@ -52,10 +52,12 @@ class User extends Base {
 	}
 
 	private function Start_openid_verification($finish_path) {
-		header('Content-type: application/json');
-		if(!isset($_POST['openid'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Must give an openid'));
-			return;
+		$openid = $this->Input_post('openid');
+		if(NULL === $openid) {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Must give an openid')
+			);
 		}
 
 		require_once "Auth/OpenID/Consumer.php";
@@ -64,23 +66,28 @@ class User extends Base {
 		$store = new Auth_OpenID_FileStore('../oid_store');
 		$consumer = new Auth_OpenID_Consumer($store);
 
-		$auth = $consumer->begin($_POST['openid']);
+		$auth = $consumer->begin($openid);
 		if (!$auth) {
-			echo json_encode(array('success' => false, 'reason' => 'Could not start openid login process'));
-			return;
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Could not start openid login process')
+			);
 		}
 
 		$url = $auth->redirectURL($GLOBALS['base_url'], $GLOBALS['base_url'].$finish_path);
-		echo json_encode(array('success' => true, 'redirect_url' => $url));
+		return array(
+			'view' => 'data_json',
+			'data' => array('success' => true, 'redirect_url' => $url)
+		);
 	}
 
 	public function Start_openid_login() {
-		$this->Start_openid_verification('user/Finish_openid_login');
+		return $this->Start_openid_verification('user/Finish_openid_login');
 	}
 
 	public function Start_add_openid()
 	{
-		$this->Start_openid_verification('user/Finish_add_openid');
+		return $this->Start_openid_verification('user/Finish_add_openid');
 	}
 
 	public function Finish_openid_verification($finish_path)
