@@ -149,7 +149,7 @@ class User extends Base {
 	}
 
 	public function Create_account() {
-		$this->Load_view('signup_view');
+		return array('view' => 'signup_view');
 	}
 	
 	public function Create_user() {
