@@ -153,27 +153,34 @@ class User extends Base {
 	}
 	
 	public function Create_user() {
-		header('Content-type: application/json');
-		if($_SESSION['OPENID_AUTH'] !== true) {
-			echo json_encode(array('success' => false, 'reason' => 'No authorized openid'));
-			return;
+		if($this->Session_get('OPENID_AUTH') !== true) {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'No authorized openid')
+			);
 		}
-		if(!isset($_POST['username']) || $_POST['username'] == "") {
-			echo json_encode(array('success' => false, 'reason' => 'No username'));
-			return;
+		$username = $this->Input_post('username');
+		if(null === $username || $username == "") {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'No username')
+			);
 		}
 
 		$this->Load_model('User_model');
-		$r = $this->User_model->Create_user_openid($_POST['username'], $_SESSION['OPENID']);
+		$r = $this->User_model->Create_user_openid($username, $this->Session_get('OPENID'));
 		if($r['success'] == false) {
-			echo json_encode(array('success' => false, 'reason' => $r['reason']));
-			return;
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => $r['reason'])
+			);
 		} else {
-			$_SESSION['username'] = $_POST['username'];
-			$_SESSION['userid'] = $r['ID'];
-			$_SESSION['admin'] = $this->User_model->User_has_access($_SESSION['userid'], 'Admin');
-			echo json_encode(array('success' => true));
-			return;
+			$this->Session_get('username', $username);
+			$this->Session_get('userid', $r['ID']);
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => true)
+			);
 		}
 	}
 
