@@ -216,16 +216,19 @@ class User extends Base {
 	}
 	
 	public function Delete_openid() {
-		header('Content-type: application/json');
 		$this->Load_model('User_model');
 		if(!$this->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Not logged in')
+			);
 		}
 		
-		$r = $this->User_model->Delete_user_openid($_SESSION['userid'], $_POST['id']);
-		
-		echo json_encode($r);
+		$r = $this->User_model->Delete_user_openid($this->Session_get('userid'), $this->Input_post('id'));
+		return array(
+			'view' => 'data_json',
+			'data' => $r
+		);
 	}
 }
 
