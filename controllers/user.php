@@ -175,8 +175,8 @@ class User extends Base {
 				'data' => array('success' => false, 'reason' => $r['reason'])
 			);
 		} else {
-			$this->Session_get('username', $username);
-			$this->Session_get('userid', $r['ID']);
+			$this->Session_set('username', $username);
+			$this->Session_set('userid', $r['ID']);
 			return array(
 				'view' => 'data_json',
 				'data' => array('success' => true)
