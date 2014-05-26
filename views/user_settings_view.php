@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Morzo</title>
-		<?php echo $common_head_view; ?>
+		<?php echo $view_factory->Load_view('common_head_view'); ?>
 		<script type="text/javascript" src="/js/user.js"></script>
 	</head>
 	<body>
@@ -11,12 +11,12 @@
 		<?php
 		echo '<table>
 			  ';
-		foreach($openids as $openid) {
+		foreach($data['openids'] as $openid) {
 			echo '
 				  <tr>
 					  <td style="font-size: small;">'.$openid['OpenID'].'</td>';
 
-			if(count($openids) > 1)
+			if(count($data['openids']) > 1)
 				echo '<td class="action" onclick="delete_openid('.$openid['ID'].');">Delete</td>';
 
 			echo '</tr>
@@ -29,8 +29,8 @@
 		<div>
 			<div class="openid_icons">
 			<?php
-			if(isset($openid_icons)) {
-				foreach($openid_icons as $icon) {
+			if(isset($data['openid_icons'])) {
+				foreach($data['openid_icons'] as $icon) {
 					echo '<span class="action openid_icon" data-tooltip="'.$icon['name'].'"><img src="'.$icon['icon'].'" height="16" width="16" onclick="add_openid(\''.$icon['URI'].'\');" /></span>';
 				}
 			}

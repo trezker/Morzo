@@ -201,18 +201,18 @@ class User extends Base {
 	public function Settings() {
 		$this->Load_model('User_model');
 		if(!$this->Logged_in()) {
-			header("Location: /front");
-			return;
+			return array('view' => 'redirect', 'data' => '/');
 		}
-		$openids = $this->User_model->Get_user_openids($_SESSION['userid']);
+		$openids = $this->User_model->Get_user_openids($this->Session_get('userid'));
 		$openid_icons = $this->User_model->Get_openid_icons();
 
-		$common_head_view = $this->Load_view('common_head_view', array());
-		$this->Load_view('user_settings_view', array(
-														'openids' => $openids,
-														'openid_icons' => $openid_icons, 
-														'common_head_view' => $common_head_view
-													));
+		return array(
+			'view' => 'user_settings_view',
+			'data' => array(
+				'openids' => $openids,
+				'openid_icons' => $openid_icons
+			)
+		);
 	}
 	
 	public function Delete_openid() {
