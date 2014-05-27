@@ -43,16 +43,20 @@ class User_admin extends Base {
 	}
 	
 	public function Kick_user() {
-		header('Content-type: application/json');
-
-		if(!is_numeric($_POST['id'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Must give a user id'));
-			return;
+		$id = $this->Input_post('id');
+		if(!is_numeric($id)) {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Must give a user id')
+			);
 		}
 		
-		Set_cache('kick_user_'.$_POST['id'], true);
+		Set_cache('kick_user_' . $id, true);
 		
-		echo json_encode(array('success' => true));
+		return array(
+			'view' => 'data_json',
+			'data' => array('success' => true)
+		);
 	}
 	
 	public function Ban_user() {
