@@ -1,25 +1,42 @@
 <?php
 require_once "../controllers/base.php";
 
-class World_admin extends Base
-{
-	public function Index()
-	{
-		$this->Map(0, 0);
-	}
-	
-	public function Map($center_x, $center_y)
-	{
+class World_admin extends Base {
+	function Precondition($args) {
+		$header_accept = $this->Input_header("Accept");
+		$json_request = false;
+		if (strpos($header_accept,'application/json') !== false) {
+			$json_request = true;
+		}
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			header("Location: /front");
-			return;
+			if($json_request === true) {
+				return $this->Json_response_not_logged_in();
+			} else {
+				return array("view" => "redirect", "data" => "/");
+			}
 		}
-		if($_SESSION['admin'] != true) {
-			echo "You need to be admin to access this page";
-			return;
+		if($this->Session_get('admin') != true) {
+			if($json_request === true) {
+				return array(
+					'view' => 'data_json',
+					'data' => array(
+						'success' => false,
+						'reason' => 'Requires admin privilege'
+					)
+				);
+			} else {
+				return array("view" => "redirect", "data" => "/");
+			}
 		}
+		return true;
+	}
 
+	public function Index() {
+		$this->Map(0, 0);
+	}
+
+	public function Map($center_x, $center_y) {
 		$this->Load_model('Location_model');
 		$locations = $this->Location_model->Get_locations($center_x, $center_y);
 		$max_actors = $this->Location_model->Get_max_actors();
@@ -36,17 +53,8 @@ class World_admin extends Base
 											));
 	}
 	
-	public function Set_max_actors(){
+	public function Set_max_actors() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
 
 		$this->Load_model('Location_model');
 		$success = $this->Location_model->Set_max_actors($_POST['value']);
@@ -54,17 +62,8 @@ class World_admin extends Base
 		echo json_encode(array('success' => $success));
 	}
 	
-	public function Set_max_actors_account(){
+	public function Set_max_actors_account() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
 
 		$this->Load_model('Location_model');
 		$success = $this->Location_model->Set_max_actors_account($_POST['value']);
@@ -72,17 +71,8 @@ class World_admin extends Base
 		echo json_encode(array('success' => $success));
 	}
 	
-	public function Edit_location(){
+	public function Edit_location() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
 
 		$this->Load_model('Location_model');
 		$location = $this->Location_model->Get_location($_POST['id']);
@@ -119,18 +109,8 @@ class World_admin extends Base
 		echo json_encode(array('success' => true, 'data' => $location_admin_view));
 	}
 	
-	public function get_landscape_resources()
-	{
+	public function get_landscape_resources() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
 
 		$this->Load_model('Location_model');
 		$location_resources = $this->Location_model->Get_location_resources($_POST['location'], $_POST['landscape']);
@@ -143,18 +123,9 @@ class World_admin extends Base
 		echo json_encode(array('success' => true, 'data' => $resources_view));
 	}
 	
-	public function Add_biome()
-	{
+	public function Add_biome() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
+
 		if(!is_string($_POST['name']) || $_POST['name'] == '') {
 			echo json_encode(array('success' => false, 'reason' => $_POST['name'].'Must give a name'));
 			return;
@@ -171,18 +142,9 @@ class World_admin extends Base
 		echo json_encode(array('success' => true, 'data' => $biomes_view));
 	}
 
-	public function Add_landscape()
-	{
+	public function Add_landscape() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
+
 		if(!is_string($_POST['name']) || $_POST['name'] == '') {
 			echo json_encode(array('success' => false, 'reason' => $_POST['name'].'Must give a name'));
 			return;
@@ -202,15 +164,7 @@ class World_admin extends Base
 
 	public function Set_location_biome() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
+
 		if(!is_string($_POST['location']) || $_POST['location'] == '') {
 			echo json_encode(array('success' => false, 'reason' => 'Must give a location'));
 			return;
@@ -228,17 +182,10 @@ class World_admin extends Base
 
 		echo json_encode(array('success' => true));
 	}
+
 	public function Add_location_resource() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
+
 		if(!is_string($_POST['location']) || $_POST['location'] == '') {
 			echo json_encode(array('success' => false, 'reason' => 'Must give a location'));
 			return;
@@ -256,17 +203,10 @@ class World_admin extends Base
 
 		echo json_encode(array('success' => true));
 	}
+
 	public function Remove_location_resource() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
+
 		if(!is_string($_POST['location']) || $_POST['location'] == '') {
 			echo json_encode(array('success' => false, 'reason' => 'Must give a location'));
 			return;
@@ -289,15 +229,7 @@ class World_admin extends Base
 
 	public function Save_species() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
+
 		$name = $_POST['name'];
 		if(!is_string($name) || $name == '') {
 			echo json_encode(array('success' => false, 'reason' => 'Must give a name'));
@@ -324,15 +256,6 @@ class World_admin extends Base
 
 	public function Get_specie() {
 		header('Content-type: application/json');
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
 
 		$this->Load_model('Species_model');
 		$specie = $this->Species_model->Get_specie($_POST['id'], $_POST['location_id']);
