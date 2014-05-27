@@ -78,17 +78,21 @@ class User_admin extends Base {
 	}
 	
 	public function set_user_actor_limit() {
-		header('Content-type: application/json');
-
-		if(!is_numeric($_POST['id'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Must give a user id'));
-			return;
+		$id = $this->Input_post('id');
+		if(!is_numeric($id)) {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Must give a user id')
+			);
 		}
 		
 		$this->Load_model('User_model');
-		$success = $this->User_model->Set_user_actor_limit($_POST['id'], $_POST['actor_limit']);
+		$success = $this->User_model->Set_user_actor_limit($id, $this->Input_post('actor_limit'));
 		
-		echo json_encode(array('success' => $success));
+		return array(
+			'view' => 'data_json',
+			'data' => array('success' => $success)
+		);
 	}
 	
 	public function Login_as() {
