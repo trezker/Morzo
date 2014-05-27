@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>User admin - Morzo</title>
-		<?php echo $common_head_view; ?>
+		<?php echo $view_factory->Load_view('common_head_view'); ?>
 		<script type="text/javascript" src="/js/user_admin.js"></script>
 	</head>
 	<body>
@@ -26,7 +26,7 @@
 					<td>Last active {Last_active}</td>
 				</tr>';
 			$alternate = '';
-			foreach ($users as $user) {
+			foreach ($data['users'] as $user) {
 				$alternate = ($alternate == 'alternate1')? 'alternate2': 'alternate1';
 				$user['Banned_text'] = '';
 				if($user['Banned_from'] != NULL) {

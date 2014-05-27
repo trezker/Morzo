@@ -36,8 +36,10 @@ class User_admin extends Base {
 		$this->Load_model('User_model');
 		$users = $this->User_model->Get_users();
 		
-		$common_head_view = $this->Load_view('common_head_view', array());
-		$this->Load_view('user_admin_view', array('users' => $users, 'common_head_view' => $common_head_view));
+		return array(
+			'view' => 'user_admin_view',
+			'data' => array('users' => $users)
+		);
 	}
 	
 	public function Kick_user() {
