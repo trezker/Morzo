@@ -99,13 +99,16 @@ class User_admin extends Base {
 		header('Content-type: application/json');
 
 		$this->Load_model('User_model');
-		$this->User_model->Login($_POST['id']);
+		$this->User_model->Login($this->Input_post('id'));
 		
-		$_SESSION['username'] = $_POST['username'];
-		$_SESSION['userid'] = $_POST['id'];
-		$_SESSION['admin'] = false;
+		$this->Session_set('username', $this->Input_post('username'));
+		$this->Session_set('userid', $this->Input_post('id'));
+		$this->Session_set('admin', false);
 
-		echo json_encode(array('success' => true));
+		return array(
+			'view' => 'data_json',
+			'data' => array('success' => true)
+		);
 	}
 }
 
