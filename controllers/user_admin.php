@@ -1,20 +1,38 @@
 <?php
 require_once "../controllers/base.php";
 
-class User_admin extends Base
-{
-	public function Index()
-	{
+class User_admin extends Base {
+	function Precondition($args) {
+		$header_accept = $this->Input_header("Accept");
+		$json_request = false;
+		if (strpos($header_accept,'application/json') !== false) {
+			$json_request = true;
+		}
 		$this->Load_controller('User');
 		if(!$this->User->Logged_in()) {
-			header("Location: front");
-			return;
+			if($json_request === true) {
+				return $this->Json_response_not_logged_in();
+			} else {
+				return array("view" => "redirect", "data" => "/");
+			}
 		}
-		if($_SESSION['admin'] != true) {
-			echo "You need to be admin to access this page";
-			return;
+		if($this->Session_get('admin') != true) {
+			if($json_request === true) {
+				return array(
+					'view' => 'data_json',
+					'data' => array(
+						'success' => false,
+						'reason' => 'Requires admin privilege'
+					)
+				);
+			} else {
+				return array("view" => "redirect", "data" => "/");
+			}
 		}
+		return true;
+	}
 
+	public function Index() {
 		$this->Load_model('User_model');
 		$users = $this->User_model->Get_users();
 		
@@ -22,19 +40,9 @@ class User_admin extends Base
 		$this->Load_view('user_admin_view', array('users' => $users, 'common_head_view' => $common_head_view));
 	}
 	
-	public function Kick_user()
-	{
+	public function Kick_user() {
 		header('Content-type: application/json');
 
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
 		if(!is_numeric($_POST['id'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Must give a user id'));
 			return;
@@ -45,19 +53,9 @@ class User_admin extends Base
 		echo json_encode(array('success' => true));
 	}
 	
-	public function Ban_user()
-	{
+	public function Ban_user() {
 		header('Content-type: application/json');
 
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
 		if(!is_numeric($_POST['id'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Must give a user id'));
 			return;
@@ -72,15 +70,6 @@ class User_admin extends Base
 	public function set_user_actor_limit() {
 		header('Content-type: application/json');
 
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
 		if(!is_numeric($_POST['id'])) {
 			echo json_encode(array('success' => false, 'reason' => 'Must give a user id'));
 			return;
@@ -92,20 +81,9 @@ class User_admin extends Base
 		echo json_encode(array('success' => $success));
 	}
 	
-	public function Login_as()
-	{
+	public function Login_as() {
 		header('Content-type: application/json');
 
-		$this->Load_controller('User');
-		if(!$this->User->Logged_in()) {
-			echo json_encode(array('success' => false, 'reason' => 'Not logged in'));
-			return;
-		}
-		if($_SESSION['admin'] != true) {
-			echo json_encode(array('success' => false, 'reason' => 'Requires admin privilege'));
-			return;
-		}
-		
 		$this->Load_model('User_model');
 		$this->User_model->Login($_POST['id']);
 		
