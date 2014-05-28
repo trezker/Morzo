@@ -54,21 +54,23 @@ class World_admin extends Base {
 	}
 	
 	public function Set_max_actors() {
-		header('Content-type: application/json');
-
 		$this->Load_model('Location_model');
-		$success = $this->Location_model->Set_max_actors($_POST['value']);
+		$success = $this->Location_model->Set_max_actors($this->Input_post('value'));
 		
-		echo json_encode(array('success' => $success));
+		return array(
+			'view' => 'data_json',
+			'data' => array('success' => $success)
+		);
 	}
 	
 	public function Set_max_actors_account() {
-		header('Content-type: application/json');
-
 		$this->Load_model('Location_model');
-		$success = $this->Location_model->Set_max_actors_account($_POST['value']);
+		$success = $this->Location_model->Set_max_actors_account($this->Input_post('value'));
 		
-		echo json_encode(array('success' => $success));
+		return array(
+			'view' => 'data_json',
+			'data' => array('success' => $success)
+		);
 	}
 	
 	public function Edit_location() {
