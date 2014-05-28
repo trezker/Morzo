@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>World admin - Morzo</title>
-		<?php echo $common_head_view; ?>
+		<?php echo $view_factory->Load_view('common_head_view'); ?>
 		<script type="text/javascript" src="/js/world_admin.js"></script>
 	</head>
 	<body>
@@ -29,11 +29,11 @@
 
 		<div id="actor_control">
 			Maximum number of actors in the world
-			<input name="max_actors_input" id="max_actors_input" type="text" value="<?php echo $max_actors;?>" />
+			<input name="max_actors_input" id="max_actors_input" type="text" value="<?php echo $data['max_actors'];?>" />
 			<span class="action" onclick="set_max_actors();">Update</span>
 			<br />
 			Default max actors for new accounts
-			<input name="max_actors_account_input" id="max_actors_account_input" type="text" value="<?php echo $max_actors_account;?>" />
+			<input name="max_actors_account_input" id="max_actors_account_input" type="text" value="<?php echo $data['max_actors_account'];?>" />
 			<span class="action" onclick="set_max_actors_account();">Update</span>
 
 			<div id="actor_control_feedback"></div>
@@ -43,22 +43,22 @@
 			<h2>Locations (Deficient=red)</h2>
 			<div id="locations">
 				<label for="map_center_x">X:</label>
-				<input id="map_center_x" type="number" value="<?php echo $center_x; ?>" style="width: 50px; text-align: right;"></input>
+				<input id="map_center_x" type="number" value="<?php echo $data['center_x']; ?>" style="width: 50px; text-align: right;"></input>
 				<label for="map_center_y">Y:</label>
-				<input id="map_center_y" type="number" value="<?php echo $center_y; ?>" style="width: 50px; text-align: right;"></input>
+				<input id="map_center_y" type="number" value="<?php echo $data['center_y']; ?>" style="width: 50px; text-align: right;"></input>
 				<span class="action" onclick="move_map();">Fetch map</span>
 				<?php
 				$i = 0;
 				echo '<table>';
 				echo '<tr>';
 				for($x=-5; $x <= 5; $x++) {
-					echo '<th>'.($center_x+$x).'</th>';
+					echo '<th>'.($data['center_x']+$x).'</th>';
 				}
 				for($y=-5; $y <= 5; $y++) {
 					echo '<tr>';
 					for($x=-5; $x <= 5; $x++) {
-						if($i < count($locations) && $locations[$i]['X'] == $center_x+$x && $locations[$i]['Y'] == $center_y+$y) {
-							$location = $locations[$i];
+						if($i < count($data['locations']) && $data['locations'][$i]['X'] == $data['center_x']+$x && $data['locations'][$i]['Y'] == $data['center_y']+$y) {
+							$location = $data['locations'][$i];
 							$location['deficient_class'] = '';
 							if($location['Resource_count'] == 0 || $location['Biome_ID'] == NULL) {
 								$location['deficient_class'] = ' deficient_location';
@@ -75,7 +75,7 @@
 							echo '<td> </td>';
 						}
 					}
-					echo '<th>'.($center_y+$y).'</th>';
+					echo '<th>'.($data['center_y']+$y).'</th>';
 					echo '</tr>';
 				}
 				echo '</table>';

@@ -33,7 +33,7 @@ class World_admin extends Base {
 	}
 
 	public function Index() {
-		$this->Map(0, 0);
+		return $this->Map(0, 0);
 	}
 
 	public function Map($center_x, $center_y) {
@@ -41,16 +41,16 @@ class World_admin extends Base {
 		$locations = $this->Location_model->Get_locations($center_x, $center_y);
 		$max_actors = $this->Location_model->Get_max_actors();
 		$max_actors_account = $this->Location_model->Get_max_actors_account();
-
-		$common_head_view = $this->Load_view('common_head_view', array());
-		$this->Load_view('world_admin_view', array(
-												'locations' => $locations, 
-												'max_actors' => $max_actors,
-												'max_actors_account' => $max_actors_account,
-												'center_x' => $center_x,
-												'center_y' => $center_y,
-												'common_head_view' => $common_head_view
-											));
+		return array(
+			'view' => 'world_admin_view',
+			'data' => array(
+				'locations' => $locations, 
+				'max_actors' => $max_actors,
+				'max_actors_account' => $max_actors_account,
+				'center_x' => $center_x,
+				'center_y' => $center_y
+			)
+		);
 	}
 	
 	public function Set_max_actors() {
