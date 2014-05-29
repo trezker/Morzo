@@ -1,9 +1,9 @@
-<h2>Edit location <?php echo $location['X']." ".$location['Y'];?></h2>
+<h2>Edit location <?php echo $data['location']['X']." ".$data['location']['Y'];?></h2>
 
 <div class="edit_panel" style="float: left;">
 	<div class="panel_header">Biome</div>
 	<div id="biome_list">
-		<?php echo $biomes_view; ?>
+		<?php echo $view_factory->Load_view($data['biomes_view']['view'], $data['biomes_view']['data']); ?>
 	</div>
 	<input type="text" id="new_biome" />
 	<br/><span class="action" onclick="add_biome();">Add biome</span>
@@ -12,7 +12,7 @@
 <div class="edit_panel" style="float: left;">
 	<div class="panel_header">Landscapes</div>
 	<div id="landscape_list">
-		<?php echo $landscapes_view; ?>
+		<?php echo $view_factory->Load_view($data['landscapes_view']['view'], $data['landscapes_view']['data']); ?>
 	</div>
 	<input type="text" id="new_landscape" />
 	<br/><span class="action" onclick="add_landscape();">Add landscape</span>
@@ -27,7 +27,7 @@
 <div class="edit_panel" style="float: left; clear: both;">
 	<div class="panel_header">Animal species</div>
 	<div id="species_list">
-		<?php echo $species_view; ?>
+		<?php echo $view_factory->Load_view($data['species_view']['view'], $data['species_view']['data']); ?>
 	</div>
 	<span class="action" onclick="add_species();">Add species</span>
 </div>
@@ -36,7 +36,7 @@
 	$corpseoption_template = '
 		<option value="{ID}">{Name}</option>
 	';
-	foreach ($corpse_products as $corpse) {
+	foreach ($data['corpse_products'] as $corpse) {
 		$corpse_select .= expand_template($corpseoption_template, $corpse);
 	}
 	$corpse_select .= '</select>';

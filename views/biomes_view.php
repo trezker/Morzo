@@ -1,7 +1,7 @@
 <ul class="selectable" id="biomes">
 	<?php
-	foreach ($biomes as $biome) {
-		if(isset($location) && $location['Biome_ID'] == $biome['ID'])
+	foreach ($data['biomes'] as $biome) {
+		if(isset($data['location']) && $data['location']['Biome_ID'] == $biome['ID'])
 			$selected = ' selected';
 		else
 			$selected = '';

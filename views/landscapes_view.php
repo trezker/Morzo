@@ -1,9 +1,9 @@
 <ul class="selectable" id="landscapes">
 	<?php
-	foreach ($landscapes as $landscape) {
+	foreach ($data['landscapes'] as $landscape) {
 		$contains_resources = '';
-		if(isset($location_resources)) {
-			foreach ($location_resources as $location_resource) {
+		if(isset($data['location_resources'])) {
+			foreach ($data['location_resources'] as $location_resource) {
 				if($location_resource['Landscape_ID'] == $landscape['ID'])
 					$contains_resources = ' contains_resources';
 			}

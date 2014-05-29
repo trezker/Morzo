@@ -19,11 +19,12 @@ function edit_location(id) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
 				current_location = id;
-				$('#edit_location').html(data.data);
+				$('#edit_location').html(data.html);
 			}
 		}
 	});
 }
+
 function add_biome() {
 	$.ajax({
 		type: 'POST',

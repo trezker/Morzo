@@ -74,41 +74,56 @@ class World_admin extends Base {
 	}
 	
 	public function Edit_location() {
-		header('Content-type: application/json');
-
+		$id = $this->Input_post('id');
+		
 		$this->Load_model('Location_model');
-		$location = $this->Location_model->Get_location($_POST['id']);
+		$location = $this->Location_model->Get_location($id);
 		if($location['Biome_name'] === NULL)
 			$location['Biome_name'] = "N/A";
 
-		$all_location_resources = $this->Location_model->Get_location_resources($_POST['id']);
+		$all_location_resources = $this->Location_model->Get_location_resources($id);
 		$landscapes = $this->Location_model->Get_landscapes();
-
 		$biomes = $this->Location_model->Get_biomes();
-		$biomes_view = $this->Load_view('biomes_view', array('biomes' => $biomes, 'location' => $location), true);
-
 		$landscapes = $this->Location_model->Get_landscapes();
-		$landscapes_view = $this->Load_view('landscapes_view', array('landscapes' => $landscapes, 'location_resources' => $all_location_resources), true);
 
 		$this->Load_model('Species_model');
-		$location_species = $this->Species_model->Get_location_species($_POST['id']);
+		$location_species = $this->Species_model->Get_location_species($id);
 		$species = $this->Species_model->Get_species();
 		$this->Load_model('Product_model');
 		$corpse_products = $this->Product_model->Get_products('Corpse');
 		
-		$species_view = $this->Load_view('species_view', array('species' => $species, 'location_species' => $location_species), true);
+		$biomes_view = array(
+			'view' => 'biomes_view',
+			'data' => array('biomes' => $biomes, 'location' => $location)
+		);
 		
-		$location_admin_view = $this->Load_view('location_edit_view', 
-												array(
-													'biomes_view' => $biomes_view,
-													'landscapes' => $landscapes,
-													'location' => $location,
-													'landscapes_view' => $landscapes_view,
-													'species_view' => $species_view,
-													'corpse_products' => $corpse_products
-												), true);
-
-		echo json_encode(array('success' => true, 'data' => $location_admin_view));
+		$landscapes_view = array(
+			'view' => 'landscapes_view',
+			'data' => array('landscapes' => $landscapes, 'location_resources' => $all_location_resources)
+		);
+		
+		$species_view = array(
+			'view' => 'species_view',
+			'data' => array('species' => $species, 'location_species' => $location_species)
+		);
+		
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'location_edit_view',
+					'data' => array(
+						'biomes_view' => $biomes_view,
+						'landscapes' => $landscapes,
+						'location' => $location,
+						'landscapes_view' => $landscapes_view,
+						'species_view' => $species_view,
+						'corpse_products' => $corpse_products
+					)
+				)
+			)
+		);
 	}
 	
 	public function get_landscape_resources() {

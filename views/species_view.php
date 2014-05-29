@@ -1,9 +1,9 @@
 <ul class="selectable" id="species">
 	<?php
-	foreach ($species as $specie) {
+	foreach ($data['species'] as $specie) {
 		$selected = '';
-		if(isset($location_species)) {
-			foreach ($location_species as $location_specie) {
+		if(isset($data['location_species'])) {
+			foreach ($data['location_species'] as $location_specie) {
 				if($location_specie['ID'] == $specie['ID'])
 					$selected = ' selected';
 			}
