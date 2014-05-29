@@ -125,7 +125,7 @@ function toggle_landscape(landscape) {
 				$('#landscape_'+current_landscape).removeClass('selected');
 				current_landscape = landscape;
 				$('#landscape_'+current_landscape).addClass('selected');
-				$('#resource_list').html(data.data);
+				$('#resource_list').html(data.html);
 			}
 		}
 	});

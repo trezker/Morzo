@@ -127,17 +127,21 @@ class World_admin extends Base {
 	}
 	
 	public function get_landscape_resources() {
-		header('Content-type: application/json');
-
 		$this->Load_model('Location_model');
-		$location_resources = $this->Location_model->Get_location_resources($_POST['location'], $_POST['landscape']);
+		$location_resources = $this->Location_model->Get_location_resources($this->Input_post('location'), $this->Input_post('landscape'));
 		$this->Load_model('Resource_model');
 		$resources = $this->Resource_model->Get_resources();
 
-		$resources_view = $this->Load_view('resources_view', array('resources' => $resources,
-																'location_resources' => $location_resources), true);
-
-		echo json_encode(array('success' => true, 'data' => $resources_view));
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'resources_view',
+					'data' => array('resources' => $resources, 'location_resources' => $location_resources)
+				)
+			)
+		);
 	}
 	
 	public function Add_biome() {

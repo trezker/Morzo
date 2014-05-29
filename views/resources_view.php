@@ -1,9 +1,9 @@
 <ul class="selectable" id="resources">
 	<?php
-	foreach ($resources as $resource) {
+	foreach ($data['resources'] as $resource) {
 		$selected = '';
-		if(isset($location_resources)) {
-			foreach ($location_resources as $location_resource) {
+		if(isset($data['location_resources'])) {
+			foreach ($data['location_resources'] as $location_resource) {
 				if($location_resource['ID'] == $resource['ID'])
 					$selected = ' selected';
 			}
