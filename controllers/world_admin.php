@@ -145,22 +145,34 @@ class World_admin extends Base {
 	}
 	
 	public function Add_biome() {
-		header('Content-type: application/json');
-
-		if(!is_string($_POST['name']) || $_POST['name'] == '') {
-			echo json_encode(array('success' => false, 'reason' => $_POST['name'].'Must give a name'));
-			return;
+		$name = $this->Input_post('name');
+		
+		if(!is_string($name) || $name == '') {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Must give a name')
+			);
 		}
 
 		$this->Load_model('Location_model');
-		if(!$this->Location_model->Add_biome($_POST['name'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Failed to add biome'));
-			return;
+		if(!$this->Location_model->Add_biome($name)) {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Failed to add biome')
+			);
 		}
 		$biomes = $this->Location_model->Get_biomes();
-		$biomes_view = $this->Load_view('biomes_view', array('biomes' => $biomes), true);
 
-		echo json_encode(array('success' => true, 'data' => $biomes_view));
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'biomes_view',
+					'data' => array('biomes' => $biomes)
+				)
+			)
+		);
 	}
 
 	public function Add_landscape() {

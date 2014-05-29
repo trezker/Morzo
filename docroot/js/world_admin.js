@@ -35,7 +35,7 @@ function add_biome() {
 		success: function(data){
 			if(ajax_logged_out(data)) return;
 			if(data !== false){
-				$('#biome_list').html(data.data);
+				$('#biome_list').html(data.html);
 			}
 		}
 	});
