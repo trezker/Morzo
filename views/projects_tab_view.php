@@ -2,7 +2,7 @@
 	<span class="action" id="open_recipe_menu" onclick="toggle_recipe_menu(<?php echo $data['actor_id'];?>);">Start a new project</span>
 	<div id="recipe_menu_content" style="display: none;">
 		<span class="action" onclick="toggle_recipe_menu();">Close recipe menu</span>
-		<?php echo $data['recipe_selection_view'];?>
+		<?php echo $view_factory->Load_view($data['recipe_selection_view']['view'], $data['recipe_selection_view']['data']); ?>
 	</div>
 </div>
 

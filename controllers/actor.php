@@ -115,7 +115,12 @@ class Actor extends Base {
 			$projects = $this->Project_model->Get_projects($actor_id);
 			$hunts = $this->Species_model->Get_hunts($actor_id);
 			$recipe_list = $this->Project_model->Get_recipes_without_nature_resource();
-			$recipe_selection_view = $this->Load_view('recipe_selection_view', array('recipe_list' => $recipe_list, 'actor_id' => $actor_id), true);
+			
+			$recipe_selection_view = array(
+				'view' => 'recipe_selection_view',
+				'data' => array('recipe_list' => $recipe_list, 'actor_id' => $actor_id)
+			);
+			
 			$tab_view = array(
 				'view' => 'projects_tab_view', 
 				'data' => array(

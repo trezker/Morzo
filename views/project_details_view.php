@@ -1,17 +1,12 @@
-<?php
-	if($project == false) {
-		echo "Something is broken";
-		return;
-	}
-?>
 <div id="project_details">
 	<?php
 	echo expand_template(
-	'
-	Cycles left: {Cycles_left}<br />
-	Time: {Cycle_time} hours<br />
-	',
-	$project['info']);
+		'
+		Cycles left: {Cycles_left}<br />
+		Time: {Cycle_time} hours<br />
+		',
+		$data['project']['info']
+	);
 	?>
 	
 	<div id="recipe_outputs">
@@ -23,7 +18,7 @@
 				{Amount}{Measure_desc} {Name}
 			</li>';
 
-			foreach ($project['recipe_outputs'] as $output) {
+			foreach ($data['project']['recipe_outputs'] as $output) {
 				$output['Measure_desc'] = '';
 				if($output['Measure_name'] == 'Mass') {
 					$output['Amount'] *= $output['Mass_factor'];
@@ -41,7 +36,7 @@
 				{Amount} {Name}
 			</li>';
 
-			foreach ($project['recipe_product_outputs'] as $output) {
+			foreach ($data['project']['recipe_product_outputs'] as $output) {
 				echo expand_template($output_template, $output);
 			}
 			?>
@@ -61,7 +56,7 @@
 			echo "<li>Resources<ul>";
 			$needs_resources = false;
 			$only_from_nature = true;
-			foreach ($project['recipe_inputs'] as $input) {
+			foreach ($data['project']['recipe_inputs'] as $input) {
 				if($input['From_nature'] == 1) {
 					continue;
 				} else {
@@ -106,7 +101,7 @@
 			</li>';
 
 			echo "<li>Products<ul>";
-			foreach ($project['recipe_product_inputs'] as $input) {
+			foreach ($data['project']['recipe_product_inputs'] as $input) {
 				if($input['Project_amount'] < $input['Amount']) {
 					$needs_resources = true;
 				}
@@ -121,7 +116,7 @@
 			</li>';
 
 			echo "<li>Tools<ul>";
-			foreach ($project['recipe_tools'] as $tool) {
+			foreach ($data['project']['recipe_tools'] as $tool) {
 				$tool['style'] = '';
 				if($tool['Project_amount'] == 0) {
 					$tool['style'] = 'inactive_project';
@@ -133,9 +128,9 @@
 		</ul>
 		<?php 
 			if($needs_resources) {
-				echo '<span class="action" onclick="supply_project('.$actor_id.', '.$project['info']['ID'].')">Supply resources</span>';
+				echo '<span class="action" onclick="supply_project('.$data['actor_id'].', '.$data['project']['info']['ID'].')">Supply resources</span>';
 			}
-			echo ' <span class="action" onclick="cancel_project('.$actor_id.', '.$project['info']['ID'].')">Cancel</span>';
+			echo ' <span class="action" onclick="cancel_project('.$data['actor_id'].', '.$data['project']['info']['ID'].')">Cancel</span>';
 		?>
 	</div>
 </div>

@@ -116,12 +116,12 @@
 		</tr>
 		<tr>
 			<td>
-				<input type="number" id="cycle_count" style="width: 30px;" />
+				<input type="number" id="cycle_count" style="width: 40px;" />
 			</td>
 			<td>
 				Number of cycles
 			</td>
 		</tr>
 	</table>
-	<div class="action" onclick="start_project(<?php echo $actor_id.', '.$recipe['recipe']['ID'];?>)">Start project</div>
+	<div class="action" onclick="start_project(<?php echo $data['actor_id'].', '.$data['recipe']['recipe']['ID'];?>)">Start project</div>
 </div>

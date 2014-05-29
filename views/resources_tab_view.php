@@ -8,7 +8,7 @@
 			';
 	$resourcecellmap = array();
 	foreach ($data['resources'] as $resource) {
-		$resource['actor_id'] = $actor_id;
+		$resource['actor_id'] = $data['actor_id'];
 		$landscape = $resource['Landscape_name'];
 		if(!isset($resourcecellmap[$landscape]))
 			$resourcecellmap[$landscape] = "";
