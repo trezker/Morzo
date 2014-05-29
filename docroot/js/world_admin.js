@@ -272,7 +272,7 @@ function save_species() {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data.success !== false) {
-				$('#species_list').html(data.data);
+				$('#species_list').html(data.html);
 				$('#edit_species').hide();
 			}
 		}

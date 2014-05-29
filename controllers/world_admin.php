@@ -267,30 +267,49 @@ class World_admin extends Base {
 	}
 
 	public function Save_species() {
-		header('Content-type: application/json');
-
-		$name = $_POST['name'];
+		$name = $this->Input_post('name');
+		$id = $this->Input_post('id');
+		$max_population = $this->Input_post('max_population');
+		$location_id = $this->Input_post('location_id');
+		$on_location = $this->Input_post('on_location');
+		$population = $this->Input_post('population');
+		$actor_spawn = $this->Input_post('actor_spawn');
+		
 		if(!is_string($name) || $name == '') {
-			echo json_encode(array('success' => false, 'reason' => 'Must give a name'));
-			return;
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Must give a name')
+			);
 		}
 
 		$this->Load_model('Species_model');
-		$id = $this->Species_model->Save_species($name, $_POST['id'], $_POST['max_population']);
+		$id = $this->Species_model->Save_species($name, $id, $max_population);
 		if(!$id) {
-			echo json_encode(array('success' => false, 'reason' => 'Failed to save species'));
-			return;
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Failed to save species')
+			);
 		}
-		if(!$this->Species_model->Save_location_species($id, $_POST['location_id'], $_POST['on_location'], $_POST['population'], $_POST['actor_spawn'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Failed to save species on location'));
-			return;
+		if(!$this->Species_model->Save_location_species($id, $location_id, $on_location, $population, $actor_spawn)) {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Failed to save species on location')
+			);
 		}
 		
 		$species = $this->Species_model->Get_species();
-		$all_location_species = $this->Species_model->Get_location_species($_POST['location_id']);
-		$species_view = $this->Load_view('species_view', array('species' => $species, 'location_species' => $all_location_species), true);
+		$all_location_species = $this->Species_model->Get_location_species($location_id);
 
-		echo json_encode(array('success' => true, 'data' => $species_view));
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'species_view',
+					'data' => array('species' => $species, 'location_species' => $all_location_species)
+				)
+			)
+		);
 	}
 
 	public function Get_specie() {
