@@ -60,21 +60,4 @@ class Controller {
 	public function Load_controller($controller) {
 		$this->$controller = $this->controller_factory->Load_controller($controller);
 	}
-
-	public function Load_view($view, $data = array(), $return = false) {
-		//TODO: Eliminate all use of this function.
-		foreach($data as $key => $value) {
-			$$key = $value;
-		}
-		ob_start();
-		include "../views/".strtolower($view).".php";
-		$result = ob_get_clean();
-		//Make a view factory instead that uses the model factory.
-		$language_model = $this->model_factory->Load_model("Language_model");
-		$result = $language_model->Translate_tokens($result);
-		if($return == true)
-			return $result;
-		else
-			echo $result;
-	}
 }
