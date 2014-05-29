@@ -313,16 +313,19 @@ class World_admin extends Base {
 	}
 
 	public function Get_specie() {
-		header('Content-type: application/json');
-
 		$this->Load_model('Species_model');
-		$specie = $this->Species_model->Get_specie($_POST['id'], $_POST['location_id']);
+		$specie = $this->Species_model->Get_specie($this->Input_post('id'), $this->Input_post('location_id'));
 		if(!$specie) {
-			echo json_encode(array('success' => false, 'reason' => 'Failed to get_specie'));
-			return;
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Failed to get_specie')
+			);
 		}
 
-		echo json_encode(array('success' => true, 'data' => $specie));
+		return array(
+			'view' => 'data_json',
+			'data' => array('success' => true, 'data' => $specie)
+		);
 	}
 }
 ?>
