@@ -70,7 +70,7 @@ function add_landscape() {
 		success: function(data) {
 			if(ajax_logged_out(data)) return;
 			if(data !== false) {
-				$('#landscape_list').html(data.data);
+				$('#landscape_list').html(data.html);
 			}
 		}
 	});

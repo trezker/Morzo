@@ -176,23 +176,36 @@ class World_admin extends Base {
 	}
 
 	public function Add_landscape() {
-		header('Content-type: application/json');
-
-		if(!is_string($_POST['name']) || $_POST['name'] == '') {
-			echo json_encode(array('success' => false, 'reason' => $_POST['name'].'Must give a name'));
-			return;
+		$name = $this->Input_post('name');
+		
+		if(!is_string($name) || $name == '') {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Must give a name')
+			);
 		}
 
 		$this->Load_model('Location_model');
-		if(!$this->Location_model->Add_landscape($_POST['name'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Failed to add landscape'));
-			return;
+		if(!$this->Location_model->Add_landscape($name)) {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Failed to add landscape')
+			);
 		}
-		$landscapes = $this->Location_model->Get_landscapes();
-		$all_location_resources = $this->Location_model->Get_location_resources($_POST['location_id']);
-		$landscapes_view = $this->Load_view('landscapes_view', array('landscapes' => $landscapes, 'location_resources' => $all_location_resources), true);
 
-		echo json_encode(array('success' => true, 'data' => $landscapes_view));
+		$landscapes = $this->Location_model->Get_landscapes();
+		$all_location_resources = $this->Location_model->Get_location_resources($this->Input_post('location_id'));
+
+		return array(
+			'view' => 'single_view_json',
+			'data' => array(
+				'success' => true,
+				'html' => array(
+					'view' => 'landscapes_view',
+					'data' => array('landscapes' => $landscapes, 'location_resources' => $all_location_resources)
+				)
+			)
+		);
 	}
 
 	public function Set_location_biome() {
