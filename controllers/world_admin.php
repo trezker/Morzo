@@ -224,24 +224,22 @@ class World_admin extends Base {
 	}
 
 	public function Add_location_resource() {
-		header('Content-type: application/json');
-
-		if(!is_string($_POST['location']) || $_POST['location'] == '') {
-			echo json_encode(array('success' => false, 'reason' => 'Must give a location'));
-			return;
-		}
-		if(!is_string($_POST['resource']) || $_POST['resource'] == '') {
-			echo json_encode(array('success' => false, 'reason' => 'Must give a resource'));
-			return;
-		}
-
 		$this->Load_model('Location_model');
-		if(!$this->Location_model->Add_location_resource($_POST['location'], $_POST['resource'], $_POST['landscape'])) {
-			echo json_encode(array('success' => false, 'reason' => 'Failed to add resource'));
-			return;
+		if(!$this->Location_model->Add_location_resource(
+			$this->Input_post('location'), 
+			$this->Input_post('resource'), 
+			$this->Input_post('landscape')
+		)) {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Failed to add resource')
+			);
 		}
 
-		echo json_encode(array('success' => true));
+		return array(
+			'view' => 'data_json',
+			'data' => array('success' => true)
+		);
 	}
 
 	public function Remove_location_resource() {
