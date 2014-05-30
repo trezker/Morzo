@@ -1,6 +1,6 @@
 <?php
 
-require_once '../models/model.php';
+require_once '../framework/model.php';
 
 class Product_model extends Model {
 	public function Get_products() {

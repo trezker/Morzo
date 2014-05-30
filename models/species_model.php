@@ -1,6 +1,6 @@
 <?php
 
-require_once '../models/model.php';
+require_once '../framework/model.php';
 
 class Species_model extends Model {
 	public function Get_species() {
