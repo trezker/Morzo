@@ -1,5 +1,5 @@
 <?php
-require_once "../controllers/controller.php";
+require_once "../framework/controller.php";
 
 class Base extends Controller {
 	public function Before_page_load() {
