@@ -74,10 +74,13 @@ class User extends Base {
 			);
 		}
 
-		$url = $auth->redirectURL($GLOBALS['base_url'], $GLOBALS['base_url'].$finish_path);
+		$url = $auth->redirectURL($this->Input_global('base_url'), $this->Input_global('base_url') . $finish_path);
 		return array(
 			'view' => 'data_json',
-			'data' => array('success' => true, 'redirect_url' => $url)
+			'data' => array(
+				'success' => true,
+				'redirect_url' => $url
+			)
 		);
 	}
 
@@ -95,7 +98,7 @@ class User extends Base {
 
 		$store = new Auth_OpenID_FileStore('../oid_store');
 		$consumer = new Auth_OpenID_Consumer($store);
-		$response = $consumer->complete($GLOBALS['base_url'].$finish_path);
+		$response = $consumer->complete($this->Input_global('base_url').$finish_path);
 
   		if ($response->status == Auth_OpenID_SUCCESS) {
 			$this->Session_set('OPENID', $response->identity_url);

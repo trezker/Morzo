@@ -5,12 +5,14 @@ class Input {
 	private $post = array();
 	private $cookie = array();
 	private $header = array();
+	private $globals = array();
 	
 	function __construct() {
 		$this->get = $_GET;
 		$this->post = $_POST;
 		$this->cookie = $_COOKIE;
 		$this->header = apache_request_headers();
+		$this->globals = $GLOBALS;
 	}
 
 	public function Get($key) {
@@ -36,6 +38,12 @@ class Input {
 	public function Get_header($key) {
 		if(isset($this->header[$key]))
 			return $this->header[$key];
+		return null;
+	}
+
+	public function Get_global($key) {
+		if(isset($this->globals[$key]))
+			return $this->globals[$key];
 		return null;
 	}
 

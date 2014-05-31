@@ -45,6 +45,10 @@ class Controller {
 		return $this->input->Get_header($key);
 	}
 
+	function Input_global($key) {
+		return $this->input->Get_global($key);
+	}
+
 	function Model_factory() {
 		return $this->model_factory;
 	}
