@@ -5,12 +5,14 @@ class Controller {
 	private $controller_factory = null;
 	private $session = null;
 	private $input = null;
+	private $cache = null;
 	
-	function __construct($model_factory, $controller_factory, $session, $input) {
+	function __construct($model_factory, $controller_factory, $session, $input, $cache) {
 		$this->model_factory = $model_factory;
 		$this->controller_factory = $controller_factory;
 		$this->session = $session;
 		$this->input = $input;
+		$this->cache = $cache;
 	}
 	
 	function Session_get($key) {

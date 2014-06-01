@@ -19,7 +19,6 @@ class Front extends Base {
 		$openid_icons = $this->User_model->Get_openid_icons();
 
 		return array(
-			'type' => 'view',
 			'view' => 'front_view',
 			'data' => array(
 				'openid_icons' => $openid_icons,

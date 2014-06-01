@@ -18,7 +18,7 @@ Mock::generate('Blog_model');
 Mock::generate('User_model');
 
 class TestOfFront extends UnitTestCase {
-    function testIndex() {
+    function test_Index() {
 		$posts = array(
 			array(
 				"ID" => 1, 
@@ -36,12 +36,12 @@ class TestOfFront extends UnitTestCase {
 		$controller_factory = new Mock_Controller_factory();
 		$controller_factory->controllers["User"] = new MockUser();
 		$session = new MockSession();
-		$input = new Input();
+		$input = new MockInput();
+		$cache = new MockCache();
 
-		$front = new Front($model_factory, $controller_factory, $session, $input);
+		$front = new Front($model_factory, $controller_factory, $session, $input, $cache);
 		$response = $front->Index();
 		
-		$this->assertTrue($response["type"] === "view");
 		$this->assertTrue($response["view"] === "front_view");
 		$this->assertTrue($response["data"]["posts"][0]["ID"] === 1);
     }

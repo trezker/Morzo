@@ -32,13 +32,14 @@ class TestOfActor extends UnitTestCase {
 		$model_factory = new Mock_Model_factory();
 		$controller_factory = new Mock_Controller_factory();
 		$session = new MockSession();
-		$input = new Input();
+		$input = new MockInput();
+		$cache = new MockCache();
 
 		//Set up mock resources
 		$controller_factory->controllers["User"] = new MockUser();
 
 		//Create controller
-		$actor = new Actor($model_factory, $controller_factory, $session, $input);
+		$actor = new Actor($model_factory, $controller_factory, $session, $input, $cache);
 
 		//Call function
 		$response = $actor->Precondition(array(0));
@@ -53,7 +54,8 @@ class TestOfActor extends UnitTestCase {
 		$model_factory = new Mock_Model_factory();
 		$controller_factory = new Mock_Controller_factory();
 		$session = new MockSession();
-		$input = new Input();
+		$input = new MockInput();
+		$cache = new MockCache();
 
 		//Set up mock resources
 		$model_factory->models["Actor_model"] = new MockActor_model();
@@ -63,7 +65,7 @@ class TestOfActor extends UnitTestCase {
 		$controller_factory->controllers["User"]->returns('Logged_in', true);
 
 		//Create controller
-		$actor = new Actor($model_factory, $controller_factory, $session, $input);
+		$actor = new Actor($model_factory, $controller_factory, $session, $input, $cache);
 
 		//Call function
 		$response = $actor->Precondition(array(0));
@@ -77,7 +79,8 @@ class TestOfActor extends UnitTestCase {
 		$model_factory = new Mock_Model_factory();
 		$controller_factory = new Mock_Controller_factory();
 		$session = new MockSession();
-		$input = new Input();
+		$input = new MockInput();
+		$cache = new MockCache();
 
 		//Set up mock resources
 		$model_factory->models["Actor_model"] = new MockActor_model();
@@ -85,9 +88,8 @@ class TestOfActor extends UnitTestCase {
 		$controller_factory->controllers["User"] = new MockUser();
 		$controller_factory->controllers["User"]->returns('Logged_in', true);
 
-
 		//Create controller
-		$actor = new Actor($model_factory, $controller_factory, $session, $input);
+		$actor = new Actor($model_factory, $controller_factory, $session, $input, $cache);
 		
 		//Call function
 		$response = $actor->Precondition(array(0));
