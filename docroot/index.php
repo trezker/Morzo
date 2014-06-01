@@ -18,6 +18,7 @@ require_once '../util/log.php';
 require_once '../util/database.php';
 require_once '../framework/session.php';
 require_once '../framework/input.php';
+require_once '../framework/cache.php';
 require_once '../framework/model_factory.php';
 require_once '../framework/controller_factory.php';
 require_once '../config.php';
@@ -28,36 +29,9 @@ if (empty($_SERVER['PATH_INFO'])) {
 }
 $argv = explode("/",$_SERVER['PATH_INFO']);
 
-$memcache;
-$memcache = new Memcache;	
-$memcache->addServer('127.0.0.1', 11211);
-# Gets key / value pair from memcache
-function Get_cache($key) {
-	global $memcache;
-	return ($memcache) ? $memcache->get($key) : false;
-}
-
-# Puts key / value pair into memcache
-function Set_cache($key, $object, $timeout = 60) {
-	global $memcache;
-	return ($memcache) ? $memcache->set($key, $object, 0, $timeout) : NULL;
-}
-
-function Delete_cache($key) {
-	global $memcache;
-	return ($memcache) ? $memcache->delete($key) : NULL;
-}
-
 if($argv[1] == "info")
 {
 	phpinfo();
-}
-else if($argv[1] == "mem")
-{
-	
-	Set_cache('test', 'woop');
-	var_dump(Get_cache('test'));
-	var_dump(Get_cache('tes'));
 }
 else if($argv[1] == "debug")
 {
@@ -126,8 +100,9 @@ else
 				$db = Create_database_connection($config['database']['default']);
 				$session = new Session();
 				$input = new Input();
+				$cache = new Cache();
 				$model_factory = new Model_factory($db);
-				$controller_factory = new Controller_factory($model_factory, $session, $input);
+				$controller_factory = new Controller_factory($model_factory, $session, $input, $cache);
 				$obj = $controller_factory->Load_controller($controller_name);
 
 				$response = null;

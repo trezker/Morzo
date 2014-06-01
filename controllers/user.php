@@ -6,8 +6,8 @@ class User extends Base {
 		if(NULL == $this->Session_get('userid')) {
 			return false;
 		}
-		if(Get_cache('kick_user_' . $this->Session_get('userid'))) {
-			Delete_cache('kick_user_' . $this->Session_get('userid'));
+		if($this->cache->Get('kick_user_' . $this->Session_get('userid'))) {
+			$this->cache->Delete('kick_user_' . $this->Session_get('userid'));
 			$this->Kick_user();
 			return false;
 		}

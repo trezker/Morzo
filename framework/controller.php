@@ -5,7 +5,7 @@ class Controller {
 	private $controller_factory = null;
 	private $session = null;
 	private $input = null;
-	private $cache = null;
+	protected $cache = null;
 	
 	function __construct($model_factory, $controller_factory, $session, $input, $cache) {
 		$this->model_factory = $model_factory;

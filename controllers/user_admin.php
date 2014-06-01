@@ -51,7 +51,7 @@ class User_admin extends Base {
 			);
 		}
 		
-		Set_cache('kick_user_' . $id, true);
+		$this->cache->Set('kick_user_' . $id, true);
 		
 		return array(
 			'view' => 'data_json',
