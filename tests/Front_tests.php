@@ -10,8 +10,10 @@
 require_once '../controllers/front.php';
 require_once '../models/blog_model.php';
 require_once '../models/user_model.php';
+require_once '../controllers/user.php';
 
 Mock::generate('Session');
+Mock::generate('Input');
 Mock::generate('Blog_model');
 Mock::generate('User_model');
 
@@ -32,10 +34,13 @@ class TestOfFront extends UnitTestCase {
 		$model_factory->models["Blog_model"]->returns('Get_posts', $posts, array(1, 5, 0));
 		$model_factory->models["User_model"] = new MockUser_model();
 		$controller_factory = new Mock_Controller_factory();
+		$controller_factory->controllers["User"] = new MockUser();
 		$session = new MockSession();
+		$input = new Input();
 
-		$front = new Front($model_factory, $controller_factory, $session);
+		$front = new Front($model_factory, $controller_factory, $session, $input);
 		$response = $front->Index();
+		
 		$this->assertTrue($response["type"] === "view");
 		$this->assertTrue($response["view"] === "front_view");
 		$this->assertTrue($response["data"]["posts"][0]["ID"] === 1);
