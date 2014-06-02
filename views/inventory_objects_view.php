@@ -1,5 +1,5 @@
 <?php
-foreach ($objects as $object) {
+foreach ($data['objects'] as $object) {
 	$actions = '';
 	if($object['Object_inventory_ID'] !== NULL) {
 		$template =  '<a href="javascript:void(0)" onclick="open_container({actor_id}, {Inventory_ID})">Open</a>';
@@ -16,7 +16,7 @@ foreach ($objects as $object) {
 				
 		$actions = expand_template($template,
 					array(
-						'actor_id' => $actor_id,
+						'actor_id' => $data['actor_id'],
 						'Inventory_ID' => $object['Object_inventory_ID'],
 						'Object_ID' => $object['ID']
 					));
@@ -30,7 +30,7 @@ foreach ($objects as $object) {
 				
 		$actions = expand_template($template,
 					array(
-						'actor_id' => $actor_id,
+						'actor_id' => $data['actor_id'],
 						'Inventory_ID' => $object['Object_inventory_ID'],
 						'Object_ID' => $object['ID']
 					));
@@ -51,12 +51,12 @@ foreach ($objects as $object) {
 				';
 	echo expand_template($template,
 		array(
-			'actor_id' => $actor_id,
+			'actor_id' => $data['actor_id'],
 			'Name' => $object_name,
 			'Object_ID' => $object['ID'],
 			'Label' => $object['Label'],
-			'Product_ID' => $product_id,
-			'Inventory_ID' => $inventory_id,
+			'Product_ID' => $data['product_id'],
+			'Inventory_ID' => $data['inventory_id'],
 			'actions' => $actions
 		));
 }
