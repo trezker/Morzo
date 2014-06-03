@@ -10,11 +10,6 @@ class View_factory {
 	
 	function Load_view($view, $data = array(), $translate_tokens = false) {
 		$view_factory = $this;
-		/*
-		foreach($data as $key => $value) {
-			$$key = $value;
-		}
-		*/
 		ob_start();
 		include "../views/".strtolower($view).".php";
 		$result = ob_get_clean();
