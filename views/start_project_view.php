@@ -6,7 +6,7 @@
 	{Name}<br />
 	Time: {Cycle_time} hours<br />
 	',
-	$recipe['recipe']);
+	$data['recipe']['recipe']);
 	?>
 	
 	<div id="recipe_outputs">
@@ -18,7 +18,7 @@
 				{Amount}{Measure_desc} {Resource_Name}
 			</li>';
 
-			foreach ($recipe['recipe_outputs'] as $output) {
+			foreach ($data['recipe']['recipe_outputs'] as $output) {
 				$output['Measure_desc'] = '';
 				if($output['Measure_name'] == 'Mass') {
 					$output['Amount'] = $output['Mass'];
@@ -35,7 +35,7 @@
 			<li>
 				{Amount} {Product_Name}
 			</li>';
-			foreach ($recipe['recipe_product_outputs'] as $output) {
+			foreach ($data['recipe']['recipe_product_outputs'] as $output) {
 				echo expand_template($output_template, $output);
 			}
 			?>
@@ -46,7 +46,7 @@
 		Requires
 		<ul class="selectable">
 			<?php
-			if(count($recipe['recipe_inputs']) > 0) {
+			if(count($data['recipe']['recipe_inputs']) > 0) {
 				$input_template = '
 					<li>
 						{Amount}{Measure_desc} {Resource_Name} {From_nature_text}
@@ -54,7 +54,7 @@
 				';
 
 				echo "<li>Resources<ul>";
-				foreach ($recipe['recipe_inputs'] as $input) {
+				foreach ($data['recipe']['recipe_inputs'] as $input) {
 					$from_nature_text = "";
 					if($input['From_nature'] == 1)
 						$from_nature_text = "from nature";
@@ -79,25 +79,25 @@
 				echo "</ul></li>";
 			}
 
-			if(count($recipe['recipe_product_inputs']) > 0) {
+			if(count($data['recipe']['recipe_product_inputs']) > 0) {
 				$input_template = '
 				<li>
 					{Amount} {Product_Name}
 				</li>';
 				echo "<li>Products<ul>";
-				foreach ($recipe['recipe_product_inputs'] as $input) {
+				foreach ($data['recipe']['recipe_product_inputs'] as $input) {
 					echo expand_template($input_template, $input);
 				}
 				echo "</ul></li>";
 			}
 
-			if(count($recipe['recipe_tools']) > 0) {
+			if(count($data['recipe']['recipe_tools']) > 0) {
 				$tool_template = '
 				<li>
 					{Category_Name}
 				</li>';
 				echo "<li>Tools<ul>";
-				foreach ($recipe['recipe_tools'] as $tool) {
+				foreach ($data['recipe']['recipe_tools'] as $tool) {
 					echo expand_template($tool_template, $tool);
 				}
 				echo "</ul></li>";
