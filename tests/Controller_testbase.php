@@ -20,6 +20,8 @@ class Controller_testbase extends UnitTestCase {
 		$this->cache = new MockCache();
 	}
 	
-	function test() {
-	}
+    function test_constructor() {
+		$controller = new Controller($this->model_factory, $this->controller_factory, $this->session, $this->input, $this->cache);
+		$this->assertTrue($controller !== NULL);
+    }
 }
