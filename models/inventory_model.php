@@ -328,6 +328,10 @@ class Inventory_model extends Model
 			return array('success' => false, 'reason' => 'Inventory not accessible');
 		}
 
+		if(trim($label) === "") {
+			$label = NULL;
+		}
+
 		$rs = $this->db->Execute('update Object set Label = ? where ID = ?', array($label, $object_id));
 		
 		if(!$rs) {
