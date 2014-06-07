@@ -17,6 +17,16 @@ class Mock_Controller_factory {
 	}	
 }
 
+class Mock_View_factory {
+	function Load_view($view, $data = array(), $translate_tokens = false) {
+		$view_factory = $this;
+		ob_start();
+		include "../views/".strtolower($view).".php";
+		$result = ob_get_clean();
+		return $result;
+	}
+}
+
 //Include all the test files
 if ($handle = opendir('../tests')) {
 	while (false !== ($entry = readdir($handle))) {
