@@ -1,45 +1,23 @@
 <?php
 
-/* TODO:
- * Tests need to put global variables in a known state.
- * Session, post and get should perhaps be provided to the controller by index.php
- * 
- * Might it be a good solution to present a webpage with options for which tests to run.
- * Each test could be an ajax call, that would isolate them and each test can easily present its own result.
- */
 require_once '../controllers/actor.php';
 require_once '../controllers/user.php';
 require_once '../controllers/update.php';
 require_once '../models/actor_model.php';
 require_once '../models/travel_model.php';
 
-Mock::generate('Session');
-Mock::generate('Input');
 Mock::generate('User');
 Mock::generate('Update');
 Mock::generate('Actor_model');
 Mock::generate('Travel_model');
 
-/*
- * We have to call precheck before the controller function.
- * Think through this...
- * We don't want to write tests for prechecks on every method.
- * The precheck behaviours should be tested separately.
- * */
-class TestOfActor extends UnitTestCase {
+class TestOfActor extends Controller_testbase {
     function test_Precondition_not_logged_in_redirect() {
-		//Create dependency classes
-		$model_factory = new Mock_Model_factory();
-		$controller_factory = new Mock_Controller_factory();
-		$session = new MockSession();
-		$input = new MockInput();
-		$cache = new MockCache();
-
 		//Set up mock resources
-		$controller_factory->controllers["User"] = new MockUser();
+		$this->controller_factory->controllers["User"] = new MockUser();
 
 		//Create controller
-		$actor = new Actor($model_factory, $controller_factory, $session, $input, $cache);
+		$actor = new Actor($this->model_factory, $this->controller_factory, $this->session, $this->input, $this->cache);
 
 		//Call function
 		$response = $actor->Precondition(array(0));
@@ -50,22 +28,15 @@ class TestOfActor extends UnitTestCase {
     }
 
     function test_Precondition_pass() {
-		//Create dependency classes
-		$model_factory = new Mock_Model_factory();
-		$controller_factory = new Mock_Controller_factory();
-		$session = new MockSession();
-		$input = new MockInput();
-		$cache = new MockCache();
-
 		//Set up mock resources
-		$model_factory->models["Actor_model"] = new MockActor_model();
-		$model_factory->models["Actor_model"]->returns('User_owns_actor', true);
+		$this->model_factory->models["Actor_model"] = new MockActor_model();
+		$this->model_factory->models["Actor_model"]->returns('User_owns_actor', true);
 
-		$controller_factory->controllers["User"] = new MockUser();
-		$controller_factory->controllers["User"]->returns('Logged_in', true);
+		$this->controller_factory->controllers["User"] = new MockUser();
+		$this->controller_factory->controllers["User"]->returns('Logged_in', true);
 
 		//Create controller
-		$actor = new Actor($model_factory, $controller_factory, $session, $input, $cache);
+		$actor = new Actor($this->model_factory, $this->controller_factory, $this->session, $this->input, $this->cache);
 
 		//Call function
 		$response = $actor->Precondition(array(0));
@@ -75,21 +46,14 @@ class TestOfActor extends UnitTestCase {
     }
 
     function test_Show_actor_not_your_actor_redirect() {
-		//Create dependency classes
-		$model_factory = new Mock_Model_factory();
-		$controller_factory = new Mock_Controller_factory();
-		$session = new MockSession();
-		$input = new MockInput();
-		$cache = new MockCache();
-
 		//Set up mock resources
-		$model_factory->models["Actor_model"] = new MockActor_model();
+		$this->model_factory->models["Actor_model"] = new MockActor_model();
 
-		$controller_factory->controllers["User"] = new MockUser();
-		$controller_factory->controllers["User"]->returns('Logged_in', true);
+		$this->controller_factory->controllers["User"] = new MockUser();
+		$this->controller_factory->controllers["User"]->returns('Logged_in', true);
 
 		//Create controller
-		$actor = new Actor($model_factory, $controller_factory, $session, $input, $cache);
+		$actor = new Actor($this->model_factory, $this->controller_factory, $this->session, $this->input, $this->cache);
 		
 		//Call function
 		$response = $actor->Precondition(array(0));
