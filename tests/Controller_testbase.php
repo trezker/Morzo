@@ -2,6 +2,7 @@
 
 Mock::generate('Session');
 Mock::generate('Input');
+Mock::generate('Cache');
 
 class Controller_testbase extends UnitTestCase {
 	protected $model_factory;

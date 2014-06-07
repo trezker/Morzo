@@ -5,8 +5,6 @@ require_once '../models/blog_model.php';
 require_once '../models/user_model.php';
 require_once '../controllers/user.php';
 
-Mock::generate('Session');
-Mock::generate('Input');
 Mock::generate('Blog_model');
 Mock::generate('User_model');
 
