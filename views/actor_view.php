@@ -18,6 +18,14 @@
 				</tr>
 				<tr>
 					<td>
+						Species
+					</td>
+					<td>
+						<?= htmlspecialchars($data['actor']['Species_name']); ?>
+					</td>
+				</tr>
+				<tr>
+					<td>
 						Vitality
 					</td>
 					<td>

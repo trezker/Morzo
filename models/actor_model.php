@@ -347,7 +347,8 @@ class Actor_model extends Model
 				T.Value as Time,
 				A.Hunger,
 				A.Health,
-				A.Project_ID
+				A.Project_ID,
+				S.Name as Species_name
 			from Actor A
 			left join Actor_name AN on A.ID = AN.Actor_ID and A.ID = AN.Named_actor_ID
 			left join Location_name LN on A.ID = LN.Actor_ID and A.Location_ID = LN.Location_ID
@@ -355,6 +356,7 @@ class Actor_model extends Model
 			left join Object O on O.ID = A.Inside_object_ID
 			left join Product P on P.ID = O.Product_ID
 			left join Biome B on L.Biome_ID = B.ID
+			left join Species S on S.ID = A.Species_ID
 			join Count T on T.Name = \'Update\'
 			where A.ID = ?
 			', array($actor_id));
