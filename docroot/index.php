@@ -15,7 +15,8 @@ $GLOBALS['base_url'] = $base_url;
 
 require_once '../util/htmltemplate.php';
 require_once '../util/log.php';
-require_once '../util/database.php';
+//require_once '../util/database.php';
+require_once '../framework/database.php';
 require_once '../framework/session.php';
 require_once '../framework/input.php';
 require_once '../framework/cache.php';
@@ -97,11 +98,11 @@ else
 			}
 			else
 			{
-				$db = Create_database_connection($config['database']['default']);
+				$database = new Database($config['database']['default']);
 				$session = new Session();
 				$input = new Input();
 				$cache = new Cache();
-				$model_factory = new Model_factory($db);
+				$model_factory = new Model_factory($database);
 				$controller_factory = new Controller_factory($model_factory, $session, $input, $cache);
 				$obj = $controller_factory->Load_controller($controller_name);
 

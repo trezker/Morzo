@@ -46,7 +46,7 @@ class User extends Base {
 		$r = $this->Actor_model->Request_actor($this->Session_get('userid'));
 		
 		return array(
-			'type' => 'json',
+			'view' => 'data_json',
 			'data' => $r
 		);
 	}

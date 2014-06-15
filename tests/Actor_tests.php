@@ -5,11 +5,19 @@ require_once '../controllers/user.php';
 require_once '../controllers/update.php';
 require_once '../models/actor_model.php';
 require_once '../models/travel_model.php';
+require_once '../models/inventory_model.php';
 
 Mock::generate('User');
 Mock::generate('Update');
 Mock::generate('Actor_model');
 Mock::generate('Travel_model');
+Mock::generate('Inventory_model');
+
+/* According to TDD experts, getting bogged down in mocks is not the right way
+ * You should only need to mock external dependencies.
+ * File, db...
+ * So try with only mocking the db and input/session.
+ * */
 
 class TestOfActor extends Controller_testbase {
     function test_Precondition_not_logged_in_redirect() {

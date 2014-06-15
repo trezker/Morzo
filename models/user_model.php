@@ -20,6 +20,7 @@ class User_model extends Model
 		{
 			return 'Query failed';
 		}
+		echo "eheh";
 		if($rs->RecordCount()!=1)
 		{
 			return 'Not found';
