@@ -401,7 +401,7 @@ class Actor_model extends Model
 			join Actor A on not Me.ID = A.ID and (Me.Inside_object_ID is NULL and A.Inside_object_ID is NULL and Me.Location_ID = A.Location_ID)
 							or Me.Inside_object_ID = A.Inside_object_ID
 			left join Actor_name AN on A.ID = AN.Named_actor_ID and Me.ID = AN.Actor_ID
-			where Me.ID = ?
+			where Me.ID = ? and A.Corpse_object_ID is NULL
 			', array($actor_ID));
 		
 		if(!$rs) {
