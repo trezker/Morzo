@@ -41,17 +41,26 @@ foreach ($data['objects'] as $object) {
 	} else {
 		$object['Label'] = '';
 	}
-	
+
+	$actor_corpse_template = '';
+	if($object['Actor_ID']) {
+		$actor_corpse_template = '({Actor_name})';
+		if(!$object['Actor_name']) {
+			$object['Actor_name'] = 'Unnamed actor';
+		}
+	}
+
 	$template = '
 				<tr data-object_collection="{Inventory_ID}_{Product_ID}">
 					<td>
 						<a id="name_object_{Object_ID}" href="javascript:void(0)" onclick="show_object_label_dialog({actor_id}, {Object_ID}, \'{Label}\')">{Name}</a>
-						({Actor_name})
+						' . $actor_corpse_template . '
 					</td>
 					<td>&nbsp;</td>
 					<td>{!actions}</td>
 				</tr>
 				';
+
 	echo expand_template($template,
 		array(
 			'actor_id' => $data['actor_id'],

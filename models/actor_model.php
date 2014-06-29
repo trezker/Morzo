@@ -101,7 +101,7 @@ class Actor_model extends Model
 				left join Object_inventory O on O.Object_ID = A.Inside_object_ID
 				where A.Inventory_ID = O.Inventory_ID
 			)
-			where O.Inventory_ID in (select AO.Inventory_ID from Actor AO where AO.Health <= 0)
+			where O.Inventory_ID in (select AO.Inventory_ID from Actor AO where AO.Health <= 0 and Corpse_object_ID is NULL)
 		";
 		$rs = $this->db->Execute($sql);
 
@@ -110,7 +110,7 @@ class Actor_model extends Model
 		$rs = $this->db->Execute('
 			select A.ID, S.Corpse_product_ID from Actor A
 			join Species S on S.ID = A.Species_ID
-			where Health <= 0
+			where Health <= 0 and Corpse_object_ID is NULL
 			');
 		$actors = $rs->getArray();
 		foreach($actors as $actor) {
