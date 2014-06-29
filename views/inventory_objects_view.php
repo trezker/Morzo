@@ -44,7 +44,10 @@ foreach ($data['objects'] as $object) {
 	
 	$template = '
 				<tr data-object_collection="{Inventory_ID}_{Product_ID}">
-					<td><a id="name_object_{Object_ID}" href="javascript:void(0)" onclick="show_object_label_dialog({actor_id}, {Object_ID}, \'{Label}\')">{Name}</a></td>
+					<td>
+						<a id="name_object_{Object_ID}" href="javascript:void(0)" onclick="show_object_label_dialog({actor_id}, {Object_ID}, \'{Label}\')">{Name}</a>
+						({Actor_name})
+					</td>
 					<td>&nbsp;</td>
 					<td>{!actions}</td>
 				</tr>
@@ -55,6 +58,7 @@ foreach ($data['objects'] as $object) {
 			'Name' => $object_name,
 			'Object_ID' => $object['ID'],
 			'Label' => $object['Label'],
+			'Actor_name' => $object['Actor_name'],
 			'Product_ID' => $data['product_id'],
 			'Inventory_ID' => $data['inventory_id'],
 			'actions' => $actions

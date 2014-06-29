@@ -244,6 +244,8 @@ class Inventory_model extends Model
 					O.ID,
 					O.Label,
 					P.Name,
+					A.ID as Actor_ID,
+					AN.Name as Actor_name,
 					OI.Inventory_ID as Object_inventory_ID,
 					OL.ID as Object_lock_ID,
 					OL.Attached_object_ID as Is_attached,
@@ -254,9 +256,11 @@ class Inventory_model extends Model
 				left join Object_inventory OI on OI.Object_ID = O.ID
 				left join Object_lock OL on OL.Object_ID = O.ID
 				left join Object_lock AL on AL.Attached_object_ID = O.ID
+				left join Actor A on A.Corpse_object_ID = O.ID
+				left join Actor_name AN on A.ID = AN.Named_actor_ID and AN.Actor_ID = ?
 				where O.Inventory_ID = ? and O.Product_ID = ?
 			';
-		$args = array($inventory_id, $product_id);
+		$args = array($actor_id, $inventory_id, $product_id);
 		$rs = $this->db->Execute($sql, $args);
 		if(!$rs) {
 			return false;
