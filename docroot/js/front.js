@@ -1,4 +1,8 @@
 $(function () {
+	$("#username, #pass").on('keydown', function() {
+		$("#login_message").html("");
+	});
+	
 	$("#login").on('click', function() {
 		var username = $("#username").val();
 		var pass = $("#pass").val();
@@ -35,7 +39,7 @@ $(function () {
 			if(data.success == true)
 				window.location = '/';
 			else
-				$("#login_message").html("Failed. Please try again.");
+				$("#login_message").html(data.reason);
 		});
 	});
 });

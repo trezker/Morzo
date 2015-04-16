@@ -55,6 +55,13 @@ class User extends Base {
 		
 		$username = $this->Input_post('username');
 		$pass = $this->Input_post('pass');
+		$username = trim($username);
+		if(strlen($username) == 0) {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Username requires at least one character.')
+			);
+		}
 		
 		$this->Load_model('User_model');
 		$r = $this->User_model->Create_user_password($username, $pass);
