@@ -13,6 +13,67 @@ class User extends Base {
 		}
 		return true;
 	}
+	
+	public function Login() {
+		if($this->Logged_in()) {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Already logged in')
+			);
+		}
+		
+		$username = $this->Input_post('username');
+		$pass = $this->Input_post('pass');
+
+		$this->Load_model('User_model');
+		$r = $this->User_model->Login_password($username, $pass);
+		
+		if($r['success'] == true) {
+			$this->Session_set('username', $username);
+			$this->Session_set('userid', $r['ID']);
+			$this->Session_set('admin', $this->User_model->User_has_access($r['ID'], 'Admin'));
+
+			return array(
+				'view' => 'data_json', 
+				'data' => array('success' => true)
+			);
+		} else {
+			return array(
+				'view' => 'data_json', 
+				'data' => $r
+			);
+		}
+	}
+
+	public function Create_user_password() {
+		if($this->Logged_in()) {
+			return array(
+				'view' => 'data_json',
+				'data' => array('success' => false, 'reason' => 'Already logged in')
+			);
+		}
+		
+		$username = $this->Input_post('username');
+		$pass = $this->Input_post('pass');
+		
+		$this->Load_model('User_model');
+		$r = $this->User_model->Create_user_password($username, $pass);
+		
+		if($r['success'] == true) {
+			$this->Session_set('username', $username);
+			$this->Session_set('userid', $r['ID']);
+			$this->Session_set('admin', $this->User_model->User_has_access($r['ID'], 'Admin'));
+			return array(
+				'view' => 'data_json', 
+				'data' => array('success' => true)
+			);
+		} else {
+			return array(
+				'view' => 'data_json', 
+				'data' => $r
+			);
+		}		
+	}
 
 	public function Index() {
 		if(!$this->Logged_in()) {

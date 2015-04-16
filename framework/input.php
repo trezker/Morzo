@@ -24,6 +24,9 @@ class Input {
 	private $globals = array();
 	
 	function __construct() {
+		//Note: $_POST was not being automatically populated after I switched to nginx.
+		$data = file_get_contents("php://input");
+		parse_str($data, $_POST);
 		$this->get = $_GET;
 		$this->post = $_POST;
 		$this->cookie = $_COOKIE;
