@@ -15,8 +15,14 @@ body {
 	background:#fff;
 	color:#333;
 }
+
+#content {
+	width: 800px;
+	margin: 0 auto;
+}
+
 h1, h2, h3, h4 {
-	color:#008400;
+	color:#AAAAFF;
 }
 blockquote {
 	color:#008400;

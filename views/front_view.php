@@ -38,7 +38,7 @@
 			</div>
 		</div>
 		
-		<div>
+		<div id="content">
 			<?php
 				echo $view_factory->Load_view('blogposts_view', array(
 					'posts' => $data["posts"],
