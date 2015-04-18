@@ -1,6 +1,6 @@
 $(function () {
 	$("#username, #pass").on('keydown', function() {
-		$("#login_message").html("");
+		$("#login_message").html("&nbsp;");
 	});
 	
 	$("#login").on('click', function() {

@@ -13,25 +13,32 @@
 		</div>
 
 		<div class="login_content">
-			<div class="floatright">
-				<label for="username">Username</label>
-				<input type="text" id="username" />
+			<div>
+				<div class="floatright">
+					<label for="username">Username</label>
+					<input type="text" id="username" class="width_100" />
+				</div>
+				<div class="clearboth floatright">
+					<label for="pass">Pass</label>
+					<input type="password" id="pass" class="width_100" />
+				</div>
+				<div class="clearboth floatright">
+					<span id="login" class="action">Log in</span>
+				</div>
+				<div class="floatleft">
+					<span id="create" class="action">Create account</span>
+				</div>
+				<div class="clearboth floatright">
+					<div id="login_message">&nbsp;</div>
+				</div>
+				<div class="clearboth"></div>
 			</div>
-			<div class="clearboth floatright">
-				<label for="pass">Pass</label>
-				<input type="password" id="pass" />
-			</div>
-			<div class="clearboth floatright">
-				<span id="login" class="action">Log in</span>
-				<span id="create" class="action">Create account</span>
-			</div>
-			<div class="clearboth floatright">
-				<div id="login_message"></div>
+			<div class="rowmargin">
+				<a href="/library">Documentation</a>
 			</div>
 		</div>
 		
-		<div style="clear: both;">
-			<p><a href="/library">Documentation</a></p>
+		<div>
 			<?php
 				echo $view_factory->Load_view('blogposts_view', array(
 					'posts' => $data["posts"],
