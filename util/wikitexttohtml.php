@@ -53,7 +53,7 @@ class WikiTextToHTML {
 				=>	'<img src="\1" />',
 			'/\[a (.*?) (.*?)\]/'
 				=>	'<a href="\1">\2</a>',
-			'/^([ ]+)1 (.+)$/'
+			'/^([ ]+)# (.+)$/'
 				=>	'<li>\2</li>',
 			'/^([ ]+)\* (.+)$/'
 				=>	'<li>\2</li>',
@@ -115,17 +115,17 @@ class WikiTextToHTML {
 			$prevliststate = $liststate;
 			$prevlistdepth = $listdepth;
 			switch(substr(ltrim($in), 0, 1)) {
-				case '1':
+				case '#':
 					$liststate = self::LS_ORDERED;
-					$listdepth = strpos($in, '1');
+					$listdepth = strpos($in, '#')-1;
 					break;
 				case '*':
 					$liststate = self::LS_UNORDERED;
-					$listdepth = strpos($in, '*');
+					$listdepth = strpos($in, '*')-1;
 					break;
 				default:
 					$liststate = self::LS_NONE;
-					$listdepth = 1;
+					$listdepth = 0;
 					break;
 			}
 			
@@ -133,8 +133,7 @@ class WikiTextToHTML {
 			if($liststate != $prevliststate) {
 				// close old list
 				if(self::LS_NONE != $prevliststate) {
-					$output[] =
-						self::$LT_CLOSE[$prevliststate];
+					$output[] = self::$LT_CLOSE[$prevliststate];
 				}
 				
 				// start new list
@@ -150,20 +149,12 @@ class WikiTextToHTML {
 
 				// open or close tags based on difference
 				if($listdepth > $prevlistdepth) {
-					for($i = 0;
-						$i < $depthdiff;
-						$i++)
-					{
-						$output[] =
-							self::$LT_OPEN[$liststate];
+					for($i = 0; $i < $depthdiff; $i++) {
+						$output[] = self::$LT_OPEN[$liststate];
 					}
 				} else {
-					for($i = 0;
-						$i < $depthdiff;
-						$i++)
-					{
-						$output[] =
-							self::$LT_CLOSE[$prevliststate];
+					for($i = 0; $i < $depthdiff; $i++) {
+						$output[] = self::$LT_CLOSE[$prevliststate];
 					}
 				}
 			}
@@ -173,14 +164,12 @@ class WikiTextToHTML {
 			} else if ('{{{' == trim($in)) {
 				$output[] = '<p><pre><code>';
 				$codestate = self::CS_CODE;
-			} else if ('}}}' == trim($in)) {
+			}
+			else if ('}}}' == trim($in)) {
 				$output[] = '</code></pre></p>';
 				$codestate = self::CS_NONE;
-			} else if (
-				$in[0] != '=' &&
-				$in[0] != ' ' &&
-				$in[0] != '-')
-			{
+			}
+			else if ($in[0] != '=' && $in[0] != ' ' && $in[0] != '-') {
 				// only output paragraphs when not in code
 				if(self::CS_NONE == $codestate) {
 					$output[] = '<p>';

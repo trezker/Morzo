@@ -4,6 +4,62 @@ require_once '../framework/model.php';
 
 class User_model extends Model
 {
+	public function Login_password($username, $pass) {
+		$query = '
+			SELECT
+				u.ID,
+				u.Username,
+				u.Banned_from,
+				u.Banned_to
+			FROM User u
+			WHERE u.Username = ?
+			AND Pass = SHA2(CONCAT(u.Salt, ?), 512)
+		';
+		$args = array(
+			$username,
+			$pass
+		);
+		$rs = $this->db->Execute($query, $args);
+		if(!$rs) {
+			return array(
+				'success' => false,
+				'reason' => 'Failed'
+			);
+		}
+
+		if($rs->RecordCount()!=1) {
+			return array(
+				'success' => false,
+				'reason' => 'Not found'
+			);
+		}
+		
+		$banned_from = strtotime($rs->fields['Banned_from']);
+		$banned_to = strtotime($rs->fields['Banned_to']);
+		$now = time();
+
+		if($banned_from != NULL && $banned_from <= $now
+		&& ($banned_to == NULL || $banned_to > $now)) {
+			return array(
+				'success' => false,
+				'reason' => 'Banned'
+			);
+		}
+
+		$l = $this->Login($rs->fields['ID']);
+		if($l !== true) {
+			return array(
+				'success' => false,
+				'reason' => 'Login failed'
+			);
+		}
+		
+		return array(
+			'success' => true,
+			'ID' => $rs->fields['ID']
+		);
+	}
+	
 	public function Login_openid($openid)
 	{
 		$query = '
@@ -20,7 +76,7 @@ class User_model extends Model
 		{
 			return 'Query failed';
 		}
-		echo "eheh";
+
 		if($rs->RecordCount()!=1)
 		{
 			return 'Not found';
@@ -54,9 +110,62 @@ class User_model extends Model
 		$session_id = session_id();
 		$rs2 = $this->db->Execute($query, array($session_id, $id));
 		if(!$rs2) {
-			return 'Query failed';
+			return false;
 		}
 		return true;
+	}
+
+	public function Create_user_password($username, $pass) {
+		//$this->db->Debug(true);
+		$salt = str_shuffle(MD5(microtime()));
+		$this->db->StartTrans();
+		$query = "
+			INSERT INTO User (Username, Salt, Pass, Max_actors)
+			select ?, ?, SHA2(CONCAT(?, ?), 512), Value from Count where Name = 'Max_actors_account'
+		";
+		$args = array(
+			$username,
+			$salt,
+			$salt,
+			$pass
+		);
+		$rs = $this->db->Execute($query, $args);
+
+		if(!$rs) {
+			$reason = $this->db->ErrorMsg();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
+			return array(
+				'success' => false,
+				'reason' => $reason
+			);
+		}
+		$query = 'SELECT ID FROM User WHERE Username = ?';
+		$rs = $this->db->Execute($query, array($username));
+		if(!$rs) {
+			$reason = $this->db->ErrorMsg();
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
+			return array(
+				'success' => false,
+				'reason' => $reason
+			);
+		}
+		if($rs->RecordCount()!=1) {
+			$this->db->FailTrans();
+			$this->db->CompleteTrans();
+			return array(
+				'success' => false,
+				'reason' => 'Could not find user row, weird.',
+			);
+		}
+		$userid = $rs->fields['ID'];
+
+		$this->db->CompleteTrans();
+		return array(
+			'success' => true,
+			'ID' => $userid
+		);
 	}
 
 	public function Create_user_openid($username, $openid)

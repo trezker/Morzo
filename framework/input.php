@@ -1,5 +1,21 @@
 <?php
 
+// apache_request_headers replacement for nginx
+if (!function_exists('apache_request_headers')) { 
+	function apache_request_headers() { 
+		foreach($_SERVER as $key=>$value) { 
+			if (substr($key,0,5)=="HTTP_") { 
+				$key=str_replace(" ","-",ucwords(strtolower(str_replace("_"," ",substr($key,5))))); 
+				$out[$key]=$value; 
+			}
+			else {
+				$out[$key]=$value; 
+			}
+		} 
+		return $out; 
+	}
+}
+
 class Input {
 	private $get = array();
 	private $post = array();
@@ -8,6 +24,9 @@ class Input {
 	private $globals = array();
 	
 	function __construct() {
+		//Note: $_POST was not being automatically populated after I switched to nginx.
+		$data = file_get_contents("php://input");
+		parse_str($data, $_POST);
 		$this->get = $_GET;
 		$this->post = $_POST;
 		$this->cookie = $_COOKIE;

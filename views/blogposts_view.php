@@ -17,7 +17,7 @@ if($data["show_owner_controls"] == true) {
 $post_template .= '
 				</span>
 			</div>
-			<div class="blogcontent"s>{!Content2}</div>
+			<div class="blogcontent">{!Content2}</div>
 		</div>
 	';
 

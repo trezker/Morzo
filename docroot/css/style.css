@@ -6,13 +6,23 @@ input {
 	width: 100%;
 }
 
+.rowmargin {
+	margin: 5px 0;
+}
+
 body {
 	margin: 1em 2em;
 	background:#fff;
 	color:#333;
 }
+
+#content {
+	width: 800px;
+	margin: 0 auto;
+}
+
 h1, h2, h3, h4 {
-	color:#008400;
+	color:#AAAAFF;
 }
 blockquote {
 	color:#008400;
@@ -35,12 +45,16 @@ a:hover {
 	float:left;
 }
 
+.floatright {
+	float: right;
+}
+
 .clearboth {
 	clear: both;
 }
 
 .title {
-	float: left;
+	text-align: center;
 }
 
 .user_menu {
@@ -55,11 +69,6 @@ a:hover {
 	color: #009;
 	cursor: pointer;
 	user-select: none;
-}
-
-.login {
-	float: right;
-	margin-top: 10px;
 }
 
 .action {
@@ -159,11 +168,9 @@ li.selected:hover {
 	margin-bottom: 5px;
 }
 
-.login_action {
-	margin-top: 5px;;
-}
-
 .login_content {
+	width: 200px;
+	margin: 0 auto;
     text-align: center;
 }
 
