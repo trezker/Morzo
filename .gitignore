@@ -6,3 +6,4 @@ php_errors.log
 config.php
 controllers/test.php
 apache.log
+apache-config.php
