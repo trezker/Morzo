@@ -1,0 +1,13 @@
+version: '3.6'
+services:
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - ../mysqldata/morzo:/var/lib/mysql
+networks:
+  default:
+    external: 
+      name: morzo
