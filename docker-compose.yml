@@ -2,9 +2,9 @@ version: '3.6'
 services:
   game:
     build:
-      context: ./
+      build: './php/'
     volumes:
-      - ./:/usr/src/app
+      - ./game/:/var/www/html/
     env_file:
       .env
   nginx:
