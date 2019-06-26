@@ -1,3 +1,5 @@
+USE morzo;
+
 INSERT INTO `Access` VALUES (1,'Admin');
 INSERT INTO `Count` VALUES (1,'Update',2909),(2,'Max_actors',20),(3,'Max_actors_account',7);
 INSERT INTO `Language` VALUES (1,'English'),(2,'Svenska');
