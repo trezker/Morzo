@@ -4,7 +4,7 @@ class Cache {
 	private $memcache = null;
 
 	function __construct() {
-		$this->memcache = new Memcache;	
+		$this->memcache = new Memcached;	
 		$this->memcache->addServer('127.0.0.1', 11211);
 	}
 
