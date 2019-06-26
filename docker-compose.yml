@@ -1,5 +1,7 @@
 version: '3.6'
 services:
+  memcache:
+    image: memcached:latest
   game:
     build:
       './php/'
@@ -19,6 +21,7 @@ services:
       - ./ssl/key.pem:/etc/nginx/conf.d/key.pem
     depends_on:
       - game
+      - memcache
 networks:
   default:
     external: 
