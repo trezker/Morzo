@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS morzo
 CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
-CREATE USER IF NOT EXISTS 'morzo'@'%' IDENTIFIED BY 'qfpioub';
+CREATE USER IF NOT EXISTS 'morzo'@'%' IDENTIFIED WITH mysql_native_password BY 'qfpioub';
 
 GRANT INSERT, UPDATE, SELECT, DELETE, EXECUTE, TRIGGER ON morzo.* to 'morzo'@'%';
 

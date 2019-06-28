@@ -22,7 +22,15 @@ services:
     depends_on:
       - game
       - memcache
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8181:80
+    environment:
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      PMA_HOST: db
 networks:
   default:
     external: 
-      name: charchat
+      name: morzo

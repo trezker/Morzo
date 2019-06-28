@@ -10,6 +10,7 @@ class Database {
 		$this->database->Connect($config['host'], $config['user'], $config['password'], $config['database']);
 		$this->database->Execute("set names 'utf8'");
 		$this->database->SetFetchMode(ADODB_FETCH_ASSOC);
+		//print_r($this->database);
 	}
 	
 	function Debug($on) {
